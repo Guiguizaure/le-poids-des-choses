@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-creme: #fff3dc;
+  --color-encre: #1f1a17;
+  --color-texte-attenue: #6b625a;
+  --color-blanc: #ffffff;
+  --color-tomate: #ff4f2e;
+  --color-tomate-douce: #ffe0d6;
+  --color-pomme: #2fbf71;
+  --color-pomme-douce: #d9f4e4;
+  --color-outremer: #2d4bff;
+  --color-soleil: #ffc93c;
+  --color-rose: #ff8fb1;
+
+  --font-titre: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-texte: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --text-display: 88px;
+  --text-display--line-height: 1;
+  --text-titre-xl: 44px;
+  --text-titre-xl--line-height: 1.1;
+  --text-titre-l: 26px;
+  --text-titre-l--line-height: 1.2;
+  --text-titre-m: 22px;
+  --text-titre-m--line-height: 1.25;
+  --text-chiffre-xl: 56px;
+  --text-chiffre-xl--line-height: 1;
+  --text-corps-l: 17px;
+  --text-corps-l--line-height: 1.5;
+  --text-corps-m: 16px;
+  --text-corps-m--line-height: 1.5;
+  --text-corps-s: 14px;
+  --text-corps-s--line-height: 1.45;
+  --text-legende: 12px;
+  --text-legende--line-height: 1.4;
+}
+
+body {
+  background: var(--color-creme);
+  color: var(--color-encre);
+  font-family: var(--font-texte);
+}
