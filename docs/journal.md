@@ -23,4 +23,7 @@ Vitest, thème Figma, page provisoire, arborescence, docs), sans aucune fonction
 - `AGENTS.md` généré par `create-next-app` conservé (avertissement sur la version de Next) ;
   `CLAUDE.md` réécrit et y renvoie.
 - Fichiers d'exemple de `public/` supprimés.
-- Aucun commit ni push : en attente de ton accord.
+- Ajouts avant commit : `.nvmrc` (24), `packageManager` pnpm@11.3.0 (déjà présent),
+  `prettier-plugin-tailwindcss`.
+- Premier commit sur `main` (accord reçu). Push bloqué : clé d'hôte SSH GitHub inconnue.
+- Nouvelle règle : messages de commit conventionnels, travail uniquement sur branches.
