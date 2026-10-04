@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { JournalEntry } from "@/lib/data/types";
-import { ILLUSTRATION_SPECS } from "@/lib/illustrations/specs";
+import { ILLUSTRATION_SPECS, PENDING_PICTOS } from "@/lib/illustrations/specs";
 import { getGestures } from "@/lib/data";
 import {
   entryCategory,
@@ -90,11 +90,24 @@ describe("relativeDay", () => {
 });
 
 describe("pictos et catégories", () => {
-  it("chaque geste a un picto qui existe", () => {
+  it("chaque geste a son picto, ou figure dans la liste des pictos à fournir", () => {
     for (const gesture of getGestures()) {
       const picto = pictoFor(gesture.id);
       expect(picto in ILLUSTRATION_SPECS).toBe(true);
-      expect(picto).not.toBe("picto-generique");
+      if (picto === "picto-generique") {
+        expect(PENDING_PICTOS).toContain(`picto-${gesture.id}`);
+      }
+    }
+  });
+  it("aucun geste n'affiche plus picto-generique", () => {
+    for (const gesture of getGestures())
+      expect(pictoFor(gesture.id)).not.toBe("picto-generique");
+  });
+  it("la liste des pictos à fournir est à jour (aucun n'existe déjà, tous servent)", () => {
+    const wanted = new Set(getGestures().map((g) => `picto-${g.id}`));
+    for (const name of PENDING_PICTOS) {
+      expect(name in ILLUSTRATION_SPECS).toBe(false);
+      expect(wanted.has(name)).toBe(true);
     }
   });
   it("modes : occasion et garder", () => {
@@ -113,5 +126,26 @@ describe("pictos et catégories", () => {
         gestureB: "repas-vegetarien",
       }),
     ).toBe("Manger");
+  });
+});
+
+describe("objets : libellés courts, accord tiré du nom", () => {
+  const object = (
+    id: string,
+    modeA: "neuf" | "garder" | "occasion-livree",
+    modeB: "occasion" | "neuf" | "garder",
+    chosen: "a" | "b",
+  ) =>
+    entryTitle({ ...base, gestureA: id, gestureB: id, modeA, modeB, chosen });
+  it("masculin, féminin, pluriel", () => {
+    expect(object("smartphone", "neuf", "occasion", "a")).toBe(
+      "Smartphone neuf plutôt que d’occasion",
+    );
+    expect(object("television", "neuf", "garder", "b")).toBe(
+      "Télévision gardée plutôt que neuve",
+    );
+    expect(object("chaussures", "occasion-livree", "neuf", "a")).toBe(
+      "Chaussures de sport d’occasion livrées plutôt que neuves",
+    );
   });
 });

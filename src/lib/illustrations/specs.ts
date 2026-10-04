@@ -150,6 +150,21 @@ export const ILLUSTRATION_SPECS = {
   "picto-velo": picto,
   "picto-visio": picto,
   "picto-voiture": picto,
+  // Boire et Se faire livrer (lot 5b)
+  "picto-eau-robinet": picto,
+  "picto-eau-bouteille": picto,
+  "picto-cafe": picto,
+  "picto-the": picto,
+  "picto-soda": picto,
+  "picto-biere": picto,
+  "picto-vin": picto,
+  "picto-lait-vache": picto,
+  "picto-boisson-soja": picto,
+  "picto-livraison-domicile": picto,
+  "picto-point-relais-pied": picto,
+  "picto-point-relais-voiture": picto,
+  "picto-magasin-pied": picto,
+  "picto-magasin-voiture": picto,
 } as const satisfies Record<string, IllustrationSpec>;
 
 export type IllustrationName = keyof typeof ILLUSTRATION_SPECS;
@@ -169,3 +184,11 @@ export function anchorAsCssOrigin(name: IllustrationName): string {
   const pct = (value: number) => `${Math.round(value * 1000) / 10}%`;
   return `${pct(anchor.x / spec.width)} ${pct(anchor.y / spec.height)}`;
 }
+
+/**
+ * Pictos À FOURNIR (64×64, groupes `fond` et `objet`) pour des gestes déjà proposés : en
+ * attendant, `picto-generique` s'affiche. Quand un fichier arrive, l'ajouter au contrat
+ * ci-dessus et le retirer de cette liste (un test le vérifie). Voir
+ * docs/illustrations-a-fournir.md.
+ */
+export const PENDING_PICTOS: readonly string[] = [];

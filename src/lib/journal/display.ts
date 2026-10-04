@@ -1,4 +1,5 @@
 // Présentation d'une entrée du carnet (titre, date relative, catégorie, picto).
+import { objectNoun } from "@/lib/compare/nouns";
 import { getGesture } from "@/lib/data";
 import type { AcquisitionMode, Category, JournalEntry } from "@/lib/data/types";
 import {
@@ -11,6 +12,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   alimentation: "Manger",
   habillement: "S’habiller",
   numerique: "Numérique",
+  boisson: "Boire",
+  livraison: "Se faire livrer",
 };
 
 const VOWEL = /^[aàâeéèêëiîïoôuùûüyhœæ]/i;
@@ -41,16 +44,15 @@ function shortenOther(chosen: string, other: string): string {
     .replace(/^(au|aux|à la|à l’|à l'|en|de la|du|des) /i, "");
 }
 
-const NEW_SUFFIX = /\s(neuf|neuve|neufs|neuves)$/;
-
 /** Forme du mode accordée avec l'objet (« neuve », « d’occasion livrée », « gardée »). */
-function modeWord(mode: AcquisitionMode, agreement: string): string {
-  const feminine = agreement.startsWith("neuve");
-  const pluralMark = agreement.endsWith("s") ? "s" : "";
-  const ending = `${feminine ? "e" : ""}${pluralMark}`;
+function modeWord(mode: AcquisitionMode, objectId: string): string {
+  const { feminine, plural } = objectNoun(objectId);
+  const ending = `${feminine ? "e" : ""}${plural ? "s" : ""}`;
   switch (mode) {
     case "neuf":
-      return agreement;
+      return feminine
+        ? `neuve${plural ? "s" : ""}`
+        : `neuf${plural ? "s" : ""}`;
     case "occasion":
       return "d’occasion";
     case "occasion-livree":
@@ -71,10 +73,8 @@ export function entryTitle(entry: JournalEntry): string {
   const otherLabel = getGesture(otherId)?.label ?? otherId;
 
   if (chosenId === otherId && chosenMode && otherMode) {
-    const match = chosenLabel.match(NEW_SUFFIX);
-    const base = match ? chosenLabel.slice(0, match.index) : chosenLabel;
-    const agreement = match?.[1] ?? "neuf";
-    return `${base} ${modeWord(chosenMode, agreement)} ${rather(modeWord(otherMode, agreement))}`;
+    // Libellé court (« Jean ») ; l'accord vient du nom de l'objet (genre, nombre).
+    return `${chosenLabel} ${modeWord(chosenMode, chosenId)} ${rather(modeWord(otherMode, chosenId))}`;
   }
   return `${chosenLabel} ${rather(lowerFirst(shortenOther(chosenLabel, otherLabel)))}`;
 }

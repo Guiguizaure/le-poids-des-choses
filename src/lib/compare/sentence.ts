@@ -15,7 +15,8 @@ export function formatRatio(ratio: number): string {
 const CONTEXT: Record<Unit, string> = {
   km: "Sur ce trajet, ",
   repas: "",
-  heure: "Sur cette durée, ",
+  litre: "Pour un litre, ",
+  achat: "Pour un même achat, ",
   objet: "",
 };
 

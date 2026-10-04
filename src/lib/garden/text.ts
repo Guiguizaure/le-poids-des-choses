@@ -1,16 +1,29 @@
 // Textes du jardin (français, tutoiement).
 import type { AnimalKind, GardenState } from "./model";
 
-type AnimalName = { name: string; feminine: boolean };
+type AnimalName = {
+  name: string;
+  feminine: boolean;
+  /** « du papillon », « de l’oiseau » */ of: string;
+};
 
 export const ANIMAL_NAMES: Record<AnimalKind, AnimalName> = {
-  butterfly: { name: "papillon", feminine: false },
-  ladybug: { name: "coccinelle", feminine: true },
-  bird: { name: "oiseau", feminine: false },
-  snail: { name: "escargot", feminine: false },
-  bee: { name: "abeille", feminine: true },
-  hedgehog: { name: "hérisson", feminine: false },
+  butterfly: { name: "papillon", feminine: false, of: "du papillon" },
+  ladybug: { name: "coccinelle", feminine: true, of: "de la coccinelle" },
+  bird: { name: "oiseau", feminine: false, of: "de l’oiseau" },
+  snail: { name: "escargot", feminine: false, of: "de l’escargot" },
+  bee: { name: "abeille", feminine: true, of: "de l’abeille" },
+  // h aspiré : « du hérisson »
+  hedgehog: { name: "hérisson", feminine: false, of: "du hérisson" },
 };
+
+/** « Encore 2 choix légers avant l’arrivée de la coccinelle » (vide quand tous sont là). */
+export function nextAnimalMessage(
+  next: { kind: AnimalKind; remaining: number } | null,
+): string {
+  if (!next) return "";
+  return `Encore ${plural(next.remaining, "choix léger", "choix légers")} avant l’arrivée ${ANIMAL_NAMES[next.kind].of}`;
+}
 
 /** « Une coccinelle s'est installée dans ton jardin » */
 export function arrivalMessage(kind: AnimalKind): string {

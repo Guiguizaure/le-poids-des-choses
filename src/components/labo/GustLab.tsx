@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Illustration } from "@/components/illustrations/Illustration";
+import { Landscape } from "@/components/scene/Landscape";
 import { playGust, useAutoGusts } from "@/components/motion/gust";
 import { Bee } from "@/components/scene/Bee";
 import { Butterfly } from "@/components/scene/Butterfly";
@@ -35,11 +35,7 @@ export function GustLab() {
         ref={sceneRef}
         className="relative aspect-[390/220] w-full overflow-hidden rounded-2xl"
       >
-        <Illustration
-          name="scene-paysage"
-          preserveAspectRatio="xMidYMax slice"
-          className="absolute inset-0 h-full w-full"
-        />
+        <Landscape className="absolute bottom-0 left-0 w-full" />
         <Wind className="absolute inset-x-0 top-[38%]" />
         <Butterfly
           className="absolute top-[12%] left-[18%] w-[9%]"
@@ -84,7 +80,7 @@ export function GustLab() {
         </ToggleButton>
       </div>
       <p className="text-corps-s text-texte-attenue">
-        Les rafales automatiques arrivent toutes les 8 à 15 secondes, seulement
+        Les rafales automatiques arrivent toutes les 25 à 45 secondes, seulement
         quand l&apos;onglet est visible. En animations réduites, le vent ne fait
         rien bouger.
       </p>

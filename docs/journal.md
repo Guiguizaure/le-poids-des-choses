@@ -290,3 +290,46 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
   réglé dans `scripts/build-gestures.ts`, données régénérées), affichée sous le libellé dans
   les cartes des écrans 02 et 03.
 - Gardés : pastille sur le 03b, textes ajoutés de l'étape 2.
+
+## 2026-10-05 — Lot 5b : retours de test (branche feat/feedback-1)
+
+**Demandé** : scène plus vivante, numérique recentré sur les appareils, choix des deux gestes
+sur un seul écran, prochain animal en silhouette, nouvelles comparaisons « Boire » et « Se
+faire livrer » si le CSV le permet.
+
+**Proposé / fait** :
+
+- `Landscape` : nuages qui traversent la scène (72, 86 s ; boucle sans saut,
+  `cloudDrift`), halo du soleil qui respire (6 s) ; rafales automatiques toutes les 25 à
+  45 s. Tout s'arrête en mouvement réduit (vérifié dans le labo) et dans le jardin assoupi.
+- Numérique : streaming et visioconférence retirés ; ne restent que les appareils (Neuf /
+  D'occasion / Je garde le mien). Unité heure et curseur de durée supprimés.
+- Choix des gestes sur un seul écran : `toggleGesture` / `isSelectable` (fonctions pures
+  testées), badges « 1 » et « 2 », gestes d'une autre unité grisés, retoucher pour retirer,
+  bouton « Comparer », état annoncé (zone `aria-live`), boutons à bascule (`aria-pressed`).
+- Jardin : prochain animal en silhouette (encre, 16 % d'opacité, immobile) et « Encore N
+  choix légers avant l’arrivée de … » ; rien quand tous sont là.
+- CSV : thématique Boisson (9 boissons, par litre) et Livraison (5 façons de recevoir un
+  colis d'1 kg, par livraison ou achat). Unités confirmées sur impactco2.fr. Nouvelles
+  unités `litre` et `achat`. 14 pictos à fournir (`docs/illustrations-a-fournir.md`),
+  `picto-generique` en attendant.
+- Vérifié dans Chrome sur l'export statique : choix sur un seul écran (sélection,
+  désélection, grisé, Comparer), duels « Boire » et « Se faire livrer », ancien lien
+  streaming qui ramène proprement au choix, numérique vers les trois options, silhouette et
+  message du jardin, ciel animé puis figé en mouvement réduit.
+
+**Gardé / changé** :
+
+- Pastille « Mon jardin » sans montant tant que rien n'est évité (correctif oublié au lot 5).
+- Libellés des livraisons : « En magasin à pied / en voiture », « Point relais à pied / en
+  voiture », précision du trajet en voiture et du colis d'1 kg en ligne secondaire.
+
+**Ajustements après relecture (2026-10-05)** :
+
+- 14 pictos « Boire » et « Se faire livrer » intégrés depuis
+  `le-poids-des-choses-pictos-boire-livrer.zip` (64×64, `fond` et `objet`) ; contrat à 68
+  illustrations, `PENDING_PICTOS` vidé, `docs/illustrations-a-fournir.md` vidé ; test :
+  plus aucun geste sur `picto-generique` (vérifié aussi dans Chrome).
+- Objets : libellés courts dans les cartes (« Smartphone », « Jean »…). Les titres du carnet
+  tirent désormais l'accord de `objectNoun` (« Télévision gardée plutôt que neuve »).
+- Pas de Click & Collect.

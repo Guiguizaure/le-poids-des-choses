@@ -1,4 +1,4 @@
-import { Illustration } from "@/components/illustrations/Illustration";
+import { Landscape } from "@/components/scene/Landscape";
 import { Scale } from "@/components/scene/Scale";
 import type { IllustrationName } from "@/lib/illustrations/specs";
 
@@ -16,10 +16,7 @@ export function DuelScene({
 }) {
   return (
     <div className="bg-creme relative aspect-[390/280] w-full overflow-hidden">
-      <Illustration
-        name="scene-paysage"
-        className="absolute bottom-0 left-0 block h-auto w-full"
-      />
+      <Landscape className="absolute bottom-0 left-0 w-full" />
       <div className="absolute bottom-[7%] left-1/2 w-[72%] -translate-x-1/2">
         <Scale
           tilt={tilt}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Illustration } from "@/components/illustrations/Illustration";
+import { Landscape } from "@/components/scene/Landscape";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { Butterfly } from "@/components/scene/Butterfly";
 import { Flower } from "@/components/scene/Flower";
@@ -31,10 +31,7 @@ export function HomeScene({ className = "" }: { className?: string }) {
       className={`bg-creme relative aspect-[390/470] w-full overflow-hidden ${className}`}
       aria-hidden
     >
-      <Illustration
-        name="scene-paysage"
-        className="absolute bottom-0 left-0 block h-auto w-full"
-      />
+      <Landscape className="absolute bottom-0 left-0 w-full" />
       <div className="absolute top-[47%] left-[60%] w-[11%]">
         <Butterfly className="w-full" />
       </div>

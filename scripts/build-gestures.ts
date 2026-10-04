@@ -52,10 +52,17 @@ const equipement = {
   unit: "objet",
   defaultQuantity: 1,
 } as const;
-const numerique = {
-  theme: "Usage numérique",
-  category: "numerique",
-  unit: "heure",
+const boisson = {
+  theme: "Boisson",
+  category: "boisson",
+  unit: "litre",
+  defaultQuantity: 1,
+} as const;
+// Livraison d'un même achat (colis d'1 kg) : le CSV donne un total par livraison ou achat.
+const livraison = {
+  theme: "Livraison",
+  category: "livraison",
+  unit: "achat",
   defaultQuantity: 1,
 } as const;
 
@@ -111,55 +118,109 @@ export const SELECTION: readonly Selection[] = [
     label: "Repas au poisson blanc (cabillaud)",
   },
 
-  { ...habit, sourceId: "jeans", id: "jean", label: "Jean neuf" },
+  { ...habit, sourceId: "jeans", id: "jean", label: "Jean" },
   {
     ...habit,
     sourceId: "tshirtencoton",
     id: "tshirt",
-    label: "T-shirt en coton neuf",
+    label: "T-shirt en coton",
   },
   {
     ...habit,
     sourceId: "pullenlaine",
     id: "pull",
-    label: "Pull en laine neuf",
+    label: "Pull en laine",
   },
   {
     ...habit,
     sourceId: "chaussuresdesport",
     id: "chaussures",
-    label: "Chaussures de sport neuves",
+    label: "Chaussures de sport",
   },
 
-  {
-    ...numerique,
-    sourceId: "streamingvideo",
-    id: "streaming",
-    label: "Streaming vidéo",
-  },
-  {
-    ...numerique,
-    sourceId: "visioconference",
-    id: "visio",
-    label: "Visioconférence",
-  },
   {
     ...equipement,
     sourceId: "smartphone",
     id: "smartphone",
-    label: "Smartphone neuf",
+    label: "Smartphone",
   },
   {
     ...equipement,
     sourceId: "ordinateurportable",
     id: "ordinateur-portable",
-    label: "Ordinateur portable neuf",
+    label: "Ordinateur portable",
   },
   {
     ...equipement,
     sourceId: "television",
     id: "television",
-    label: "Télévision neuve",
+    label: "Télévision",
+  },
+
+  {
+    ...boisson,
+    sourceId: "eaudurobinet",
+    id: "eau-robinet",
+    label: "Eau du robinet",
+  },
+  {
+    ...boisson,
+    sourceId: "eauenbouteille",
+    id: "eau-bouteille",
+    label: "Eau en bouteille",
+  },
+  { ...boisson, sourceId: "cafe", id: "cafe", label: "Café" },
+  { ...boisson, sourceId: "the", id: "the", label: "Thé" },
+  { ...boisson, sourceId: "soda", id: "soda", label: "Soda" },
+  { ...boisson, sourceId: "biere", id: "biere", label: "Bière" },
+  { ...boisson, sourceId: "vin", id: "vin", label: "Vin" },
+  {
+    ...boisson,
+    sourceId: "laitdevache",
+    id: "lait-vache",
+    label: "Lait de vache",
+  },
+  {
+    ...boisson,
+    sourceId: "soja",
+    id: "boisson-soja",
+    label: "Boisson au soja",
+  },
+
+  {
+    ...livraison,
+    sourceId: "livraisondomicile",
+    id: "livraison-domicile",
+    label: "Livraison à domicile",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "pointrelaisdouce",
+    id: "point-relais-pied",
+    label: "Point relais à pied",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "pointrelais",
+    id: "point-relais-voiture",
+    label: "Point relais en voiture",
+    detail: "3,5 km en voiture, colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "magasindouce",
+    id: "magasin-pied",
+    label: "En magasin à pied",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "magasin",
+    id: "magasin-voiture",
+    label: "En magasin en voiture",
+    detail: "15 km en voiture, colis d’1 kg",
   },
 ];
 

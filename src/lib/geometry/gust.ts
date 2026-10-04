@@ -8,8 +8,8 @@ export const GUST = {
   minLean: 6,
   maxLean: 10,
   /** Intervalle entre deux rafales automatiques, en secondes. */
-  minInterval: 8,
-  maxInterval: 15,
+  minInterval: 25,
+  maxInterval: 45,
 } as const;
 
 export type SceneBox = { left: number; width: number };
@@ -42,7 +42,7 @@ export function gustLean(random: () => number = Math.random): number {
   return GUST.minLean + clamp01(random()) * (GUST.maxLean - GUST.minLean);
 }
 
-/** Attente (s) avant la prochaine rafale automatique, entre 8 et 15 s. */
+/** Attente (s) avant la prochaine rafale automatique, entre 25 et 45 s. */
 export function nextGustInterval(random: () => number = Math.random): number {
   return (
     GUST.minInterval + clamp01(random()) * (GUST.maxInterval - GUST.minInterval)

@@ -6,6 +6,7 @@ import {
   COMPARE_PATH,
   comparisonHref,
   comparisonQuery,
+  defaultQuantity,
   duelEntry,
   objectEntry,
   parseComparison,
@@ -63,9 +64,11 @@ export function CompareFlow() {
 
   switch (state.step) {
     case "first":
+    case "second":
+      // Un seul écran pour les deux gestes : la même clé garde la sélection quand ?a= change.
       return (
         <>
-          {notice ? (
+          {notice && state.step === "first" ? (
             <p
               role="status"
               className="bg-tomate-douce text-corps-s text-encre mx-auto mt-4 w-[calc(100%-40px)] max-w-[390px] rounded-2xl p-3"
@@ -75,39 +78,31 @@ export function CompareFlow() {
             </p>
           ) : null}
           <GestureChooser
-            key="first"
+            key="chooser"
+            initialFirst={state.step === "second" ? state.first : undefined}
             backHref="/"
             focusTitle={navigated}
-            onContinue={(id) =>
-              getGesture(id)?.unit === "objet"
-                ? go({
-                    step: "object",
-                    object: id,
-                    option: "occasion",
-                    delivered: true,
-                  })
-                : go({ step: "second", first: id })
+            onFirstChange={(first) =>
+              replace(first ? { step: "second", first } : { step: "first" })
+            }
+            onObject={(object) =>
+              go({
+                step: "object",
+                object,
+                option: "occasion",
+                delivered: true,
+              })
+            }
+            onCompare={(a, b) =>
+              go({
+                step: "duel",
+                a,
+                b,
+                quantity: defaultQuantity(getGesture(a)!.unit),
+              })
             }
           />
         </>
-      );
-    case "second":
-      return (
-        <GestureChooser
-          key={`second-${state.first}`}
-          firstId={state.first}
-          backHref={COMPARE_PATH}
-          focusTitle={navigated}
-          onContinue={(id) => {
-            const unit = getGesture(state.first)!.unit;
-            go({
-              step: "duel",
-              a: state.first,
-              b: id,
-              quantity: unit === "km" ? 50 : 1,
-            });
-          }}
-        />
       );
     case "duel":
       return (

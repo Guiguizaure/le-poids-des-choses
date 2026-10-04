@@ -12,12 +12,13 @@ import {
 import { testGestures } from "./test-gestures";
 import type { Category } from "./types";
 
-// Le numérique mêle des usages (à l'heure) et des équipements (par objet).
 const UNITS_BY_CATEGORY: Record<Category, string[]> = {
   transport: ["km"],
   alimentation: ["repas"],
   habillement: ["objet"],
-  numerique: ["heure", "objet"],
+  numerique: ["objet"],
+  boisson: ["litre"],
+  livraison: ["achat"],
 };
 const CATEGORIES = Object.keys(UNITS_BY_CATEGORY) as Category[];
 
@@ -44,11 +45,27 @@ describe("données générées (Impact CO2)", () => {
       expect(g.label.length).toBeGreaterThan(0);
     }
   });
-  it("les équipements numériques sont comptés par objet, les usages à l'heure", () => {
-    expect(getGesture("smartphone")?.unit).toBe("objet");
-    expect(getGesture("ordinateur-portable")?.unit).toBe("objet");
-    expect(getGesture("television")?.unit).toBe("objet");
-    expect(getGesture("streaming")?.unit).toBe("heure");
+  it("le numérique ne garde que les appareils (par objet), plus d'usages à l'heure", () => {
+    expect(
+      getGesturesByCategory("numerique").map((g) => [g.id, g.unit]),
+    ).toEqual([
+      ["smartphone", "objet"],
+      ["ordinateur-portable", "objet"],
+      ["television", "objet"],
+    ]);
+    expect(getGesture("streaming")).toBeUndefined();
+    expect(getGesture("visio")).toBeUndefined();
+  });
+  it("boire : par litre ; se faire livrer : par achat, colis d'1 kg", () => {
+    expect(getGesturesByCategory("boisson")).toHaveLength(9);
+    expect(getGesture("eau-robinet")?.sourceId).toBe("eaudurobinet");
+    expect(getGesturesByCategory("livraison").map((g) => g.sourceId)).toEqual([
+      "livraisondomicile",
+      "pointrelaisdouce",
+      "pointrelais",
+      "magasindouce",
+      "magasin",
+    ]);
   });
   it("tous sourcés Impact CO2, aucun fictif", () => {
     for (const g of getGestures()) {

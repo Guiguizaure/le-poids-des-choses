@@ -3,7 +3,7 @@ import { getGesture } from "@/lib/data";
 
 export type Noun = { text: string; feminine: boolean };
 
-/** Gestes comparables (km, repas, heure) : « le train », « la voiture »… */
+/** Gestes comparables (km, repas, litre, achat) : « le train », « la voiture »… */
 const GESTURE_NOUNS: Record<string, Noun> = {
   tgv: { text: "le TGV", feminine: false },
   ter: { text: "le TER", feminine: false },
@@ -18,8 +18,23 @@ const GESTURE_NOUNS: Record<string, Noun> = {
   "repas-poulet": { text: "le repas au poulet", feminine: false },
   "repas-boeuf": { text: "le repas au bœuf", feminine: false },
   "repas-poisson": { text: "le repas au poisson", feminine: false },
-  streaming: { text: "le streaming vidéo", feminine: false },
-  visio: { text: "la visioconférence", feminine: true },
+  "eau-robinet": { text: "l’eau du robinet", feminine: true },
+  "eau-bouteille": { text: "l’eau en bouteille", feminine: true },
+  cafe: { text: "le café", feminine: false },
+  the: { text: "le thé", feminine: false },
+  soda: { text: "le soda", feminine: false },
+  biere: { text: "la bière", feminine: true },
+  vin: { text: "le vin", feminine: false },
+  "lait-vache": { text: "le lait de vache", feminine: false },
+  "boisson-soja": { text: "la boisson au soja", feminine: true },
+  "livraison-domicile": { text: "la livraison à domicile", feminine: true },
+  "point-relais-pied": { text: "le point relais à pied", feminine: false },
+  "point-relais-voiture": {
+    text: "le point relais en voiture",
+    feminine: false,
+  },
+  "magasin-pied": { text: "l’achat en magasin à pied", feminine: false },
+  "magasin-voiture": { text: "l’achat en magasin en voiture", feminine: false },
 };
 
 export function gestureNoun(id: string): Noun {

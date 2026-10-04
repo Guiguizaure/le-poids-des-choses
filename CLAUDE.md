@@ -122,12 +122,16 @@ Prettier, pnpm. Site statique
   05a / 05b Choix noté, 07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
   toucher à un écran ; tutoiement et textes repris tels quels.
 - Parcours de comparaison (`/comparer`, état dans l'URL, lu côté client) :
-  - `?a=tgv` : second geste parmi ceux de MÊME UNITÉ ; `?a=tgv&b=avion&q=50` : duel ;
+  - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
+    pure : `toggleGesture`, `isSelectable`) ; dès le premier choix, les gestes d'une autre
+    unité sont grisés ; retoucher un geste le retire ; un objet ouvre directement 03b.
+  - `?a=tgv` : premier geste choisi ; `?a=tgv&b=avion&q=50` : duel ;
     `?objet=jean&option=occasion&colis=1` : duel objet. URL invalide → premier choix avec
     `?lien=invalide`. Navigation par `history.pushState` / `replaceState` (Next les
     synchronise avec `useSearchParams`, sans recharger).
-  - Curseurs : distance 1 à 1 000 km (échelle logarithmique, défaut 50), durée 1 à 10 h ;
-    rien pour les repas et les objets.
+  - Unités : km (Se déplacer), repas (Manger), litre (Boire), achat (Se faire livrer,
+    colis d'1 kg), objet (S'habiller, Numérique : appareils seulement). Seul curseur :
+    distance 1 à 1 000 km (échelle logarithmique, défaut 50).
   - Balance : inclinaison ∝ log du rapport, maximale à partir de ×50 (`TILT_MAX_RATIO`).
   - Objets : Neuf / D'occasion (interrupteur « Livré en colis », activé par défaut) / Je
     garde le mien. L'option retenue est comparée au neuf ; le neuf, à l'occasion telle que
@@ -135,8 +139,16 @@ Prettier, pnpm. Site statique
   - « Je choisis … » : `useJournal().add(…)`, puis 05a (plante, rafale, animal) ou 05b.
 - Coup de vent : `playGust(scene)` ; chaque plante réagit quand le front l'atteint
   (`gustDelay`, selon sa position x) et se couche de 6 à 10° ; papillon et abeille sont
-  déportés. Rafales automatiques (`useAutoGusts`) toutes les 8 à 15 s, onglet visible
+  déportés. Rafales automatiques (`useAutoGusts`) toutes les 25 à 45 s, onglet visible
   seulement. Rien en mouvement réduit.
+- Ciel : `Landscape` remplace scene-paysage partout ; nuages qui traversent (60 à 90 s,
+  `src/lib/geometry/sky.ts`), halo du soleil qui respire (6 s). Immobile en mouvement réduit
+  et quand le jardin est assoupi.
+- Pictos manquants : `PENDING_PICTOS` (`specs.ts`, vide aujourd'hui) et
+  `docs/illustrations-a-fournir.md` ; `picto-generique` en attendant. Un test vérifie
+  qu'aucun geste n'affiche `picto-generique` hors de cette liste.
+- Objets : libellés courts (« Jean », « Smartphone ») ; « neuf » n'apparaît que dans
+  l'option Neuf du 03b et dans les titres du carnet, accordés via `objectNoun`.
 - Pousse : `GROWTH` (`StagedPlant`) — 0,7 s, montée depuis le pied avec dépassement
   (`back.out`), puis éclat. Le balancement au repos reste calme (±1,5°).
 - Carnet : `localStorage`, clé versionnée `lpdc:journal:v1` (`{ version: 1, entries }`).
@@ -154,7 +166,9 @@ Prettier, pnpm. Site statique
     les plus grands vers l'arrière ; au-delà de 40, les nouveaux choix font grandir les
     plus anciennes plantes ;
   - animaux selon le nombre de choix légers (`ANIMAL_UNLOCKS`, provisoire) : papillon 1,
-    coccinelle 3, oiseau 5, escargot 8, abeille 12, hérisson 20 ; message d'arrivée ;
+    coccinelle 3, oiseau 5, escargot 8, abeille 12, hérisson 20 ; message d'arrivée ; le
+    prochain apparaît en silhouette (encre, faible opacité) avec « Encore N choix légers
+    avant l’arrivée de … » (`nextAnimal`, `nextAnimalMessage`) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
 - Lot pages (à venir) : page Méthode complète (remplace `/methode` provisoire), bandeau
