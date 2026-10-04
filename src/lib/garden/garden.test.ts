@@ -7,9 +7,10 @@ import {
   GARDEN_SLOTS,
   gardenSignature,
   levelForKg,
+  boxAt,
+  PLANT_FRAME_WIDTH,
   maxLevel,
   nextAnimal,
-  animalIllustration,
   MAX_PLANT_WIDTH,
   MAX_PLANTS,
   plantKindFor,
@@ -210,13 +211,50 @@ describe("animaux", () => {
       "Un hérisson s’est installé dans ton jardin",
     );
   });
-  it("l'oiseau reste dans le ciel", () => {
+  it("papillon et abeille volent au-dessus des plus hauts feuillages", () => {
+    const highestTree = Math.min(
+      ...GARDEN_SLOTS.map(
+        (slot) =>
+          boxAt("arbre-1-grand", slot.x, slot.y, PLANT_FRAME_WIDTH.tree).y,
+      ),
+    );
+    const flyers = buildGarden(entries(12), soon).animals.filter((a) =>
+      ["butterfly", "bee"].includes(a.kind),
+    );
+    expect(flyers).toHaveLength(2);
+    for (const flyer of flyers) {
+      // Marge pour le vol en boucle et le déport du vent (10 % de la hauteur).
+      expect(flyer.box.y + flyer.box.height * 1.1).toBeLessThan(highestTree);
+      expect(flyer.box.y).toBeGreaterThan(0);
+    }
+  });
+  it("coccinelle, escargot, hérisson et oiseau sont posés au sol", () => {
+    const grounded = buildGarden(entries(20), soon).animals.filter(
+      (a) => !["butterfly", "bee"].includes(a.kind),
+    );
+    expect(grounded.map((a) => a.kind).sort()).toEqual([
+      "bird",
+      "hedgehog",
+      "ladybug",
+      "snail",
+    ]);
+    for (const animal of grounded) {
+      const footX = animal.box.x + animal.box.width / 2;
+      expect(animal.box.y + animal.box.height).toBeGreaterThanOrEqual(
+        surfaceY(footX),
+      );
+      expect(animal.box.y + animal.box.height).toBeLessThanOrEqual(
+        SCENE.height,
+      );
+    }
+  });
+  it("l'oiseau se pose sur la colline verte, pas sur la bleue (V1 : il ne vole pas)", () => {
     const bird = buildGarden(entries(5), soon).animals.find(
       (a) => a.kind === "bird",
     )!;
-    expect(bird.box.y + bird.box.height).toBeLessThan(
-      surfaceY(bird.box.x + bird.box.width / 2),
-    );
+    const footX = bird.box.x + bird.box.width / 2;
+    expect(footX).toBeGreaterThan(250); // la colline bleue (arrière) s'arrête en x = 250
+    expect(bird.box.y + bird.box.height).toBeCloseTo(surfaceY(footX) + 4, 1);
   });
 });
 
@@ -295,8 +333,5 @@ describe("prochain animal", () => {
   it("rien quand tous les animaux sont là", () => {
     expect(nextAnimal(20)).toBeNull();
     expect(nextAnimalMessage(nextAnimal(57))).toBe("");
-  });
-  it("la silhouette prend la place de l'animal attendu", () => {
-    expect(animalIllustration("ladybug")).toBe("coccinelle");
   });
 });

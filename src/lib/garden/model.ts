@@ -171,15 +171,19 @@ export const SLEEPERS: readonly AnimalKind[] = ["bird", "snail", "hedgehog"];
 
 /**
  * Place de chaque animal (unités de scène) : centre du cadre pour ceux qui volent, point
- * d'appui au sol pour les autres. L'oiseau reste dans le ciel (bleu sur la colline bleue).
+ * d'appui au sol pour les autres.
+ * - Papillon et abeille volent dans la bande de ciel, au-dessus des plus hauts feuillages
+ *   (le haut du plus haut cadre d'arbre est vers y = 105), sans se poser sur une plante.
+ * - Coccinelle, escargot, hérisson et (V1) oiseau restent au sol. L'oiseau, bleu, se pose
+ *   sur la colline verte (il disparaîtrait sur la bleue) ; l'envol est prévu pour la V1.1.
  */
 export const ANIMAL_PLACES: Record<
   AnimalKind,
   { x: number; y: number; width: number; flying: boolean }
 > = {
-  bird: { x: 168, y: 78, width: 30, flying: true },
-  butterfly: { x: 112, y: 128, width: 24, flying: true },
-  bee: { x: 262, y: 132, width: 24, flying: true },
+  bird: { x: 372, y: surfaceY(372) + 4, width: 30, flying: false },
+  butterfly: { x: 100, y: 84, width: 24, flying: true },
+  bee: { x: 205, y: 76, width: 24, flying: true },
   ladybug: { x: 318, y: 293, width: 16, flying: false },
   snail: { x: 58, y: 294, width: 30, flying: false },
   hedgehog: { x: 206, y: 295, width: 34, flying: false },
@@ -198,11 +202,6 @@ export function unlockedAnimals(lightChoiceCount: number): AnimalKind[] {
   return ANIMAL_UNLOCKS.filter(
     (unlock) => lightChoiceCount >= unlock.lightChoices,
   ).map((unlock) => unlock.kind);
-}
-
-/** Illustration d'un animal éveillé (aussi utilisée pour sa silhouette à venir). */
-export function animalIllustration(kind: AnimalKind): IllustrationName {
-  return ANIMAL_ILLUSTRATION[kind];
 }
 
 export type NextAnimal = { kind: AnimalKind; remaining: number };
