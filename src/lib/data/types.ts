@@ -67,5 +67,9 @@ export type JournalEntry = {
   gestureB: string;
   quantity: number;
   chosen: Choice;
+  /** kg CO2e évités par ce choix (0 si on a pris le plus lourd), figés au moment du choix. */
   avoidedKg: number;
+  /** Objets uniquement : mode d'acquisition de chaque côté (même objet, deux modes). */
+  modeA?: AcquisitionMode;
+  modeB?: AcquisitionMode;
 };

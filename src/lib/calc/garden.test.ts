@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { JournalEntry } from "@/lib/data/types";
-import {
-  GARDEN_STAGE_THRESHOLDS_KG,
-  gardenStage,
-  gardenTotals,
-  isAsleep,
-} from "./garden";
+import { gardenTotals, isAsleep } from "./garden";
 
 function entry(avoidedKg: number, id = "1"): JournalEntry {
   return {
@@ -41,25 +36,6 @@ describe("gardenTotals", () => {
     const before = gardenTotals([entry(3)]).totalAvoidedKg;
     const after = gardenTotals([entry(3), entry(0, "2")]).totalAvoidedKg;
     expect(after).toBe(before);
-  });
-});
-
-describe("gardenStage", () => {
-  it("0 sans rien évité", () => {
-    expect(gardenStage(0)).toBe(0);
-    expect(gardenStage(0.99)).toBe(0);
-  });
-  it("change pile au seuil", () => {
-    GARDEN_STAGE_THRESHOLDS_KG.forEach((threshold, i) => {
-      expect(gardenStage(threshold - 0.001)).toBe(i);
-      expect(gardenStage(threshold)).toBe(i + 1);
-    });
-  });
-  it("plafonne à 5", () => {
-    expect(gardenStage(1_000_000)).toBe(5);
-  });
-  it("traite un total négatif comme vide", () => {
-    expect(gardenStage(-3)).toBe(0);
   });
 });
 

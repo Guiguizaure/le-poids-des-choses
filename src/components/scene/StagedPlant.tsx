@@ -39,6 +39,10 @@ type StagedPlantProps<S extends string> = {
   title?: string;
   className: string;
   sparkle: boolean;
+  /** Immobile : ni balancement ni vent (jardin assoupi). */
+  still?: boolean;
+  /** À l'apparition, la plante pousse depuis son pied (avec l'éclat). */
+  popIn?: boolean;
 };
 
 /**
@@ -54,6 +58,8 @@ export function StagedPlant<S extends string>({
   title,
   className,
   sparkle,
+  still = false,
+  popIn = false,
 }: StagedPlantProps<S>) {
   const ref = useRef<HTMLDivElement>(null);
   const sparkleRef = useRef<HTMLDivElement>(null);
@@ -63,49 +69,54 @@ export function StagedPlant<S extends string>({
   const spec = getSpec(firstName);
   const origin = anchorAsCssOrigin(firstName);
 
-  const reduceRef = useMotion(ref, (reduce) => {
-    swayItems.current = [];
-    const root = ref.current;
-    if (reduce || !root) return;
-    const targets =
-      swing === "foliage"
-        ? gsap.utils.toArray<Element>(FOLIAGE, root)
-        : gsap.utils.toArray<Element>("[data-stage]", root);
-    const items = targets.map((target) => {
-      gsap.set(target, {
-        transformOrigin: swing === "foliage" ? "50% 100%" : origin,
-      });
-      const setRotation = gsap.quickSetter(target, "rotation", "deg");
-      // Le balancement et l'inclinaison au vent s'additionnent sur la même rotation.
-      const item: SwayItem = {
-        sway: 0,
-        lean: 0,
-        apply: () => setRotation(item.sway + item.lean),
-      };
-      gsap.fromTo(
-        item,
-        { sway: -SWAY_ANGLE },
-        {
-          sway: SWAY_ANGLE,
-          duration: gsap.utils.random(2.2, 3.2),
-          delay: gsap.utils.random(0, 1),
-          ease: "sine.inOut",
-          repeat: -1,
-          yoyo: true,
-          onUpdate: item.apply,
-        },
-      );
-      return item;
-    });
-    swayItems.current = items;
-    return () => {
-      gsap.killTweensOf(items);
-      gsap.set(targets, { rotation: 0 });
+  const reduceRef = useMotion(
+    ref,
+    (reduce) => {
       swayItems.current = [];
-    };
-  });
+      const root = ref.current;
+      if (reduce || still || !root) return;
+      const targets =
+        swing === "foliage"
+          ? gsap.utils.toArray<Element>(FOLIAGE, root)
+          : gsap.utils.toArray<Element>("[data-stage]", root);
+      const items = targets.map((target) => {
+        gsap.set(target, {
+          transformOrigin: swing === "foliage" ? "50% 100%" : origin,
+        });
+        const setRotation = gsap.quickSetter(target, "rotation", "deg");
+        // Le balancement et l'inclinaison au vent s'additionnent sur la même rotation.
+        const item: SwayItem = {
+          sway: 0,
+          lean: 0,
+          apply: () => setRotation(item.sway + item.lean),
+        };
+        gsap.fromTo(
+          item,
+          { sway: -SWAY_ANGLE },
+          {
+            sway: SWAY_ANGLE,
+            duration: gsap.utils.random(2.2, 3.2),
+            delay: gsap.utils.random(0, 1),
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+            onUpdate: item.apply,
+          },
+        );
+        return item;
+      });
+      swayItems.current = items;
+      return () => {
+        gsap.killTweensOf(items);
+        gsap.set(targets, { rotation: 0 });
+        swayItems.current = [];
+      };
+    },
+    [still],
+  );
 
   useGust(ref, reduceRef, (delay) => {
+    if (still) return;
     const lean = gustLean();
     for (const item of swayItems.current) {
       gsap.killTweensOf(item, "lean");
@@ -125,6 +136,12 @@ export function StagedPlant<S extends string>({
         });
     }
   });
+
+  const sparkleOver = (layer: HTMLElement, reduce: boolean) => {
+    if (!sparkle || !sparkleRef.current) return;
+    placeSparkle(sparkleRef.current, layer, spec.width, spec.height);
+    playSparkle(sparkleRef.current, reduce).delay(reduce ? 0 : 0.25);
+  };
 
   useGSAP(
     () => {
@@ -179,12 +196,36 @@ export function StagedPlant<S extends string>({
       }
 
       const grew = stages.indexOf(stage) > stages.indexOf(from);
-      if (sparkle && grew && sparkleRef.current) {
-        placeSparkle(sparkleRef.current, current, spec.width, spec.height);
-        playSparkle(sparkleRef.current, reduce).delay(reduce ? 0 : 0.25);
-      }
+      if (grew) sparkleOver(current, reduce);
     },
     { scope: ref, dependencies: [stage] },
+  );
+
+  // Apparition (nouvelle plante dans le jardin) : elle pousse depuis son pied, puis l'éclat.
+  useGSAP(
+    () => {
+      const current = ref.current?.querySelector<HTMLElement>(
+        `[data-stage="${stage}"]`,
+      );
+      if (!popIn || !current) return;
+      const reduce = reduceRef.current;
+      if (reduce) {
+        gsap.fromTo(current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 });
+      } else {
+        gsap.fromTo(
+          current,
+          { autoAlpha: 0, scale: GROWTH.fromScale },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: GROWTH.duration,
+            ease: GROWTH.ease,
+          },
+        );
+      }
+      sparkleOver(current, reduce);
+    },
+    { scope: ref },
   );
 
   return (

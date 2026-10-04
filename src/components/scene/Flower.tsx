@@ -14,6 +14,10 @@ type FlowerProps = {
   /** Taille : une largeur suffit, la hauteur suit le cadre 60×80. */
   className?: string;
   sparkle?: boolean;
+  /** Immobile : ni balancement ni vent (jardin assoupi). */
+  still?: boolean;
+  /** Pousse depuis le pied à l'apparition (nouvelle plante). */
+  popIn?: boolean;
 };
 
 /** Fleur à deux stades ; elle se balance et se couche au vent depuis son pied. */
@@ -23,6 +27,8 @@ export function Flower({
   title,
   className = "w-[60px]",
   sparkle = true,
+  still,
+  popIn,
 }: FlowerProps) {
   return (
     <StagedPlant
@@ -33,6 +39,8 @@ export function Flower({
       title={title}
       className={className}
       sparkle={sparkle}
+      still={still}
+      popIn={popIn}
     />
   );
 }

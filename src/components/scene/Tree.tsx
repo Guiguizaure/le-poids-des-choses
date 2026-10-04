@@ -16,6 +16,10 @@ type TreeProps = {
   className?: string;
   /** Éclat quand l'arbre grandit (par défaut oui). */
   sparkle?: boolean;
+  /** Immobile : ni balancement ni vent (jardin assoupi). */
+  still?: boolean;
+  /** Pousse depuis le pied à l'apparition (nouvelle plante). */
+  popIn?: boolean;
 };
 
 /** Arbre à trois stades ; le feuillage se balance et se couche au vent. */
@@ -25,6 +29,8 @@ export function Tree({
   title,
   className = "w-[120px]",
   sparkle = true,
+  still,
+  popIn,
 }: TreeProps) {
   return (
     <StagedPlant
@@ -35,6 +41,8 @@ export function Tree({
       title={title}
       className={className}
       sparkle={sparkle}
+      still={still}
+      popIn={popIn}
     />
   );
 }

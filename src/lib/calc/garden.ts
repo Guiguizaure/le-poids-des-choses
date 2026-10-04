@@ -1,11 +1,5 @@
 import type { JournalEntry } from "@/lib/data/types";
 
-/**
- * Seuils PROVISOIRES (kg CO2e évités cumulés) pour passer aux stades 1 à 5 du jardin.
- * Stade 0 = jardin vide. À ajuster avec les illustrations.
- */
-export const GARDEN_STAGE_THRESHOLDS_KG = [1, 10, 50, 150, 400] as const;
-
 /** Nombre de jours sans entrée après lesquels le jardin s'assoupit (il ne meurt jamais). */
 export const DEFAULT_ASLEEP_DAYS = 21;
 
@@ -29,13 +23,6 @@ export function gardenTotals(entries: readonly JournalEntry[]): GardenTotals {
     }
   }
   return { totalAvoidedKg, choiceCount: entries.length, lightChoiceCount };
-}
-
-/** Stade du jardin, de 0 à 5. */
-export function gardenStage(totalAvoidedKg: number): number {
-  return GARDEN_STAGE_THRESHOLDS_KG.filter(
-    (threshold) => totalAvoidedKg >= threshold,
-  ).length;
 }
 
 /**

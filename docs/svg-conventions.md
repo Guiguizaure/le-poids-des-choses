@@ -37,6 +37,11 @@ Coordonnées en unités du SVG (origine en haut à gauche).
 Les animations s'appuient sur ces points : la plante pousse depuis son pied, le fléau tourne
 autour du pivot et les plateaux suivent ses extrémités, le feuillage se balance depuis sa base.
 
+Le jardin pose ses plantes sur la ligne des collines de `scene-paysage` : `pnpm
+illustrations` lit les chemins des calques `colline-arriere` et `colline-avant` et le
+rectangle `sol` (commandes de chemin M, L, H, V, C, Z ; un arc ou une courbe quadratique fait
+échouer la conversion avec un message clair).
+
 ## Export depuis Figma
 
 1. Sélectionner le **cadre nommé** (son nom devient le nom du fichier : `arbre-1-pousse`).

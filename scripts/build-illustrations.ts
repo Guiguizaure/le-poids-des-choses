@@ -6,6 +6,7 @@
 // chaque instance. Seuls les id référencés dans le fichier (url(#…), href="#…", ex. dégradés ou
 // masques exportés par Figma) restent des id, préfixés par un identifiant propre à l'instance.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { extractSceneGeometry, generateSceneModule } from "./scene-geometry";
 import {
   ILLUSTRATION_NAMES,
   ILLUSTRATION_SPECS,
@@ -307,11 +308,26 @@ export function convertDirectory(directory: URL = SOURCE_DIR): ConvertedSvg[] {
   return converted;
 }
 
+const SCENE_OUTPUT = new URL(
+  "../src/lib/garden/scene.generated.ts",
+  import.meta.url,
+);
+
+/** Géométrie de la scène pour le jardin (collines, sol), lue dans scene-paysage.svg. */
+export function sceneModuleFrom(directory: URL = SOURCE_DIR): string {
+  const svg = readFileSync(new URL("scene-paysage.svg", directory), "utf8");
+  return generateSceneModule(extractSceneGeometry(svg));
+}
+
 function main() {
   const converted = convertDirectory();
   writeFileSync(OUTPUT, generateModule(converted));
+  writeFileSync(SCENE_OUTPUT, sceneModuleFrom());
   console.log(
     `${converted.length} illustrations converties dans src/components/illustrations/generated.tsx`,
+  );
+  console.log(
+    "Collines et sol extraits dans src/lib/garden/scene.generated.ts",
   );
 }
 

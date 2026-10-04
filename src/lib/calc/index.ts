@@ -2,8 +2,6 @@ export { emissions } from "./emissions";
 export { avoidedKg, compare, type Comparison } from "./compare";
 export {
   DEFAULT_ASLEEP_DAYS,
-  GARDEN_STAGE_THRESHOLDS_KG,
-  gardenStage,
   gardenTotals,
   isAsleep,
   type GardenTotals,
