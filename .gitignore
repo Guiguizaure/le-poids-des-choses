@@ -42,3 +42,9 @@ next-env.d.ts
 
 # secrets (la clé API ADEME ne sert qu'au script de données, en local)
 .env*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
