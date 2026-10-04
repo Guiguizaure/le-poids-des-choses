@@ -7,11 +7,14 @@ import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
 import { CARNET_PATH } from "@/components/garden/CarnetScreen";
 import { MilestoneCard } from "@/components/garden/MilestoneCard";
+import { SkyPicker } from "@/components/garden/SkyPicker";
+import { useSky } from "@/components/garden/useSky";
 import { WeekChart } from "@/components/garden/WeekChart";
 import { Icon } from "@/components/ui/buttons";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
+import { effectiveSky } from "@/lib/garden/skies";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
@@ -75,6 +78,8 @@ export function GardenScreen() {
     return () => window.clearTimeout(timer);
   }, [nouveau, journal.ready]);
   const upcoming = nextAnimal(garden.lightChoiceCount);
+  const [chosenSky, setSky] = useSky();
+  const sky = effectiveSky(chosenSky, garden.lightChoiceCount);
   const today = new Date(now);
 
   const onImport = async (file: File | undefined) => {
@@ -114,7 +119,12 @@ export function GardenScreen() {
         </h1>
       </div>
 
-      <Garden entries={journal.entries} now={now} highlightId={revealId} />
+      <Garden
+        entries={journal.entries}
+        now={now}
+        highlightId={revealId}
+        sky={sky}
+      />
       {upcoming && journal.ready ? (
         // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
         <p className="text-legende text-texte-attenue px-5 pt-2">
@@ -205,6 +215,14 @@ export function GardenScreen() {
               </p>
             </section>
           </>
+        ) : null}
+
+        {hasEntries ? (
+          <SkyPicker
+            value={sky}
+            lightChoiceCount={garden.lightChoiceCount}
+            onChange={setSky}
+          />
         ) : null}
 
         {journal.ready ? (

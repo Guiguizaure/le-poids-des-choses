@@ -15,6 +15,7 @@ import { Bird } from "@/components/scene/Bird";
 import { Butterfly } from "@/components/scene/Butterfly";
 import { AnimalsLab } from "./AnimalsLab";
 import { BirdFlightLab } from "./BirdFlightLab";
+import { SkyLab } from "./SkyLab";
 import { GustLab } from "./GustLab";
 import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
@@ -178,6 +179,7 @@ export function LaboControls() {
         <JournalSimulator />
         <AnimalsLab />
         <BirdFlightLab />
+        <SkyLab />
         <GustLab />
       </div>
     </MotionProvider>
