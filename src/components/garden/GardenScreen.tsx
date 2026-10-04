@@ -74,7 +74,7 @@ export function GardenScreen() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
-      <div className="flex items-center justify-between px-5 pt-[22px] pb-2">
+      <div className="flex items-center px-5 pt-[22px] pb-2">
         <Link
           href="/"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
@@ -83,9 +83,6 @@ export function GardenScreen() {
           <img src="/icons/retour.svg" alt="" width={24} height={24} />
           Comparer
         </Link>
-        <PillButton onClick={journal.exportFile} disabled={!hasEntries}>
-          Exporter
-        </PillButton>
       </div>
 
       <div className="px-5 pt-2 pb-1">

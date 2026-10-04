@@ -10,7 +10,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   transport: "Se déplacer",
   alimentation: "Manger",
   habillement: "S’habiller",
-  numerique: "Écrans",
+  numerique: "Numérique",
 };
 
 const VOWEL = /^[aàâeéèêëiîïoôuùûüyhœæ]/i;
