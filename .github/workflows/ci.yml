@@ -1,0 +1,57 @@
+# Intégration continue : lint, tests, build et tests de bout en bout sur chaque demande de
+# fusion (et sur main après fusion). Gratuit pour un dépôt public.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  qualite:
+    name: Lint, tests, build, bout en bout
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # Version de pnpm lue dans le champ packageManager de package.json.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests unitaires
+        run: pnpm test
+
+      # Sans STRICT_DATA : les mentions légales restent à remplir avant le lancement.
+      - name: Build (export statique)
+        run: pnpm build
+
+      - name: Navigateurs Playwright
+        run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Tests de bout en bout (Chromium, WebKit)
+        run: pnpm e2e
+
+      - name: Rapport en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
