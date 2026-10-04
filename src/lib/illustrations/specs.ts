@@ -36,6 +36,9 @@ const bird = {
   height: 48,
   parts: ["queue", "corps", "tete", "bec", "oeil", "aile", "pattes"],
 } as const;
+// Petites bêtes du jardin : point d'appui au centre du bas (là où elles se posent).
+const critter = (parts: readonly string[]) =>
+  ({ width: 64, height: 48, anchor: { x: 32, y: 48 }, parts }) as const;
 const picto = { width: 64, height: 64, parts: ["fond", "objet"] } as const;
 
 export const ILLUSTRATION_SPECS = {
@@ -87,7 +90,33 @@ export const ILLUSTRATION_SPECS = {
     parts: ["aile-gauche", "aile-droite", "corps"],
   },
 
+  abeille: critter([
+    "aile-gauche",
+    "aile-droite",
+    "corps",
+    "rayures",
+    "tete",
+    "oeil",
+    "dard",
+  ]),
+  coccinelle: {
+    width: 48,
+    height: 40,
+    anchor: { x: 24, y: 40 },
+    parts: ["corps", "tete", "pattes", "elytre-gauche", "elytre-droite"],
+  },
+  escargot: critter(["corps", "antennes", "coquille"]),
+  "escargot-endormi": critter(["corps", "coquille"]),
+  herisson: critter(["corps", "piquants", "museau", "oeil", "pattes"]),
+  "herisson-endormi": critter(["piquants", "museau"]),
+
   brume: { width: 390, height: 120, parts: ["brume-1", "brume-2", "brume-3"] },
+  // Traits de vent : ils traversent la scène de gauche à droite (coup de vent).
+  vent: {
+    width: 390,
+    height: 120,
+    parts: ["traits-1", "traits-2", "traits-3"],
+  },
   // Les traits rayonnent depuis ce point.
   eclat: {
     width: 80,
