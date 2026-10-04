@@ -245,3 +245,48 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
   pas de chemin, fichier généré à jour.
 - `gardenStage` et `GARDEN_STAGE_THRESHOLDS_KG` retirés avec leurs tests (remplacés par le
   modèle par plante).
+
+## 2026-10-05 — Lot 5 : le parcours de comparaison (branche feat/duel)
+
+**Demandé** : accueil (01 / 07), choix des gestes (02), duel (03), duel objet (03b), résultats
+(05a / 05b) d'après les maquettes ; URL partageable ; ajout au carnet ; accessibilité ; tests.
+
+**Proposé / fait** :
+
+- Maquettes lues avec le connecteur Figma ; icône « fermer » téléchargée dans
+  `public/icons/fermer.svg`. Les scènes « formes provisoires » sont composées avec nos
+  illustrations (paysage, balance avec pictos sur les plateaux, jardin).
+- `src/lib/compare` (fonctions pures testées) : gestes de même unité, curseurs (distance en
+  échelle logarithmique), inclinaison ∝ log du rapport plafonnée à ×50, phrase de résultat
+  (X fois, plus de 100 fois, presque autant, zéro émission, écart en masse), équivalence en
+  km de voiture thermique, noms et accords (le / la, plus léger / plus légère, le tien / la
+  tienne), lecture et écriture de l'URL, entrées du carnet (gestes et objets avec modes).
+- Écrans : accueil avec balance animée (statique en mouvement réduit) ; 02 en deux étapes ;
+  03 avec pastille « Mon jardin · X kg évités », curseur, phrase annoncée (`aria-live`) ;
+  03b avec options en boutons radio et interrupteur ; 05a / 05b avec le jardin qui réagit.
+  Focus déplacé sur le titre à chaque étape.
+- `/methode` provisoire (les liens « Comment ça marche ? », « Méthode » et « Comment on
+  compte l’occasion ? » y mènent).
+- Vérifié dans Chrome sur l'export statique (serveur local qui sert `/comparer` comme
+  Cloudflare) : URL partagée qui ouvre le duel, curseur au clavier et URL qui suit, choix
+  léger (plante, papillon annoncé), objet (interrupteur, garder), choix lourd, URL invalide,
+  filtrage par unité, accueil et 02 en largeur mobile.
+
+**Gardé / changé** :
+
+- Phrases et libellés hors maquette, à relire : titre de l'étape 2 « Avec quoi le
+  comparer ? », sous-titre « Se déplacer · à comparer avec le TGV », note « Ensuite,
+  pose-les sur la balance. », message d'URL invalide, phrases des objets.
+- Pastille « Mon jardin » sans montant tant que rien n'est évité (au lieu de « 0 g »).
+- Pas du curseur de distance : 1 % de la course (sinon les flèches ne bougeaient pas la
+  valeur aux petites distances).
+
+**Ajustements après relecture (2026-10-05)** :
+
+- Objets : « aucune nouvelle fabrication » remplace « zéro émission » pour « garder » et
+  « d’occasion sans colis » (hypothèse de méthode : entretien et fin de vie non comptés) ;
+  « zéro émission » reste réservé à la marche.
+- Avion : libellé « Avion », précision « trajet court » (nouveau champ `detail` des gestes,
+  réglé dans `scripts/build-gestures.ts`, données régénérées), affichée sous le libellé dans
+  les cartes des écrans 02 et 03.
+- Gardés : pastille sur le 03b, textes ajoutés de l'étape 2.

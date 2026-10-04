@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T10:23:13.767Z",
+  "downloadedAt": "2026-10-04T14:14:10.423Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -28,7 +28,8 @@
     },
     {
       "id": "avion",
-      "label": "Avion (court courrier)",
+      "label": "Avion",
+      "detail": "trajet court",
       "category": "transport",
       "unit": "km",
       "kgCo2ePerUnit": 0.2246,

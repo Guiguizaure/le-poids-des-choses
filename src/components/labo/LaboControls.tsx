@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import { REDUCED_MOTION_QUERY } from "@/components/motion/gsap";
+import { useState } from "react";
+import { useSystemReducedMotion } from "@/components/motion/useReducedMotion";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import {
   Tree,
@@ -19,20 +19,6 @@ import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
 
 const VARIANTS: TreeVariant[] = [1, 2, 3];
-
-function subscribeToReducedMotion(callback: () => void) {
-  const query = window.matchMedia(REDUCED_MOTION_QUERY);
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-}
-
-function useSystemReducedMotion(): boolean {
-  return useSyncExternalStore(
-    subscribeToReducedMotion,
-    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
-    () => false,
-  );
-}
 
 export function LaboControls() {
   const systemReduced = useSystemReducedMotion();
