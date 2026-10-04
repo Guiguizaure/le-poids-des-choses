@@ -15,6 +15,7 @@ import { Bird } from "@/components/scene/Bird";
 import { Butterfly } from "@/components/scene/Butterfly";
 import { AnimalsLab } from "./AnimalsLab";
 import { GustLab } from "./GustLab";
+import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
 
 const VARIANTS: TreeVariant[] = [1, 2, 3];
@@ -187,6 +188,7 @@ export function LaboControls() {
           </Panel>
         </div>
 
+        <JournalSimulator />
         <AnimalsLab />
         <GustLab />
       </div>
