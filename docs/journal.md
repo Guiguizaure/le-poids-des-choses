@@ -739,7 +739,7 @@ là pour validation avant la suite du lot.
 
 **Proposé / fait** :
 
-- Inventaire (UI, méta, OG, docs, code, tests) : 27 occurrences de « évité(s) » / « évite »,
+- Inventaire (UI, méta, OG, docs, code, tests) : 39 occurrences de « évité(s) » / « évite »,
   aucune de « économisé », « sauvé », « épargné » ou « gagné » au sens des kg. L'image de
   partage (OG) et le manifeste ne disaient « évités » que via `SITE_DESCRIPTION`.
 - Reformulation appliquée : « X kg de CO2e d’écart avec les autres options » (bilan de
