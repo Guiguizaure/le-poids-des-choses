@@ -195,7 +195,7 @@ function Fleur3Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF" /><circle cx="40" cy="36" r="5" fill="#2D4BFF" /><circle cx="30" cy="44" r="4" fill="#2D4BFF" /></g>
+      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF" /><circle cx="40" cy="36" r="5" fill="#2D4BFF" /><circle cx="30" cy="44" r="4" fill="#2D4BFF" /></g>
     </svg>
   );
 }
@@ -204,7 +204,7 @@ function Fleur3Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="brins"><path d="M26 78 Q 24 68 20 62 M32 78 Q 34 66 38 60" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g>
+      <g data-part="brins"><path d="M26 78 Q 24 68 20 62 M32 78 Q 34 66 38 60" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g>
     </svg>
   );
 }
@@ -492,7 +492,7 @@ function Vent({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={390} height={120} viewBox="0 0 390 120" fill="none" {...svgProps}>
       {children}
-      <g data-part="traits-1"><path d="M10 40 C80 20 140 60 210 40 C240 32 262 30 282 38 C292 42 290 52 282 50" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /></g><g data-part="traits-2"><path d="M60 78 C130 58 190 98 260 78 C300 68 330 68 360 76" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /></g><g data-part="traits-3"><path d="M140 106 C180 96 220 112 250 102 C262 98 268 104 262 108" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+      <g data-part="traits-1"><path d="M10 40 C80 20 140 60 210 40 C240 32 262 30 282 38 C292 42 290 52 282 50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-2"><path d="M60 78 C130 58 190 98 260 78 C300 68 330 68 360 76" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-3"><path d="M140 106 C180 96 220 112 250 102 C262 98 268 104 262 108" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
     </svg>
   );
 }
