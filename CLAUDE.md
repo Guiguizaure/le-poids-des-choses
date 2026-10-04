@@ -144,8 +144,11 @@ Prettier, pnpm. Site statique
 - Ciel : `Landscape` remplace scene-paysage partout ; nuages qui traversent (60 à 90 s,
   `src/lib/geometry/sky.ts`), halo du soleil qui respire (6 s). Immobile en mouvement réduit
   et quand le jardin est assoupi.
-- Pictos manquants : `PENDING_PICTOS` (`specs.ts`) et `docs/illustrations-a-fournir.md` ;
-  `picto-generique` en attendant. Un test garde la liste à jour.
+- Pictos manquants : `PENDING_PICTOS` (`specs.ts`, vide aujourd'hui) et
+  `docs/illustrations-a-fournir.md` ; `picto-generique` en attendant. Un test vérifie
+  qu'aucun geste n'affiche `picto-generique` hors de cette liste.
+- Objets : libellés courts (« Jean », « Smartphone ») ; « neuf » n'apparaît que dans
+  l'option Neuf du 03b et dans les titres du carnet, accordés via `objectNoun`.
 - Pousse : `GROWTH` (`StagedPlant`) — 0,7 s, montée depuis le pied avec dépassement
   (`back.out`), puis éclat. Le balancement au repos reste calme (±1,5°).
 - Carnet : `localStorage`, clé versionnée `lpdc:journal:v1` (`{ version: 1, entries }`).

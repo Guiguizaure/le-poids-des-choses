@@ -323,3 +323,13 @@ faire livrer » si le CSV le permet.
 - Pastille « Mon jardin » sans montant tant que rien n'est évité (correctif oublié au lot 5).
 - Libellés des livraisons : « En magasin à pied / en voiture », « Point relais à pied / en
   voiture », précision du trajet en voiture et du colis d'1 kg en ligne secondaire.
+
+**Ajustements après relecture (2026-10-05)** :
+
+- 14 pictos « Boire » et « Se faire livrer » intégrés depuis
+  `le-poids-des-choses-pictos-boire-livrer.zip` (64×64, `fond` et `objet`) ; contrat à 68
+  illustrations, `PENDING_PICTOS` vidé, `docs/illustrations-a-fournir.md` vidé ; test :
+  plus aucun geste sur `picto-generique` (vérifié aussi dans Chrome).
+- Objets : libellés courts dans les cartes (« Smartphone », « Jean »…). Les titres du carnet
+  tirent désormais l'accord de `objectNoun` (« Télévision gardée plutôt que neuve »).
+- Pas de Click & Collect.
