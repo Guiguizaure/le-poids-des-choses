@@ -25,6 +25,27 @@ export function nextAnimalMessage(
   return `Encore ${plural(next.remaining, "choix léger", "choix légers")} avant l’arrivée ${ANIMAL_NAMES[next.kind].of}`;
 }
 
+/** « Et un papillon arrive ! », « Et une coccinelle arrive ! » */
+export function arrivalExclamation(kind: AnimalKind): string {
+  const { name, feminine } = ANIMAL_NAMES[kind];
+  return `Et ${feminine ? "une" : "un"} ${name} arrive !`;
+}
+
+/** Titre de la révélation : « Une fleur va pousser dans ton jardin », « Un arbre va grandir… » */
+export function revealTitle(reveal: {
+  plant: { kind: { type: "tree" | "flower" } };
+  isNew: boolean;
+}): string {
+  const tree = reveal.plant.kind.type === "tree";
+  if (reveal.isNew)
+    return tree
+      ? "Un arbre va pousser dans ton jardin"
+      : "Une fleur va pousser dans ton jardin";
+  return tree
+    ? "Un arbre va grandir dans ton jardin"
+    : "Une fleur va s’épanouir dans ton jardin";
+}
+
 /** « Une coccinelle s'est installée dans ton jardin » */
 export function arrivalMessage(kind: AnimalKind): string {
   const { name, feminine } = ANIMAL_NAMES[kind];
