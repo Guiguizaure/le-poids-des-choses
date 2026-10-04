@@ -349,7 +349,7 @@ export function buildGestures(
           method: "hypothese-occasion",
           parts: [
             {
-              label: "Fabrication évitée (hypothèse)",
+              label: "Pas de nouvelle fabrication (hypothèse)",
               kgCo2e: 0,
               method: "hypothese-occasion",
             },

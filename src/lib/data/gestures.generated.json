@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T15:18:26.668Z",
+  "downloadedAt": "2026-10-04T22:41:48.808Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -186,7 +186,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -232,7 +232,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -278,7 +278,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -324,7 +324,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -370,7 +370,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -416,7 +416,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
@@ -462,7 +462,7 @@
           "method": "hypothese-occasion",
           "parts": [
             {
-              "label": "Fabrication évitée (hypothèse)",
+              "label": "Pas de nouvelle fabrication (hypothèse)",
               "kgCo2e": 0,
               "method": "hypothese-occasion"
             },
