@@ -1,5 +1,5 @@
-import type { Choice, Gesture } from "@/lib/data/types";
-import { emissions } from "./emissions";
+import type { Choice } from "@/lib/data/types";
+import { emissions, type Emitter } from "./emissions";
 
 /** Écart relatif (par rapport au plus lourd) en dessous duquel deux gestes comptent pour égaux. */
 const ALMOST_EQUAL_RATIO = 0.1;
@@ -18,9 +18,9 @@ export type Comparison = {
 };
 
 export function compare(
-  a: Gesture,
+  a: Emitter,
   qa: number,
-  b: Gesture,
+  b: Emitter,
   qb: number,
 ): Comparison {
   const emissionsA = emissions(a, qa);

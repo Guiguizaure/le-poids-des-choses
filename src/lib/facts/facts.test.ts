@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getGesture, getGestures } from "@/lib/data";
+import { getSeasonalProduct } from "@/lib/saison";
 import {
   buildFact,
   daySeed,
@@ -10,9 +11,11 @@ import {
 } from "./index";
 
 describe("Le savais-tu ? : gabarits", () => {
-  it("8 à 10 gabarits, ids uniques", () => {
-    expect(FACT_TEMPLATES.length).toBeGreaterThanOrEqual(8);
-    expect(FACT_TEMPLATES.length).toBeLessThanOrEqual(10);
+  it("10 gabarits sur les gestes, plus celui des deux mangues ; ids uniques", () => {
+    const onGestures = FACT_TEMPLATES.filter((t) => "gestures" in t);
+    expect(onGestures.length).toBeGreaterThanOrEqual(8);
+    expect(onGestures.length).toBeLessThanOrEqual(10);
+    expect(FACT_TEMPLATES.map((t) => t.id)).toContain("mangue-avion-bateau");
     const ids = FACT_TEMPLATES.map((template) => template.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -72,6 +75,13 @@ describe("Le savais-tu ? : gabarits", () => {
       "jean-voiture → jean (neuf)",
     ]);
   });
+  it("un produit de saison disparu est signalé aussi", () => {
+    const noBoat = (slug: string) =>
+      slug === "manguebateau" ? undefined : getSeasonalProduct(slug);
+    expect(missingFactGestures(FACT_TEMPLATES, getGesture, noBoat)).toEqual([
+      "mangue-avion-bateau → produit manguebateau",
+    ]);
+  });
 });
 
 describe("Le savais-tu ? : choix et mise en forme", () => {
@@ -104,14 +114,32 @@ describe("Le savais-tu ? : choix et mise en forme", () => {
     expect(pickFact("2026-10-04", ["marche"])).not.toBeNull();
   });
 
-  it("chaque fait renvoie au geste source et à la méthode", () => {
+  it("chaque fait renvoie au geste (ou produit) source et à la méthode", () => {
     for (const template of FACT_TEMPLATES) {
       const fact = buildFact(template)!;
       expect(fact.source.label).toBe(
-        getGesture(template.gestures[0].id)!.label,
+        "products" in template
+          ? getSeasonalProduct(template.products[0])!.label
+          : getGesture(template.gestures[0].id)!.label,
       );
       expect(fact.methodHref).toBe("/methode#savais-tu");
     }
+  });
+
+  it("mangue : rapport calculé depuis les deux lignes des données", () => {
+    const template = FACT_TEMPLATES.find(
+      (t) => t.id === "mangue-avion-bateau",
+    )!;
+    const avion = getSeasonalProduct("mangue")!;
+    const bateau = getSeasonalProduct("manguebateau")!;
+    expect(avion.label).toBe("Mangue (importée par avion)");
+    expect(bateau.label).toBe("Mangue (importée par bateau)");
+    const fact = buildFact(template)!;
+    expect(fact.value).toBeCloseTo(avion.kgCo2ePerKg / bateau.kgCo2ePerKg, 10);
+    expect(fact.text).toMatch(
+      /^Une mangue importée par avion émet \d+ fois plus qu’une mangue importée par bateau\.$/,
+    );
+    expect(fact.source.url).toBe(avion.sourceUrl);
   });
 
   it("graine du jour en date locale", () => {
@@ -120,8 +148,10 @@ describe("Le savais-tu ? : choix et mise en forme", () => {
 
   it("couvre plusieurs familles de gestes", () => {
     const categories = new Set(
-      FACT_TEMPLATES.map(
-        (t) => getGestures().find((g) => g.id === t.gestures[0].id)!.category,
+      FACT_TEMPLATES.flatMap((t) =>
+        "gestures" in t
+          ? [getGestures().find((g) => g.id === t.gestures[0].id)!.category]
+          : [],
       ),
     );
     expect(categories.size).toBeGreaterThanOrEqual(4);
