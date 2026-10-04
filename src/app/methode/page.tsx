@@ -141,6 +141,15 @@ export default function MethodePage() {
         </p>
       </Section>
 
+      <Section id="savais-tu" title="« Le savais-tu ? »">
+        <p>
+          Ces petits faits sont calculés à partir des mêmes données Impact CO2
+          que les comparaisons, jamais écrits à la main : si une valeur change,
+          la phrase suit. Ils sont arrondis pour rester lisibles et renvoient à
+          la fiche du geste d’origine.
+        </p>
+      </Section>
+
       <Section id="fabrication" title="Comment ce site est fait">
         <p>
           Conçu, illustré et développé par Guillaume (

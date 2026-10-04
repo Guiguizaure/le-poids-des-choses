@@ -13,6 +13,7 @@ import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
 import { useJournal } from "@/lib/journal/useJournal";
+import { FactCard } from "@/components/facts/FactCard";
 
 const RECENT_COUNT = 5;
 
@@ -203,6 +204,18 @@ export function GardenScreen() {
               </p>
             </section>
           </>
+        ) : null}
+
+        {journal.ready ? (
+          // Graine : le dernier choix noté (en lien avec ses gestes), sinon le jour.
+          <FactCard
+            seed={newestFirst[0]?.id}
+            related={
+              newestFirst[0]
+                ? [newestFirst[0].gestureA, newestFirst[0].gestureB]
+                : []
+            }
+          />
         ) : null}
 
         <InstallBanner />

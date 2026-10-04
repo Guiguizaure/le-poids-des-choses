@@ -24,7 +24,8 @@ Projet indépendant, non affilié à l'ADEME.
   emplacement des mentions légales ([NOM], [SIRET], [ADRESSE], [EMAIL] dans
   `src/lib/legal.ts`), mais seulement si `STRICT_DATA=1` est défini (à activer chez
   Cloudflare au lancement). Aujourd'hui, `STRICT_DATA=1 pnpm build` échoue donc tant que
-  les mentions légales ne sont pas remplies ; `pnpm build` passe.
+  les mentions légales ne sont pas remplies ; `pnpm build` passe. Toujours bloquant, même
+  sans `STRICT_DATA` : un gabarit « Le savais-tu ? » qui référence un geste disparu.
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -98,6 +99,9 @@ Prettier, pnpm. Site statique
   uniquement), adaptateur (`index.ts` : `getGestures`,
   `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
   gestes que par cet adaptateur
+- `src/lib/facts` — « Le savais-tu ? » : gabarits (`templates.ts`), faits calculés et choix
+  déterministe (`pickFact`, graine : jour ou id d'entrée), garde-fou du build (`check.ts`) ;
+  carte `FactCard` (`src/components/facts`) sous le duel, le duel objet et sur /jardin
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
   `isAsleep`, `formatMass`, modes d'acquisition)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
@@ -246,5 +250,11 @@ Prettier, pnpm. Site statique
     `motion-reduce:animate-none` ; compteur du total évité (`CountUp`) ;
   - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
     (à compléter si une nouvelle paire apparaît).
+- « Le savais-tu ? » : aucun chiffre écrit à la main. Un gabarit ne rédige que la prémisse
+  (« un jean neuf », « un repas ») ; la valeur vient des données via `src/lib/calc`, arrondie
+  par `readableNumber` (2 chiffres significatifs au-delà de 100, entier dès 10, sinon un
+  décimal) ou `formatMass`. Chaque fait renvoie à la fiche Impact CO2 du geste source et à
+  `/methode#savais-tu`. Sur le duel, on préfère un fait sur les gestes comparés ; sur
+  /jardin, graine = dernier choix noté. Tests : valeur finie et positive pour chaque gabarit.
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
   droits réservés (`LICENSE`).

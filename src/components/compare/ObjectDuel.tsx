@@ -17,6 +17,7 @@ import { getGesture } from "@/lib/data";
 import type { IllustrationName } from "@/lib/illustrations/specs";
 import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
 import { useFocusTitle } from "./useFocusTitle";
+import { FactCard } from "@/components/facts/FactCard";
 
 type ObjectDuelProps = {
   object: string;
@@ -192,6 +193,7 @@ export function ObjectDuel({
         <TextLink href="/methode#occasion">
           Comment on compte l’occasion ?
         </TextLink>
+        <FactCard related={[object]} className="mt-2" />
       </div>
     </main>
   );
