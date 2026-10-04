@@ -27,7 +27,21 @@ export function useMotion(
         (context) => {
           const reduce = forceReduced || Boolean(context.conditions?.reduce);
           reduceRef.current = reduce;
-          return setup(reduce);
+          // Les animations d'ambiance démarrent après le premier affichage (deux images) :
+          // le texte de la page s'affiche d'abord (LCP), sans différence visible. Elles
+          // restent enregistrées dans ce contexte, donc annulées avec lui.
+          let cleanup: void | (() => void);
+          const deferred = context as gsap.Context & { start?: () => void };
+          context.add("start", () => {
+            cleanup = setup(reduce);
+          });
+          let frame = requestAnimationFrame(() => {
+            frame = requestAnimationFrame(() => deferred.start?.());
+          });
+          return () => {
+            cancelAnimationFrame(frame);
+            if (typeof cleanup === "function") cleanup();
+          };
         },
         scope.current ?? undefined,
       );

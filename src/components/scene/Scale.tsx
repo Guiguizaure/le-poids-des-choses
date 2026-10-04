@@ -46,6 +46,7 @@ export function Scale({
   const ref = useRef<HTMLDivElement>(null);
   // Angle affiché, animé par GSAP ; la géométrie est recalculée à chaque image.
   const displayed = useRef({ angle: 0 });
+  const arrived = useRef(false);
 
   const apply = (angle: number) => {
     const root = ref.current;
@@ -90,8 +91,11 @@ export function Scale({
         angle: target,
         duration: 1.2,
         ease: "elastic.out(1, 0.45)",
+        // À l'arrivée, le rebond attend le premier affichage de la page (le texte d'abord).
+        delay: arrived.current ? 0 : 0.15,
         onUpdate: () => apply(state.angle),
       });
+      arrived.current = true;
     },
     { scope: ref, dependencies: [tilt] },
   );

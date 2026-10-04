@@ -1,0 +1,17 @@
+# En-têtes Cloudflare Pages (copié tel quel dans out/). Vérifié par les tests de bout en bout,
+# qui servent l'export avec ces en-têtes (e2e/static-server.mjs) et échouent sur toute erreur CSP.
+#
+# CSP : site 100 % statique. 'unsafe-inline' reste nécessaire pour les scripts que Next.js
+# insère dans chaque page (données de l'export statique) et pour les attributs style.
+# Cloudflare Web Analytics : script static.cloudflareinsights.com, envoi vers
+# cloudflareinsights.com.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+
+# Fichiers versionnés (nom avec empreinte) : cache long et immuable.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

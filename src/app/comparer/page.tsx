@@ -13,7 +13,8 @@ export const metadata: Metadata = pageMetadata({
 export default function ComparerPage() {
   // La comparaison est lue dans l'URL côté client (export statique).
   return (
-    <Suspense fallback={null}>
+    // Repli à la hauteur de l'écran : le pied de page ne saute pas quand le parcours s'affiche.
+    <Suspense fallback={<main className="min-h-screen" aria-busy="true" />}>
       <CompareFlow />
     </Suspense>
   );

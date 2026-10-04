@@ -1,0 +1,49 @@
+Le poids des choses — licences
+
+Ce dépôt contient deux sortes de contenus, sous deux régimes différents.
+
+1. LE CODE — licence MIT
+
+   Tout le code source (dossiers src/, scripts/, e2e/, fichiers de configuration), À
+   L'EXCEPTION des éléments listés au point 2, est distribué sous la licence MIT ci-dessous.
+
+2. LES ILLUSTRATIONS ET L'IDENTITÉ VISUELLE — tous droits réservés
+
+   Ne sont PAS couverts par la licence MIT et restent la propriété exclusive de leur auteur,
+   tous droits réservés :
+   - les illustrations : public/illustrations/ (et leur conversion,
+     src/components/illustrations/generated.tsx) ;
+   - l'icône et les images dérivées : assets/icon/, public/icons/, public/og.png,
+     src/app/favicon.ico ;
+   - l'identité visuelle du site : nom « Le poids des choses », direction artistique,
+     maquettes, palette et mise en page.
+   Toute reproduction, modification ou réutilisation, totale ou partielle, demande l'accord
+   écrit de l'auteur.
+
+3. CE QUI RELÈVE D'AUTRES LICENCES
+
+   - Données : Impact CO2 (ADEME), Base Carbone et Agribalyse, sous les conditions de leurs
+     producteurs (voir la page /methode du site).
+   - Polices : Bricolage Grotesque et DM Sans, SIL Open Font License 1.1 (assets/fonts/).
+   - Dépendances : sous leurs propres licences (voir node_modules après installation).
+
+-------------------------------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2026 Guillaume (webjuno.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

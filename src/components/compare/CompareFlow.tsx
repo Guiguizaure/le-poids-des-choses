@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -15,10 +16,19 @@ import {
 import { getGesture } from "@/lib/data";
 import type { Choice, JournalEntry } from "@/lib/data/types";
 import { useJournal } from "@/lib/journal/useJournal";
-import { ChoiceResult } from "./ChoiceResult";
 import { Duel } from "./Duel";
 import { GestureChooser } from "./GestureChooser";
 import { ObjectDuel } from "./ObjectDuel";
+
+// L'écran de résultat (jardin, plantes, animaux) ne sert qu'après un choix : chargé à la
+// demande, il n'alourdit pas l'affichage du duel.
+const ChoiceResult = dynamic(
+  () => import("./ChoiceResult").then((m) => m.ChoiceResult),
+  {
+    ssr: false,
+    loading: () => <main className="min-h-screen" aria-busy="true" />,
+  },
+);
 
 /**
  * Parcours de comparaison, piloté par l'URL (/comparer?…) : choix du premier geste, du second

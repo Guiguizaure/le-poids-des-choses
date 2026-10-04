@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Illustration } from "@/components/illustrations/Illustration";
-import { Bird } from "@/components/scene/Bird";
-import { Landscape } from "@/components/scene/Landscape";
 import { PrimaryLink } from "@/components/ui/buttons";
 import { SITE_NAME } from "@/lib/site";
 
@@ -10,7 +8,11 @@ export const metadata: Metadata = {
   title: `Page introuvable · ${SITE_NAME}`,
 };
 
-/** 404 : le jardin dans la brume, l'oiseau endormi au sol. */
+/**
+ * 404 : le jardin dans la brume, l'oiseau endormi au sol. Scène immobile, rendue côté serveur
+ * sans composant client : la 404 racine est embarquée dans toutes les pages, elle ne doit
+ * rien leur ajouter (ni GSAP, ni animations).
+ */
 export default function NotFound() {
   return (
     <main className="mx-auto flex w-full max-w-[430px] flex-col">
@@ -18,13 +20,16 @@ export default function NotFound() {
         className="relative aspect-[390/300] w-full overflow-hidden"
         aria-hidden
       >
-        <Landscape className="absolute inset-0" still />
+        <Illustration
+          name="scene-paysage"
+          className="absolute inset-0 block h-auto w-full"
+        />
         <div className="pointer-events-none absolute inset-x-0 top-[42%]">
           <Illustration name="brume" className="block h-auto w-full" />
         </div>
         {/* L'oiseau devant la brume, pour qu'on le voie dormir. */}
         <div className="absolute bottom-[23%] left-[78%] w-[9%]">
-          <Bird asleep className="w-full" />
+          <Illustration name="oiseau-endormi" className="block h-auto w-full" />
         </div>
       </div>
       <div className="flex flex-col gap-3.5 px-6 pt-6 pb-9">

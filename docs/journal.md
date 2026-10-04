@@ -396,3 +396,42 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
   `SITE_URL`).
 - Cloudflare Web Analytics annoncé dans les mentions légales : à activer dans le tableau de
   bord Cloudflare Pages au lancement (aucun script ajouté au code).
+
+## 2026-10-05 — Lot 7 : qualité avant lancement (branche feat/quality)
+
+**Demandé** : Lighthouse ≥ 95 partout, axe et contraste, focus, clavier, tests de bout en
+bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final, licences.
+
+**Proposé / fait** :
+
+- Lighthouse mobile (`pnpm lighthouse`, build `SITE_LAUNCHED=1`), avant → après :
+
+  | Page              | Performance             | Accessibilité | Bonnes pratiques | SEO       |
+  | ----------------- | ----------------------- | ------------- | ---------------- | --------- |
+  | Accueil           | 93 → 97-100             | 100 → 100     | 100 → 100        | 100 → 100 |
+  | Duel (TGV, avion) | 93 → 94-95 (médiane 95) | 100 → 100     | 100 → 100        | 100 → 100 |
+  | Mon jardin        | 93 → 94-96 (médiane 95) | 100 → 100     | 100 → 100        | 100 → 100 |
+  | Méthode           | 100 → 99-100            | 100 → 100     | 100 → 100        | 100 → 100 |
+
+  Corrections : la 404 racine (embarquée dans toutes les pages) chargeait GSAP et les
+  scènes animées → rendue statique, sans composant client (-134 Ko de JS sur les pages de
+  texte) ; écran de résultat chargé à la demande ; repli à hauteur d'écran sur /comparer
+  (CLS 0,022 → 0) ; animations d'ambiance et rebond d'arrivée de la balance démarrés après
+  le premier affichage. Polices : déjà en sous-ensemble latin et préchargées.
+
+- Accessibilité : axe (WCAG 2.1 AA) sans violation sur 11 écrans ; test de contraste de
+  toutes les paires du thème, qui a révélé les badges « 1 / 2 » crème sur tomate (2,98) →
+  encre sur tomate (5,26) ; focus visible vérifié au clavier ; parcours complet au clavier.
+- Bout en bout (Playwright, Chromium et WebKit) : comparaison jusqu'au jardin, URL partagée
+  et invalide, objet avec ses trois options, export puis import, 404, bandeau iPhone,
+  en-têtes. 47 tests, toute erreur de console (CSP comprise) fait échouer.
+- CI GitHub Actions, `public/_headers`, README final avec captures, `LICENSE` (MIT pour le
+  code, illustrations et identité visuelle tous droits réservés).
+
+**Gardé / changé** :
+
+- CSP : `upgrade-insecure-requests` retiré (inutile sur Cloudflare Pages, toutes les URL
+  sont relatives, et il cassait WebKit en http local). `'unsafe-inline'` nécessaire aux
+  scripts que Next insère dans chaque page de l'export.
+- Duel et jardin restent au seuil de 95 : leur contenu dépend de l'URL ou du carnet, lus
+  côté client dans un export statique ; le socle React/Next représente l'essentiel du JS.

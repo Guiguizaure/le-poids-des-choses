@@ -4,3 +4,6 @@ node_modules
 pnpm-lock.yaml
 src/components/illustrations/generated.tsx
 src/lib/garden/scene.generated.ts
+test-results
+playwright-report
+blob-report
