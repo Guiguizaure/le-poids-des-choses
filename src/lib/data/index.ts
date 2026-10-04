@@ -1,11 +1,11 @@
 // Adaptateur de données : le reste du code ne lit les gestes que par ici.
-// Pour brancher plus tard les données générées depuis l'API, remplacer `gestures`
-// par le contenu du fichier généré (même type `Gesture[]`) ; les fonctions ci-dessous
-// et leurs appelants ne changent pas.
-import { testGestures } from "./test-gestures";
+// Source : gestures.generated.json, produit par `pnpm build-gestures` depuis le CSV Impact CO2.
+// Les valeurs fictives (test-gestures.ts) ne servent plus qu'aux tests. Pour changer de
+// source, il suffit de remplacer `gestures` : les fonctions ci-dessous ne bougent pas.
+import generated from "./gestures.generated.json";
 import type { Category, Gesture } from "./types";
 
-const gestures: readonly Gesture[] = testGestures;
+const gestures = generated.gestures as readonly Gesture[];
 
 export function getGestures(): readonly Gesture[] {
   return gestures;
