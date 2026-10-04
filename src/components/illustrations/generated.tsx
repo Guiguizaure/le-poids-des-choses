@@ -123,7 +123,7 @@ function Coccinelle({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={48} height={40} viewBox="0 0 48 40" fill="none" {...svgProps}>
       {children}
-      <g data-part="pattes"><path d="M12 22 L5 20 M12 28 L4 30 M36 22 L43 20 M36 28 L44 30" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g><g data-part="corps"><ellipse cx="24" cy="25" rx="13" ry="12" fill="#1F1A17" /></g><g data-part="tete"><circle cx="24" cy="10" r="6" fill="#1F1A17" /></g><g data-part="elytre-gauche"><path d="M24 12 A13 13 0 0 0 11 25 Q11 35 24 37 Z" fill="#FF4F2E" /><circle cx="17" cy="21" r="2.4" fill="#1F1A17" /><circle cx="18" cy="30" r="2" fill="#1F1A17" /></g><g data-part="elytre-droite"><path d="M24 12 A13 13 0 0 1 37 25 Q37 35 24 37 Z" fill="#FF4F2E" /><circle cx="31" cy="21" r="2.4" fill="#1F1A17" /><circle cx="30" cy="30" r="2" fill="#1F1A17" /></g>
+      <g data-part="pattes"><path d="M12 22 L5 20 M12 28 L4 30 M36 22 L43 20 M36 28 L44 30" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g><g data-part="corps"><ellipse cx="24" cy="25" rx="13" ry="12" fill="#1F1A17" /></g><g data-part="tete"><circle cx="24" cy="10" r="6" fill="#1F1A17" /></g><g data-part="elytre-gauche"><path d="M24 12 A13 13 0 0 0 11 25 Q11 35 24 37 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="17" cy="21" r="2.4" fill="#1F1A17" /><circle cx="18" cy="30" r="2" fill="#1F1A17" /></g><g data-part="elytre-droite"><path d="M24 12 A13 13 0 0 1 37 25 Q37 35 24 37 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="31" cy="21" r="2.4" fill="#1F1A17" /><circle cx="30" cy="30" r="2" fill="#1F1A17" /></g>
     </svg>
   );
 }
@@ -141,7 +141,7 @@ function Escargot({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
       {children}
-      <g data-part="corps"><path d="M4 43 C4 37 10 35 18 35 H44 C50 35 52 29 54 23 C56 19 61 21 60 27 C59 35 55 43 47 43 Z" fill="#FF8FB1" /></g><g data-part="antennes"><path d="M55 22 L52 11 M58 22 L61 12" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /><circle cx="52" cy="10" r="2" fill="#1F1A17" /><circle cx="61" cy="11" r="2" fill="#1F1A17" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
+      <g data-part="corps"><path d="M4 43 C4 37 10 35 18 35 H44 C50 35 52 29 54 23 C56 19 61 21 60 27 C59 35 55 43 47 43 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /></g><g data-part="antennes"><path d="M55 22 L52 11 M58 22 L61 12" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /><circle cx="52" cy="10" r="2" fill="#1F1A17" /><circle cx="61" cy="11" r="2" fill="#1F1A17" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -150,7 +150,7 @@ function EscargotEndormi({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
       {children}
-      <g data-part="corps"><path d="M16 43 C16 39 20 37 26 37 H36 C40 37 42 41 42 43 Z" fill="#FF8FB1" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
+      <g data-part="corps"><path d="M16 43 C16 39 20 37 26 37 H36 C40 37 42 41 42 43 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -249,7 +249,7 @@ function Papillon({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
       {children}
-      <g data-part="aile-gauche"><ellipse cx="21" cy="17" rx="14" ry="11" fill="#FFC93C" /><ellipse cx="24" cy="34" rx="10" ry="8" fill="#FFC93C" /><circle cx="18" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="aile-droite"><ellipse cx="43" cy="17" rx="14" ry="11" fill="#FFC93C" /><ellipse cx="40" cy="34" rx="10" ry="8" fill="#FFC93C" /><circle cx="46" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="corps"><ellipse cx="32" cy="26" rx="3" ry="14" fill="#1F1A17" /><path d="M31 13 Q27 5 23 4 M33 13 Q37 5 41 4" stroke="#1F1A17" strokeWidth="1.8" strokeLinecap="round" /></g>
+      <g data-part="aile-gauche"><ellipse cx="21" cy="17" rx="14" ry="11" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><ellipse cx="24" cy="34" rx="10" ry="8" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="18" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="aile-droite"><ellipse cx="43" cy="17" rx="14" ry="11" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><ellipse cx="40" cy="34" rx="10" ry="8" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /><circle cx="46" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="corps"><ellipse cx="32" cy="26" rx="3" ry="14" fill="#1F1A17" /><path d="M31 13 Q27 5 23 4 M33 13 Q37 5 41 4" stroke="#1F1A17" strokeWidth="1.8" strokeLinecap="round" /></g>
     </svg>
   );
 }
@@ -609,7 +609,7 @@ function ScenePaysage({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={390} height={300} viewBox="0 0 390 300" fill="none" {...svgProps}>
       {children}
-      <g data-part="ciel"><rect width="390" height="300" fill="#FFF3DC" /></g><g data-part="soleil"><circle cx="318" cy="66" r="42" fill="#FF4F2E" /></g><g data-part="nuage-1"><ellipse cx="86" cy="56" rx="44" ry="15" fill="#FF8FB1" /><ellipse cx="116" cy="44" rx="24" ry="12" fill="#FF8FB1" /></g><g data-part="nuage-2"><ellipse cx="226" cy="96" rx="26" ry="9" fill="#FF8FB1" /></g><g data-part="colline-arriere"><path d="M-30 250 C 60 150, 170 150, 250 250 Z" fill="#2D4BFF" /></g><g data-part="colline-avant"><path d="M140 255 C 230 165, 330 165, 430 250 Z" fill="#2FBF71" /></g><g data-part="sol"><rect y="240" width="390" height="60" fill="#2FBF71" /></g>
+      <g data-part="ciel"><rect width="390" height="300" fill="#FFF3DC" /></g><g data-part="halo-soleil" opacity="0"><circle cx="318" cy="66" r="50" fill="#FFC93C" /></g><g data-part="soleil"><circle cx="318" cy="66" r="42" fill="#FF4F2E" /></g><g data-part="nuage-1"><ellipse cx="86" cy="56" rx="44" ry="15" fill="#FF8FB1" /><ellipse cx="116" cy="44" rx="24" ry="12" fill="#FF8FB1" /></g><g data-part="nuage-2"><ellipse cx="226" cy="96" rx="26" ry="9" fill="#FF8FB1" /></g><g data-part="colline-arriere"><path d="M-30 250 C 60 150, 170 150, 250 250 Z" fill="#2D4BFF" /></g><g data-part="colline-avant"><path d="M140 255 C 230 165, 330 165, 430 250 Z" fill="#2FBF71" /></g><g data-part="sol"><rect y="240" width="390" height="60" fill="#2FBF71" /></g>
     </svg>
   );
 }

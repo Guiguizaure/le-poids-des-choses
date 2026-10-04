@@ -47,6 +47,8 @@ export const ILLUSTRATION_SPECS = {
     height: 300,
     parts: [
       "ciel",
+      // Anneau couleur soleil derrière le disque, invisible par défaut (animé par Landscape).
+      "halo-soleil",
       "soleil",
       "nuage-1",
       "nuage-2",
