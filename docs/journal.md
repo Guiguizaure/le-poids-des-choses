@@ -697,3 +697,35 @@ dans CLAUDE.md.)
   jardin manqué par `toBeVisible` (WebKit) ; ce dernier test guette désormais l'éclat à
   chaque image. Les deux suites complètes suivantes : 86/86.
 - « 1 kg » se coupait en fin de ligne sur /saison : espace insécable.
+
+## 2026-10-05 — Lot V2-1, fusion de main et dernières retouches (branche feat/v1-1)
+
+**Demandé** : ramener main (fix/launch fusionnée) dans feat/v1-1 par fusion, en gardant
+les deux côtés des conflits ; afficher les deux dates des données de saison ; joindre le
+texte complet de toute erreur console au rapport Playwright ; relancer toutes les
+vérifications (`STRICT_DATA=1 pnpm build` doit passer).
+
+**Proposé / fait** :
+
+- Fusion de main (sans rebase). Conflits : CLAUDE.md (mentions légales remplies et garde-fou
+  des faits, plus la règle ADEME), journal (entrée fix/launch remise avant les entrées V2-1,
+  ordre chronologique), `e2e/journeys.spec.ts` (même vérification de l'éclat des deux
+  côtés : gardée dans sa version image par image, `toBeVisible` l'avait manquée une fois).
+- Données de saison : « Données Agribalyse 3.2 (mise à jour du 15/01/2025), récupérées le
+  4 octobre 2026 » sur /saison et /methode#saison. `SAISON_BASE` (src/lib/saison/index.ts)
+  cite la page lue le 2026-10-05 (https://impactco2.fr/outils/fruitsetlegumes et les
+  fiches produits) ; `pnpm build-saison` rappelle de la relire.
+- Rapport Playwright : chaque erreur console (texte, emplacement, page, pile d'une
+  exception) est jointe au test (`erreurs-console.txt`), même tolérée ; vérifié sur le test
+  de la 404. Rapport HTML activé et conservé en CI à chaque passage.
+- Vérifications : lint, typecheck, 444 tests unitaires, 2 suites de bout en bout complètes
+  (86/86, Chromium et WebKit, axe compris), `pnpm build` et `STRICT_DATA=1 pnpm build`
+  passent (« Mentions légales : complètes »). Lighthouse mobile, 3 passages sur le build
+  normal (noindex) : Accueil 97-100, Comparer 95-96, Duel 94, Jardin 92-95, De saison 97,
+  Méthode 97-100 ; accessibilité et bonnes pratiques à 100 ; SEO 66-69 (noindex). Captures
+  mises à jour.
+
+**Gardé / changé** :
+
+- L'erreur console WebKit de l'accueil n'est pas revenue sur ces deux suites ; si elle
+  revient, son texte complet sera dans le rapport.
