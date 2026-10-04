@@ -23,8 +23,8 @@ Projet indépendant, non affilié à l'ADEME.
   `pnpm build`) fait échouer la construction s'il reste une donnée fictive OU un
   emplacement des mentions légales ([NOM], [SIRET], [ADRESSE], [EMAIL] dans
   `src/lib/legal.ts`), mais seulement si `STRICT_DATA=1` est défini (à activer chez
-  Cloudflare au lancement). Aujourd'hui, `STRICT_DATA=1 pnpm build` échoue donc tant que
-  les mentions légales ne sont pas remplies ; `pnpm build` passe.
+  Cloudflare au lancement). Les mentions légales sont remplies : `STRICT_DATA=1 pnpm build`
+  passe (un test le vérifie).
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -161,12 +161,12 @@ Prettier, pnpm. Site statique
   - « Je choisis … » : `useJournal().add(…)`, puis la carte de révélation (pas de jardin) :
     choix léger → vitrine avec la plante EXACTE du jardin (`revealForEntry` : même calcul
     que `buildGarden`, jardin avec / sans l'entrée) mise à l'échelle pour occuper la hauteur
-    de la vitrine quel que soit son stade (`vitrineFit` ; une pousse est agrandie, l'éclat
-    garde sa taille via `zoom` et les traits l'épaisseur du jardin via `strokeScale` ; dans
-    le jardin, vraie taille), titre selon le stade (« Une
-    petite pousse va sortir de terre », « Un arbre / Une fleur va pousser… », « … va
-    grandir… » jardin plein), éclat, animal débloqué qui entre,
-    « Et un papillon arrive ! », « Aller la planter » → `/jardin?nouveau=<id>` ; choix lourd
+    de la vitrine quel que soit son stade (`vitrineFit` ; une pousse est agrandie, les
+    traits gardent l'épaisseur du jardin via `strokeScale` ; dans le jardin, vraie taille),
+    sans éclat (réservé au jardin, quand la plante pousse à sa place), titre selon le stade
+    (« Une petite pousse va sortir de terre », « Un arbre / Une fleur va pousser… », « … va
+    grandir… » jardin plein), animal débloqué qui entre, « Et un papillon arrive ! »,
+    « Aller la planter » → `/jardin?nouveau=<id>` ; choix lourd
     → balance qui oscille puis se pose, « C’est noté ». La carte se pose comme un papier.
   - `/jardin?nouveau=<id>` : la scène s'affiche sans ce choix (`Garden highlightId`), puis
     la plante pousse (ou grandit), rafale, animal qui entre par le bord, message
