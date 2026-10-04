@@ -22,7 +22,7 @@ Coordonnées en unités du SVG (origine en haut à gauche).
 
 | Famille                                                                   | Cadre     | Point d'appui et calques                                                                                                                                                                                                                                                                                   |
 | ------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scene-paysage`                                                           | 390 × 300 | `ciel`, `soleil`, `nuage-1`, `nuage-2`, `colline-arriere`, `colline-avant`, `sol`                                                                                                                                                                                                                          |
+| `scene-paysage`                                                           | 390 × 300 | `ciel`, `halo-soleil` (anneau derrière le disque, opacité 0 dans le dessin : le code l'anime), `soleil`, `nuage-1`, `nuage-2`, `colline-arriere`, `colline-avant`, `sol`                                                                                                                                   |
 | `balance`                                                                 | 280 × 170 | pivot du fléau en **140,40** ; plateaux accrochés aux extrémités du fléau, en **40,40** et **240,40** ; `socle`, `mat`, `fleau`, `plateau-gauche`, `plateau-droit`                                                                                                                                         |
 | `arbre-{1,2,3}-{pousse,jeune,grand}`                                      | 120 × 160 | pied en **60,156** ; pousse : `tige`, `feuilles` ; jeune et grand : `tronc`, `feuillage`                                                                                                                                                                                                                   |
 | `fleur-{1,2,3}-{pousse,fleurie}`                                          | 60 × 80   | pied en **30,78** ; calques selon la fleur (voir `specs.ts`)                                                                                                                                                                                                                                               |
@@ -48,6 +48,12 @@ rectangle `sol` (commandes de chemin M, L, H, V, C, Z ; un arc ou une courbe qua
 2. Exporter au format **SVG**.
 3. Cocher **« Inclure l'attribut id »** : les noms de calques deviennent les `id`.
 4. Déposer le fichier dans `public/illustrations/`, puis lancer `pnpm illustrations`.
+
+## Contours
+
+Les petites bêtes (papillon, coccinelle, escargot) ont un contour encre de 1,5 avec
+`vector-effect="non-scaling-stroke"` sur leurs formes principales : le trait garde environ
+1,5 px à l'écran, même quand la bête est affichée petite.
 
 ## Couleurs
 

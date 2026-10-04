@@ -142,8 +142,10 @@ Prettier, pnpm. Site statique
   déportés. Rafales automatiques (`useAutoGusts`) toutes les 25 à 45 s, onglet visible
   seulement. Rien en mouvement réduit.
 - Ciel : `Landscape` remplace scene-paysage partout ; nuages qui traversent (60 à 90 s,
-  `src/lib/geometry/sky.ts`), halo du soleil qui respire (6 s). Immobile en mouvement réduit
-  et quand le jardin est assoupi.
+  `src/lib/geometry/sky.ts`) ; halo = calque `halo-soleil` du dessin (anneau soleil #FFC93C
+  derrière le disque, invisible par défaut), opacité 0,35 à 0,6 et échelle 1 à 1,12 sur
+  6 s. Ne jamais poser un calque HTML « derrière » un SVG opaque : il serait caché. Immobile
+  en mouvement réduit et quand le jardin est assoupi.
 - Pictos manquants : `PENDING_PICTOS` (`specs.ts`, vide aujourd'hui) et
   `docs/illustrations-a-fournir.md` ; `picto-generique` en attendant. Un test vérifie
   qu'aucun geste n'affiche `picto-generique` hors de cette liste.
@@ -167,8 +169,15 @@ Prettier, pnpm. Site statique
     plus anciennes plantes ;
   - animaux selon le nombre de choix légers (`ANIMAL_UNLOCKS`, provisoire) : papillon 1,
     coccinelle 3, oiseau 5, escargot 8, abeille 12, hérisson 20 ; message d'arrivée ; le
-    prochain apparaît en silhouette (encre, faible opacité) avec « Encore N choix légers
-    avant l’arrivée de … » (`nextAnimal`, `nextAnimalMessage`) ;
+    « Encore N choix légers avant l’arrivée de … » (`nextAnimal`, `nextAnimalMessage`)
+    uniquement sur /jardin, sous la scène (ni sur 05a / 05b, ni ailleurs ; pas de
+    silhouette) ;
+  - places (`ANIMAL_PLACES`) : papillon et abeille dans la bande de ciel, au-dessus des plus
+    hauts feuillages ; coccinelle, escargot, hérisson et oiseau au sol ;
+  - oiseau au sol pour la V1 (posé sur la colline verte, sautille, picore, dort au sol).
+    **V1.1 : l'envol de l'oiseau** (vol dans le ciel, retour au sol) ;
+  - petites bêtes cernées d'encre 1,5 px (`vector-effect="non-scaling-stroke"` : le trait
+    reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
 - Lot pages (à venir) : page Méthode complète (remplace `/methode` provisoire), bandeau
