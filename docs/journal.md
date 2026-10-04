@@ -547,3 +547,71 @@ avec la règle : lot 1 le 2026-10-03, tous les autres lots et ajustements (2, 2b
 
 - Les dates des tests (`compare.test.ts`, `journal.test.ts`, `display.test.ts`) et de
   téléchargement du CSV ne sont pas des dates de session : inchangées.
+
+## 2026-10-04 — Lot V2-1 : briques V1.1 (branche feat/v1-1)
+
+**Demandé** : retirer l'éclat de la vitrine s'il est encore sur main ; envol de l'oiseau ;
+fruits et légumes de saison (vérifier d'abord la source et la montrer avant de coder
+l'interface) ; « Le savais-tu ? » avec des faits calculés depuis nos données ;
+vérifications complètes, captures, journal, push de feat/v1-1.
+
+**Proposé / fait** :
+
+- Éclat : fix/launch n'était pas fusionnée, main avait encore l'éclat dans la vitrine.
+  Même changement repris sur feat/v1-1 (fichiers identiques à fix/launch, sans les mentions
+  légales), pour que les deux fusions ne se contredisent pas.
+- Envol de l'oiseau : `oiseau-vol.svg` (archive dézippée telle quelle), spec,
+  `pnpm illustrations` (69 illustrations). Trajet pur et testé
+  (`src/lib/geometry/flight.ts`) : décollage vers la gauche sous le soleil, boucle dans la
+  bande de ciel (y ≤ 105, comme le papillon et l'abeille), retour exact à sa place ; jamais
+  devant le soleil, halo compris (rayon 56), ni hors scène. Ailes en scaleY de 1 à -0,6
+  autour de (28, 30), en décalé. Envols spontanés toutes les 40 à 90 s (graine tirée une
+  fois par session dans `sessionStorage`, délais reproductibles), onglet visible seulement.
+  Bouton « Faire s’envoler l’oiseau » posé sur lui, hors de la scène (`role="img"`
+  masquerait un bouton intérieur), focus visible, sans effet pendant le vol. Ni bouton ni
+  envol quand le jardin dort ou en mouvement réduit. Démo dans /labo (carnet en mémoire).
+- « Le savais-tu ? » : 10 gabarits (`src/lib/facts`). Seule la prémisse est rédigée (« un
+  jean neuf », « un repas ») ; la valeur vient des données via `src/lib/calc`, arrondie
+  lisiblement. Chaque fait renvoie à la fiche Impact CO2 du geste source et à
+  `/methode#savais-tu` (nouvelle section). Choix sans hasard : graine du jour sur les
+  duels (en préférant un fait sur les gestes comparés), dernier choix noté sur /jardin.
+  Carte discrète sous les boutons du duel et du duel objet, et sur /jardin. Un gabarit sur
+  un geste disparu fait échouer `check-data`, donc `pnpm build` (vérifié en renommant un
+  geste, puis remis).
+- Fruits et légumes de saison : source vérifiée, interface non codée (voir plus bas).
+- Vérifications : lint, typecheck, 423 tests unitaires, 68 tests de bout en bout
+  (Chromium et WebKit, axe compris, dont le jardin avec l'oiseau), Lighthouse mobile
+  (3 passages, `SITE_LAUNCHED=1`) : Accueil 97-100, Comparer 95-96, Duel 95, Jardin 94-96,
+  Méthode 98-100 ; accessibilité, bonnes pratiques et SEO à 100. `STRICT_DATA=1 pnpm
+build` : seule l'erreur des mentions légales (attendue). Captures : duel avec « Le
+  savais-tu ? », jardin avec l'oiseau en vol au milieu de sa boucle.
+
+**Source « Fruits et légumes de saison » (vérifiée le 2026-10-04)** :
+
+- API publique `https://impactco2.fr/api/v1/fruitsetlegumes?month=1…12` : par produit,
+  `name`, `slug`, `months` (mois de saison), `ecv` (kg CO2e par kg, confirmé sur la fiche :
+  « 408 g CO₂e par kg » pour la pomme), `category` (fruits, légumes, herbes, fruits à
+  coque, pommes de terre et tubercules, pâtes riz et céréales). Sans `month`, seul le mois
+  courant est renvoyé : il faut interroger les 12 mois. Union : 76 produits, cohérente
+  (chaque produit est renvoyé pour chacun de ses mois), valeurs identiques aux 76 lignes
+  « Fruits et légumes » du CSV public (qui, lui, n'a pas les mois). Source affichée :
+  Agribalyse 3.2, mise à jour le 15/01/2025.
+- Sans clé, l'API répond avec un avertissement : l'accès anonyme peut être coupé ; une clé
+  gratuite s'obtient auprès de l'équipe Impact CO2.
+- Licence : aucune licence ouverte affichée pour l'API ni le CSV. Les mentions légales
+  d'impactco2.fr autorisent la réutilisation non commerciale et pédagogique avec mention
+  de l'ADEME, et demandent une licence pour un usage commercial ou promotionnel (même
+  gratuit pour des tiers). Le code du site Impact CO2 est sous MIT.
+- Origine : la donnée ne donne pas la provenance, sauf deux lignes qui la portent dans le
+  nom (« Mangue (importée par avion) », « Mangue (importée par bateau) »).
+
+**Gardé / changé** :
+
+- Fruits et légumes de saison : arrêt avant le script et l'interface, en attente de tes
+  décisions (clé d'API, licence, mangues) ; donc pas de /saison, ni de Lighthouse, de
+  capture ou de test e2e de /saison dans ce lot.
+- Le libellé du bouton prend l'apostrophe typographique du site : « Faire s’envoler
+  l’oiseau ».
+- `oiseau-vol.svg` a un trait encre de 1,5 sur l'aile avant, sans
+  `vector-effect="non-scaling-stroke"` (contrairement au papillon) : gardé tel que livré.
+- « 27 000 km » se coupait en fin de ligne sur la capture : espace insécable ajouté.
