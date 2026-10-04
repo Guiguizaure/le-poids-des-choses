@@ -46,6 +46,32 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   await expect(page.getByText("1 choix noté")).toBeVisible();
 });
 
+test("petit choix : une petite pousse, agrandie dans la vitrine", async ({
+  page,
+}) => {
+  await page.goto("/comparer?a=velo&b=voiture&q=2");
+  await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Une petite pousse va sortir de terre" }),
+  ).toBeFocused();
+  // La pousse occupe la hauteur de la vitrine (dans le jardin, elle garde sa vraie taille).
+  const plant = page.locator("[data-stage='pousse']").first();
+  await expect(plant).toBeVisible();
+  // Mesure après la pousse depuis le pied (animation d'échelle).
+  await expect
+    .poll(() =>
+      plant.locator("svg > *").evaluateAll((nodes) => {
+        // Hauteur de tout le dessin (union des formes).
+        const rects = nodes.map((n) => n.getBoundingClientRect());
+        return (
+          Math.max(...rects.map((r) => r.bottom)) -
+          Math.min(...rects.map((r) => r.top))
+        );
+      }),
+    )
+    .toBeGreaterThan(80);
+});
+
 test("choix plus lourd : la balance se pose, c'est noté, rien ne pousse", async ({
   page,
 }) => {

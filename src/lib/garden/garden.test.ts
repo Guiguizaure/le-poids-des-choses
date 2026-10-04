@@ -375,16 +375,42 @@ describe("révélation d'un choix", () => {
     expect(reveal.plant.id).toBe("e0");
     expect(reveal.plant.level).toBe(1);
   });
-  it("textes : titre selon la plante, arrivée accordée", () => {
-    const tree = { plant: { kind: { type: "tree" as const } }, isNew: true };
+  it("textes : titre selon la plante et son stade, arrivée accordée", () => {
+    const tree = {
+      plant: { kind: { type: "tree" as const }, stage: "jeune" },
+      isNew: true,
+    };
     const flower = {
-      plant: { kind: { type: "flower" as const } },
+      plant: { kind: { type: "flower" as const }, stage: "fleurie" },
+      isNew: true,
+    };
+    const sprout = {
+      plant: { kind: { type: "tree" as const }, stage: "pousse" },
       isNew: true,
     };
     expect(revealTitle(tree)).toBe("Un arbre va pousser dans ton jardin");
     expect(revealTitle(flower)).toBe("Une fleur va pousser dans ton jardin");
+    expect(revealTitle(sprout)).toBe("Une petite pousse va sortir de terre");
+    expect(
+      revealTitle({
+        ...sprout,
+        plant: { ...sprout.plant, kind: { type: "flower" } },
+      }),
+    ).toBe("Une petite pousse va sortir de terre");
+    // Jardin plein : la plus ancienne plante grandit, quel que soit son stade.
     expect(revealTitle({ ...tree, isNew: false })).toBe(
       "Un arbre va grandir dans ton jardin",
+    );
+    expect(revealTitle({ ...flower, isNew: false })).toBe(
+      "Une fleur va grandir dans ton jardin",
+    );
+    expect(revealTitle({ ...sprout, isNew: false })).toBe(
+      "Un arbre va grandir dans ton jardin",
+    );
+    // Une pousse de révélation correspond bien à un petit choix (moins de 1 kg).
+    const small = entries(1, 0.5);
+    expect(revealTitle(revealForEntry(small, "e0", soon)!)).toBe(
+      "Une petite pousse va sortir de terre",
     );
     expect(arrivalExclamation("butterfly")).toBe("Et un papillon arrive !");
     expect(arrivalExclamation("ladybug")).toBe("Et une coccinelle arrive !");

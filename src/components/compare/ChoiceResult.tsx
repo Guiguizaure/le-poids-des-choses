@@ -21,17 +21,17 @@ import {
 import { formatMass } from "@/lib/calc";
 import type { JournalEntry } from "@/lib/data/types";
 import {
+  illustrationFor,
   revealForEntry,
   type AnimalKind,
   type Reveal,
 } from "@/lib/garden/model";
 import { arrivalExclamation, revealTitle } from "@/lib/garden/text";
+import { VITRINE, vitrineFit } from "@/lib/garden/vitrine";
 import { entryTitle } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { useFocusTitle } from "./useFocusTitle";
 
-/** Vitrine (300×190) : un bout de colline, la plante au sommet, l'animal sur le côté. */
-const VITRINE = { width: 300, height: 190, footY: 142 } as const;
 const FLYERS: readonly AnimalKind[] = ["butterfly", "bee"];
 
 function percent(value: number, total: number) {
@@ -69,14 +69,12 @@ function Vitrine({
   const ref = useRef<HTMLDivElement>(null);
   const { plant } = reveal;
   const tree = plant.kind.type === "tree";
-  // Cadres : arbre 120×160 (pied 60,156), fleur 60×80 (pied 30,78).
-  const width = tree ? 104 : 70;
-  const height = tree ? (width * 160) / 120 : (width * 80) / 60;
-  const footRatio = tree ? 156 / 160 : 78 / 80;
+  // La plante occupe la hauteur de la vitrine quel que soit son stade (une pousse est agrandie).
+  const fit = vitrineFit(illustrationFor(plant.kind, plant.level));
   const plantStyle: CSSProperties = {
-    left: percent(VITRINE.width / 2 - width / 2, VITRINE.width),
-    top: percent(VITRINE.footY - height * footRatio, VITRINE.height),
-    width: percent(width, VITRINE.width),
+    left: percent(fit.left, VITRINE.width),
+    top: percent(fit.top, VITRINE.height),
+    width: percent(fit.width, VITRINE.width),
   };
   const animal = reveal.animals[0];
   const flying = animal ? FLYERS.includes(animal) : false;
@@ -133,6 +131,7 @@ function Vitrine({
               stage={plant.stage as "pousse" | "jeune" | "grand"}
               className="w-full"
               popIn
+              zoom={fit.zoom}
             />
           ) : (
             <Flower
@@ -140,6 +139,7 @@ function Vitrine({
               stage={plant.stage as "pousse" | "fleurie"}
               className="w-full"
               popIn
+              zoom={fit.zoom}
             />
           )}
         </div>

@@ -465,3 +465,37 @@ le jardin par `?nouveau=`, micro-interactions discrètes, sans régression Light
 - Le test axe attend la fin des apparitions : sinon, un texte en plein fondu faisait
   échouer le contraste de temps en temps.
 - La légende « Animation : … » des maquettes est une note de conception, non affichée.
+
+## 2026-10-04 — Lot 5d, ajustement : la plante à l'échelle de la vitrine (branche feat/reveal)
+
+**Demandé** : dans la vitrine de la carte de révélation, mettre la plante à l'échelle pour
+qu'elle occupe la hauteur de la vitrine quel que soit son stade (une pousse est donc
+agrandie ; dans le jardin, elle garde sa vraie taille). Titre selon le stade : « Une petite
+pousse va sortir de terre » pour une pousse, « Une fleur va pousser… » et « Un arbre va
+pousser… » sinon, « … va grandir… » quand le jardin est plein.
+
+**Proposé / fait** :
+
+- `pnpm illustrations` calcule l'emprise réelle du dessin de chaque arbre et de chaque fleur
+  (rectangles, cercles, ellipses, chemins échantillonnés, plus la moitié du trait) dans
+  `src/lib/illustrations/bounds.generated.ts` ; les courbes quadratiques (Q) sont prises en
+  charge. Un test échoue si le fichier n'est pas à jour.
+- `vitrineFit` (pure, testée sur les 15 dessins) : pied au sommet de la colline, hauteur du
+  dessin 130 sur 190, largeur bornée à 120 pour laisser passer l'animal. Une pousse d'arbre
+  est agrandie environ 3 fois, une pousse de fleur 4 à 5 fois ; un grand arbre garde à peu
+  près sa taille.
+- `zoom` sur `Tree` / `Flower` : l'éclat garde sa taille habituelle sur une plante agrandie.
+  Le jardin ne passe pas de `zoom` : rien n'y change.
+- `revealTitle` selon le stade et le jardin plein (« Une fleur va grandir… » remplace « Une
+  fleur va s’épanouir… »).
+- Test de parcours : un petit choix (vélo plutôt que voiture sur 2 km) affiche la petite
+  pousse, plus haute que 80 px dans la vitrine.
+- Vérifié sur l'export statique (captures Playwright, Pixel 7) : pousses, fleurs fleuries et
+  grands arbres occupent tous la hauteur de la vitrine.
+
+**Gardé / changé** :
+
+- Les traits grossissent avec la pousse agrandie (épaisseur proportionnelle) : c'est le
+  dessin agrandi, sans retouche.
+- Dans Chrome, l'onglet piloté était ralenti (la carte encore en train de tomber après 3 s) :
+  vérification visuelle faite avec Playwright ; le choix noté dans Chrome a été effacé.

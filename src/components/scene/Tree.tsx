@@ -20,6 +20,8 @@ type TreeProps = {
   still?: boolean;
   /** Pousse depuis le pied à l'apparition (nouvelle plante). */
   popIn?: boolean;
+  /** Agrandissement du dessin (vitrine) : l'éclat garde sa taille. */
+  zoom?: number;
 };
 
 /** Arbre à trois stades ; le feuillage se balance et se couche au vent. */
@@ -31,6 +33,7 @@ export function Tree({
   sparkle = true,
   still,
   popIn,
+  zoom,
 }: TreeProps) {
   return (
     <StagedPlant
@@ -43,6 +46,7 @@ export function Tree({
       sparkle={sparkle}
       still={still}
       popIn={popIn}
+      zoom={zoom}
     />
   );
 }

@@ -31,19 +31,24 @@ export function arrivalExclamation(kind: AnimalKind): string {
   return `Et ${feminine ? "une" : "un"} ${name} arrive !`;
 }
 
-/** Titre de la révélation : « Une fleur va pousser dans ton jardin », « Un arbre va grandir… » */
+/**
+ * Titre de la révélation selon le stade : « Une petite pousse va sortir de terre », « Une fleur
+ * va pousser dans ton jardin »… ; jardin plein, la plus ancienne plante « va grandir ».
+ */
 export function revealTitle(reveal: {
-  plant: { kind: { type: "tree" | "flower" } };
+  plant: { kind: { type: "tree" | "flower" }; stage: string };
   isNew: boolean;
 }): string {
   const tree = reveal.plant.kind.type === "tree";
-  if (reveal.isNew)
+  if (!reveal.isNew)
     return tree
-      ? "Un arbre va pousser dans ton jardin"
-      : "Une fleur va pousser dans ton jardin";
+      ? "Un arbre va grandir dans ton jardin"
+      : "Une fleur va grandir dans ton jardin";
+  if (reveal.plant.stage === "pousse")
+    return "Une petite pousse va sortir de terre";
   return tree
-    ? "Un arbre va grandir dans ton jardin"
-    : "Une fleur va s’épanouir dans ton jardin";
+    ? "Un arbre va pousser dans ton jardin"
+    : "Une fleur va pousser dans ton jardin";
 }
 
 /** « Une coccinelle s'est installée dans ton jardin » */

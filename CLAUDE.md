@@ -46,7 +46,8 @@ Prettier, pnpm. Site statique
   rendues par resvg avec les polices d'`assets/fonts` ; fichiers commités
 - `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
   (`src/components/illustrations/generated.tsx`) et extrait de `scene-paysage.svg` le
-  contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`) ; à relancer
+  contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`), et
+  l'emprise du dessin de chaque plante (`src/lib/illustrations/bounds.generated.ts`) ; à relancer
   après chaque nouvel export, et à commiter (des tests échouent si les fichiers générés ne
   sont pas à jour ou si les deux collines sont introuvables)
 - `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
@@ -159,7 +160,11 @@ Prettier, pnpm. Site statique
     réglée (donc un choix plus lourd).
   - « Je choisis … » : `useJournal().add(…)`, puis la carte de révélation (pas de jardin) :
     choix léger → vitrine avec la plante EXACTE du jardin (`revealForEntry` : même calcul
-    que `buildGarden`, jardin avec / sans l'entrée), éclat, animal débloqué qui entre,
+    que `buildGarden`, jardin avec / sans l'entrée) mise à l'échelle pour occuper la hauteur
+    de la vitrine quel que soit son stade (`vitrineFit` ; une pousse est agrandie, l'éclat
+    garde sa taille via `zoom` ; dans le jardin, vraie taille), titre selon le stade (« Une
+    petite pousse va sortir de terre », « Un arbre / Une fleur va pousser… », « … va
+    grandir… » jardin plein), éclat, animal débloqué qui entre,
     « Et un papillon arrive ! », « Aller la planter » → `/jardin?nouveau=<id>` ; choix lourd
     → balance qui oscille puis se pose, « C’est noté ». La carte se pose comme un papier.
   - `/jardin?nouveau=<id>` : la scène s'affiche sans ce choix (`Garden highlightId`), puis

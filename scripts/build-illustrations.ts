@@ -6,6 +6,7 @@
 // chaque instance. Seuls les id référencés dans le fichier (url(#…), href="#…", ex. dégradés ou
 // masques exportés par Figma) restent des id, préfixés par un identifiant propre à l'instance.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { contentBounds, generateBoundsModule, isPlant } from "./bounds";
 import { extractSceneGeometry, generateSceneModule } from "./scene-geometry";
 import {
   ILLUSTRATION_NAMES,
@@ -319,10 +320,29 @@ export function sceneModuleFrom(directory: URL = SOURCE_DIR): string {
   return generateSceneModule(extractSceneGeometry(svg));
 }
 
+const BOUNDS_OUTPUT = new URL(
+  "../src/lib/illustrations/bounds.generated.ts",
+  import.meta.url,
+);
+
+/** Emprise du dessin de chaque plante (vitrine de révélation). */
+export function boundsModuleFrom(directory: URL = SOURCE_DIR): string {
+  const bounds = Object.fromEntries(
+    readdirSync(directory)
+      .filter((file) => file.endsWith(".svg") && isPlant(file))
+      .map((file) => [
+        file.replace(/\.svg$/, ""),
+        contentBounds(readFileSync(new URL(file, directory), "utf8")),
+      ]),
+  );
+  return generateBoundsModule(bounds);
+}
+
 function main() {
   const converted = convertDirectory();
   writeFileSync(OUTPUT, generateModule(converted));
   writeFileSync(SCENE_OUTPUT, sceneModuleFrom());
+  writeFileSync(BOUNDS_OUTPUT, boundsModuleFrom());
   console.log(
     `${converted.length} illustrations converties dans src/components/illustrations/generated.tsx`,
   );
