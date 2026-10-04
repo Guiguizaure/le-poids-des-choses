@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
+import { InstallBanner } from "@/components/garden/InstallBanner";
 import { Icon } from "@/components/ui/buttons";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
@@ -189,6 +190,8 @@ export function GardenScreen() {
             </section>
           </>
         ) : null}
+
+        <InstallBanner />
 
         {journal.ready ? (
           <section

@@ -1,5 +1,8 @@
 # Méthode (brouillon)
 
+> La version publiée est la page /methode (`src/app/methode/page.tsx`), d'après la
+> maquette 06. Ce brouillon garde le raisonnement détaillé.
+
 Ce document décrit ce que le site compte, ce qu'il ne compte pas, et les hypothèses de
 calcul. Brouillon à relire avant le lancement ; à reprendre dans une page « Méthode » du site.
 

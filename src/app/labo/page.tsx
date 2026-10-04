@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { LaboControls } from "@/components/labo/LaboControls";
 import { ILLUSTRATION_NAMES } from "@/lib/illustrations/specs";
 
 // Page de démonstration des illustrations et animations : non liée, jamais indexée.
 export const metadata: Metadata = {
-  title: "Labo — Le poids des choses",
-  description: "Banc d'essai des illustrations et des animations.",
+  ...pageMetadata({
+    title: "Labo",
+    description: "Banc d’essai des illustrations et des animations.",
+    path: "/labo",
+  }),
+  // Jamais indexée, même après le lancement, et absente du sitemap.
   robots: { index: false, follow: false },
 };
 

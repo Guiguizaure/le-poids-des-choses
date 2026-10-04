@@ -189,7 +189,9 @@ export function ObjectDuel({
         </div>
 
         <PrimaryButton onClick={onChoose}>{action}</PrimaryButton>
-        <TextLink href="/methode">Comment on compte l’occasion ?</TextLink>
+        <TextLink href="/methode#occasion">
+          Comment on compte l’occasion ?
+        </TextLink>
       </div>
     </main>
   );

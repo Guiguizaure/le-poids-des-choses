@@ -1,40 +1,166 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { IconLink } from "@/components/ui/buttons";
+import {
+  ContentPage,
+  ExternalLink,
+  Section,
+} from "@/components/ui/ContentPage";
+import generated from "@/lib/data/gestures.generated.json";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Méthode — Le poids des choses",
-  description: "D’où viennent les chiffres et comment le jardin compte.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Méthode et sources",
+  description:
+    "D’où viennent les chiffres (Impact CO2, ADEME), nos hypothèses, ce qui n’est pas compté et les limites.",
+  path: "/methode",
+});
 
-// Page PROVISOIRE : la page « Méthode » complète viendra au lot pages.
+/**
+ * EMPLACEMENT — mention de licence des données ADEME / Impact CO2, en attente de la réponse
+ * de l'ADEME. Quand elle arrive : renseigner { text, url } ; elle s'affiche alors dans la
+ * section « D'où viennent les chiffres ? ». Tant qu'elle vaut null, rien n'est affiché.
+ */
+const DATA_LICENSE: { text: string; url?: string } | null = null;
+
+const REPOSITORY = "https://github.com/Guiguizaure/le-poids-des-choses";
+const IMPACT_CO2 = "https://impactco2.fr";
+
+const updatedOn = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: "Europe/Paris",
+}).format(new Date(generated.downloadedAt));
+
+/** Page 06 · Méthode et sources (maquette), complétée d'après docs/methode.md. */
 export default function MethodePage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col gap-4 px-5 pt-[22px] pb-10">
-      <IconLink href="/" label="Retour à l’accueil" icon="retour" />
-      <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
-        Méthode
-      </h1>
-      <p className="text-corps-m text-encre leading-[1.4]">
-        Les chiffres viennent des données publiques Impact CO2 de l’ADEME, en
-        kilos de CO2e par kilomètre, par repas, par litre, par achat ou par
-        objet. Le poids des choses est un projet indépendant, non affilié à
-        l’ADEME.
+    <ContentPage title="Méthode et sources">
+      <p className="text-legende text-texte-attenue leading-[1.3] font-semibold">
+        Données mises à jour le {updatedOn}
       </p>
-      <p className="text-corps-m text-encre leading-[1.4]">
-        Pour un objet d’occasion, on compte zéro nouvelle fabrication, plus
-        l’envoi d’un colis s’il est livré. Le trajet jusqu’à la boutique,
-        l’entretien et la réparation ne sont pas comptés.
-      </p>
-      <p className="text-corps-s text-texte-attenue">
-        Cette page sera bientôt complétée.
-      </p>
-      <Link
-        href="/comparer"
-        className="text-corps-s text-encre font-semibold underline"
-      >
-        Comparer deux gestes
-      </Link>
-    </main>
+
+      <Section id="sources" title="D’où viennent les chiffres ?">
+        <p>
+          Des données publiques de l’ADEME, publiées par{" "}
+          <ExternalLink href={IMPACT_CO2}>Impact CO2</ExternalLink>, qui
+          s’appuie sur la Base Carbone et la base Agribalyse. Le site lit le{" "}
+          <ExternalLink href={generated.source}>
+            fichier public des équivalents
+          </ExternalLink>{" "}
+          d’Impact CO2 ; chaque geste y renvoie à sa page sur impactco2.fr, où
+          sa valeur est détaillée.
+        </p>
+        {DATA_LICENSE ? (
+          <p className="text-corps-s text-texte-attenue">
+            {DATA_LICENSE.url ? (
+              <ExternalLink href={DATA_LICENSE.url}>
+                {DATA_LICENSE.text}
+              </ExternalLink>
+            ) : (
+              DATA_LICENSE.text
+            )}
+          </p>
+        ) : null}
+      </Section>
+
+      <Section id="unites" title="Ce qu’ils comptent">
+        <p>
+          Chaque valeur est une moyenne en kilos d’équivalent CO2 (kg CO2e), qui
+          additionne les gaz à effet de serre selon leur effet sur le climat. On
+          compare toujours deux gestes de même unité :
+        </p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            Se déplacer : par kilomètre et par personne, sur la distance que tu
+            choisis ;
+          </li>
+          <li>Manger : par repas ;</li>
+          <li>Boire : par litre ;</li>
+          <li>
+            S’habiller et Numérique : par objet, pour la fabrication d’un objet
+            neuf ;
+          </li>
+          <li>Se faire livrer : par achat, pour un colis d’1 kg.</li>
+        </ul>
+      </Section>
+
+      <Section id="hypotheses" title="Nos hypothèses">
+        <p id="occasion" className="scroll-mt-6">
+          <strong>L’occasion.</strong> Acheter un objet déjà fabriqué ne
+          provoque pas de nouvelle fabrication : on compte 0 kg pour la
+          fabrication. C’est une hypothèse, pas une mesure. Garder le tien
+          compte aussi 0 kg.
+        </p>
+        <p>
+          <strong>Le colis.</strong> Si l’objet d’occasion est livré, on ajoute
+          l’envoi d’un colis à domicile, selon Impact CO2 : 1 kg pour un
+          vêtement ou un smartphone, 2 kg pour des chaussures ou un ordinateur
+          portable, 15 kg pour une télévision.
+        </p>
+        <p>
+          <strong>Les trajets des achats.</strong> Pour « Se faire livrer », les
+          valeurs d’Impact CO2 comprennent le trajet jusqu’au colis : 3,5 km en
+          voiture pour le point relais, 15 km en voiture pour le magasin, aucun
+          trajet motorisé à pied.
+        </p>
+      </Section>
+
+      <Section id="non-compte" title="Ce qui n’est pas compté">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            le trajet pour aller acheter d’occasion (friperie, brocante, remise
+            en main propre) ;
+          </li>
+          <li>
+            l’entretien, le lavage, la réparation ou la remise en état d’un
+            objet ;
+          </li>
+          <li>la fin de vie (revente, don, déchet) ;</li>
+          <li>
+            l’usage des appareils (l’électricité d’une télévision, par exemple).
+          </li>
+        </ul>
+      </Section>
+
+      <Section id="limites" title="Leurs limites">
+        <p>
+          Ce sont des moyennes. Ton trajet, ton repas ou ton vêtement peuvent
+          peser plus ou moins selon les détails.
+        </p>
+        <p>
+          Compter zéro fabrication pour l’occasion lui est favorable : d’autres
+          méthodes répartissent l’empreinte de fabrication entre les vies
+          successives d’un objet.
+        </p>
+      </Section>
+
+      <Section id="jardin" title="Et ton jardin ?">
+        <p>
+          Il ne montre que les choix que tu notes ici. Ce n’est pas ton
+          empreinte carbone, juste une trace de ce que tu as évité.
+        </p>
+      </Section>
+
+      <Section id="fabrication" title="Comment ce site est fait">
+        <p>
+          Conçu, illustré et développé par Guillaume (
+          <ExternalLink href="https://webjuno.com">webjuno.com</ExternalLink>).
+          Le code a été écrit avec l’aide de Claude Code, l’assistant de
+          programmation d’Anthropic. Il est ouvert : le{" "}
+          <ExternalLink href={REPOSITORY}>dépôt GitHub</ExternalLink> est
+          public.
+        </p>
+      </Section>
+
+      <aside className="bg-blanc text-corps-s flex flex-col gap-1.5 rounded-[20px] p-[18px]">
+        <p className="text-encre leading-[1.3] font-semibold">
+          Projet indépendant
+        </p>
+        <p className="text-texte-attenue leading-[1.4]">
+          Non affilié à l’ADEME. Conçu, dessiné et développé par Guillaume,
+          webjuno.com.
+        </p>
+      </aside>
+    </ContentPage>
   );
 }
