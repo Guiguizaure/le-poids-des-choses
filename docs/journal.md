@@ -172,3 +172,13 @@ endormies, vent), composants animés, pousse plus marquée, coup de vent manuel 
 - Les traits de `vent` sont crème comme le ciel de `scene-paysage` : ils ne se voient que
   sur les collines et le sol.
 - `fleur-3-fleurie` : brins verts sur sol vert, seules les baies se voient sur la scène.
+
+**Ajustements après relecture (2026-10-04)** :
+- `vent.svg` : traits en encre #1F1A17, épaisseur 3 (mêmes calques) : visibles sur toute la
+  scène, ciel compris.
+- `fleur-3-pousse` et `fleur-3-fleurie` : brins en soleil #FFC93C (herbes sèches), baies
+  inchangées.
+- `Ladybug` : la tête pointe dans le sens de la marche (`headingAngle`, fonction pure
+  testée) ; demi-tour animé à chaque changement de direction, y compris avant l'envol de
+  retour. Déplacement, orientation et dandinement sont sur trois niveaux séparés.
+- Contrat `specs.ts` inchangé ; `generated.tsx` régénéré.
