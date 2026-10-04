@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
+import { CARNET_PATH } from "@/components/garden/CarnetScreen";
+import { WeekChart } from "@/components/garden/WeekChart";
 import { Icon } from "@/components/ui/buttons";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
@@ -42,7 +44,6 @@ function PillButton({
 export function GardenScreen() {
   const journal = useJournal();
   const now = useNow();
-  const [showAll, setShowAll] = useState(false);
   const [importMessage, setImportMessage] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -54,7 +55,7 @@ export function GardenScreen() {
     () => [...journal.entries].reverse(),
     [journal.entries],
   );
-  const visible = showAll ? newestFirst : newestFirst.slice(0, RECENT_COUNT);
+  const visible = newestFirst.slice(0, RECENT_COUNT);
   const hasEntries = journal.entries.length > 0;
   // Arrivée depuis « Aller la planter » : /jardin?nouveau=<id de l'entrée>.
   const nouveau = useSearchParam("nouveau");
@@ -182,18 +183,14 @@ export function GardenScreen() {
                 >
                   Carnet
                 </h2>
-                {newestFirst.length > RECENT_COUNT ? (
-                  <button
-                    type="button"
-                    aria-expanded={showAll}
-                    aria-controls="carnet-entrees"
-                    onClick={() => setShowAll((value) => !value)}
-                    className="text-corps-s leading-[1.3] font-semibold underline"
-                  >
-                    {showAll ? "Voir moins" : "Tout voir"}
-                  </button>
-                ) : null}
+                <Link
+                  href={CARNET_PATH}
+                  className="text-corps-s leading-[1.3] font-semibold underline"
+                >
+                  Tout voir
+                </Link>
               </div>
+              {now ? <WeekChart entries={journal.entries} now={today} /> : null}
               <ul id="carnet-entrees" className="flex flex-col gap-2">
                 {visible.map((entry) => (
                   <EntryRow key={entry.id} entry={entry} now={today} />

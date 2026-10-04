@@ -32,6 +32,7 @@ export const PUBLIC_PATHS = [
   "/",
   "/comparer",
   "/jardin",
+  "/jardin/carnet",
   "/saison",
   "/methode",
   "/mentions-legales",
