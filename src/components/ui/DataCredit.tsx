@@ -14,12 +14,14 @@ export function dataDate(iso: string): string {
 
 /**
  * Crédit des données, sur chaque résultat, sur /saison et sur /methode : « Données : Impact
- * CO2 – ADEME » (lien), avec la date de téléchargement des données affichées.
+ * CO2 – ADEME » (lien), avec la date de téléchargement des données affichées (et, pour la
+ * saison, la base d'origine et sa date de mise à jour).
  */
 export function DataCredit({
   downloadedAt = gestures.downloadedAt,
   href = IMPACT_CO2_URL,
   independent = false,
+  base,
   className = "",
 }: {
   /** Date des données (ISO) ; par défaut, celle des gestes comparés. */
@@ -27,6 +29,11 @@ export function DataCredit({
   href?: string;
   /** Ajoute « projet indépendant ». */
   independent?: boolean;
+  /**
+   * Base d'origine et date de sa mise à jour (fruits et légumes de saison) : « Données
+   * Agribalyse 3.2 (mise à jour du 15/01/2025), récupérées le 4 octobre 2026 ».
+   */
+  base?: { name: string; updatedOn: string };
   className?: string;
 }) {
   return (
@@ -41,7 +48,9 @@ export function DataCredit({
       >
         Impact CO2 – ADEME
       </a>
-      , téléchargées le {dataDate(downloadedAt)}
+      {base
+        ? ` · Données ${base.name} (mise à jour du ${base.updatedOn}), récupérées le ${dataDate(downloadedAt)}`
+        : `, téléchargées le ${dataDate(downloadedAt)}`}
       {independent ? " · projet indépendant" : ""}
     </p>
   );

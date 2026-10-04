@@ -17,6 +17,17 @@ export const SAISON_DOWNLOADED_AT: string = generated.downloadedAt;
 /** Page de l'outil « Fruits et légumes de saison » d'Impact CO2. */
 export const SAISON_TOOL_URL: string = generated.tool;
 
+/**
+ * Base des valeurs de saison et date de sa mise à jour : l'API ne les renvoie pas. Lues le
+ * 5 octobre 2026 sur https://impactco2.fr/outils/fruitsetlegumes et sur les fiches des
+ * produits (ex. https://impactco2.fr/outils/fruitsetlegumes/pomme) : « Source : Agribalyse
+ * 3.2 - Mise à jour le 15/01/2025 ». À relire à chaque `pnpm build-saison`.
+ */
+export const SAISON_BASE = {
+  name: "Agribalyse 3.2",
+  updatedOn: "15/01/2025",
+} as const;
+
 export function getSeasonalProducts(): readonly SeasonalProduct[] {
   return products;
 }

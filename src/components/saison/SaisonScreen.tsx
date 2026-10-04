@@ -12,6 +12,7 @@ import {
   monthOf,
   parseMonth,
   productsForMonth,
+  SAISON_BASE,
   SAISON_DOWNLOADED_AT,
   SAISON_TOOL_URL,
   saisonHref,
@@ -164,6 +165,7 @@ export function SaisonScreen() {
             <DataCredit
               downloadedAt={SAISON_DOWNLOADED_AT}
               href={SAISON_TOOL_URL}
+              base={SAISON_BASE}
               independent
             />
           </>

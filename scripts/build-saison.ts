@@ -154,6 +154,9 @@ async function main() {
   console.log(
     `${products.length} produits écrits dans src/lib/data/saison.generated.json (${key ? "avec" : "sans"} clé d'API).`,
   );
+  console.log(
+    "À vérifier à la main : la base et sa date de mise à jour affichées sur l'outil Impact CO2 (SAISON_BASE, src/lib/saison/index.ts).",
+  );
 }
 
 if (

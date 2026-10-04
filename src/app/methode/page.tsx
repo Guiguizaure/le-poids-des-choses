@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/ContentPage";
 import { DataCredit } from "@/components/ui/DataCredit";
 import generated from "@/lib/data/gestures.generated.json";
-import { SAISON_DOWNLOADED_AT, SAISON_TOOL_URL } from "@/lib/saison";
+import {
+  SAISON_BASE,
+  SAISON_DOWNLOADED_AT,
+  SAISON_TOOL_URL,
+} from "@/lib/saison";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -170,6 +174,7 @@ export default function MethodePage() {
         <DataCredit
           downloadedAt={SAISON_DOWNLOADED_AT}
           href={SAISON_TOOL_URL}
+          base={SAISON_BASE}
         />
       </Section>
 

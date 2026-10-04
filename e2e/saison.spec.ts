@@ -23,10 +23,16 @@ function grams(text: string): number {
   return number * (unit === "g" ? 1 : unit === "kg" ? 1000 : 1_000_000);
 }
 
+/** Saison : la base d'origine et sa mise à jour, puis la date de récupération. */
+const SEASON_DATES =
+  /Données Agribalyse 3\.2 \(mise à jour du 15\/01\/2025\), récupérées le \d{1,2} [a-zéû]+ \d{4}/;
+
 async function expectCredit(scope: Page | Locator) {
   const credit = scope.locator("[data-credit]").first();
   await expect(credit).toContainText("Données : Impact CO2 – ADEME");
-  await expect(credit).toContainText(/téléchargées le \d{1,2} [a-zéû]+ \d{4}/);
+  await expect(credit).toContainText(
+    /(téléchargées|récupérées) le \d{1,2} [a-zéû]+ \d{4}/,
+  );
   await expect(
     credit.getByRole("link", { name: "Impact CO2 – ADEME" }),
   ).toHaveAttribute("href", /^https:\/\/impactco2\.fr/);
@@ -58,6 +64,7 @@ test("/saison : le mois courant par défaut, triés par impact, regroupés par c
     page.getByRole("link", { name: "Fruits et légumes de saison, Impact CO2" }),
   ).toHaveAttribute("href", "https://impactco2.fr/outils/fruitsetlegumes");
   await expectCredit(page);
+  await expect(page.locator("[data-credit]")).toContainText(SEASON_DATES);
 });
 
 test("/saison : le mois suit l'URL et le sélecteur, le retour arrière aussi", async ({
@@ -101,6 +108,7 @@ test("/saison : les deux mangues gardées telles quelles, l'origine expliquée",
     "La donnée ne précise pas l’origine des produits, sauf pour la mangue, où elle distingue l’import par avion et l’import par bateau.",
   );
   await expectCredit(section);
+  await expect(section.locator("[data-credit]")).toContainText(SEASON_DATES);
 });
 
 for (const path of ["/", "/comparer"]) {
