@@ -36,6 +36,8 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
 
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
 - `pnpm build` — vérifie les données (`check-data`) puis export statique dans `out/`
+- `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
+  `src/lib/data/gestures.generated.json` (jamais pendant le build). Commite le fichier généré.
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
 - `pnpm lint` · `pnpm test` · `pnpm format`
 
@@ -43,7 +45,8 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
 
 - `src/app` — pages et layout
 - `src/components` — composants
-- `src/lib/data` — types, données de test, adaptateur (`index.ts` : `getGestures`,
+- `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
+  uniquement), adaptateur (`index.ts` : `getGestures`,
   `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
   gestes que par cet adaptateur
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
@@ -63,5 +66,11 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
   lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours
   sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Seuils des stades
   provisoires : `GARDEN_STAGE_THRESHOLDS_KG`.
+- Source des données : CSV public Impact CO2 (ADEME), https://impactco2.fr/equivalents.csv,
+  sans clé API. La sélection des gestes (ID du CSV, libellé, catégorie, unité) est la
+  constante `SELECTION` de `scripts/build-gestures.ts` ; le script échoue si un ID disparaît
+  ou change de thématique. Valeurs arrondies à 4 chiffres significatifs, date de
+  téléchargement en tête du fichier. Pas de source, pas de geste : ne jamais ajouter de
+  valeur à la main dans le JSON généré.
 - Le site est en `noindex` tant qu'il n'est pas lancé (`metadata.robots` du layout).
 - SVG : voir `docs/svg-conventions.md`.

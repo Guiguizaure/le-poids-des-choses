@@ -52,3 +52,34 @@ garde-fou contre les données fictives.
 - `vitest.config.ts` renommé en `.mts` (avertissement ESM). `src/lib/calc/example.test.ts`
   (test d'exemple du lot 1) supprimé, remplacé par les vrais tests.
 - CSV Impact CO2 : voir le résumé de la session (colonnes, unités, langue).
+
+## 2026-10-04 — Lot 2b : données Impact CO2 (branche feat/data-csv)
+
+**Demandé** : remplacer les valeurs fictives par les données du CSV Impact CO2 (ADEME).
+
+**Proposé / fait** :
+
+- `scripts/build-gestures.ts` (`pnpm build-gestures`, à la main) : télécharge le CSV,
+  sélectionne 19 gestes par ID, écrit `src/lib/data/gestures.generated.json`
+  (4 chiffres significatifs, date de téléchargement en tête, `sourceId`, `sourceUrl`).
+- L'adaptateur lit ce fichier ; `hasFictiveData()` renvoie `false`. Les données fictives ne
+  servent plus qu'aux tests. `STRICT_DATA=1 pnpm build` passe désormais.
+- Tests : valeurs, unités, catégories, arrondis, marche → ratio `null`, et le script.
+
+**Gardé / changé** :
+
+- Retirés comme demandé : « vêtement d'occasion » et « appel audio » (pas de source).
+- Unités confirmées sur les pages impactco2.fr (1 km, 1 repas, 1 jeans, 1 heure de
+  streaming ou de visioconférence) : le CSV n'a pas de colonne d'unité.
+- Choix à relire : voiture = `voiturethermique` (identique à « Moyenne – Diesel ») ; poisson
+  = cabillaud ; pull = laine ; chaussures = sport. Rien d'autre à l'heure dans « Usage
+  numérique » : seulement streaming et visioconférence (puis équipements, voir plus bas).
+- Vélo mécanique n'est pas à 0 (0,00017 kg/km) ; seule la marche donne `ratio: null`.
+
+**Ajustements après relecture (2026-10-04)** :
+
+- Libellé « Repas au poisson blanc (cabillaud) ».
+- Ajout de 3 équipements de la thématique « Numérique », unité `objet` (confirmée sur
+  impactco2.fr : « 1 smartphone », « 1 ordinateur portable », « 1 télévision ») : 22 gestes.
+- Le numérique mêle donc usages (`heure`) et équipements (`objet`) : l'interface devra
+  comparer deux gestes de même unité.

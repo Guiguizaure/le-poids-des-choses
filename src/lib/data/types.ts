@@ -15,6 +15,10 @@ export type Gesture = {
   /** Quantité proposée par défaut (ex. 10 km, 1 repas). */
   defaultQuantity: number;
   source: GestureSource;
+  /** Identifiant dans le CSV Impact CO2 (absent des données fictives). */
+  sourceId?: string;
+  /** Page Impact CO2 du geste (absente des données fictives). */
+  sourceUrl?: string;
   /** Vrai pour toute valeur de test : la construction stricte doit alors échouer. */
   fictive: boolean;
 };
