@@ -12,13 +12,14 @@ import {
 import { testGestures } from "./test-gestures";
 import type { Category } from "./types";
 
-const UNIT_BY_CATEGORY: Record<Category, string> = {
-  transport: "km",
-  alimentation: "repas",
-  habillement: "objet",
-  numerique: "heure",
+// Le numérique mêle des usages (à l'heure) et des équipements (par objet).
+const UNITS_BY_CATEGORY: Record<Category, string[]> = {
+  transport: ["km"],
+  alimentation: ["repas"],
+  habillement: ["objet"],
+  numerique: ["heure", "objet"],
 };
-const CATEGORIES = Object.keys(UNIT_BY_CATEGORY) as Category[];
+const CATEGORIES = Object.keys(UNITS_BY_CATEGORY) as Category[];
 
 describe("données générées (Impact CO2)", () => {
   it("date de téléchargement et source en tête de fichier", () => {
@@ -36,12 +37,18 @@ describe("données générées (Impact CO2)", () => {
   it("chaque geste a une catégorie, une unité cohérente et une valeur ≥ 0", () => {
     for (const g of getGestures()) {
       expect(CATEGORIES).toContain(g.category);
-      expect(g.unit).toBe(UNIT_BY_CATEGORY[g.category]);
+      expect(UNITS_BY_CATEGORY[g.category]).toContain(g.unit);
       expect(Number.isFinite(g.kgCo2ePerUnit)).toBe(true);
       expect(g.kgCo2ePerUnit).toBeGreaterThanOrEqual(0);
       expect(g.defaultQuantity).toBeGreaterThan(0);
       expect(g.label.length).toBeGreaterThan(0);
     }
+  });
+  it("les équipements numériques sont comptés par objet, les usages à l'heure", () => {
+    expect(getGesture("smartphone")?.unit).toBe("objet");
+    expect(getGesture("ordinateur-portable")?.unit).toBe("objet");
+    expect(getGesture("television")?.unit).toBe("objet");
+    expect(getGesture("streaming")?.unit).toBe("heure");
   });
   it("tous sourcés Impact CO2, aucun fictif", () => {
     for (const g of getGestures()) {

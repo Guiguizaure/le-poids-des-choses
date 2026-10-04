@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T09:10:30.337Z",
+  "downloadedAt": "2026-10-04T10:13:13.163Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -148,7 +148,7 @@
     },
     {
       "id": "repas-poisson",
-      "label": "Repas au poisson blanc",
+      "label": "Repas au poisson blanc (cabillaud)",
       "category": "alimentation",
       "unit": "repas",
       "kgCo2ePerUnit": 2.43,
@@ -229,6 +229,42 @@
       "fictive": false,
       "sourceId": "visioconference",
       "sourceUrl": "https://impactco2.fr/outils/usagenumerique/visioconference"
+    },
+    {
+      "id": "smartphone",
+      "label": "Smartphone neuf",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 80.16,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "smartphone",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone"
+    },
+    {
+      "id": "ordinateur-portable",
+      "label": "Ordinateur portable neuf",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 192.6,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "ordinateurportable",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable"
+    },
+    {
+      "id": "television",
+      "label": "Télévision neuve",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 369.7,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "television",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/television"
     }
   ]
 }

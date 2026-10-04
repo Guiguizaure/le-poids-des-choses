@@ -38,6 +38,12 @@ const habit = {
   unit: "objet",
   defaultQuantity: 1,
 } as const;
+const equipement = {
+  theme: "Numérique",
+  category: "numerique",
+  unit: "objet",
+  defaultQuantity: 1,
+} as const;
 const numerique = {
   theme: "Usage numérique",
   category: "numerique",
@@ -93,7 +99,7 @@ export const SELECTION: readonly Selection[] = [
     ...repas,
     sourceId: "repasavecdupoissonblanc",
     id: "repas-poisson",
-    label: "Repas au poisson blanc",
+    label: "Repas au poisson blanc (cabillaud)",
   },
 
   { ...habit, sourceId: "jeans", id: "jean", label: "Jean neuf" },
@@ -127,6 +133,24 @@ export const SELECTION: readonly Selection[] = [
     sourceId: "visioconference",
     id: "visio",
     label: "Visioconférence",
+  },
+  {
+    ...equipement,
+    sourceId: "smartphone",
+    id: "smartphone",
+    label: "Smartphone neuf",
+  },
+  {
+    ...equipement,
+    sourceId: "ordinateurportable",
+    id: "ordinateur-portable",
+    label: "Ordinateur portable neuf",
+  },
+  {
+    ...equipement,
+    sourceId: "television",
+    id: "television",
+    label: "Télévision neuve",
   },
 ];
 
