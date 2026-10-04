@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
+import { Icon } from "@/components/ui/buttons";
 import { formatMass } from "@/lib/calc";
 import { buildGarden } from "@/lib/garden/model";
 import { plural } from "@/lib/garden/text";
@@ -76,11 +77,10 @@ export function GardenScreen() {
     <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
       <div className="flex items-center px-5 pt-[22px] pb-2">
         <Link
-          href="/"
+          href="/comparer"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- icône SVG statique */}
-          <img src="/icons/retour.svg" alt="" width={24} height={24} />
+          <Icon name="retour" />
           Comparer
         </Link>
       </div>
@@ -116,7 +116,7 @@ export function GardenScreen() {
               retiré au jardin.
             </p>
             <Link
-              href="/"
+              href="/comparer"
               className="bg-encre text-corps-m text-creme rounded-full px-6 py-4 leading-[1.3] font-semibold"
             >
               Comparer deux gestes
