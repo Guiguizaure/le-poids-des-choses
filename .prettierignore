@@ -2,3 +2,4 @@
 out
 node_modules
 pnpm-lock.yaml
+src/components/illustrations/generated.tsx

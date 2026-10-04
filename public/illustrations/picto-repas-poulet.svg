@@ -1,0 +1,3 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E"/></g><g id="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC"/><ellipse cx="29" cy="31" rx="9" ry="7" transform="rotate(-35 29 31)" fill="#FFC93C"/><path d="M34 36 L41 43" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/><circle cx="42" cy="45" r="2.5" fill="#1F1A17"/></g>
+</svg>

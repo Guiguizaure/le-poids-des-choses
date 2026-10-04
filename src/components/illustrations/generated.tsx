@@ -1,0 +1,485 @@
+// Généré par scripts/build-illustrations.ts depuis public/illustrations : ne pas modifier.
+// Régénérer avec `pnpm illustrations`.
+import type { ComponentType, ReactNode, SVGProps } from "react";
+import type { IllustrationName } from "@/lib/illustrations/specs";
+
+export type GeneratedSvgProps = {
+  /** Préfixe propre à l'instance, pour les id référencés (dégradés, masques). */
+  uid: string;
+  svgProps?: SVGProps<SVGSVGElement>;
+  /** Rendu en premier dans <svg> (ex. <title>). */
+  children?: ReactNode;
+};
+
+function Arbre1Grand({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="56" y="76" width="8" height="80" fill="#1F1A17" /></g><g data-part="feuillage"><circle cx="60" cy="54" r="44" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function Arbre1Jeune({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="57" y="100" width="6" height="56" fill="#1F1A17" /></g><g data-part="feuillage"><circle cx="60" cy="88" r="24" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function Arbre1Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function Arbre2Grand({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="57" y="100" width="6" height="56" fill="#1F1A17" /></g><g data-part="feuillage"><ellipse cx="60" cy="64" rx="22" ry="54" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function Arbre2Jeune({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="58" y="112" width="5" height="44" fill="#1F1A17" /></g><g data-part="feuillage"><ellipse cx="60" cy="96" rx="13" ry="26" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function Arbre2Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function Arbre3Grand({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="56" y="90" width="8" height="66" fill="#1F1A17" /></g><g data-part="feuillage"><circle cx="42" cy="76" r="28" fill="#FF8FB1" /><circle cx="78" cy="68" r="26" fill="#FF8FB1" /><circle cx="62" cy="42" r="26" fill="#FF8FB1" /></g>
+    </svg>
+  );
+}
+
+function Arbre3Jeune({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tronc"><rect x="57" y="104" width="6" height="52" fill="#1F1A17" /></g><g data-part="feuillage"><circle cx="52" cy="96" r="16" fill="#FF8FB1" /><circle cx="70" cy="90" r="14" fill="#FF8FB1" /></g>
+    </svg>
+  );
+}
+
+function Arbre3Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF8FB1" /></g>
+    </svg>
+  );
+}
+
+function Balance({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={280} height={170} viewBox="0 0 280 170" fill="none" {...svgProps}>
+      {children}
+      <g data-part="socle"><path d="M114 168 L140 140 L166 168 Z" fill="#1F1A17" /></g><g data-part="mat"><rect x="137" y="40" width="6" height="112" fill="#1F1A17" /></g><g data-part="plateau-gauche"><path d="M40 40 L13 94 M40 40 L67 94" stroke="#1F1A17" strokeWidth="2" /><path d="M2 94 H78 Q40 122 2 94 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="2" /></g><g data-part="plateau-droit"><path d="M240 40 L213 94 M240 40 L267 94" stroke="#1F1A17" strokeWidth="2" /><path d="M202 94 H278 Q240 122 202 94 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="2" /></g><g data-part="fleau"><line x1="40" y1="40" x2="240" y2="40" stroke="#1F1A17" strokeWidth="6" strokeLinecap="round" /><circle cx="140" cy="40" r="8" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="3" /></g>
+    </svg>
+  );
+}
+
+function Brume({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={390} height={120} viewBox="0 0 390 120" fill="none" {...svgProps}>
+      {children}
+      <g data-part="brume-1"><ellipse cx="110" cy="60" rx="140" ry="22" fill="#FFF3DC" fillOpacity="0.85" /></g><g data-part="brume-2"><ellipse cx="280" cy="84" rx="130" ry="18" fill="#FFF3DC" fillOpacity="0.75" /></g><g data-part="brume-3"><ellipse cx="210" cy="36" rx="90" ry="12" fill="#FFF3DC" fillOpacity="0.65" /></g>
+    </svg>
+  );
+}
+
+function Eclat({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="eclat-traits"><path d="M18 30 L8 20 M40 22 L40 6 M62 30 L72 20 M16 50 L2 50 M64 50 L78 50" stroke="#FF4F2E" strokeWidth="4" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function Fleur1Fleurie({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M30 78 V34" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="22" cy="58" rx="9" ry="5" transform="rotate(-25 22 58)" fill="#2FBF71" /></g><g data-part="petales"><circle cx="30" cy="16" r="8" fill="#FF8FB1" /><circle cx="41" cy="24" r="8" fill="#FF8FB1" /><circle cx="37" cy="37" r="8" fill="#FF8FB1" /><circle cx="23" cy="37" r="8" fill="#FF8FB1" /><circle cx="19" cy="24" r="8" fill="#FF8FB1" /></g><g data-part="coeur"><circle cx="30" cy="28" r="7" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function Fleur1Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M30 78 V62" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#2FBF71" /><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function Fleur2Fleurie({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M30 78 V30" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#2FBF71" /></g><g data-part="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function Fleur2Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tige"><path d="M30 78 V60" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="30" cy="58" rx="5" ry="9" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function Fleur3Fleurie({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF" /><circle cx="40" cy="36" r="5" fill="#2D4BFF" /><circle cx="30" cy="44" r="4" fill="#2D4BFF" /></g>
+    </svg>
+  );
+}
+
+function Fleur3Pousse({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="brins"><path d="M26 78 Q 24 68 20 62 M32 78 Q 34 66 38 60" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function Oiseau({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="queue"><path d="M14 28 L2 20 L5 33 Z" fill="#2D4BFF" /></g><g data-part="corps"><ellipse cx="28" cy="30" rx="18" ry="12" fill="#2D4BFF" /></g><g data-part="tete"><circle cx="46" cy="19" r="9" fill="#2D4BFF" /></g><g data-part="bec"><path d="M54 17 L62 20 L54 23 Z" fill="#FFC93C" /></g><g data-part="oeil"><circle cx="48" cy="17" r="2" fill="#1F1A17" /></g><g data-part="aile"><ellipse cx="25" cy="27" rx="12" ry="7" transform="rotate(-18 25 27)" fill="#FF8FB1" /></g><g data-part="pattes"><path d="M24 41 L22 47 M32 41 L33 47" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function OiseauEndormi({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="queue"><path d="M14 28 L2 20 L5 33 Z" fill="#2D4BFF" /></g><g data-part="corps"><ellipse cx="28" cy="30" rx="18" ry="12" fill="#2D4BFF" /></g><g data-part="tete"><circle cx="42" cy="26" r="9" fill="#2D4BFF" /></g><g data-part="bec"><path d="M50 25 L57 28 L50 31 Z" fill="#FFC93C" /></g><g data-part="oeil"><path d="M41 24 Q44 26.5 47 24" stroke="#1F1A17" strokeWidth="1.8" strokeLinecap="round" /></g><g data-part="aile"><ellipse cx="25" cy="27" rx="12" ry="7" transform="rotate(-18 25 27)" fill="#FF8FB1" /></g><g data-part="pattes"><path d="M24 41 L22 47 M32 41 L33 47" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function Papillon({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="aile-gauche"><ellipse cx="21" cy="17" rx="14" ry="11" fill="#FFC93C" /><ellipse cx="24" cy="34" rx="10" ry="8" fill="#FFC93C" /><circle cx="18" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="aile-droite"><ellipse cx="43" cy="17" rx="14" ry="11" fill="#FFC93C" /><ellipse cx="40" cy="34" rx="10" ry="8" fill="#FFC93C" /><circle cx="46" cy="16" r="3.5" fill="#FF8FB1" /></g><g data-part="corps"><ellipse cx="32" cy="26" rx="3" ry="14" fill="#1F1A17" /><path d="M31 13 Q27 5 23 4 M33 13 Q37 5 41 4" stroke="#1F1A17" strokeWidth="1.8" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoAvion({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M32 10 C35 10 36 14 36 18 V27 L52 35 V40 L36 36 V45 L42 49 V52 L32 50 L22 52 V49 L28 45 V36 L12 40 V35 L28 27 V18 C28 14 29 10 32 10 Z" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoBus({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><rect x="16" y="13" width="32" height="34" rx="6" fill="#FFF3DC" /><rect x="20" y="18" width="24" height="11" rx="2" fill="#2D4BFF" /><rect x="20" y="33" width="24" height="3" rx="1.5" fill="#FFC93C" /><circle cx="23" cy="48" r="4" fill="#1F1A17" /><circle cx="41" cy="48" r="4" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoChaussures({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1" /></g><g data-part="objet"><path d="M12 38 C12 30 16 26 20 26 L26 30 L34 24 C38 30 46 32 52 36 V42 H12 Z" fill="#FFF3DC" /><rect x="11" y="42" width="42" height="5" rx="2.5" fill="#1F1A17" /><path d="M26 30 L30 34 M30 27 L34 31" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoGarder({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2FBF71" /></g><g data-part="objet"><path d="M32 46 C20 38 14 31 14 24 C14 18 19 15 23 15 C27 15 30 17 32 20 C34 17 37 15 41 15 C45 15 50 18 50 24 C50 31 44 38 32 46 Z" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoGenerique({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2FBF71" /></g><g data-part="objet"><path d="M20 44 C20 28 30 18 46 18 C46 34 36 44 20 44 Z" fill="#FFF3DC" /><path d="M20 44 L36 28" stroke="#1F1A17" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoJean({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1" /></g><g data-part="objet"><path d="M21 13 H43 L46 52 H36 L32 28 L28 52 H18 Z" fill="#2D4BFF" /><path d="M21 19 H43" stroke="#FFF3DC" strokeWidth="2" strokeDasharray="2 2" /><path d="M32 19 V28" stroke="#FFF3DC" strokeWidth="2" /></g>
+    </svg>
+  );
+}
+
+function PictoMarche({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><ellipse cx="25" cy="40" rx="6" ry="10" transform="rotate(-12 25 40)" fill="#FFF3DC" /><ellipse cx="39" cy="26" rx="6" ry="10" transform="rotate(12 39 26)" fill="#FFF3DC" /><circle cx="21" cy="27" r="2.2" fill="#FFF3DC" /><circle cx="26" cy="26" r="2.2" fill="#FFF3DC" /><circle cx="41" cy="13" r="2.2" fill="#FFF3DC" /><circle cx="36" cy="12" r="2.2" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoMetro({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><rect x="18" y="12" width="28" height="34" rx="13" fill="#FFF3DC" /><rect x="22" y="18" width="20" height="12" rx="5" fill="#2D4BFF" /><circle cx="32" cy="38" r="3" fill="#FF4F2E" /><path d="M22 46 L18 54 M42 46 L46 54 M20 51 H44" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoOccasion({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2FBF71" /></g><g data-part="objet"><path d="M19 30 A13 13 0 0 1 42 22" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><path d="M45 34 A13 13 0 0 1 22 42" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><path d="M45 15 L46 26 L36 23 Z" fill="#FFF3DC" /><path d="M19 49 L18 38 L28 41 Z" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoOrdinateur({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="15" y="16" width="34" height="23" rx="3" fill="#FFF3DC" /><rect x="19" y="20" width="26" height="15" rx="1.5" fill="#2D4BFF" /><path d="M10 43 H54 L50 48 H14 Z" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoPull({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1" /></g><g data-part="objet"><path d="M24 14 L12 20 L10 40 L17 41 L19 27 V50 H45 V27 L47 41 L54 40 L52 20 L40 14 C38 18 35 19 32 19 C29 19 26 18 24 14 Z" fill="#FFC93C" /><path d="M19 46 H45 M24 14 C26 18 29 19 32 19 C35 19 38 18 40 14" stroke="#1F1A17" strokeWidth="2" /></g>
+    </svg>
+  );
+}
+
+function PictoRepasBoeuf({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E" /></g><g data-part="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC" /><path d="M22 30 C22 23 30 21 36 23 C43 25 45 31 42 37 C39 42 31 44 26 41 C23 39 22 35 22 30 Z" fill="#1F1A17" /><circle cx="37" cy="30" r="3.5" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoRepasPoisson({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E" /></g><g data-part="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC" /><ellipse cx="30" cy="33" rx="11" ry="7" fill="#2D4BFF" /><path d="M40 33 L48 27 L48 39 Z" fill="#2D4BFF" /><circle cx="25" cy="31" r="1.8" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoRepasPoulet({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E" /></g><g data-part="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC" /><ellipse cx="29" cy="31" rx="9" ry="7" transform="rotate(-35 29 31)" fill="#FFC93C" /><path d="M34 36 L41 43" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /><circle cx="42" cy="45" r="2.5" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoRepasVegetalien({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E" /></g><g data-part="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC" /><path d="M22 40 C22 28 30 21 42 21 C42 33 34 40 22 40 Z" fill="#2FBF71" /><path d="M22 40 L34 28" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /><circle cx="38" cy="40" r="2.5" fill="#FFC93C" /><circle cx="43" cy="36" r="2.5" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function PictoRepasVegetarien({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF4F2E" /></g><g data-part="objet"><circle cx="32" cy="33" r="18" fill="#FFF3DC" /><ellipse cx="27" cy="31" rx="8" ry="5" transform="rotate(-30 27 31)" fill="#2FBF71" /><ellipse cx="37" cy="29" rx="7" ry="4.5" transform="rotate(25 37 29)" fill="#2FBF71" /><circle cx="35" cy="39" r="4.5" fill="#FF4F2E" /><circle cx="27" cy="40" r="3" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
+function PictoSmartphone({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="22" y="11" width="20" height="40" rx="5" fill="#1F1A17" /><rect x="25" y="15" width="14" height="27" rx="2" fill="#FFF3DC" /><circle cx="32" cy="46.5" r="2" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoStreaming({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="12" y="16" width="40" height="27" rx="4" fill="#FFF3DC" /><path d="M28 23 L39 29.5 L28 36 Z" fill="#FF4F2E" /><path d="M24 49 H40" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoTelevision({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="10" y="14" width="44" height="30" rx="4" fill="#1F1A17" /><rect x="14" y="18" width="36" height="22" rx="2" fill="#FFF3DC" /><path d="M26 50 H38 M32 44 V50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoTer({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><rect x="19" y="14" width="26" height="30" rx="8" fill="#FFF3DC" /><rect x="23" y="19" width="18" height="10" rx="3" fill="#2D4BFF" /><circle cx="25" cy="37" r="2.5" fill="#FFC93C" /><circle cx="39" cy="37" r="2.5" fill="#FFC93C" /><path d="M23 45 L18 53 M41 45 L46 53" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoTgv({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M12 42 C12 25 25 16 46 16 H50 V42 Z" fill="#FFF3DC" /><path d="M24 21 H46 V29 H18 C19 25 21 23 24 21 Z" fill="#2D4BFF" /><rect x="13" y="35" width="37" height="3" fill="#FFC93C" /><path d="M18 43 L14 51 M44 43 L48 51" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoTshirt({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1" /></g><g data-part="objet"><path d="M24 14 L18 17 L10 26 L17 32 L21 29 V51 H43 V29 L47 32 L54 26 L46 17 L40 14 C38 18 35 19 32 19 C29 19 26 18 24 14 Z" fill="#FFF3DC" /><path d="M24 14 C26 18 29 19 32 19 C35 19 38 18 40 14" stroke="#1F1A17" strokeWidth="2" /></g>
+    </svg>
+  );
+}
+
+function PictoVelo({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><circle cx="20" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="44" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M20 40 L28 26 H40 L44 40 M28 26 L33 40 H20 M38 22 H44" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><path d="M25 22 H31" stroke="#FFC93C" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoVisio({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="15" y="16" width="34" height="23" rx="3" fill="#FFF3DC" /><circle cx="32" cy="25" r="4" fill="#1F1A17" /><path d="M25 35 C25 30 39 30 39 35 Z" fill="#1F1A17" /><path d="M10 43 H54 L50 48 H14 Z" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoVoiture({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M13 39 L17 29 C18 26 20 25 23 25 H41 C44 25 46 26 47 29 L51 39 V44 H13 Z" fill="#FFF3DC" /><path d="M20 34 L22 29 H42 L44 34 Z" fill="#2D4BFF" /><circle cx="22" cy="45" r="5" fill="#1F1A17" /><circle cx="42" cy="45" r="5" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function ScenePaysage({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={390} height={300} viewBox="0 0 390 300" fill="none" {...svgProps}>
+      {children}
+      <g data-part="ciel"><rect width="390" height="300" fill="#FFF3DC" /></g><g data-part="soleil"><circle cx="318" cy="66" r="42" fill="#FF4F2E" /></g><g data-part="nuage-1"><ellipse cx="86" cy="56" rx="44" ry="15" fill="#FF8FB1" /><ellipse cx="116" cy="44" rx="24" ry="12" fill="#FF8FB1" /></g><g data-part="nuage-2"><ellipse cx="226" cy="96" rx="26" ry="9" fill="#FF8FB1" /></g><g data-part="colline-arriere"><path d="M-30 250 C 60 150, 170 150, 250 250 Z" fill="#2D4BFF" /></g><g data-part="colline-avant"><path d="M140 255 C 230 165, 330 165, 430 250 Z" fill="#2FBF71" /></g><g data-part="sol"><rect y="240" width="390" height="60" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+export const generatedIllustrations: Record<IllustrationName, ComponentType<GeneratedSvgProps>> = {
+  "arbre-1-grand": Arbre1Grand,
+  "arbre-1-jeune": Arbre1Jeune,
+  "arbre-1-pousse": Arbre1Pousse,
+  "arbre-2-grand": Arbre2Grand,
+  "arbre-2-jeune": Arbre2Jeune,
+  "arbre-2-pousse": Arbre2Pousse,
+  "arbre-3-grand": Arbre3Grand,
+  "arbre-3-jeune": Arbre3Jeune,
+  "arbre-3-pousse": Arbre3Pousse,
+  "balance": Balance,
+  "brume": Brume,
+  "eclat": Eclat,
+  "fleur-1-fleurie": Fleur1Fleurie,
+  "fleur-1-pousse": Fleur1Pousse,
+  "fleur-2-fleurie": Fleur2Fleurie,
+  "fleur-2-pousse": Fleur2Pousse,
+  "fleur-3-fleurie": Fleur3Fleurie,
+  "fleur-3-pousse": Fleur3Pousse,
+  "oiseau": Oiseau,
+  "oiseau-endormi": OiseauEndormi,
+  "papillon": Papillon,
+  "picto-avion": PictoAvion,
+  "picto-bus": PictoBus,
+  "picto-chaussures": PictoChaussures,
+  "picto-garder": PictoGarder,
+  "picto-generique": PictoGenerique,
+  "picto-jean": PictoJean,
+  "picto-marche": PictoMarche,
+  "picto-metro": PictoMetro,
+  "picto-occasion": PictoOccasion,
+  "picto-ordinateur": PictoOrdinateur,
+  "picto-pull": PictoPull,
+  "picto-repas-boeuf": PictoRepasBoeuf,
+  "picto-repas-poisson": PictoRepasPoisson,
+  "picto-repas-poulet": PictoRepasPoulet,
+  "picto-repas-vegetalien": PictoRepasVegetalien,
+  "picto-repas-vegetarien": PictoRepasVegetarien,
+  "picto-smartphone": PictoSmartphone,
+  "picto-streaming": PictoStreaming,
+  "picto-television": PictoTelevision,
+  "picto-ter": PictoTer,
+  "picto-tgv": PictoTgv,
+  "picto-tshirt": PictoTshirt,
+  "picto-velo": PictoVelo,
+  "picto-visio": PictoVisio,
+  "picto-voiture": PictoVoiture,
+  "scene-paysage": ScenePaysage,
+};

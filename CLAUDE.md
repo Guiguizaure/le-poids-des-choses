@@ -29,13 +29,18 @@ Projet indépendant, non affilié à l'ADEME.
 ## Stack
 
 Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème dans
-`src/app/globals.css`, bloc `@theme`), Vitest, ESLint, Prettier, pnpm. Site statique
+`src/app/globals.css`, bloc `@theme`), GSAP + `@gsap/react` (animations), Vitest, ESLint,
+Prettier, pnpm. Site statique
 (`output: 'export'`, images non optimisées) hébergé sur Cloudflare Pages.
 
 ## Commandes
 
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
-- `pnpm build` — vérifie les données (`check-data`) puis export statique dans `out/`
+- `pnpm build` — convertit les illustrations, vérifie les données (`check-data`) puis export
+  statique dans `out/`
+- `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
+  (`src/components/illustrations/generated.tsx`) ; à relancer après chaque nouvel export,
+  et à commiter (un test échoue si le fichier généré n'est pas à jour)
 - `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
   `src/lib/data/gestures.generated.json` (jamais pendant le build). Commite le fichier généré.
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
@@ -43,8 +48,13 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
 
 ## Arborescence
 
-- `src/app` — pages et layout
-- `src/components` — composants
+- `src/app` — pages et layout ; `/labo` : banc d'essai des illustrations et animations
+  (noindex, non liée)
+- `src/components/illustrations` — `<Illustration>` et le fichier généré
+- `src/components/scene` — `Tree`, `Scale`, `Butterfly`, `Bird`, `Sparkle` (animés)
+- `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement)
+- `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
+- `src/lib/geometry` — géométrie pure (balance)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
   uniquement), adaptateur (`index.ts` : `getGestures`,
   `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
@@ -52,7 +62,7 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
   `gardenStage`, `isAsleep`, `formatMass`)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
-- `scripts` — scripts de données (locaux)
+- `scripts` — scripts de données et de conversion des illustrations
 - `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
 
 ## Conventions
@@ -79,4 +89,14 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
   `PARCEL_BY_GESTURE_ID` (script) ; pas de ligne adaptée = pas d'option, jamais de valeur
   inventée. Hypothèses détaillées dans `docs/methode.md`.
 - Le site est en `noindex` tant qu'il n'est pas lancé (`metadata.robots` du layout).
-- SVG : voir `docs/svg-conventions.md`.
+- SVG : voir `docs/svg-conventions.md`. Jamais d'`id` dans le rendu : les calques sont des
+  `data-part`, ciblés par `[data-part="…"]` dans la ref de l'instance.
+- Animations : GSAP via `useMotion` (`gsap.matchMedia`). Tout mouvement est coupé ou réduit à
+  un fondu court sous `prefers-reduced-motion` (ou `MotionProvider forceReduced`). Les
+  calculs géométriques vont dans des fonctions pures testées (`src/lib/geometry`).
+- Code en anglais sans exception (composants : `Tree`, `Scale`, `Butterfly`, `Bird`,
+  `Sparkle`). Restent en français : les noms de fichiers d'illustration, les `data-part` (noms
+  de calques) et les valeurs qui les reprennent (`stage="pousse"`). Fichiers composants en
+  PascalCase.
+- Lot interface (à venir) : pour les objets, trois options (Neuf / D'occasion / Je garde le
+  mien), avec sous « D'occasion » un interrupteur « Livré en colis » activé par défaut.
