@@ -18,8 +18,10 @@ Projet indépendant, non affilié à l'ADEME.
   et `test` sont autorisés.
 - Aucun secret dans le dépôt (`.env*` ignorés). La clé API ADEME ne sert qu'au script de
   données, en local.
-- Toute valeur de test porte `fictive: true`. Plus tard, la construction de production
-  devra échouer s'il en reste une.
+- Toute valeur de test porte `fictive: true` (et `source: "fictive"`) et n'est jamais citée.
+  Elles vivent dans `src/lib/data/test-gestures.ts`. `scripts/check-data.ts` (lancé par
+  `pnpm build`) fait échouer la construction s'il reste une donnée fictive, mais seulement
+  si `STRICT_DATA=1` est défini (à activer chez Cloudflare au lancement).
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -33,15 +35,19 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
 ## Commandes
 
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
-- `pnpm build` — export statique dans `out/`
+- `pnpm build` — vérifie les données (`check-data`) puis export statique dans `out/`
+- `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
 - `pnpm lint` · `pnpm test` · `pnpm format`
 
 ## Arborescence
 
 - `src/app` — pages et layout
 - `src/components` — composants
-- `src/lib/data` — adaptateur de données
-- `src/lib/calc` — calculs
+- `src/lib/data` — types, données de test, adaptateur (`index.ts` : `getGestures`,
+  `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
+  gestes que par cet adaptateur
+- `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
+  `gardenStage`, `isAsleep`, `formatMass`)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
 - `scripts` — scripts de données (locaux)
 - `docs` — conventions et `journal.md`
@@ -53,5 +59,9 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
+- Règle du jardin : choisir le plus léger ajoute (lourd − léger) kg évités ; choisir le plus
+  lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours
+  sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Seuils des stades
+  provisoires : `GARDEN_STAGE_THRESHOLDS_KG`.
 - Le site est en `noindex` tant qu'il n'est pas lancé (`metadata.robots` du layout).
 - SVG : voir `docs/svg-conventions.md`.
