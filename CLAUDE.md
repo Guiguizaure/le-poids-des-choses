@@ -86,7 +86,7 @@ Prettier, pnpm. Site statique
   endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes (`text.ts`)
 - `src/components/garden` — `<Garden entries now highlightId />`, écran `/jardin`
 - `src/components/compare` — parcours : `CompareFlow` (piloté par l'URL), `GestureChooser`
-  (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a / 05b)
+  (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a v2 / 05b v2, carte de révélation)
 - `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
   « Mon jardin · X kg évités »
 - `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
@@ -139,7 +139,8 @@ Prettier, pnpm. Site statique
   PascalCase.
 - Maquettes Figma (fichier `PZ5vEqe5GthiUzst3AfsYU`, page « Écrans mobiles · Papiers
   découpés ») : 01 Accueil, 02 Choisir un geste, 03 Duel, 03b Duel objet, 04 Mon jardin,
-  05a / 05b Choix noté, 07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
+  05a v2 Révélation / 05b v2 Choix lourd (nœuds 37:58 et 37:96 ; remplacent 05a / 05b),
+  07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
   toucher à un écran ; tutoiement et textes repris tels quels.
 - Parcours de comparaison (`/comparer`, état dans l'URL, lu côté client) :
   - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
@@ -156,7 +157,15 @@ Prettier, pnpm. Site statique
   - Objets : Neuf / D'occasion (interrupteur « Livré en colis », activé par défaut) / Je
     garde le mien. L'option retenue est comparée au neuf ; le neuf, à l'occasion telle que
     réglée (donc un choix plus lourd).
-  - « Je choisis … » : `useJournal().add(…)`, puis 05a (plante, rafale, animal) ou 05b.
+  - « Je choisis … » : `useJournal().add(…)`, puis la carte de révélation (pas de jardin) :
+    choix léger → vitrine avec la plante EXACTE du jardin (`revealForEntry` : même calcul
+    que `buildGarden`, jardin avec / sans l'entrée), éclat, animal débloqué qui entre,
+    « Et un papillon arrive ! », « Aller la planter » → `/jardin?nouveau=<id>` ; choix lourd
+    → balance qui oscille puis se pose, « C’est noté ». La carte se pose comme un papier.
+  - `/jardin?nouveau=<id>` : la scène s'affiche sans ce choix (`Garden highlightId`), puis
+    la plante pousse (ou grandit), rafale, animal qui entre par le bord, message
+    `aria-live` ; le paramètre est retiré (`replaceState`) après 4 s. Lu avec
+    `useSearchParam` (pas `useSearchParams`, qui ferait rendre toute la page côté client).
 - Coup de vent : `playGust(scene)` ; chaque plante réagit quand le front l'atteint
   (`gustDelay`, selon sa position x) et se couche de 6 à 10° ; papillon et abeille sont
   déportés. Rafales automatiques (`useAutoGusts`) toutes les 25 à 45 s, onglet visible
@@ -219,6 +228,10 @@ Prettier, pnpm. Site statique
   - performance : la 404 racine est embarquée dans toutes les pages, elle doit rester sans
     composant client ; l'écran de résultat est chargé à la demande ; les animations
     d'ambiance démarrent deux images après l'affichage (`useMotion`) ;
+  - micro-interactions (CSS, `globals.css`) : `press` (survol / toucher), `animate-enter`
+    (apparition des pages et étapes, depuis une opacité de 0,35 pour ne pas retarder le
+    LCP), `animate-pop` (badges), `animate-select` (cartes choisies) — toujours avec
+    `motion-reduce:animate-none` ; compteur du total évité (`CountUp`) ;
   - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
     (à compléter si une nouvelle paire apparaît).
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous

@@ -435,3 +435,33 @@ bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final
   scripts que Next insère dans chaque page de l'export.
 - Duel et jardin restent au seuil de 95 : leur contenu dépend de l'URL ou du carnet, lus
   côté client dans un export statique ; le socle React/Next représente l'essentiel du JS.
+
+## 2026-10-05 — Lot 5d : révélation et micro-interactions (branche feat/reveal)
+
+**Demandé** : carte de révélation après un choix (maquettes 05a v2 et 05b v2), arrivée dans
+le jardin par `?nouveau=`, micro-interactions discrètes, sans régression Lighthouse.
+
+**Proposé / fait** :
+
+- `revealForEntry` (pure, testée) : la plante exacte qu'un choix fait pousser, ou fait
+  grandir quand le jardin est plein, et l'animal débloqué ; textes « Une fleur va pousser
+  dans ton jardin », « Et un papillon arrive ! » (accords).
+- Carte de révélation : posée comme un papier (descente, légère rotation, petit rebond),
+  vitrine (bout de colline, plante qui pousse avec l'éclat, animal qui entre en volant ou en
+  marchant) ; choix lourd : balance qui oscille puis se stabilise. Focus sur le titre de la
+  carte, arrivée de l'animal annoncée (`aria-live`).
+- `/jardin?nouveau=<id>` : scène sans le choix, puis plante, rafale, animal par le bord,
+  message, URL nettoyée. Sans paramètre, rien ne change.
+- Micro-interactions en CSS (aucune bibliothèque) et compteur du total évité en GSAP.
+- Vérifié dans Chrome : carte, éclat, papillon, arrivée au jardin, URL nettoyée, compteur ;
+  choix lourd avec focus sur « C’est noté ».
+- Lighthouse (5 passages, build `SITE_LAUNCHED=1`) : Accueil 97-100, Duel 95, Jardin
+  94-96, Méthode 98-100 ; accessibilité, bonnes pratiques et SEO à 100.
+
+**Gardé / changé** :
+
+- L'apparition des pages partait d'une opacité nulle : le duel tombait à 92-93 (LCP
+  retardé) ; elle part maintenant de 0,35.
+- Le test axe attend la fin des apparitions : sinon, un texte en plein fondu faisait
+  échouer le contraste de temps en temps.
+- La légende « Animation : … » des maquettes est une note de conception, non affichée.
