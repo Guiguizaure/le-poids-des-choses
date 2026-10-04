@@ -234,3 +234,14 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - Catégorie numérique affichée « Écrans » (absente de la maquette, à valider).
 - « Exporter » reste aussi dans la barre du haut, comme sur la maquette (doublon possible
   avec les boutons du bas).
+
+**Ajustements après relecture (2026-10-04)** :
+
+- Catégorie numérique affichée « Numérique », comme dans les maquettes.
+- « Exporter » retiré de la barre du haut de /jardin ; restent les boutons du bas.
+- Collines extraites automatiquement de `scene-paysage.svg` par `pnpm illustrations`
+  (`scripts/scene-geometry.ts` → `src/lib/garden/scene.generated.ts`, avec le haut du sol) ;
+  `scene.ts` ne recopie plus rien. Tests : extraction, échec si une colline manque ou n'a
+  pas de chemin, fichier généré à jour.
+- `gardenStage` et `GARDEN_STAGE_THRESHOLDS_KG` retirés avec leurs tests (remplacés par le
+  modèle par plante).

@@ -39,8 +39,10 @@ Prettier, pnpm. Site statique
 - `pnpm build` — convertit les illustrations, vérifie les données (`check-data`) puis export
   statique dans `out/`
 - `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
-  (`src/components/illustrations/generated.tsx`) ; à relancer après chaque nouvel export,
-  et à commiter (un test échoue si le fichier généré n'est pas à jour)
+  (`src/components/illustrations/generated.tsx`) et extrait de `scene-paysage.svg` le
+  contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`) ; à relancer
+  après chaque nouvel export, et à commiter (des tests échouent si les fichiers générés ne
+  sont pas à jour ou si les deux collines sont introuvables)
 - `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
   `src/lib/data/gestures.generated.json` (jamais pendant le build). Commite le fichier généré.
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
@@ -60,7 +62,7 @@ Prettier, pnpm. Site statique
   export et import (`merge.ts`), stockage avec repli en mémoire (`store.ts`), création
   d'une entrée (`entry.ts`), textes d'une entrée (`display.ts`), hook `useJournal`
 - `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
-  endormissement), géométrie de la scène (`scene.ts`), textes (`text.ts`)
+  endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes (`text.ts`)
 - `src/components/garden` — `<Garden entries now highlightId />`, écran `/jardin`
 - `src/lib/geometry` — géométrie pure (balance, délais et inclinaisons du coup de vent)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
@@ -68,7 +70,7 @@ Prettier, pnpm. Site statique
   `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
   gestes que par cet adaptateur
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
-  `gardenStage`, `isAsleep`, `formatMass`)
+  `isAsleep`, `formatMass`, modes d'acquisition)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
 - `scripts` — scripts de données et de conversion des illustrations
 - `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
@@ -83,8 +85,8 @@ Prettier, pnpm. Site statique
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
 - Règle du jardin : choisir le plus léger ajoute (lourd − léger) kg évités ; choisir le plus
   lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours
-  sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Seuils des stades
-  provisoires : `GARDEN_STAGE_THRESHOLDS_KG`.
+  sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Stades : par plante
+  (`PLANT_STAGE_KG`, voir le modèle du jardin plus bas).
 - Source des données : CSV public Impact CO2 (ADEME), https://impactco2.fr/equivalents.csv,
   sans clé API. La sélection des gestes (ID du CSV, libellé, catégorie, unité) est la
   constante `SELECTION` de `scripts/build-gestures.ts` ; le script échoue si un ID disparaît
@@ -125,7 +127,8 @@ Prettier, pnpm. Site statique
   - type (arbre ou fleur 1-3) tiré de l'id de l'entrée ; stade selon les kg du choix
     (`PLANT_STAGE_KG`, provisoire : < 1 kg pousse, 1-20 jeune/fleurie, > 20 grand) ;
   - 40 emplacements (`GARDEN_SLOTS`, 5 rangées) posés sur la ligne des collines de
-    `scene-paysage` (`src/lib/garden/scene.ts` : à mettre à jour si les collines changent) ;
+    `scene-paysage`, extraite automatiquement du SVG (calques `colline-arriere`,
+    `colline-avant`, `sol`) : redessiner les collines suffit, puis `pnpm illustrations` ;
     les plus grands vers l'arrière ; au-delà de 40, les nouveaux choix font grandir les
     plus anciennes plantes ;
   - animaux selon le nombre de choix légers (`ANIMAL_UNLOCKS`, provisoire) : papillon 1,
