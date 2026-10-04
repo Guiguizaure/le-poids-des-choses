@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import { compare } from "@/lib/calc";
 import { missingLegalFields } from "@/lib/legal";
+import { getSeasonalProducts } from "@/lib/saison";
 import { checkData } from "./check";
 import generated from "./gestures.generated.json";
 import {
@@ -194,8 +195,21 @@ describe("checkData", () => {
       checkData([real, { ...real, id: "x", source: "fictive" }], true).ok,
     ).toBe(false);
   });
-  it("strict : passe avec les données réelles", () => {
+  it("strict : passe avec les données réelles (gestes et produits de saison)", () => {
     expect(checkData(getGestures(), true).ok).toBe(true);
+    expect(
+      checkData([...getGestures(), ...getSeasonalProducts()], true).ok,
+    ).toBe(true);
+  });
+  it("strict : un produit de saison fictif fait aussi échouer", () => {
+    const fruit = {
+      ...getSeasonalProducts()[0],
+      slug: "fruit-test",
+      fictive: true,
+    };
+    const result = checkData([fruit], true);
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("fruit-test");
   });
 });
 

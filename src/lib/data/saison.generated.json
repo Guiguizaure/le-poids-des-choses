@@ -1,0 +1,1240 @@
+{
+  "downloadedAt": "2026-10-04T21:23:48.830Z",
+  "source": "https://impactco2.fr/api/v1/fruitsetlegumes",
+  "tool": "https://impactco2.fr/outils/fruitsetlegumes",
+  "authenticated": false,
+  "products": [
+    {
+      "slug": "abricot",
+      "label": "Abricot",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "kgCo2ePerKg": 1.452,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/abricot"
+    },
+    {
+      "slug": "ail",
+      "label": "Ail",
+      "category": "herbes",
+      "months": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.3835,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/ail"
+    },
+    {
+      "slug": "ananas",
+      "label": "Ananas",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 1.361,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/ananas"
+    },
+    {
+      "slug": "artichaut",
+      "label": "Artichaut",
+      "category": "légumes",
+      "months": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 2.556,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/artichaut"
+    },
+    {
+      "slug": "asperge",
+      "label": "Asperge",
+      "category": "légumes",
+      "months": [
+        4,
+        5,
+        6
+      ],
+      "kgCo2ePerKg": 1.639,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/asperge"
+    },
+    {
+      "slug": "aubergine",
+      "label": "Aubergine",
+      "category": "légumes",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.472,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/aubergine"
+    },
+    {
+      "slug": "avocat",
+      "label": "Avocat",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 1.553,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/avocat"
+    },
+    {
+      "slug": "banane",
+      "label": "Banane",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.9085,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/banane"
+    },
+    {
+      "slug": "betterave",
+      "label": "Betterave",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4074,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/betterave"
+    },
+    {
+      "slug": "blette",
+      "label": "Blette",
+      "category": "légumes",
+      "months": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "kgCo2ePerKg": 0.5811,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/blette"
+    },
+    {
+      "slug": "brocoli",
+      "label": "Brocoli",
+      "category": "légumes",
+      "months": [
+        9,
+        10,
+        11
+      ],
+      "kgCo2ePerKg": 0.9507,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/brocoli"
+    },
+    {
+      "slug": "carambole",
+      "label": "Carambole",
+      "category": "fruits",
+      "months": [
+        1,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.5535,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/carambole"
+    },
+    {
+      "slug": "carotte",
+      "label": "Carotte",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.3961,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/carotte"
+    },
+    {
+      "slug": "cassis",
+      "label": "Cassis",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "kgCo2ePerKg": 1.904,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/cassis"
+    },
+    {
+      "slug": "celeri",
+      "label": "Céleri",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.7157,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/celeri"
+    },
+    {
+      "slug": "cerise",
+      "label": "Cerise",
+      "category": "fruits",
+      "months": [
+        6,
+        7
+      ],
+      "kgCo2ePerKg": 1.745,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/cerise"
+    },
+    {
+      "slug": "champignonmorille",
+      "label": "Champignon (morille crue)",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 6.175,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/champignonmorille"
+    },
+    {
+      "slug": "chataigne",
+      "label": "Châtaigne",
+      "category": "fruits à coque et graines oléagineuses",
+      "months": [
+        10,
+        11
+      ],
+      "kgCo2ePerKg": 1.944,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/chataigne"
+    },
+    {
+      "slug": "chou",
+      "label": "Chou",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.8476,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/chou"
+    },
+    {
+      "slug": "choudebruxelles",
+      "label": "Chou de Bruxelles",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.5621,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/choudebruxelles"
+    },
+    {
+      "slug": "choufleur",
+      "label": "Chou-fleur",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.7207,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/choufleur"
+    },
+    {
+      "slug": "citron",
+      "label": "Citron",
+      "category": "fruits",
+      "months": [
+        1,
+        2
+      ],
+      "kgCo2ePerKg": 0.7636,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/citron"
+    },
+    {
+      "slug": "clementine",
+      "label": "Clémentine",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 1.302,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/clementine"
+    },
+    {
+      "slug": "coing",
+      "label": "Coing",
+      "category": "fruits",
+      "months": [
+        10
+      ],
+      "kgCo2ePerKg": 0.5615,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/coing"
+    },
+    {
+      "slug": "concombre",
+      "label": "Concombre",
+      "category": "légumes",
+      "months": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 0.5123,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/concombre"
+    },
+    {
+      "slug": "courge",
+      "label": "Courge",
+      "category": "légumes",
+      "months": [
+        1,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.6382,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/courge"
+    },
+    {
+      "slug": "courgette",
+      "label": "Courgette",
+      "category": "légumes",
+      "months": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 0.4985,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/courgette"
+    },
+    {
+      "slug": "cresson",
+      "label": "Cresson",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.8681,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/cresson"
+    },
+    {
+      "slug": "datte",
+      "label": "Datte",
+      "category": "fruits",
+      "months": [
+        1,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 2.893,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/datte"
+    },
+    {
+      "slug": "echalote",
+      "label": "Échalote",
+      "category": "légumes",
+      "months": [
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.3936,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/echalote"
+    },
+    {
+      "slug": "endive",
+      "label": "Endive",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10
+      ],
+      "kgCo2ePerKg": 0.861,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/endive"
+    },
+    {
+      "slug": "epinard",
+      "label": "Épinard",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4226,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/epinard"
+    },
+    {
+      "slug": "fenouil",
+      "label": "Fenouil",
+      "category": "légumes",
+      "months": [
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "kgCo2ePerKg": 1.018,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/fenouil"
+    },
+    {
+      "slug": "figue",
+      "label": "Figue",
+      "category": "fruits",
+      "months": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 0.6115,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/figue"
+    },
+    {
+      "slug": "fraise",
+      "label": "Fraise",
+      "category": "fruits",
+      "months": [
+        5,
+        6,
+        7
+      ],
+      "kgCo2ePerKg": 0.5111,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/fraise"
+    },
+    {
+      "slug": "framboise",
+      "label": "Framboise",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "kgCo2ePerKg": 1.543,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/framboise"
+    },
+    {
+      "slug": "fruitdelapassion",
+      "label": "Fruit de la passion",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.9376,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/fruitdelapassion"
+    },
+    {
+      "slug": "grenade",
+      "label": "Grenade",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4985,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/grenade"
+    },
+    {
+      "slug": "groseille",
+      "label": "Groseille",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "kgCo2ePerKg": 1.895,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/groseille"
+    },
+    {
+      "slug": "haricotvert",
+      "label": "Haricot vert (cru)",
+      "category": "légumes",
+      "months": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 0.4465,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/haricotvert"
+    },
+    {
+      "slug": "kaki",
+      "label": "Kaki",
+      "category": "fruits",
+      "months": [
+        1,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.9495,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/kaki"
+    },
+    {
+      "slug": "kiwi",
+      "label": "Kiwi",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 1.002,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/kiwi"
+    },
+    {
+      "slug": "laitue",
+      "label": "Laitue",
+      "category": "légumes",
+      "months": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.8681,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/laitue"
+    },
+    {
+      "slug": "mache",
+      "label": "Mâche",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.8681,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/mache"
+    },
+    {
+      "slug": "mais",
+      "label": "Maïs",
+      "category": "pâtes, riz et céréales",
+      "months": [
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.5688,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/mais"
+    },
+    {
+      "slug": "mandarine",
+      "label": "Mandarine",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4684,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/mandarine"
+    },
+    {
+      "slug": "mangue",
+      "label": "Mangue (importée par avion)",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 11.66,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/mangue"
+    },
+    {
+      "slug": "manguebateau",
+      "label": "Mangue (importée par bateau)",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.7275,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/manguebateau"
+    },
+    {
+      "slug": "melon",
+      "label": "Melon",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.9783,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/melon"
+    },
+    {
+      "slug": "mure",
+      "label": "Mûre",
+      "category": "fruits",
+      "months": [
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 1.248,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/mure"
+    },
+    {
+      "slug": "myrtille",
+      "label": "Myrtille",
+      "category": "fruits",
+      "months": [
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.9216,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/myrtille"
+    },
+    {
+      "slug": "navet",
+      "label": "Navet",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.3961,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/navet"
+    },
+    {
+      "slug": "nectarine",
+      "label": "Nectarine",
+      "category": "fruits",
+      "months": [
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.6136,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/nectarine"
+    },
+    {
+      "slug": "noisette",
+      "label": "Noisette",
+      "category": "fruits à coque et graines oléagineuses",
+      "months": [
+        9,
+        10,
+        11
+      ],
+      "kgCo2ePerKg": 4.811,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/noisette"
+    },
+    {
+      "slug": "noix",
+      "label": "Noix",
+      "category": "fruits à coque et graines oléagineuses",
+      "months": [
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 4.114,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/noix"
+    },
+    {
+      "slug": "noixdecoco",
+      "label": "Noix de coco",
+      "category": "fruits à coque et graines oléagineuses",
+      "months": [
+        1,
+        2,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 2.411,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/noixdecoco"
+    },
+    {
+      "slug": "oignon",
+      "label": "Oignon",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4205,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/oignon"
+    },
+    {
+      "slug": "orange",
+      "label": "Orange",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3
+      ],
+      "kgCo2ePerKg": 0.6777,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/orange"
+    },
+    {
+      "slug": "pamplemousse",
+      "label": "Pamplemousse",
+      "category": "fruits",
+      "months": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "kgCo2ePerKg": 0.9256,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/pamplemousse"
+    },
+    {
+      "slug": "panais",
+      "label": "Panais",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4943,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/panais"
+    },
+    {
+      "slug": "pasteque",
+      "label": "Pastèque",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.6805,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/pasteque"
+    },
+    {
+      "slug": "peche",
+      "label": "Pêche",
+      "category": "fruits",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.5905,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/peche"
+    },
+    {
+      "slug": "petitpois",
+      "label": "Petit pois",
+      "category": "légumes",
+      "months": [
+        5,
+        6,
+        7
+      ],
+      "kgCo2ePerKg": 0.7018,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/petitpois"
+    },
+    {
+      "slug": "poire",
+      "label": "Poire",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.3873,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/poire"
+    },
+    {
+      "slug": "poireau",
+      "label": "Poireau",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.6114,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/poireau"
+    },
+    {
+      "slug": "poivron",
+      "label": "Poivron",
+      "category": "légumes",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.7154,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/poivron"
+    },
+    {
+      "slug": "pomme",
+      "label": "Pomme",
+      "category": "fruits",
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4082,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/pomme"
+    },
+    {
+      "slug": "potiron",
+      "label": "Potiron",
+      "category": "légumes",
+      "months": [
+        1,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.6382,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/potiron"
+    },
+    {
+      "slug": "prune",
+      "label": "Prune",
+      "category": "fruits",
+      "months": [
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 1.035,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/prune"
+    },
+    {
+      "slug": "radis",
+      "label": "Radis",
+      "category": "légumes",
+      "months": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "kgCo2ePerKg": 0.3847,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/radis"
+    },
+    {
+      "slug": "raisin",
+      "label": "Raisin",
+      "category": "fruits",
+      "months": [
+        9,
+        10
+      ],
+      "kgCo2ePerKg": 0.5093,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/raisin"
+    },
+    {
+      "slug": "reineclaude",
+      "label": "Reine claude",
+      "category": "fruits",
+      "months": [
+        9
+      ],
+      "kgCo2ePerKg": 1.044,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/reineclaude"
+    },
+    {
+      "slug": "rhubarbe",
+      "label": "Rhubarbe",
+      "category": "fruits",
+      "months": [
+        4,
+        5,
+        6
+      ],
+      "kgCo2ePerKg": 0.7015,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/rhubarbe"
+    },
+    {
+      "slug": "salsifis",
+      "label": "Salsifis",
+      "category": "légumes",
+      "months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4943,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/salsifis"
+    },
+    {
+      "slug": "tomate",
+      "label": "Tomate",
+      "category": "légumes",
+      "months": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "kgCo2ePerKg": 0.6256,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/tomate"
+    },
+    {
+      "slug": "topinambour",
+      "label": "Topinambour",
+      "category": "pommes de terre et autres tubercules",
+      "months": [
+        1,
+        2,
+        11,
+        12
+      ],
+      "kgCo2ePerKg": 0.4913,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceUrl": "https://impactco2.fr/outils/fruitsetlegumes/topinambour"
+    }
+  ]
+}
