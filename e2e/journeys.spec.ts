@@ -60,7 +60,7 @@ function stemStroke(page: import("@playwright/test").Page) {
     });
 }
 
-test("petit choix : une petite pousse, agrandie dans la vitrine, au trait du jardin", async ({
+test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au trait du jardin", async ({
   page,
 }) => {
   await page.goto("/comparer?a=velo&b=voiture&q=2");
@@ -85,6 +85,9 @@ test("petit choix : une petite pousse, agrandie dans la vitrine, au trait du jar
     )
     .toBeGreaterThan(80);
 
+  // Pas d'éclat dans la vitrine : il est réservé au jardin.
+  await expect(page.locator("[data-sparkle]")).toHaveCount(0);
+
   // Le trait n'est pas agrandi : même épaisseur que dans le jardin (à l'écran, à la mise en
   // page près : la vitrine et la scène n'ont pas tout à fait la même échelle).
   await expect.poll(() => stemStroke(page)).toBeLessThan(3);
@@ -94,6 +97,9 @@ test("petit choix : une petite pousse, agrandie dans la vitrine, au trait du jar
   await expect(
     page.getByRole("img", { name: /Jardin : 1 plante/ }),
   ).toBeVisible();
+  // Dans le jardin, la plante pousse à sa place avec l'éclat.
+  await expect(page.locator("[data-sparkle]")).toHaveCount(1);
+  await expect(page.locator("[data-sparkle]")).toBeVisible();
   await expect
     .poll(async () => Math.abs((await stemStroke(page)) - inVitrine))
     .toBeLessThan(0.5);

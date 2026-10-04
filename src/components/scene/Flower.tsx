@@ -18,8 +18,6 @@ type FlowerProps = {
   still?: boolean;
   /** Pousse depuis le pied à l'apparition (nouvelle plante). */
   popIn?: boolean;
-  /** Agrandissement du dessin (vitrine) : l'éclat garde sa taille. */
-  zoom?: number;
   /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
   strokeScale?: number;
 };
@@ -33,7 +31,6 @@ export function Flower({
   sparkle = true,
   still,
   popIn,
-  zoom,
   strokeScale,
 }: FlowerProps) {
   return (
@@ -47,7 +44,6 @@ export function Flower({
       sparkle={sparkle}
       still={still}
       popIn={popIn}
-      zoom={zoom}
       strokeScale={strokeScale}
     />
   );

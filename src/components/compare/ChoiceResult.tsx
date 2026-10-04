@@ -131,7 +131,7 @@ function Vitrine({
               stage={plant.stage as "pousse" | "jeune" | "grand"}
               className="w-full"
               popIn
-              zoom={fit.zoom}
+              sparkle={false}
               strokeScale={fit.strokeScale}
             />
           ) : (
@@ -140,7 +140,7 @@ function Vitrine({
               stage={plant.stage as "pousse" | "fleurie"}
               className="w-full"
               popIn
-              zoom={fit.zoom}
+              sparkle={false}
               strokeScale={fit.strokeScale}
             />
           )}
@@ -157,7 +157,8 @@ function Vitrine({
 
 /**
  * Après un choix (maquettes 05a v2 et 05b v2) : une carte se pose comme un papier. Choix léger :
- * la plante exacte que ce choix fera pousser, l'éclat, l'animal éventuel, « Aller la planter ».
+ * la plante exacte que ce choix fera pousser (sans éclat : il est réservé au jardin, quand la
+ * plante pousse à sa place), l'animal éventuel, « Aller la planter ».
  * Choix plus lourd : la balance oscille puis se stabilise, « C’est noté ».
  */
 export function ChoiceResult({

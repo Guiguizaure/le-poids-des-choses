@@ -1,11 +1,11 @@
-// Mentions légales : éditeur du site. Les emplacements entre crochets sont À REMPLIR avant le
-// lancement ; `STRICT_DATA=1 pnpm build` échoue tant qu'il en reste (scripts/check-data.ts).
+// Mentions légales : éditeur du site. Un emplacement entre crochets ([NOM]…) serait à remplir :
+// `STRICT_DATA=1 pnpm build` échoue tant qu'il en reste (scripts/check-data.ts).
 
 export const PUBLISHER = {
-  name: "[NOM]",
-  siret: "[SIRET]",
-  address: "[ADRESSE]",
-  email: "[EMAIL]",
+  name: "Guillaume Salle",
+  siret: "93169536500011",
+  address: "193 impasse d’azur, 83140, Six-Fours-Les-Plages",
+  email: "webjunopro@gmail.com",
 } as const;
 
 /** Hébergeur (vérifié sur cloudflare.com : conditions d'utilisation, politique de confidentialité). */
