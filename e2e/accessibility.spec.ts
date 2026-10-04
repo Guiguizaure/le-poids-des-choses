@@ -86,6 +86,25 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     await expectNoAxeViolations(page);
   });
 
+  test("jardin avec l'oiseau (bouton d'envol) et « Le savais-tu ? »", async ({
+    page,
+  }) => {
+    await seedJournal(
+      page,
+      Array.from({ length: 5 }, (_, i) =>
+        entry(`axe-oiseau-${i}`, 4.1, 10 + i),
+      ),
+    );
+    await page.goto("/jardin");
+    await expect(
+      page.getByRole("button", { name: "Faire s’envoler l’oiseau" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("complementary", { name: "Le savais-tu ?" }),
+    ).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+
   test("écran de résultat (choix léger)", async ({ page }) => {
     await page.goto("/comparer?a=tgv&b=avion&q=300");
     await page.getByRole("button", { name: "Je choisis le TGV" }).click();

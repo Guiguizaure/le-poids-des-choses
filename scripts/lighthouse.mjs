@@ -11,6 +11,7 @@ const BASE = (process.env.BASE_URL ?? "http://localhost:4322").replace(
 );
 const PAGES = [
   ["Accueil", "/"],
+  ["Comparer (choix des gestes)", "/comparer"],
   ["Duel (TGV, avion)", "/comparer?a=tgv&b=avion&q=300"],
   ["Mon jardin", "/jardin"],
   ["Méthode", "/methode"],
