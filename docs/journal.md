@@ -174,6 +174,7 @@ endormies, vent), composants animés, pousse plus marquée, coup de vent manuel 
 - `fleur-3-fleurie` : brins verts sur sol vert, seules les baies se voient sur la scène.
 
 **Ajustements après relecture (2026-10-04)** :
+
 - `vent.svg` : traits en encre #1F1A17, épaisseur 3 (mêmes calques) : visibles sur toute la
   scène, ciel compris.
 - `fleur-3-pousse` et `fleur-3-fleurie` : brins en soleil #FFC93C (herbes sèches), baies
@@ -182,3 +183,14 @@ endormies, vent), composants animés, pousse plus marquée, coup de vent manuel 
   testée) ; demi-tour animé à chaque changement de direction, y compris avant l'envol de
   retour. Déplacement, orientation et dandinement sont sur trois niveaux séparés.
 - Contrat `specs.ts` inchangé ; `generated.tsx` régénéré.
+
+**Correctifs d'illustrations (2026-10-04)** :
+
+- 10 SVG remplacés depuis `le-poids-des-choses-illustrations-correctifs.zip` (pousses
+  d'arbres, fleurs, vent) ; mêmes tailles et calques, contrat inchangé. Feuilles en sapin
+  #1B6B45, baies de la fleur 3 en tomate, vent en encre (épaisseur 2,5 dans le fichier
+  fourni). `fleur-3-pousse` était déjà identique à la version précédente.
+- Couleur `sapin` (#1B6B45) ajoutée au thème Tailwind et documentée comme réservée aux
+  feuilles.
+- Orientation de la coccinelle : déjà faite dans le commit précédent (`headingAngle`), rien
+  à changer.

@@ -70,7 +70,8 @@ Prettier, pnpm. Site statique
 ## Conventions
 
 - Tokens de design : couleurs `creme`, `encre`, `texte-attenue`, `blanc`, `tomate`,
-  `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose` ; polices
+  `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
+  réservée aux feuilles) ; polices
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.

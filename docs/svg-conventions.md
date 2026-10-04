@@ -44,6 +44,16 @@ autour du pivot et les plateaux suivent ses extrémités, le feuillage se balanc
 3. Cocher **« Inclure l'attribut id »** : les noms de calques deviennent les `id`.
 4. Déposer le fichier dans `public/illustrations/`, puis lancer `pnpm illustrations`.
 
+## Couleurs
+
+Uniquement les couleurs du thème (`src/app/globals.css`) : crème #FFF3DC, encre #1F1A17,
+tomate #FF4F2E, pomme #2FBF71, outremer #2D4BFF, soleil #FFC93C, rose #FF8FB1…
+
+- **Sapin #1B6B45 est réservé aux feuilles** (`feuilles`, `feuillage` des pousses et des
+  fleurs) : le vert pomme du sol les faisait disparaître.
+- Le sol et les collines restent en pomme ; ne pas y poser de détail pomme.
+- Les traits de `vent` sont en encre, pour se voir aussi sur le ciel crème.
+
 Garder les couleurs en attributs de présentation (`fill`, `stroke`), pas de texte non
 vectorisé, pas d'image intégrée.
 
