@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "tsx scripts/build-illustrations.ts && tsx scripts/check-data.ts && next build",
+    "build": "tsx scripts/build-illustrations.ts && tsx scripts/build-images.ts && tsx scripts/check-data.ts && next build",
     "lint": "eslint",
     "build-gestures": "tsx scripts/build-gestures.ts",
     "check-data": "tsx scripts/check-data.ts",
     "test": "vitest run",
     "format": "prettier --write .",
-    "illustrations": "tsx scripts/build-illustrations.ts"
+    "illustrations": "tsx scripts/build-illustrations.ts",
+    "images": "tsx scripts/build-images.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -20,6 +21,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
