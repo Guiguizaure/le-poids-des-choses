@@ -141,3 +141,56 @@ règle « code en anglais » sans exception : `Tree`, `Scale`, `Butterfly`, `Bir
 (et `playSparkle`, prop `sparkle` de `Tree`). Le français reste pour les fichiers
 d'illustration et les `data-part`. Exception retirée de `CLAUDE.md`. Rebond de la balance
 gardé tel quel.
+
+## 2026-10-04 — Lot 3b : animaux, pousse plus visible, coup de vent (branche feat/wind-animals)
+
+**Demandé** : 7 nouveaux SVG (abeille, coccinelle, escargot et hérisson avec versions
+endormies, vent), composants animés, pousse plus marquée, coup de vent manuel et automatique,
+/labo enrichi.
+
+**Proposé / fait** :
+
+- SVG ajoutés et contrat `specs.ts` complété (54 illustrations) ; points d'appui au centre
+  du bas pour les petites bêtes.
+- `StagedPlant` commun à `Tree` et au nouveau `Flower` : pousse en 0,7 s avec dépassement
+  (`back.out(2)` depuis l'échelle 0,4), éclat ; balancement inchangé (±1,5°).
+- Coup de vent : fonctions pures `gustDelay`, `gustDelays`, `gustLean`, `nextGustInterval`
+  (testées) ; `playGust`, `useGust`, `useAutoGusts` ; `Wind` (traits qui traversent en
+  1,2 s). Feuillage des arbres (et fleurs entières depuis le pied) couché de 6 à 10° ; le
+  balancement et l'inclinaison s'additionnent. Papillon et abeille déportés.
+- `Bee`, `Ladybug`, `Snail`, `Hedgehog` (versions endormies pour l'escargot et le hérisson).
+- /labo : petites bêtes, scène « Coup de vent » avec rangée de plantes, bouton, rafales
+  automatiques, bouton pour faire pousser.
+- Vérifié dans Chrome sur l'export statique : traits de gauche à droite, plantes couchées
+  l'une après l'autre, aucune erreur console. Correctif trouvé à cette occasion : passer en
+  mouvement réduit pendant une rafale l'arrête désormais (traits cachés, plantes et insectes
+  remis en place).
+
+**Gardé / changé** :
+
+- Les fleurs se couchent entières depuis leur pied (elles n'ont pas de calque `feuillage`).
+- Les traits de `vent` sont crème comme le ciel de `scene-paysage` : ils ne se voient que
+  sur les collines et le sol.
+- `fleur-3-fleurie` : brins verts sur sol vert, seules les baies se voient sur la scène.
+
+**Ajustements après relecture (2026-10-04)** :
+
+- `vent.svg` : traits en encre #1F1A17, épaisseur 3 (mêmes calques) : visibles sur toute la
+  scène, ciel compris.
+- `fleur-3-pousse` et `fleur-3-fleurie` : brins en soleil #FFC93C (herbes sèches), baies
+  inchangées.
+- `Ladybug` : la tête pointe dans le sens de la marche (`headingAngle`, fonction pure
+  testée) ; demi-tour animé à chaque changement de direction, y compris avant l'envol de
+  retour. Déplacement, orientation et dandinement sont sur trois niveaux séparés.
+- Contrat `specs.ts` inchangé ; `generated.tsx` régénéré.
+
+**Correctifs d'illustrations (2026-10-04)** :
+
+- 10 SVG remplacés depuis `le-poids-des-choses-illustrations-correctifs.zip` (pousses
+  d'arbres, fleurs, vent) ; mêmes tailles et calques, contrat inchangé. Feuilles en sapin
+  #1B6B45, baies de la fleur 3 en tomate, vent en encre (épaisseur 2,5 dans le fichier
+  fourni). `fleur-3-pousse` était déjà identique à la version précédente.
+- Couleur `sapin` (#1B6B45) ajoutée au thème Tailwind et documentée comme réservée aux
+  feuilles.
+- Orientation de la coccinelle : déjà faite dans le commit précédent (`headingAngle`), rien
+  à changer.

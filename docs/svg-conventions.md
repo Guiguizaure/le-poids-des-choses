@@ -20,16 +20,19 @@ fichiers, les tailles et les noms de calques sont gardés.
 
 Coordonnées en unités du SVG (origine en haut à gauche).
 
-| Famille                                | Cadre     | Point d'appui et calques                                                                                                                                                      |
-| -------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scene-paysage`                        | 390 × 300 | `ciel`, `soleil`, `nuage-1`, `nuage-2`, `colline-arriere`, `colline-avant`, `sol`                                                                                             |
-| `balance`                              | 280 × 170 | pivot du fléau en **140,40** ; plateaux accrochés aux extrémités du fléau, en **40,40** et **240,40** ; `socle`, `mat`, `fleau`, `plateau-gauche`, `plateau-droit`            |
-| `arbre-{1,2,3}-{pousse,jeune,grand}`   | 120 × 160 | pied en **60,156** ; pousse : `tige`, `feuilles` ; jeune et grand : `tronc`, `feuillage`                                                                                      |
-| `fleur-{1,2,3}-{pousse,fleurie}`       | 60 × 80   | pied en **30,78** ; calques selon la fleur (voir `specs.ts`)                                                                                                                  |
-| `oiseau`, `oiseau-endormi`, `papillon` | 64 × 48   | papillon : corps sur l'axe **x = 32** (les ailes battent autour) ; `aile-gauche`, `aile-droite`, `corps` ; oiseau : `queue`, `corps`, `tete`, `bec`, `oeil`, `aile`, `pattes` |
-| `picto-…`                              | 64 × 64   | groupes `fond` et `objet`                                                                                                                                                     |
-| `brume`                                | 390 × 120 | `brume-1`, `brume-2`, `brume-3`                                                                                                                                               |
-| `eclat`                                | 80 × 80   | traits rayonnant depuis **40,50** ; `eclat-traits`                                                                                                                            |
+| Famille                                                                   | Cadre     | Point d'appui et calques                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scene-paysage`                                                           | 390 × 300 | `ciel`, `soleil`, `nuage-1`, `nuage-2`, `colline-arriere`, `colline-avant`, `sol`                                                                                                                                                                                                                          |
+| `balance`                                                                 | 280 × 170 | pivot du fléau en **140,40** ; plateaux accrochés aux extrémités du fléau, en **40,40** et **240,40** ; `socle`, `mat`, `fleau`, `plateau-gauche`, `plateau-droit`                                                                                                                                         |
+| `arbre-{1,2,3}-{pousse,jeune,grand}`                                      | 120 × 160 | pied en **60,156** ; pousse : `tige`, `feuilles` ; jeune et grand : `tronc`, `feuillage`                                                                                                                                                                                                                   |
+| `fleur-{1,2,3}-{pousse,fleurie}`                                          | 60 × 80   | pied en **30,78** ; calques selon la fleur (voir `specs.ts`)                                                                                                                                                                                                                                               |
+| `oiseau`, `oiseau-endormi`, `papillon`                                    | 64 × 48   | papillon : corps sur l'axe **x = 32** (les ailes battent autour) ; `aile-gauche`, `aile-droite`, `corps` ; oiseau : `queue`, `corps`, `tete`, `bec`, `oeil`, `aile`, `pattes`                                                                                                                              |
+| `abeille`, `escargot`, `escargot-endormi`, `herisson`, `herisson-endormi` | 64 × 48   | point d'appui au centre du bas (**32,48**) ; abeille : `aile-gauche`, `aile-droite`, `corps`, `rayures`, `tete`, `oeil`, `dard` ; escargot : `corps`, `antennes`, `coquille` (endormi : `corps`, `coquille`) ; hérisson : `corps`, `piquants`, `museau`, `oeil`, `pattes` (endormi : `piquants`, `museau`) |
+| `coccinelle`                                                              | 48 × 40   | point d'appui au centre du bas (**24,40**) ; `corps`, `tete`, `pattes`, `elytre-gauche`, `elytre-droite` (les élytres pivotent depuis 24,12)                                                                                                                                                               |
+| `picto-…`                                                                 | 64 × 64   | groupes `fond` et `objet`                                                                                                                                                                                                                                                                                  |
+| `brume`                                                                   | 390 × 120 | `brume-1`, `brume-2`, `brume-3`                                                                                                                                                                                                                                                                            |
+| `vent`                                                                    | 390 × 120 | `traits-1`, `traits-2`, `traits-3` (ils traversent la scène de gauche à droite)                                                                                                                                                                                                                            |
+| `eclat`                                                                   | 80 × 80   | traits rayonnant depuis **40,50** ; `eclat-traits`                                                                                                                                                                                                                                                         |
 
 Les animations s'appuient sur ces points : la plante pousse depuis son pied, le fléau tourne
 autour du pivot et les plateaux suivent ses extrémités, le feuillage se balance depuis sa base.
@@ -40,6 +43,16 @@ autour du pivot et les plateaux suivent ses extrémités, le feuillage se balanc
 2. Exporter au format **SVG**.
 3. Cocher **« Inclure l'attribut id »** : les noms de calques deviennent les `id`.
 4. Déposer le fichier dans `public/illustrations/`, puis lancer `pnpm illustrations`.
+
+## Couleurs
+
+Uniquement les couleurs du thème (`src/app/globals.css`) : crème #FFF3DC, encre #1F1A17,
+tomate #FF4F2E, pomme #2FBF71, outremer #2D4BFF, soleil #FFC93C, rose #FF8FB1…
+
+- **Sapin #1B6B45 est réservé aux feuilles** (`feuilles`, `feuillage` des pousses et des
+  fleurs) : le vert pomme du sol les faisait disparaître.
+- Le sol et les collines restent en pomme ; ne pas y poser de détail pomme.
+- Les traits de `vent` sont en encre, pour se voir aussi sur le ciel crème.
 
 Garder les couleurs en attributs de présentation (`fill`, `stroke`), pas de texte non
 vectorisé, pas d'image intégrée.

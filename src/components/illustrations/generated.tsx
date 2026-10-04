@@ -11,6 +11,15 @@ export type GeneratedSvgProps = {
   children?: ReactNode;
 };
 
+function Abeille({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="aile-gauche"><ellipse cx="26" cy="14" rx="8" ry="12" transform="rotate(-20 26 14)" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="aile-droite"><ellipse cx="37" cy="13" rx="8" ry="12" transform="rotate(20 37 13)" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="dard"><path d="M17 29 L9 31 L17 34 Z" fill="#1F1A17" /></g><g data-part="corps"><ellipse cx="31" cy="31" rx="15" ry="11" fill="#FFC93C" /></g><g data-part="rayures"><path d="M25 21.5 Q23.5 31 25 40.5 M33 20 Q31.5 31 33 42" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="tete"><circle cx="47" cy="29" r="7" fill="#1F1A17" /></g><g data-part="oeil"><circle cx="49" cy="27" r="1.6" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
 function Arbre1Grand({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
@@ -33,7 +42,7 @@ function Arbre1Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FFC93C" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FFC93C" /></g>
     </svg>
   );
 }
@@ -60,7 +69,7 @@ function Arbre2Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF4F2E" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -87,7 +96,7 @@ function Arbre3Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF8FB1" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF8FB1" /></g>
     </svg>
   );
 }
@@ -110,6 +119,15 @@ function Brume({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Coccinelle({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={48} height={40} viewBox="0 0 48 40" fill="none" {...svgProps}>
+      {children}
+      <g data-part="pattes"><path d="M12 22 L5 20 M12 28 L4 30 M36 22 L43 20 M36 28 L44 30" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g><g data-part="corps"><ellipse cx="24" cy="25" rx="13" ry="12" fill="#1F1A17" /></g><g data-part="tete"><circle cx="24" cy="10" r="6" fill="#1F1A17" /></g><g data-part="elytre-gauche"><path d="M24 12 A13 13 0 0 0 11 25 Q11 35 24 37 Z" fill="#FF4F2E" /><circle cx="17" cy="21" r="2.4" fill="#1F1A17" /><circle cx="18" cy="30" r="2" fill="#1F1A17" /></g><g data-part="elytre-droite"><path d="M24 12 A13 13 0 0 1 37 25 Q37 35 24 37 Z" fill="#FF4F2E" /><circle cx="31" cy="21" r="2.4" fill="#1F1A17" /><circle cx="30" cy="30" r="2" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
 function Eclat({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
@@ -119,11 +137,29 @@ function Eclat({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Escargot({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="corps"><path d="M4 43 C4 37 10 35 18 35 H44 C50 35 52 29 54 23 C56 19 61 21 60 27 C59 35 55 43 47 43 Z" fill="#FF8FB1" /></g><g data-part="antennes"><path d="M55 22 L52 11 M58 22 L61 12" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /><circle cx="52" cy="10" r="2" fill="#1F1A17" /><circle cx="61" cy="11" r="2" fill="#1F1A17" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function EscargotEndormi({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="corps"><path d="M16 43 C16 39 20 37 26 37 H36 C40 37 42 41 42 43 Z" fill="#FF8FB1" /></g><g data-part="coquille"><circle cx="28" cy="25" r="15" fill="#FFC93C" /><circle cx="30" cy="27" r="10" fill="#FF4F2E" /><circle cx="31.5" cy="28.5" r="5.5" fill="#FFC93C" /><circle cx="32.5" cy="29.5" r="2" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
 function Fleur1Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V34" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="22" cy="58" rx="9" ry="5" transform="rotate(-25 22 58)" fill="#2FBF71" /></g><g data-part="petales"><circle cx="30" cy="16" r="8" fill="#FF8FB1" /><circle cx="41" cy="24" r="8" fill="#FF8FB1" /><circle cx="37" cy="37" r="8" fill="#FF8FB1" /><circle cx="23" cy="37" r="8" fill="#FF8FB1" /><circle cx="19" cy="24" r="8" fill="#FF8FB1" /></g><g data-part="coeur"><circle cx="30" cy="28" r="7" fill="#FFC93C" /></g>
+      <g data-part="tige"><path d="M30 78 V34" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="22" cy="58" rx="9" ry="5" transform="rotate(-25 22 58)" fill="#1B6B45" /></g><g data-part="petales"><circle cx="30" cy="16" r="8" fill="#FF8FB1" /><circle cx="41" cy="24" r="8" fill="#FF8FB1" /><circle cx="37" cy="37" r="8" fill="#FF8FB1" /><circle cx="23" cy="37" r="8" fill="#FF8FB1" /><circle cx="19" cy="24" r="8" fill="#FF8FB1" /></g><g data-part="coeur"><circle cx="30" cy="28" r="7" fill="#FFC93C" /></g>
     </svg>
   );
 }
@@ -132,7 +168,7 @@ function Fleur1Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V62" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#2FBF71" /><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#2FBF71" /></g>
+      <g data-part="tige"><path d="M30 78 V62" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#1B6B45" /><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#1B6B45" /></g>
     </svg>
   );
 }
@@ -141,7 +177,7 @@ function Fleur2Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V30" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#2FBF71" /></g><g data-part="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E" /></g>
+      <g data-part="tige"><path d="M30 78 V30" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#1B6B45" /></g><g data-part="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -150,7 +186,7 @@ function Fleur2Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V60" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="30" cy="58" rx="5" ry="9" fill="#2FBF71" /></g>
+      <g data-part="tige"><path d="M30 78 V60" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="30" cy="58" rx="5" ry="9" fill="#1B6B45" /></g>
     </svg>
   );
 }
@@ -159,7 +195,7 @@ function Fleur3Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF" /><circle cx="40" cy="36" r="5" fill="#2D4BFF" /><circle cx="30" cy="44" r="4" fill="#2D4BFF" /></g>
+      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#FF4F2E" /><circle cx="40" cy="36" r="5" fill="#FF4F2E" /><circle cx="30" cy="44" r="4" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -168,7 +204,25 @@ function Fleur3Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="brins"><path d="M26 78 Q 24 68 20 62 M32 78 Q 34 66 38 60" stroke="#2FBF71" strokeWidth="4" strokeLinecap="round" /></g>
+      <g data-part="brins"><path d="M26 78 Q 24 68 20 62 M32 78 Q 34 66 38 60" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function Herisson({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="pattes"><path d="M18 42 L17 47 M28 43 L28 47 M38 43 L39 47 M46 41 L47 46" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" /></g><g data-part="corps"><ellipse cx="30" cy="35" rx="21" ry="9" fill="#FFF3DC" /></g><g data-part="piquants"><path d="M9 36 L5 28 L12 26 L9 18 L17 18 L17 10 L25 13 L29 5 L35 11 L41 7 L43 15 L50 15 L48 23 L53 27 L48 33 C40 30 20 31 9 36 Z" fill="#1F1A17" /></g><g data-part="museau"><path d="M45 29 C51 27 57 31 60 36 C56 38 50 40 45 38 Z" fill="#FFF3DC" /><circle cx="60" cy="36" r="2.2" fill="#1F1A17" /></g><g data-part="oeil"><circle cx="51" cy="31" r="1.8" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function HerissonEndormi({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="piquants"><path d="M32.0 10.0 L34.5 15.2 L38.9 11.4 L39.2 17.2 L44.7 15.3 L42.8 20.8 L48.6 21.1 L44.8 25.5 L50.0 28.0 L44.8 30.5 L48.6 34.9 L42.8 35.2 L44.7 40.7 L39.2 38.8 L38.9 44.6 L34.5 40.8 L32.0 46.0 L29.5 40.8 L25.1 44.6 L24.8 38.8 L19.3 40.7 L21.2 35.2 L15.4 34.9 L19.2 30.5 L14.0 28.0 L19.2 25.5 L15.4 21.1 L21.2 20.8 L19.3 15.3 L24.8 17.2 L25.1 11.4 L29.5 15.2 Z" fill="#1F1A17" /></g><g data-part="museau"><path d="M40 38 C44 36 48 38 49 41 C46 43 42 43 40 41 Z" fill="#FFF3DC" /><circle cx="49" cy="41" r="1.8" fill="#1F1A17" /></g>
     </svg>
   );
 }
@@ -434,7 +488,17 @@ function ScenePaysage({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Vent({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={390} height={120} viewBox="0 0 390 120" fill="none" {...svgProps}>
+      {children}
+      <g data-part="traits-1"><path d="M10 40 C80 20 140 60 210 40 C240 32 262 30 282 38 C292 42 290 52 282 50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-2"><path d="M60 78 C130 58 190 98 260 78 C300 68 330 68 360 76" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-3"><path d="M140 106 C180 96 220 112 250 102 C262 98 268 104 262 108" stroke="#1F1A17" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 export const generatedIllustrations: Record<IllustrationName, ComponentType<GeneratedSvgProps>> = {
+  "abeille": Abeille,
   "arbre-1-grand": Arbre1Grand,
   "arbre-1-jeune": Arbre1Jeune,
   "arbre-1-pousse": Arbre1Pousse,
@@ -446,13 +510,18 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "arbre-3-pousse": Arbre3Pousse,
   "balance": Balance,
   "brume": Brume,
+  "coccinelle": Coccinelle,
   "eclat": Eclat,
+  "escargot": Escargot,
+  "escargot-endormi": EscargotEndormi,
   "fleur-1-fleurie": Fleur1Fleurie,
   "fleur-1-pousse": Fleur1Pousse,
   "fleur-2-fleurie": Fleur2Fleurie,
   "fleur-2-pousse": Fleur2Pousse,
   "fleur-3-fleurie": Fleur3Fleurie,
   "fleur-3-pousse": Fleur3Pousse,
+  "herisson": Herisson,
+  "herisson-endormi": HerissonEndormi,
   "oiseau": Oiseau,
   "oiseau-endormi": OiseauEndormi,
   "papillon": Papillon,
@@ -482,4 +551,5 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "picto-visio": PictoVisio,
   "picto-voiture": PictoVoiture,
   "scene-paysage": ScenePaysage,
+  "vent": Vent,
 };

@@ -1,0 +1,38 @@
+"use client";
+
+import type { IllustrationName } from "@/lib/illustrations/specs";
+import { StagedPlant } from "./StagedPlant";
+
+export const FLOWER_STAGES = ["pousse", "fleurie"] as const;
+export type FlowerStage = (typeof FLOWER_STAGES)[number];
+export type FlowerVariant = 1 | 2 | 3;
+
+type FlowerProps = {
+  variant: FlowerVariant;
+  stage: FlowerStage;
+  title?: string;
+  /** Taille : une largeur suffit, la hauteur suit le cadre 60×80. */
+  className?: string;
+  sparkle?: boolean;
+};
+
+/** Fleur à deux stades ; elle se balance et se couche au vent depuis son pied. */
+export function Flower({
+  variant,
+  stage,
+  title,
+  className = "w-[60px]",
+  sparkle = true,
+}: FlowerProps) {
+  return (
+    <StagedPlant
+      stages={FLOWER_STAGES}
+      stage={stage}
+      illustrationFor={(s) => `fleur-${variant}-${s}` as IllustrationName}
+      swing="whole"
+      title={title}
+      className={className}
+      sparkle={sparkle}
+    />
+  );
+}
