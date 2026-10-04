@@ -69,7 +69,7 @@ export function useGust(
   );
 }
 
-/** Rafales automatiques toutes les 8 à 15 s, seulement quand l'onglet est visible. */
+/** Rafales automatiques toutes les 25 à 45 s, seulement quand l'onglet est visible. */
 export function useAutoGusts(
   enabled: boolean,
   rootRef?: RefObject<Element | null>,

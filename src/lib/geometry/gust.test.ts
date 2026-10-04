@@ -65,13 +65,13 @@ describe("gustLean", () => {
 });
 
 describe("nextGustInterval", () => {
-  it("entre 8 et 15 s", () => {
-    expect(nextGustInterval(() => 0)).toBe(8);
-    expect(nextGustInterval(() => 1)).toBe(15);
+  it("entre 25 et 45 s (rafales rares)", () => {
+    expect(nextGustInterval(() => 0)).toBe(25);
+    expect(nextGustInterval(() => 1)).toBe(45);
     for (let i = 0; i < 100; i++) {
       const wait = nextGustInterval();
-      expect(wait).toBeGreaterThanOrEqual(8);
-      expect(wait).toBeLessThanOrEqual(15);
+      expect(wait).toBeGreaterThanOrEqual(25);
+      expect(wait).toBeLessThanOrEqual(45);
     }
   });
 });
