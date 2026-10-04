@@ -7,9 +7,11 @@ import { useJournal } from "@/lib/journal/useJournal";
 /** Pastille « Mon jardin · X kg évités » de la barre du haut (maquette 03). */
 export function GardenPill() {
   const { totals, ready } = useJournal();
-  const label = ready
-    ? `Mon jardin · ${formatMass(totals.totalAvoidedKg)} évités`
-    : "Mon jardin";
+  // Rien d'évité pour l'instant : pas de « 0 g évités ».
+  const label =
+    ready && totals.totalAvoidedKg > 0
+      ? `Mon jardin · ${formatMass(totals.totalAvoidedKg)} évités`
+      : "Mon jardin";
   return (
     <Link
       href="/jardin"
