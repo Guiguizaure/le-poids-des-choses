@@ -24,7 +24,9 @@ describe("dérive des nuages", () => {
     }
     expect(cloudSeconds(3)).toBe(cloudSeconds(0));
   });
-  it("halo du soleil : cycle d'environ 6 s", () => {
+  it("halo du soleil : cycle d'environ 6 s, visible mais doux", () => {
     expect(SKY.sunBreathSeconds).toBe(6);
+    expect(SKY.haloOpacity).toEqual([0.35, 0.6]);
+    expect(SKY.haloScale).toEqual([1, 1.12]);
   });
 });
