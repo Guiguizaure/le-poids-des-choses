@@ -362,3 +362,37 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
 
 - Escargot endormi cerné aussi, par cohérence avec l'escargot éveillé.
 - Note V1.1 dans CLAUDE.md : envol de l'oiseau.
+
+## 2026-10-05 — Lot 6 : pages et finitions (branche feat/pages)
+
+**Demandé** : pages Méthode et Mentions légales, 404 illustrée, pied de page, installation
+(PWA), images de partage, lancement préparé (SITE_LAUNCHED).
+
+**Proposé / fait** :
+
+- /methode d'après la maquette 06 et `docs/methode.md` : sources (Impact CO2, ADEME, Base
+  Carbone, Agribalyse, liens vers impactco2.fr et le CSV), date des données (lue dans le
+  fichier généré), unités, hypothèses (ancre `#occasion` pour « Comment on compte
+  l’occasion ? »), ce qui n'est pas compté, limites, « Et ton jardin ? », « Comment ce site
+  est fait » (dépôt GitHub public vérifié). Emplacement `DATA_LICENSE` dans le code.
+- /mentions-legales : éditeur avec emplacements surlignés, hébergeur Cloudflare, Inc.
+  (101 Townsend St, San Francisco, CA 94107, vérifié sur cloudflare.com), confidentialité.
+  `STRICT_DATA=1 pnpm build` échoue tant que les emplacements ne sont pas remplis (vérifié,
+  code 1) ; `pnpm build` passe (code 0).
+- 404 : le jardin dans la brume, l'oiseau endormi devant ; lien vers l'accueil.
+- Pied de page commun ; métadonnées par page (titre, description, Open Graph, Twitter).
+- PWA : manifeste, icônes générées depuis `assets/icon/icon.svg` (balance sur fond
+  crème), favicon, bandeau « Garde ton jardin » (Android / iPhone / masqué). Vérifié dans
+  Chrome : invite d'installation, fermeture mémorisée.
+- Image de partage 1200×630 générée au build (resvg, polices OFL dans `assets/fonts`).
+- `SITE_LAUNCHED=1` : vérifié (robots ouvert sauf /labo, sitemap des 5 pages publiques,
+  index, follow) ; sans elle, noindex, robots fermé, sitemap vide.
+
+**Gardé / changé** :
+
+- Maquette 06 : « récupérées via l’API Impact CO2 » remplacé par « publiées par Impact
+  CO2 » + lien vers le fichier public : le site lit le CSV, pas l'API.
+- Adresse du site par défaut `https://le-poids-des-choses.pages.dev` (à confirmer, ou
+  `SITE_URL`).
+- Cloudflare Web Analytics annoncé dans les mentions légales : à activer dans le tableau de
+  bord Cloudflare Pages au lancement (aucun script ajouté au code).

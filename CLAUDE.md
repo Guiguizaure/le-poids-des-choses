@@ -20,8 +20,11 @@ Projet indépendant, non affilié à l'ADEME.
   données, en local.
 - Toute valeur de test porte `fictive: true` (et `source: "fictive"`) et n'est jamais citée.
   Elles vivent dans `src/lib/data/test-gestures.ts`. `scripts/check-data.ts` (lancé par
-  `pnpm build`) fait échouer la construction s'il reste une donnée fictive, mais seulement
-  si `STRICT_DATA=1` est défini (à activer chez Cloudflare au lancement).
+  `pnpm build`) fait échouer la construction s'il reste une donnée fictive OU un
+  emplacement des mentions légales ([NOM], [SIRET], [ADRESSE], [EMAIL] dans
+  `src/lib/legal.ts`), mais seulement si `STRICT_DATA=1` est défini (à activer chez
+  Cloudflare au lancement). Aujourd'hui, `STRICT_DATA=1 pnpm build` échoue donc tant que
+  les mentions légales ne sont pas remplies ; `pnpm build` passe.
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -36,8 +39,11 @@ Prettier, pnpm. Site statique
 ## Commandes
 
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
-- `pnpm build` — convertit les illustrations, vérifie les données (`check-data`) puis export
-  statique dans `out/`
+- `pnpm build` — convertit les illustrations, génère les images (`images`), lance les
+  garde-fous (`check-data`) puis l'export statique dans `out/`
+- `pnpm images` — icônes PNG (192, 512, maskable, apple-touch-icon), favicon et image de
+  partage 1200×630 (`public/og.png`) depuis `assets/icon/icon.svg` et les illustrations,
+  rendues par resvg avec les polices d'`assets/fonts` ; fichiers commités
 - `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
   (`src/components/illustrations/generated.tsx`) et extrait de `scene-paysage.svg` le
   contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`) ; à relancer
@@ -51,8 +57,14 @@ Prettier, pnpm. Site statique
 ## Arborescence
 
 - `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
-  de comparaison), `/jardin` (Mon jardin), `/methode` (PROVISOIRE, complétée au lot
-  pages), `/labo` (banc d'essai des illustrations, animations et du carnet ; non liée)
+  de comparaison), `/jardin` (Mon jardin), `/methode` (maquette 06), `/mentions-legales`,
+  404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
+  noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
+  commun (`SiteFooter`) dans le layout
+- `src/lib/site.ts` — nom, adresse (`SITE_URL`, défaut `le-poids-des-choses.pages.dev`),
+  lancement (`SITE_LAUNCHED`), métadonnées par page (`pageMetadata` : titre, description,
+  Open Graph, carte Twitter), robots et sitemap ; `src/lib/legal.ts` — éditeur et hébergeur ;
+  `src/lib/install.ts` — règles du bandeau d'installation
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
 - `src/components/scene` — `Tree`, `Flower` (via `StagedPlant`), `Scale`, `Butterfly`, `Bird`,
   `Bee`, `Ladybug`, `Snail`, `Hedgehog`, `Sparkle`, `Wind` (animés)
@@ -107,7 +119,7 @@ Prettier, pnpm. Site statique
   modes d'un même objet. Le colis de l'option « livrée » est choisi par objet dans
   `PARCEL_BY_GESTURE_ID` (script) ; pas de ligne adaptée = pas d'option, jamais de valeur
   inventée. Hypothèses détaillées dans `docs/methode.md`.
-- Le site est en `noindex` tant qu'il n'est pas lancé (`metadata.robots` du layout).
+- Le site est en `noindex` tant qu'il n'est pas lancé (`SITE_LAUNCHED`, voir plus bas).
 - SVG : voir `docs/svg-conventions.md`. Jamais d'`id` dans le rendu : les calques sont des
   `data-part`, ciblés par `[data-part="…"]` dans la ref de l'instance.
 - Animations : GSAP via `useMotion` (`gsap.matchMedia`). Tout mouvement est coupé ou réduit à
@@ -180,5 +192,13 @@ Prettier, pnpm. Site statique
     reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
-- Lot pages (à venir) : page Méthode complète (remplace `/methode` provisoire), bandeau
-  d'installation et manifeste ; levée du `noindex` au lancement.
+- Lancement : `SITE_LAUNCHED=1` au build retire le noindex, remplit sitemap.xml et ouvre
+  robots.txt (sauf /labo). Sans elle, tout reste en noindex. Penser aussi à `SITE_URL` si
+  le domaine n'est pas `le-poids-des-choses.pages.dev`, à `STRICT_DATA=1`, et à activer
+  Cloudflare Web Analytics dans le tableau de bord Pages (annoncé dans les mentions
+  légales).
+- Méthode : la mention de licence exacte des données ADEME est attendue ; emplacement
+  `DATA_LICENSE` dans `src/app/methode/page.tsx` (null : rien n'est affiché).
+- Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
+  (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
+  d’accueil » ; masqué si installé ou fermé). Pas de service worker pour l'instant.
