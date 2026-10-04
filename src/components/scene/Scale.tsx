@@ -6,7 +6,7 @@ import { gsap, useGSAP } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
 import { BALANCE, beamPosition, tiltToAngle } from "@/lib/geometry/balance";
 
-type BalanceProps = {
+type ScaleProps = {
   /** -1 : le plateau gauche descend ; 1 : le droit descend ; 0 : équilibre. */
   tilt: number;
   title?: string;
@@ -20,11 +20,7 @@ const SVG_ORIGIN = `${BALANCE.pivot.x} ${BALANCE.pivot.y}`;
  * Balance : le fléau tourne autour du pivot (±12°), les plateaux suivent ses extrémités
  * (beamPosition). L'arrivée se fait avec un petit rebond amorti.
  */
-export function Balance({
-  tilt,
-  title,
-  className = "w-[280px]",
-}: BalanceProps) {
+export function Scale({ tilt, title, className = "w-[280px]" }: ScaleProps) {
   const ref = useRef<HTMLDivElement>(null);
   // Angle affiché, animé par GSAP ; la géométrie est recalculée à chaque image.
   const displayed = useRef({ angle: 0 });

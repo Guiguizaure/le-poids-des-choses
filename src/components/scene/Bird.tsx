@@ -5,7 +5,7 @@ import { Illustration } from "@/components/illustrations/Illustration";
 import { gsap } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
 
-type OiseauProps = {
+type BirdProps = {
   /** Version endormie (jardin assoupi) : yeux fermés, respiration lente. */
   asleep?: boolean;
   title?: string;
@@ -13,11 +13,7 @@ type OiseauProps = {
 };
 
 /** Oiseau : petits sautillements ; endormi, il respire doucement. Immobile en mouvement réduit. */
-export function Oiseau({
-  asleep = false,
-  title,
-  className = "w-16",
-}: OiseauProps) {
+export function Bird({ asleep = false, title, className = "w-16" }: BirdProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useMotion(

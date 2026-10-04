@@ -4,15 +4,15 @@ import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { REDUCED_MOTION_QUERY } from "@/components/motion/gsap";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import {
-  Arbre,
+  Tree,
   TREE_STAGES,
   type TreeStage,
   type TreeVariant,
-} from "@/components/scene/Arbre";
-import { Balance } from "@/components/scene/Balance";
-import { Eclat } from "@/components/scene/Eclat";
-import { Oiseau } from "@/components/scene/Oiseau";
-import { Papillon } from "@/components/scene/Papillon";
+} from "@/components/scene/Tree";
+import { Scale } from "@/components/scene/Scale";
+import { Sparkle } from "@/components/scene/Sparkle";
+import { Bird } from "@/components/scene/Bird";
+import { Butterfly } from "@/components/scene/Butterfly";
 
 const VARIANTS: TreeVariant[] = [1, 2, 3];
 
@@ -99,7 +99,7 @@ export function LaboControls() {
   });
   const [tilt, setTilt] = useState(0);
   const [asleep, setAsleep] = useState(false);
-  const [eclatCount, setEclatCount] = useState(0);
+  const [sparkleCount, setSparkleCount] = useState(0);
 
   const setAllStages = (stage: TreeStage) =>
     setStages({ 1: stage, 2: stage, 3: stage });
@@ -136,7 +136,7 @@ export function LaboControls() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {VARIANTS.map((variant) => (
               <div key={variant} className="flex flex-col items-center gap-3">
-                <Arbre
+                <Tree
                   variant={variant}
                   stage={stages[variant]}
                   title={`Arbre ${variant}, stade ${stages[variant]}`}
@@ -169,7 +169,7 @@ export function LaboControls() {
 
         <Panel title="Balance">
           <div className="flex justify-center">
-            <Balance
+            <Scale
               tilt={tilt}
               className="w-full max-w-[420px]"
               title={
@@ -213,13 +213,13 @@ export function LaboControls() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <Panel title="Papillon">
             <div className="flex justify-center py-4">
-              <Papillon className="w-24" title="Papillon" />
+              <Butterfly className="w-24" title="Papillon" />
             </div>
           </Panel>
 
           <Panel title="Oiseau">
             <div className="flex justify-center py-4">
-              <Oiseau
+              <Bird
                 asleep={asleep}
                 className="w-24"
                 title={asleep ? "Oiseau endormi" : "Oiseau"}
@@ -232,11 +232,11 @@ export function LaboControls() {
 
           <Panel title="Éclat">
             <div className="flex justify-center py-4">
-              <Eclat trigger={eclatCount} className="w-24" />
+              <Sparkle trigger={sparkleCount} className="w-24" />
             </div>
             <ToggleButton
               pressed={false}
-              onClick={() => setEclatCount((count) => count + 1)}
+              onClick={() => setSparkleCount((count) => count + 1)}
             >
               Faire éclater
             </ToggleButton>

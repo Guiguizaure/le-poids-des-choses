@@ -7,7 +7,7 @@ import { useMotion } from "@/components/motion/useMotion";
 import { anchorAsCssOrigin } from "@/lib/illustrations/specs";
 
 /** Joue l'apparition brève d'un éclat (élément contenant l'illustration « eclat »). */
-export function playEclat(
+export function playSparkle(
   element: Element,
   reduce: boolean,
 ): gsap.core.Timeline {
@@ -42,26 +42,30 @@ export function playEclat(
     );
 }
 
-export const eclatHiddenStyle: CSSProperties = {
+export const sparkleHiddenStyle: CSSProperties = {
   opacity: 0,
   visibility: "hidden",
   transformOrigin: anchorAsCssOrigin("eclat"),
 };
 
-type EclatProps = {
+type SparkleProps = {
   /** Chaque nouvelle valeur (non nulle) rejoue l'éclat. */
   trigger?: number;
   className?: string;
   style?: CSSProperties;
 };
 
-export function Eclat({ trigger = 0, className = "w-20", style }: EclatProps) {
+export function Sparkle({
+  trigger = 0,
+  className = "w-20",
+  style,
+}: SparkleProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceRef = useMotion(ref, () => {});
 
   useGSAP(
     () => {
-      if (trigger && ref.current) playEclat(ref.current, reduceRef.current);
+      if (trigger && ref.current) playSparkle(ref.current, reduceRef.current);
     },
     { scope: ref, dependencies: [trigger] },
   );
@@ -70,7 +74,7 @@ export function Eclat({ trigger = 0, className = "w-20", style }: EclatProps) {
     <div
       ref={ref}
       className={className}
-      style={{ ...eclatHiddenStyle, ...style }}
+      style={{ ...sparkleHiddenStyle, ...style }}
     >
       <Illustration name="eclat" className="block h-auto w-full" />
     </div>

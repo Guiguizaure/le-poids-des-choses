@@ -9,7 +9,7 @@ import { getSpec } from "@/lib/illustrations/specs";
 const WINGS = '[data-part="aile-gauche"], [data-part="aile-droite"]';
 
 /** Papillon : les ailes battent (scaleX autour du corps). Immobile en mouvement réduit. */
-export function Papillon({
+export function Butterfly({
   title,
   className = "w-16",
 }: {

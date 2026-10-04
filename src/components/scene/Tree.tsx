@@ -9,7 +9,7 @@ import {
   getSpec,
   type IllustrationName,
 } from "@/lib/illustrations/specs";
-import { eclatHiddenStyle, playEclat } from "./Eclat";
+import { sparkleHiddenStyle, playSparkle } from "./Sparkle";
 
 export const TREE_STAGES = ["pousse", "jeune", "grand"] as const;
 export type TreeStage = (typeof TREE_STAGES)[number];
@@ -17,7 +17,7 @@ export type TreeVariant = 1 | 2 | 3;
 
 const FOLIAGE = '[data-part="feuillage"], [data-part="feuilles"]';
 
-type ArbreProps = {
+type TreeProps = {
   variant: TreeVariant;
   stage: TreeStage;
   /** Titre accessible ; sans titre, l'arbre est décoratif. */
@@ -25,22 +25,22 @@ type ArbreProps = {
   /** Taille : une largeur suffit, la hauteur suit le cadre 120×160. */
   className?: string;
   /** Éclat quand l'arbre grandit (par défaut oui). */
-  eclat?: boolean;
+  sparkle?: boolean;
 };
 
 /**
  * Arbre à trois stades (un SVG par stade, même cadre). Les trois stades sont superposés ; au
  * changement, le nouveau monte depuis le pied en fondu. Le feuillage se balance au repos.
  */
-export function Arbre({
+export function Tree({
   variant,
   stage,
   title,
   className = "w-[120px]",
-  eclat = true,
-}: ArbreProps) {
+  sparkle = true,
+}: TreeProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const eclatRef = useRef<HTMLDivElement>(null);
+  const sparkleRef = useRef<HTMLDivElement>(null);
   const previousStage = useRef(stage);
   const names = TREE_STAGES.map(
     (s) => `arbre-${variant}-${s}` as IllustrationName,
@@ -112,9 +112,9 @@ export function Arbre({
       }
 
       const grew = TREE_STAGES.indexOf(stage) > TREE_STAGES.indexOf(from);
-      if (eclat && grew && eclatRef.current) {
-        placeEclat(eclatRef.current, current, spec.width, spec.height);
-        playEclat(eclatRef.current, reduce).delay(reduce ? 0 : 0.25);
+      if (sparkle && grew && sparkleRef.current) {
+        placeSparkle(sparkleRef.current, current, spec.width, spec.height);
+        playSparkle(sparkleRef.current, reduce).delay(reduce ? 0 : 0.25);
       }
     },
     { scope: ref, dependencies: [stage] },
@@ -143,12 +143,12 @@ export function Arbre({
           <Illustration name={names[i]} className="block h-full w-full" />
         </div>
       ))}
-      {eclat ? (
+      {sparkle ? (
         <div
-          ref={eclatRef}
+          ref={sparkleRef}
           className="pointer-events-none absolute"
           style={{
-            ...eclatHiddenStyle,
+            ...sparkleHiddenStyle,
             width: `${(getSpec("eclat").width / spec.width) * 100}%`,
             aspectRatio: "1",
           }}
@@ -161,16 +161,16 @@ export function Arbre({
 }
 
 /** Centre l'éclat (point de rayonnement) au sommet du feuillage du stade affiché. */
-function placeEclat(
-  eclatElement: HTMLElement,
+function placeSparkle(
+  sparkleElement: HTMLElement,
   stageLayer: HTMLElement,
   frameWidth: number,
   frameHeight: number,
 ) {
-  const eclatSpec = getSpec("eclat");
-  const anchor = eclatSpec.anchor ?? {
-    x: eclatSpec.width / 2,
-    y: eclatSpec.height / 2,
+  const sparkleSpec = getSpec("eclat");
+  const anchor = sparkleSpec.anchor ?? {
+    x: sparkleSpec.width / 2,
+    y: sparkleSpec.height / 2,
   };
   const foliage = stageLayer.querySelector<SVGGraphicsElement>(FOLIAGE);
   let top = frameHeight / 2;
@@ -179,7 +179,7 @@ function placeEclat(
   } catch {
     // getBBox indisponible (élément non rendu) : on garde le milieu du cadre.
   }
-  gsap.set(eclatElement, {
+  gsap.set(sparkleElement, {
     left: `${((frameWidth / 2 - anchor.x) / frameWidth) * 100}%`,
     top: `${((top - anchor.y) / frameHeight) * 100}%`,
   });
