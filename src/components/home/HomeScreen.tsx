@@ -5,7 +5,7 @@ import { HomeScene } from "./HomeScene";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
 
 const INTRO =
-  "Avant un trajet, un repas ou un achat, pose deux options sur la balance. Ton jardin grandit avec tout ce que tu évites.";
+  "Avant un trajet, un repas ou un achat, pose deux options sur la balance. Ton jardin grandit chaque fois que tu choisis la plus légère.";
 
 /** Accueil : écran 01 sur mobile, 07 sur ordinateur (navigation + héros sur deux colonnes). */
 export function HomeScreen() {

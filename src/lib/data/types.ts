@@ -39,7 +39,7 @@ export type ModeValue = {
   /** Présent quand la valeur vient directement d'une ligne du CSV. */
   sourceId?: string;
   sourceUrl?: string;
-  /** Détail quand la valeur additionne plusieurs éléments (ex. fabrication évitée + colis). */
+  /** Détail quand la valeur additionne plusieurs éléments (ex. pas de fabrication + colis). */
   parts?: ValuePart[];
 };
 
@@ -75,7 +75,11 @@ export type JournalEntry = {
   gestureB: string;
   quantity: number;
   chosen: Choice;
-  /** kg CO2e évités par ce choix (0 si on a pris le plus lourd), figés au moment du choix. */
+  /**
+   * Écart en kg CO2e avec l'autre option comparée (0 si on a pris le plus lourd), figé au
+   * moment du choix. Le nom du champ est gardé (carnets et exports existants) ; ce n'est pas
+   * un gain mesuré.
+   */
   avoidedKg: number;
   /** Objets uniquement : mode d'acquisition de chaque côté (même objet, deux modes). */
   modeA?: AcquisitionMode;

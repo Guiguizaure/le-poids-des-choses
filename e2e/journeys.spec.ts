@@ -197,7 +197,7 @@ test("objet : neuf, d'occasion (livré par défaut) et je garde le mien", async 
   ).toBeChecked();
   await expect(page.getByText(/aucune nouvelle fabrication/)).toBeVisible();
   await page.getByRole("button", { name: "Je garde le mien" }).click();
-  await expect(page.getByText("+25,1 kg évités")).toBeVisible();
+  await expect(page.getByText("+25,1 kg d’écart")).toBeVisible();
 });
 
 test("export puis import du carnet, sans doublon", async ({ page }) => {

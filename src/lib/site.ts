@@ -3,7 +3,7 @@ import type { Metadata, MetadataRoute } from "next";
 
 export const SITE_NAME = "Le poids des choses";
 export const SITE_DESCRIPTION =
-  "Compare deux gestes du quotidien sur une balance et regarde ton jardin grandir avec les kilos de CO2e évités.";
+  "Compare deux gestes du quotidien sur une balance et regarde ton jardin grandir à chaque choix plus léger.";
 
 /**
  * Adresse publique du site (images de partage, sitemap). À confirmer au lancement : par

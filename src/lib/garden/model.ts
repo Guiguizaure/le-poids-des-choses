@@ -24,7 +24,7 @@ export const PLANT_KINDS: readonly PlantKind[] = [
 ];
 
 /**
- * Seuils PROVISOIRES du stade d'une plante, selon les kg évités par le choix qui l'a fait
+ * Seuils PROVISOIRES du stade d'une plante, selon l'écart (kg) du choix qui l'a fait
  * pousser (échelle douce) : moins de 1 kg → pousse ; 1 à 20 kg → jeune / fleurie ;
  * plus de 20 kg → grand.
  */

@@ -157,7 +157,7 @@ describe("ajout, export, import", () => {
 
 describe("createEntry", () => {
   const now = new Date("2026-10-04T10:00:00Z");
-  it("calcule et fige les kg évités (choix léger)", () => {
+  it("calcule et fige l’écart (choix léger)", () => {
     const e = createEntry(
       { gestureA: "avion", gestureB: "tgv", quantity: 100, chosen: "b" },
       { now, id: "e1" },
@@ -165,7 +165,7 @@ describe("createEntry", () => {
     expect(e).toMatchObject({ id: "e1", date: now.toISOString(), chosen: "b" });
     expect(e.avoidedKg).toBeGreaterThan(20);
   });
-  it("choix lourd : 0 kg évité", () => {
+  it("choix lourd : écart de 0 kg", () => {
     expect(
       createEntry({
         gestureA: "avion",

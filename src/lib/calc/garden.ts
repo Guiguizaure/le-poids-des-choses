@@ -9,7 +9,7 @@ export type GardenTotals = {
   totalAvoidedKg: number;
   /** Nombre total de choix notés. */
   choiceCount: number;
-  /** Choix ayant évité quelque chose (le plus léger, écart > 0). */
+  /** Choix légers : le plus léger des deux, écart > 0. */
   lightChoiceCount: number;
 };
 

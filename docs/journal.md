@@ -729,3 +729,36 @@ vérifications (`STRICT_DATA=1 pnpm build` doit passer).
 
 - L'erreur console WebKit de l'accueil n'est pas revenue sur ces deux suites ; si elle
   revient, son texte complet sera dans le rapport.
+
+## 2026-10-05 — Lot V2-4, point 0 : formulation honnête (branche feat/journal-partage)
+
+**Demandé** : le site ne peut pas affirmer que des kg ont été « évités » : lister toutes
+les occurrences (« évité », « économisé », « sauvé »…), proposer une reformulation sur
+l'écart avec l'autre option, l'appliquer partout et l'expliquer dans /methode ; s'arrêter
+là pour validation avant la suite du lot.
+
+**Proposé / fait** :
+
+- Inventaire (UI, méta, OG, docs, code, tests) : 27 occurrences de « évité(s) » / « évite »,
+  aucune de « économisé », « sauvé », « épargné » ou « gagné » au sens des kg. L'image de
+  partage (OG) et le manifeste ne disaient « évités » que via `SITE_DESCRIPTION`.
+- Reformulation appliquée : « X kg de CO2e d’écart avec les autres options » (bilan de
+  /jardin), « Mon jardin · X kg d’écart » (pastille), « +X kg d’écart » (carte de
+  révélation), « Ton jardin grandit chaque fois que tu choisis la plus légère » (accueil),
+  descriptions du site et de /jardin, deux faits « Le savais-tu ? » (« c’est X de CO2e
+  d’écart »), labo, README, CLAUDE.md (avec la règle d'écriture), commentaires et titres de
+  tests.
+- /methode#ecart : « Le site ne mesure pas des kilos évités ou économisés : il compte l’écart
+  entre l’option que tu choisis et l’autre option comparée, sans savoir ce que tu aurais
+  fait sans lui. »
+- Vérifications : lint, typecheck, 444 tests unitaires, 86 tests de bout en bout ; captures
+  du duel et du jardin refaites.
+
+**Gardé / changé** :
+
+- Gardé : « soit X de CO2e en moins » dans la phrase du duel (comparaison explicite avec
+  l'autre option), le nom du champ `avoidedKg` (carnets et exports existants ; commentaire
+  précisé), les anciennes entrées du journal (historique).
+- En attente : le libellé « Fabrication évitée (hypothèse) » des données générées (non
+  affiché sur le site) ; le changer demande de relancer `pnpm build-gestures`.
+- Écart avec la maquette Figma 03, qui écrivait « X kg évités » dans la pastille.

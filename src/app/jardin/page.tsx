@@ -5,7 +5,7 @@ import { GardenScreen } from "@/components/garden/GardenScreen";
 export const metadata: Metadata = pageMetadata({
   title: "Mon jardin",
   description:
-    "Ton jardin grandit avec les kilos de CO2e que tu évites, choix après choix.",
+    "Ton jardin grandit chaque fois que tu choisis l’option la plus légère, choix après choix.",
   path: "/jardin",
 });
 

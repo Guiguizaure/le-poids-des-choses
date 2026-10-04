@@ -9,7 +9,7 @@ import { createEntry, type NewEntry } from "@/lib/journal";
 import { Panel } from "./ui";
 
 // Cinq choix légers : l'oiseau est installé. Carnet de démonstration, en mémoire (jamais
-// enregistré) ; les kg évités sont calculés avec les vraies données.
+// enregistré) ; les écarts sont calculés avec les vraies données.
 const DEMO: NewEntry[] = [
   { gestureA: "voiture", gestureB: "velo", quantity: 3, chosen: "b" },
   {

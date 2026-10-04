@@ -35,7 +35,7 @@ export function newEntryId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-/** Crée une entrée de carnet : les kg évités sont calculés et figés au moment du choix. */
+/** Crée une entrée de carnet : l'écart (kg) est calculé et figé au moment du choix. */
 export function createEntry(
   input: NewEntry,
   { now = new Date(), id = newEntryId() }: { now?: Date; id?: string } = {},

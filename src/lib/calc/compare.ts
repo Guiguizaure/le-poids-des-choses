@@ -7,7 +7,7 @@ const ALMOST_EQUAL_RATIO = 0.1;
 export type Comparison = {
   emissionsA: number;
   emissionsB: number;
-  /** Côté le plus léger. À égalité, 'a' (l'écart vaut alors 0, donc rien n'est évité). */
+  /** Côté le plus léger. À égalité, 'a' (l'écart vaut alors 0, rien n'est compté). */
   lighter: Choice;
   heavier: Choice;
   differenceKg: number;
@@ -42,7 +42,10 @@ export function compare(
   };
 }
 
-/** kg évités par un choix : (lourd − léger) si on prend le plus léger, sinon 0. Jamais négatif. */
+/**
+ * Écart compté pour un choix : (lourd − léger) si on prend le plus léger, sinon 0. Jamais
+ * négatif. Ce n'est pas un gain mesuré : seulement l'écart avec l'autre option comparée.
+ */
 export function avoidedKg(comparison: Comparison, chosen: Choice): number {
   return chosen === comparison.lighter ? comparison.differenceKg : 0;
 }

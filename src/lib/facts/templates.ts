@@ -121,7 +121,7 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     compute: ([jean]) =>
       compareModes(jean, 1, "neuf", "garder")?.differenceKg ?? 0,
     text: (mass) =>
-      `Garder ton jean plutôt qu’en acheter un neuf évite ${mass} de CO2e.`,
+      `Garder ton jean plutôt qu’en acheter un neuf, c’est ${mass} de CO2e d’écart.`,
   }),
   productFact({
     // La donnée distingue l'import par avion et par bateau pour la mangue seulement.
@@ -139,7 +139,7 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     compute: ([domicile, relais]) =>
       compare(domicile, 1, relais, 1).differenceKg,
     text: (mass) =>
-      `Aller à pied au point relais plutôt que te faire livrer à domicile évite ${mass} de CO2e par colis.`,
+      `Aller à pied au point relais plutôt que te faire livrer à domicile, c’est ${mass} de CO2e d’écart par colis.`,
   }),
 ];
 

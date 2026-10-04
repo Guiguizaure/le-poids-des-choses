@@ -3,7 +3,7 @@
 # Le poids des choses
 
 Comparateur carbone illustré : deux gestes du quotidien sur une balance, un choix noté, un
-jardin dessiné qui grandit avec les kg de CO2e évités. Projet vitrine pour webjuno.com.
+jardin dessiné qui grandit à chaque choix plus léger. Projet vitrine pour webjuno.com.
 Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
@@ -100,7 +100,7 @@ Prettier, pnpm. Site statique
 - `src/components/compare` — parcours : `CompareFlow` (piloté par l'URL), `GestureChooser`
   (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a v2 / 05b v2, carte de révélation)
 - `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
-  « Mon jardin · X kg évités »
+  « Mon jardin · X kg d’écart »
 - `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
   (`tiltFor`), phrase de résultat et équivalence (`sentence.ts`), noms et accords
   (`nouns.ts`), URL (`url.ts`), entrées du carnet (`duelEntry`, `objectEntry`)
@@ -126,7 +126,12 @@ Prettier, pnpm. Site statique
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
-- Règle du jardin : choisir le plus léger ajoute (lourd − léger) kg évités ; choisir le plus
+- Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.
+  Le site ne mesure qu'un écart avec l'autre option comparée : « X kg de CO2e d’écart avec
+  les autres options » (bilan), « Mon jardin · X kg d’écart » (pastille), « +X kg d’écart »
+  (carte de révélation) ; expliqué dans /methode#ecart. Le champ `avoidedKg` garde son nom
+  (carnets et exports existants) mais désigne cet écart.
+- Règle du jardin : choisir le plus léger ajoute l'écart (lourd − léger) en kg ; choisir le plus
   lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours
   sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Stades : par plante
   (`PLANT_STAGE_KG`, voir le modèle du jardin plus bas).
@@ -206,7 +211,7 @@ Prettier, pnpm. Site statique
   Il ne fait que s'allonger ; entrées invalides ignorées mais conservées ; une future v2
   lira l'ancienne clé via `MIGRATIONS`. Stockage indisponible (navigation privée) : carnet
   en mémoire et message. Stockage persistant demandé au premier ajout. Export JSON, import
-  qui fusionne par id. Les kg évités sont figés dans l'entrée au moment du choix.
+  qui fusionne par id. L'écart (kg) est figé dans l'entrée au moment du choix.
 - Jardin (`buildGarden`, déterministe : même carnet = même jardin) :
   - une plante par choix léger (`avoidedKg > 0`) ; un choix lourd ne change rien ;
   - type (arbre ou fleur 1-3) tiré de l'id de l'entrée ; stade selon les kg du choix
@@ -268,7 +273,7 @@ Prettier, pnpm. Site statique
   - micro-interactions (CSS, `globals.css`) : `press` (survol / toucher), `animate-enter`
     (apparition des pages et étapes, depuis une opacité de 0,35 pour ne pas retarder le
     LCP), `animate-pop` (badges), `animate-select` (cartes choisies) — toujours avec
-    `motion-reduce:animate-none` ; compteur du total évité (`CountUp`) ;
+    `motion-reduce:animate-none` ; compteur de l'écart cumulé (`CountUp`) ;
   - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
     (à compléter si une nouvelle paire apparaît).
 - « Le savais-tu ? » : aucun chiffre écrit à la main. Un gabarit ne rédige que la prémisse

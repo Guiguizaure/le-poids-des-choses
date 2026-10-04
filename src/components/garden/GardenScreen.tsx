@@ -157,7 +157,8 @@ export function GardenScreen() {
                 <CountUp value={garden.totalAvoidedKg} format={formatMass} />
               </p>
               <p className="text-corps-s text-texte-attenue leading-[1.4]">
-                de CO2e évités depuis ton premier choix
+                de CO2e d’écart avec les autres options, depuis ton premier
+                choix
               </p>
               <p className="text-corps-s text-encre flex flex-wrap gap-x-4 gap-y-1 pt-2 leading-[1.3] font-semibold">
                 <span>

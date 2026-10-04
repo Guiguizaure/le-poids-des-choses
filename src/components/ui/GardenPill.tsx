@@ -4,13 +4,13 @@ import Link from "next/link";
 import { formatMass } from "@/lib/calc";
 import { useJournal } from "@/lib/journal/useJournal";
 
-/** Pastille « Mon jardin · X kg évités » de la barre du haut (maquette 03). */
+/** Pastille « Mon jardin · X kg d’écart » de la barre du haut (maquette 03, formulation honnête). */
 export function GardenPill() {
   const { totals, ready } = useJournal();
-  // Rien d'évité pour l'instant : pas de « 0 g évités ».
+  // Aucun écart pour l'instant : pas de « 0 g d’écart ».
   const label =
     ready && totals.totalAvoidedKg > 0
-      ? `Mon jardin · ${formatMass(totals.totalAvoidedKg)} évités`
+      ? `Mon jardin · ${formatMass(totals.totalAvoidedKg)} d’écart`
       : "Mon jardin";
   return (
     <Link
