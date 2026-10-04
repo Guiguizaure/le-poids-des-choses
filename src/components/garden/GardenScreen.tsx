@@ -6,6 +6,7 @@ import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
 import { CARNET_PATH } from "@/components/garden/CarnetScreen";
+import { MilestoneCard } from "@/components/garden/MilestoneCard";
 import { WeekChart } from "@/components/garden/WeekChart";
 import { Icon } from "@/components/ui/buttons";
 import { CountUp } from "@/components/ui/CountUp";
@@ -171,6 +172,8 @@ export function GardenScreen() {
                 </span>
               </p>
             </section>
+
+            <MilestoneCard entries={journal.entries} />
 
             <section
               className="flex flex-col gap-4"

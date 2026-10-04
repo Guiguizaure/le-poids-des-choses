@@ -108,3 +108,36 @@ test("carnet vide : état vide du graphique et du carnet", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText("Ton carnet est vide.")).toBeVisible();
 });
+
+test("palier franchi : carte sur /jardin, équivalence calculée, formulation honnête", async ({
+  page,
+}) => {
+  // 6 kg, puis un choix de 66,5 kg : le dernier franchit 10 et 50 kg, la carte montre 50 kg.
+  await seedJournal(page, [
+    entry("p-1", 1, "voiture", "velo", 6),
+    entry("p-2", 0, "avion", "tgv", 66.5),
+  ]);
+  await page.goto("/jardin");
+  const card = page.getByRole("complementary", {
+    name: "50 kg de CO2e d’écart avec les autres options",
+  });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("Palier franchi");
+  await expect(card).toContainText(/C’est autant que \d+\srepas au bœuf\./);
+  await expect(
+    card.getByRole("link", { name: /Source : Repas au bœuf sur Impact CO2/ }),
+  ).toHaveAttribute("href", /^https:\/\/impactco2\.fr\//);
+  await expect(card.getByRole("link", { name: "Méthode" })).toHaveAttribute(
+    "href",
+    "/methode#ecart",
+  );
+});
+
+test("pas de palier franchi par le dernier choix : pas de carte", async ({
+  page,
+}) => {
+  await seedJournal(page, [entry("q-1", 1, "voiture", "velo", 3)]);
+  await page.goto("/jardin");
+  await expect(page.getByText("Carnet", { exact: true })).toBeVisible();
+  await expect(page.locator("[data-milestone]")).toHaveCount(0);
+});
