@@ -246,7 +246,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - `gardenStage` et `GARDEN_STAGE_THRESHOLDS_KG` retirés avec leurs tests (remplacés par le
   modèle par plante).
 
-## 2026-10-05 — Lot 5 : le parcours de comparaison (branche feat/duel)
+## 2026-10-04 — Lot 5 : le parcours de comparaison (branche feat/duel)
 
 **Demandé** : accueil (01 / 07), choix des gestes (02), duel (03), duel objet (03b), résultats
 (05a / 05b) d'après les maquettes ; URL partageable ; ajout au carnet ; accessibilité ; tests.
@@ -281,7 +281,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - Pas du curseur de distance : 1 % de la course (sinon les flèches ne bougeaient pas la
   valeur aux petites distances).
 
-**Ajustements après relecture (2026-10-05)** :
+**Ajustements après relecture (2026-10-04)** :
 
 - Objets : « aucune nouvelle fabrication » remplace « zéro émission » pour « garder » et
   « d’occasion sans colis » (hypothèse de méthode : entretien et fin de vie non comptés) ;
@@ -291,7 +291,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
   les cartes des écrans 02 et 03.
 - Gardés : pastille sur le 03b, textes ajoutés de l'étape 2.
 
-## 2026-10-05 — Lot 5b : retours de test (branche feat/feedback-1)
+## 2026-10-04 — Lot 5b : retours de test (branche feat/feedback-1)
 
 **Demandé** : scène plus vivante, numérique recentré sur les appareils, choix des deux gestes
 sur un seul écran, prochain animal en silhouette, nouvelles comparaisons « Boire » et « Se
@@ -324,7 +324,7 @@ faire livrer » si le CSV le permet.
 - Libellés des livraisons : « En magasin à pied / en voiture », « Point relais à pied / en
   voiture », précision du trajet en voiture et du colis d'1 kg en ligne secondaire.
 
-**Ajustements après relecture (2026-10-05)** :
+**Ajustements après relecture (2026-10-04)** :
 
 - 14 pictos « Boire » et « Se faire livrer » intégrés depuis
   `le-poids-des-choses-pictos-boire-livrer.zip` (64×64, `fond` et `objet`) ; contrat à 68
@@ -334,7 +334,7 @@ faire livrer » si le CSV le permet.
   tirent désormais l'accord de `objectNoun` (« Télévision gardée plutôt que neuve »).
 - Pas de Click & Collect.
 
-## 2026-10-05 — Lot 5c : retours de test (branche feat/feedback-2)
+## 2026-10-04 — Lot 5c : retours de test (branche feat/feedback-2)
 
 **Demandé** : message du prochain animal seulement sur /jardin, plus de silhouettes,
 petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
@@ -363,7 +363,7 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
 - Escargot endormi cerné aussi, par cohérence avec l'escargot éveillé.
 - Note V1.1 dans CLAUDE.md : envol de l'oiseau.
 
-## 2026-10-05 — Lot 6 : pages et finitions (branche feat/pages)
+## 2026-10-04 — Lot 6 : pages et finitions (branche feat/pages)
 
 **Demandé** : pages Méthode et Mentions légales, 404 illustrée, pied de page, installation
 (PWA), images de partage, lancement préparé (SITE_LAUNCHED).
@@ -528,3 +528,22 @@ entrées des lots 7 et 5d (2026-10-04 et non 2026-10-05).
 
 - Les dates des lots 5, 5b, 5c et 6 portent aussi 2026-10-05 : laissées telles quelles en
   attendant confirmation.
+
+## 2026-10-04 — Lot 5d, dates du journal (branche feat/reveal)
+
+**Demandé** : corriger aussi les dates des lots 5, 5b, 5c et 6, puis vérifier tout le journal
+avec la règle : lot 1 le 2026-10-03, tous les autres lots et ajustements (2, 2b, 2c, 3, 3b,
+4, 5, 5b, 5c, 5d, 6, 7) le 2026-10-04.
+
+**Proposé / fait** :
+
+- Entrées des lots 5, 5b, 5c et 6, et notes « Ajustements après relecture » des lots 5 et
+  5b, ramenées au 2026-10-04.
+- Vérification par script de chaque titre d'entrée et de chaque note datée : les 13 lots
+  sont présents, toutes les dates suivent la règle. Les mentions de 2026-10-05 qui restent
+  décrivent l'erreur corrigée, ce ne sont pas des dates d'entrée.
+
+**Gardé / changé** :
+
+- Les dates des tests (`compare.test.ts`, `journal.test.ts`, `display.test.ts`) et de
+  téléchargement du CSV ne sont pas des dates de session : inchangées.
