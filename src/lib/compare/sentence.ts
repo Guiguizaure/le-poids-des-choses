@@ -79,8 +79,10 @@ export function objectSentence(
         : `${formatRatio(ratio)} fois`;
     return `${head} : ${times} plus lourd, soit ${formatMass(diff)} de CO2e de plus.`;
   }
+  // Objets : 0 kg veut dire « aucune nouvelle fabrication » (hypothèse de méthode : entretien et
+  // fin de vie non comptés), pas « zéro émission », réservé à la marche.
   if (chosenKg === 0)
-    return `${head} : zéro émission, soit ${formatMass(diff)} de CO2e en moins.`;
+    return `${head} : aucune nouvelle fabrication, soit ${formatMass(diff)} de CO2e en moins.`;
   return `${head} : ${lighterBy(otherKg / chosenKg, false)}, soit ${formatMass(diff)} de CO2e en moins.`;
 }
 

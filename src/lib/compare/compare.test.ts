@@ -134,10 +134,15 @@ describe("objectSentence", () => {
       "D’occasion plutôt que neuf : 35 fois plus léger, soit 24,4 kg de CO2e en moins.",
     );
   });
-  it("garder : zéro émission", () => {
+  it("garder ou occasion sans colis : aucune nouvelle fabrication (pas « zéro émission »)", () => {
     expect(objectSentence("Garder le tien", "neuf", 0, 25.09)).toBe(
-      "Garder le tien plutôt que neuf : zéro émission, soit 25,1 kg de CO2e en moins.",
+      "Garder le tien plutôt que neuf : aucune nouvelle fabrication, soit 25,1 kg de CO2e en moins.",
     );
+    const used = objectSentence("D’occasion", "neuf", 0, 25.09);
+    expect(used).toBe(
+      "D’occasion plutôt que neuf : aucune nouvelle fabrication, soit 25,1 kg de CO2e en moins.",
+    );
+    expect(used).not.toContain("zéro émission");
   });
   it("neuf : plus lourd", () => {
     expect(objectSentence("Neuf", "d’occasion", 25.09, 0.722)).toContain(
