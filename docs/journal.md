@@ -615,3 +615,62 @@ build` : seule l'erreur des mentions légales (attendue). Captures : duel avec �
 - `oiseau-vol.svg` a un trait encre de 1,5 sur l'aile avant, sans
   `vector-effect="non-scaling-stroke"` (contrairement au papillon) : gardé tel que livré.
 - « 27 000 km » se coupait en fin de ligne sur la capture : espace insécable ajouté.
+
+## 2026-10-04 — Lot V2-1, suite : fruits et légumes de saison (branche feat/v1-1)
+
+**Demandé** : décisions sur la source des fruits et légumes de saison (pas de clé d'API
+pour l'instant, licence en cours auprès de l'ADEME, mangues gardées, toutes les catégories
+de l'API), contour de l'aile avant d'oiseau-vol ; puis le point 2 du lot (script, /saison,
+encarts, /methode#saison, tests) et toutes les vérifications.
+
+**Règle ajoutée** : pas de `SITE_LAUNCHED=1` tant que l'ADEME n'a pas confirmé les
+conditions de réutilisation des données Impact CO2. `DATA_LICENSE` reste à null. (Aussi
+dans CLAUDE.md.)
+
+**Proposé / fait** :
+
+- Accès anonyme vérifié avant de commencer : l'API répond (HTTP 200, avec l'avertissement).
+- `pnpm build-saison` : les 12 mois de l'API, sans clé ; `IMPACTCO2_API_KEY` lue dans
+  `.env.local` seulement si elle existe (envoyée en `Authorization: Bearer`, jamais écrite
+  ni affichée). Fiches des produits depuis la colonne URL du CSV public. Échoue sans rien
+  écrire si l'API refuse l'accès (401, 403), si une catégorie inconnue apparaît, si une
+  valeur est invalide ou si les mois sont incohérents. 76 produits, aucune donnée fictive ;
+  la garde `STRICT_DATA` couvre aussi ces produits. Fichier généré ignoré par Prettier.
+- Catégories : celles de l'API, dans l'ordre de ses ids, intitulé = nom de l'API avec une
+  majuscule (« Pommes de terre et autres tubercules »…), aucune inventée.
+- /saison « De saison en octobre » : tous les produits du mois, regroupés par catégorie,
+  du plus léger au plus lourd au kg, puce et barre de la couleur de la catégorie ; mois dans
+  l'URL (`?mois=10`, sinon le mois courant) avec un sélecteur, retour arrière compris ;
+  lien vers l'outil Impact CO2. Les deux mangues restent telles quelles. Ajoutée au sitemap
+  (rempli seulement au lancement).
+- Encart « Ce mois-ci, c’est la saison de… » sur l'accueil et /comparer : les 3 produits
+  les plus légers au kg parmi ceux qui ont une saison (complétés au besoin par ceux de
+  toute l'année), place réservée pour que rien ne bouge.
+- /methode#saison : la donnée ne précise pas l’origine des produits, sauf pour la mangue,
+  où elle distingue l’import par avion et l’import par bateau.
+- Crédit `DataCredit` : « Données : Impact CO2 – ADEME » (lien) et date de téléchargement,
+  sur le duel, le duel objet, la carte de révélation (légère ou lourde), /saison et
+  /methode (#sources et #saison). Testé de bout en bout.
+- « Le savais-tu ? » : gabarit des deux mangues (« … émet 16 fois plus … »), rapport
+  calculé par `compare()` depuis les deux lignes des données ; `emissions()` et `compare()`
+  acceptent désormais tout ce qui a une valeur unitaire. Un produit disparu fait échouer le
+  build, comme un geste.
+- Aile avant d'oiseau-vol : `vector-effect="non-scaling-stroke"`, comme le papillon.
+- Vérifications : lint, typecheck, 444 tests unitaires, 86 tests de bout en bout (Chromium
+  et WebKit, axe compris, /saison et /saison?mois=5 inclus). Lighthouse mobile, 3 passages
+  sur le build normal (noindex) : Accueil 97-100, Comparer 95-96, Duel 94-95, Jardin
+  94-95, De saison 97, Méthode 98-100 ; accessibilité et bonnes pratiques à 100 ; SEO 66-69,
+  uniquement `is-crawlable` (le noindex). `STRICT_DATA=1 pnpm build` : seule l'erreur des
+  mentions légales. Captures : /saison (octobre) et /methode#saison.
+
+**Gardé / changé** :
+
+- Lighthouse mesuré sans `SITE_LAUNCHED=1`, pour respecter la nouvelle règle à la lettre
+  (le lot précédent l'avait fait sur un build local) : le SEO reste bas jusqu'au lancement.
+- Le gabarit des mangues porte à 11 le nombre de faits (10 sur les gestes, 1 sur les
+  produits de saison) ; le test l'écrit ainsi.
+- Deux échecs ponctuels sous la charge de la suite complète, non reproduits isolément :
+  une erreur de console sur l'accueil (WebKit, 1 fois, message non conservé) et l'éclat du
+  jardin manqué par `toBeVisible` (WebKit) ; ce dernier test guette désormais l'éclat à
+  chaque image. Les deux suites complètes suivantes : 86/86.
+- « 1 kg » se coupait en fin de ligne sur /saison : espace insécable.

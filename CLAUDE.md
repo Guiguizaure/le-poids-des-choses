@@ -26,6 +26,9 @@ Projet indépendant, non affilié à l'ADEME.
   Cloudflare au lancement). Aujourd'hui, `STRICT_DATA=1 pnpm build` échoue donc tant que
   les mentions légales ne sont pas remplies ; `pnpm build` passe. Toujours bloquant, même
   sans `STRICT_DATA` : un gabarit « Le savais-tu ? » qui référence un geste disparu.
+- **Pas de `SITE_LAUNCHED=1` tant que l'ADEME n'a pas confirmé les conditions de
+  réutilisation** des données Impact CO2 (demande en cours, octobre 2026). `DATA_LICENSE`
+  reste à null d'ici là.
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -53,6 +56,12 @@ Prettier, pnpm. Site statique
   sont pas à jour ou si les deux collines sont introuvables)
 - `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
   `src/lib/data/gestures.generated.json` (jamais pendant le build). Commite le fichier généré.
+- `pnpm build-saison` — à la main : interroge l'API publique « Fruits et légumes de
+  saison » d'Impact CO2 pour les 12 mois et régénère `src/lib/data/saison.generated.json`
+  (fiches des produits : colonne URL du CSV). Sans clé ; `IMPACTCO2_API_KEY` est lue dans
+  `.env.local` seulement si elle existe (jamais dans le dépôt ni côté navigateur). Échoue
+  sans rien écrire si l'API refuse l'accès, si une catégorie inconnue apparaît ou si les
+  mois sont incohérents. Commite le fichier généré.
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
 - `pnpm e2e` — tests de bout en bout et accessibilité (Playwright + axe, Chromium « Pixel 7 »
   et WebKit « iPhone 14 ») sur `out/`, servi par `e2e/static-server.mjs` avec les en-têtes
@@ -67,7 +76,8 @@ Prettier, pnpm. Site statique
 ## Arborescence
 
 - `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
-  de comparaison), `/jardin` (Mon jardin), `/methode` (maquette 06), `/mentions-legales`,
+  de comparaison), `/jardin` (Mon jardin), `/saison` (fruits et légumes de saison),
+  `/methode` (maquette 06), `/mentions-legales`,
   404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
   noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
   commun (`SiteFooter`) dans le layout
@@ -225,13 +235,24 @@ Prettier, pnpm. Site statique
     reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
-- Lancement : `SITE_LAUNCHED=1` au build retire le noindex, remplit sitemap.xml et ouvre
-  robots.txt (sauf /labo). Sans elle, tout reste en noindex. Penser aussi à `SITE_URL` si
+- Lancement (pas avant la réponse de l'ADEME, voir Règles) : `SITE_LAUNCHED=1` au build
+  retire le noindex, remplit sitemap.xml et ouvre robots.txt (sauf /labo). Sans elle, tout reste en noindex. Penser aussi à `SITE_URL` si
   le domaine n'est pas `le-poids-des-choses.pages.dev`, à `STRICT_DATA=1`, et à activer
   Cloudflare Web Analytics dans le tableau de bord Pages (annoncé dans les mentions
   légales).
 - Méthode : la mention de licence exacte des données ADEME est attendue ; emplacement
   `DATA_LICENSE` dans `src/app/methode/page.tsx` (null : rien n'est affiché).
+- Crédit des données (`DataCredit`) : « Données : Impact CO2 – ADEME » (lien) et la date
+  de téléchargement des données affichées, sur chaque résultat (duel, duel objet, carte de
+  révélation), sur /saison et sur /methode (#sources et #saison). Testé de bout en bout.
+- Fruits et légumes de saison (`src/lib/saison`, `src/components/saison`) : /saison « De
+  saison en octobre », mois dans l'URL (`?mois=10`, sinon le mois courant ; sélecteur qui
+  fait `pushState` puis `popstate`), tous les produits de l'API regroupés par catégorie de
+  l'API (`SEASON_CATEGORIES`, intitulé = nom de l'API avec majuscule, ordre des ids de
+  l'API), triés par impact au kg ; puces colorées, pas d'illustration. Les deux mangues
+  (avion, bateau) restent telles quelles ; aucune autre provenance (voir
+  /methode#saison). Encart `SeasonTeaser` sur l'accueil et /comparer : les 3 produits les
+  plus légers au kg parmi ceux qui ont une saison (complétés par ceux de toute l'année).
 - Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
   (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
   d’accueil » ; masqué si installé ou fermé). Pas de service worker pour l'instant.
@@ -256,5 +277,8 @@ Prettier, pnpm. Site statique
   décimal) ou `formatMass`. Chaque fait renvoie à la fiche Impact CO2 du geste source et à
   `/methode#savais-tu`. Sur le duel, on préfère un fait sur les gestes comparés ; sur
   /jardin, graine = dernier choix noté. Tests : valeur finie et positive pour chaque gabarit.
+  Un gabarit porte sur des gestes (`gestures`) ou sur des produits de saison (`products`,
+  slugs de l'API : celui des deux mangues) ; un geste ou un produit disparu fait échouer
+  le build.
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
   droits réservés (`LICENSE`).
