@@ -42,7 +42,7 @@ function Arbre1Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FFC93C" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FFC93C" /></g>
     </svg>
   );
 }
@@ -69,7 +69,7 @@ function Arbre2Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF4F2E" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -96,7 +96,7 @@ function Arbre3Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#2FBF71" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF8FB1" /></g>
+      <g data-part="tige"><path d="M60 156 V128" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="51" cy="131" rx="10" ry="6" transform="rotate(-25 51 131)" fill="#1B6B45" /><ellipse cx="69" cy="127" rx="10" ry="6" transform="rotate(25 69 127)" fill="#FF8FB1" /></g>
     </svg>
   );
 }
@@ -159,7 +159,7 @@ function Fleur1Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V34" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="22" cy="58" rx="9" ry="5" transform="rotate(-25 22 58)" fill="#2FBF71" /></g><g data-part="petales"><circle cx="30" cy="16" r="8" fill="#FF8FB1" /><circle cx="41" cy="24" r="8" fill="#FF8FB1" /><circle cx="37" cy="37" r="8" fill="#FF8FB1" /><circle cx="23" cy="37" r="8" fill="#FF8FB1" /><circle cx="19" cy="24" r="8" fill="#FF8FB1" /></g><g data-part="coeur"><circle cx="30" cy="28" r="7" fill="#FFC93C" /></g>
+      <g data-part="tige"><path d="M30 78 V34" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="22" cy="58" rx="9" ry="5" transform="rotate(-25 22 58)" fill="#1B6B45" /></g><g data-part="petales"><circle cx="30" cy="16" r="8" fill="#FF8FB1" /><circle cx="41" cy="24" r="8" fill="#FF8FB1" /><circle cx="37" cy="37" r="8" fill="#FF8FB1" /><circle cx="23" cy="37" r="8" fill="#FF8FB1" /><circle cx="19" cy="24" r="8" fill="#FF8FB1" /></g><g data-part="coeur"><circle cx="30" cy="28" r="7" fill="#FFC93C" /></g>
     </svg>
   );
 }
@@ -168,7 +168,7 @@ function Fleur1Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V62" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#2FBF71" /><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#2FBF71" /></g>
+      <g data-part="tige"><path d="M30 78 V62" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#1B6B45" /><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#1B6B45" /></g>
     </svg>
   );
 }
@@ -177,7 +177,7 @@ function Fleur2Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V30" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#2FBF71" /></g><g data-part="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E" /></g>
+      <g data-part="tige"><path d="M30 78 V30" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#1B6B45" /></g><g data-part="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -186,7 +186,7 @@ function Fleur2Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="tige"><path d="M30 78 V60" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="30" cy="58" rx="5" ry="9" fill="#2FBF71" /></g>
+      <g data-part="tige"><path d="M30 78 V60" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuilles"><ellipse cx="30" cy="58" rx="5" ry="9" fill="#1B6B45" /></g>
     </svg>
   );
 }
@@ -195,7 +195,7 @@ function Fleur3Fleurie({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
-      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF" /><circle cx="40" cy="36" r="5" fill="#2D4BFF" /><circle cx="30" cy="44" r="4" fill="#2D4BFF" /></g>
+      <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#FF4F2E" /><circle cx="40" cy="36" r="5" fill="#FF4F2E" /><circle cx="30" cy="44" r="4" fill="#FF4F2E" /></g>
     </svg>
   );
 }
@@ -492,7 +492,7 @@ function Vent({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={390} height={120} viewBox="0 0 390 120" fill="none" {...svgProps}>
       {children}
-      <g data-part="traits-1"><path d="M10 40 C80 20 140 60 210 40 C240 32 262 30 282 38 C292 42 290 52 282 50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-2"><path d="M60 78 C130 58 190 98 260 78 C300 68 330 68 360 76" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-3"><path d="M140 106 C180 96 220 112 250 102 C262 98 268 104 262 108" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+      <g data-part="traits-1"><path d="M10 40 C80 20 140 60 210 40 C240 32 262 30 282 38 C292 42 290 52 282 50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-2"><path d="M60 78 C130 58 190 98 260 78 C300 68 330 68 360 76" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="traits-3"><path d="M140 106 C180 96 220 112 250 102 C262 98 268 104 262 108" stroke="#1F1A17" strokeWidth="2.5" strokeLinecap="round" /></g>
     </svg>
   );
 }

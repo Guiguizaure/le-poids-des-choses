@@ -1,3 +1,3 @@
 <svg width="60" height="80" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="tige"><path d="M30 78 V62" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></g><g id="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#2FBF71"/><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#2FBF71"/></g>
+<g id="tige"><path d="M30 78 V62" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></g><g id="feuilles"><ellipse cx="24" cy="64" rx="7" ry="4" transform="rotate(-25 24 64)" fill="#1B6B45"/><ellipse cx="36" cy="62" rx="7" ry="4" transform="rotate(25 36 62)" fill="#1B6B45"/></g>
 </svg>

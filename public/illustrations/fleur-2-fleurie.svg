@@ -1,3 +1,3 @@
 <svg width="60" height="80" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="tige"><path d="M30 78 V30" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></g><g id="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#2FBF71"/></g><g id="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E"/></g>
+<g id="tige"><path d="M30 78 V30" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></g><g id="feuilles"><path d="M30 76 C 16 70, 14 56, 18 48 C 26 56, 30 64, 30 76 Z" fill="#1B6B45"/></g><g id="petales"><path d="M18 30 Q 17 12 24 6 L 30 14 L 36 6 Q 43 12 42 30 Q 30 40 18 30 Z" fill="#FF4F2E"/></g>
 </svg>

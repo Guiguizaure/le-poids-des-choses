@@ -1,3 +1,3 @@
 <svg width="60" height="80" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" stroke-width="4" stroke-linecap="round"/></g><g id="baies"><circle cx="20" cy="38" r="5" fill="#2D4BFF"/><circle cx="40" cy="36" r="5" fill="#2D4BFF"/><circle cx="30" cy="44" r="4" fill="#2D4BFF"/></g>
+<g id="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" stroke-width="4" stroke-linecap="round"/></g><g id="baies"><circle cx="20" cy="38" r="5" fill="#FF4F2E"/><circle cx="40" cy="36" r="5" fill="#FF4F2E"/><circle cx="30" cy="44" r="4" fill="#FF4F2E"/></g>
 </svg>
