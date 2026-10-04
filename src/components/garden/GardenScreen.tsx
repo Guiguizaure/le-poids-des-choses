@@ -6,8 +6,8 @@ import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { Icon } from "@/components/ui/buttons";
 import { formatMass } from "@/lib/calc";
-import { buildGarden } from "@/lib/garden/model";
-import { plural } from "@/lib/garden/text";
+import { buildGarden, nextAnimal } from "@/lib/garden/model";
+import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
 import { useJournal } from "@/lib/journal/useJournal";
 
@@ -52,6 +52,7 @@ export function GardenScreen() {
   );
   const visible = showAll ? newestFirst : newestFirst.slice(0, RECENT_COUNT);
   const hasEntries = journal.entries.length > 0;
+  const upcoming = nextAnimal(garden.lightChoiceCount);
   const today = new Date(now);
 
   const onImport = async (file: File | undefined) => {
@@ -96,6 +97,12 @@ export function GardenScreen() {
         now={now}
         highlightId={journal.lastAddedId}
       />
+      {upcoming && journal.ready ? (
+        // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
+        <p className="text-legende text-texte-attenue px-5 pt-2">
+          {nextAnimalMessage(upcoming)}
+        </p>
+      ) : null}
 
       <div className="flex flex-col gap-4 px-5 pt-4 pb-8">
         {!journal.persistent && journal.ready ? (

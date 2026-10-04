@@ -12,7 +12,14 @@ type BirdProps = {
   className?: string;
 };
 
-/** Oiseau : petits sautillements ; endormi, il respire doucement. Immobile en mouvement réduit. */
+const HEAD = '[data-part="tete"], [data-part="bec"], [data-part="oeil"]';
+/** Cou de l'oiseau (oiseau.svg) : la tête pivote autour pour picorer. */
+const NECK = "40 27";
+
+/**
+ * Oiseau, posé au sol (V1) : il sautille et picore ; endormi, il respire doucement au sol.
+ * Immobile en mouvement réduit. L'envol est prévu pour la V1.1.
+ */
 export function Bird({ asleep = false, title, className = "w-16" }: BirdProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -40,7 +47,30 @@ export function Bird({ asleep = false, title, className = "w-16" }: BirdProps) {
           { yPercent: -10, duration: 0.14, ease: "power2.out" },
           "+=0.08",
         )
-        .to("[data-hop]", { yPercent: 0, duration: 0.2, ease: "bounce.out" });
+        .to("[data-hop]", { yPercent: 0, duration: 0.2, ease: "bounce.out" })
+        // Picore deux fois : la tête plonge vers le sol et remonte.
+        .to(
+          HEAD,
+          { rotation: 32, svgOrigin: NECK, duration: 0.12, ease: "power2.in" },
+          "+=0.5",
+        )
+        .to(HEAD, {
+          rotation: 0,
+          svgOrigin: NECK,
+          duration: 0.14,
+          ease: "power2.out",
+        })
+        .to(
+          HEAD,
+          { rotation: 32, svgOrigin: NECK, duration: 0.12, ease: "power2.in" },
+          "+=0.12",
+        )
+        .to(HEAD, {
+          rotation: 0,
+          svgOrigin: NECK,
+          duration: 0.18,
+          ease: "power2.out",
+        });
     },
     [asleep],
   );

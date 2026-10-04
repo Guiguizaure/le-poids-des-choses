@@ -12,7 +12,7 @@ const CLOUDS = '[data-part^="nuage-"]';
 
 /**
  * Le paysage (scene-paysage) vivant : les nuages traversent lentement la scène et
- * réapparaissent de l'autre côté, un halo très doux respire autour du soleil. Immobile en
+ * réapparaissent de l'autre côté, un anneau couleur soleil respire derrière le disque. Immobile en
  * mouvement réduit, ou si `still` (jardin assoupi).
  */
 export function Landscape({
@@ -23,7 +23,6 @@ export function Landscape({
   still?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const haloRef = useRef<HTMLDivElement>(null);
 
   useMotion(
     ref,
@@ -47,27 +46,19 @@ export function Landscape({
           });
         });
 
-      const sun = root.querySelector<SVGGraphicsElement>(
-        '[data-part="soleil"]',
+      // Halo : calque « halo-soleil » du dessin, derrière le disque, invisible par défaut.
+      const halo = root.querySelector<SVGGraphicsElement>(
+        '[data-part="halo-soleil"]',
       );
-      const halo = haloRef.current;
-      if (sun && halo) {
-        const box = sun.getBBox();
-        const color =
-          sun.querySelector("[fill]")?.getAttribute("fill") ??
-          "var(--color-tomate)";
-        gsap.set(halo, {
-          left: `${(box.x / SCENE.width) * 100}%`,
-          top: `${(box.y / SCENE.height) * 100}%`,
-          width: `${(box.width / SCENE.width) * 100}%`,
-          backgroundColor: color,
-        });
+      if (halo) {
+        const box = halo.getBBox();
         gsap.fromTo(
           halo,
-          { scale: 1, opacity: 0.1 },
+          { opacity: SKY.haloOpacity[0], scale: SKY.haloScale[0] },
           {
-            scale: 1.4,
-            opacity: 0.2,
+            opacity: SKY.haloOpacity[1],
+            scale: SKY.haloScale[1],
+            svgOrigin: `${box.x + box.width / 2} ${box.y + box.height / 2}`,
             duration: SKY.sunBreathSeconds / 2,
             ease: "sine.inOut",
             repeat: -1,
@@ -82,11 +73,6 @@ export function Landscape({
   return (
     <div ref={ref} className={`pointer-events-none ${className}`} aria-hidden>
       <div className="relative">
-        <div
-          ref={haloRef}
-          className="absolute aspect-square rounded-full"
-          style={{ opacity: 0, transformOrigin: "50% 50%" }}
-        />
         <Illustration
           name="scene-paysage"
           className="relative block h-auto w-full"

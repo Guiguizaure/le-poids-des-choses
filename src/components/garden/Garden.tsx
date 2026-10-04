@@ -17,21 +17,14 @@ import { Tree } from "@/components/scene/Tree";
 import { Wind } from "@/components/scene/Wind";
 import type { JournalEntry } from "@/lib/data/types";
 import {
-  animalBox,
-  animalIllustration,
   animalsArrivedWith,
-  nextAnimal,
   buildGarden,
   type Box,
   type GardenAnimal,
   type GardenPlant,
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
-import {
-  arrivalMessage,
-  gardenDescription,
-  nextAnimalMessage,
-} from "@/lib/garden/text";
+import { arrivalMessage, gardenDescription } from "@/lib/garden/text";
 
 type GardenProps = {
   entries: readonly JournalEntry[];
@@ -39,8 +32,6 @@ type GardenProps = {
   now: number;
   /** Entrée qui vient d'être ajoutée : sa plante pousse, une rafale passe, un animal arrive. */
   highlightId?: string | null;
-  /** Affiche la silhouette et le message du prochain animal (par défaut oui). */
-  showNext?: boolean;
   className?: string;
 };
 
@@ -104,7 +95,6 @@ export function Garden({
   entries,
   now,
   highlightId = null,
-  showNext = true,
   className = "",
 }: GardenProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -123,7 +113,6 @@ export function Garden({
     [entries, highlightId],
   );
   const awake = !garden.asleep && garden.plants.length > 0;
-  const upcoming = showNext ? nextAnimal(garden.lightChoiceCount) : null;
 
   useAutoGusts(awake, sceneRef);
 
@@ -182,22 +171,6 @@ export function Garden({
             <Animal animal={animal} />
           </div>
         ))}
-        {upcoming ? (
-          // Le prochain animal, en silhouette immobile à sa future place.
-          <div
-            className="pointer-events-none absolute"
-            style={{
-              ...place(animalBox(upcoming.kind)),
-              opacity: 0.16,
-              filter: "brightness(0)",
-            }}
-          >
-            <Illustration
-              name={animalIllustration(upcoming.kind)}
-              className="block h-auto w-full"
-            />
-          </div>
-        ) : null}
         <div
           className="pointer-events-none absolute inset-x-0 top-1/2 transition-opacity duration-1000"
           style={{ opacity: garden.asleep ? 1 : 0 }}
@@ -217,11 +190,6 @@ export function Garden({
       <p role="status" aria-live="polite" className="sr-only">
         {message}
       </p>
-      {upcoming ? (
-        <p className="text-legende text-texte-attenue px-5 pt-2">
-          {nextAnimalMessage(upcoming)}
-        </p>
-      ) : null}
     </div>
   );
 }

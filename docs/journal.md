@@ -333,3 +333,32 @@ faire livrer » si le CSV le permet.
 - Objets : libellés courts dans les cartes (« Smartphone », « Jean »…). Les titres du carnet
   tirent désormais l'accord de `objectNoun` (« Télévision gardée plutôt que neuve »).
 - Pas de Click & Collect.
+
+## 2026-10-05 — Lot 5c : retours de test (branche feat/feedback-2)
+
+**Demandé** : message du prochain animal seulement sur /jardin, plus de silhouettes,
+petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
+
+**Proposé / fait** :
+
+- « Encore N choix légers… » : affiché seulement sur /jardin sous la scène ; retiré du
+  composant `Garden` (donc de 05a / 05b et du labo). Silhouettes supprimées (code, styles,
+  test, `animalIllustration`).
+- Contour encre 1,5 (`non-scaling-stroke`) sur papillon (lobes des ailes), coccinelle
+  (élytres), escargot et escargot endormi (corps, coquille) ; calques et tailles inchangés.
+- Places : papillon (100, 84) et abeille (205, 76) dans la bande de ciel, au-dessus du plus
+  haut cadre d'arbre (y ≈ 105) ; coccinelle, escargot, hérisson au sol ; oiseau posé sur la
+  colline verte (x = 372, hauteur tirée de la ligne de la colline), sautille et picore.
+  Tests : volants au-dessus des feuillages, autres au sol, oiseau sur la colline verte.
+- Halo : il était invisible partout car c'était un `div` placé derrière le SVG, dont le
+  calque `ciel` est opaque (ma vérification précédente ne lisait que l'opacité calculée).
+  Corrigé par un calque `halo-soleil` ajouté à `scene-paysage.svg` (anneau #FFC93C, r = 50,
+  derrière le disque, opacité 0 par défaut), animé de 0,35 à 0,6 et de 1 à 1,12 sur 6 s.
+- Vérifié dans Chrome : jardin avec arbre jaune, papillon cerné dans le ciel, coccinelle,
+  oiseau sur la colline verte, halo visible sur /jardin, l'accueil et 05a ; pas de message
+  sur 05a.
+
+**Gardé / changé** :
+
+- Escargot endormi cerné aussi, par cohérence avec l'escargot éveillé.
+- Note V1.1 dans CLAUDE.md : envol de l'oiseau.

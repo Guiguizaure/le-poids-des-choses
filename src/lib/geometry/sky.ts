@@ -7,6 +7,9 @@ export const SKY = {
   maxCloudSeconds: 90,
   /** Cycle complet du halo du soleil (grandit puis rétrécit), en secondes. */
   sunBreathSeconds: 6,
+  /** Halo : anneau couleur soleil derrière le disque, visible mais doux. */
+  haloOpacity: [0.35, 0.6] as readonly [number, number],
+  haloScale: [1, 1.12] as readonly [number, number],
 } as const;
 
 export type CloudDrift = {
