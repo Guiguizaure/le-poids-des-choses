@@ -280,3 +280,13 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - Pastille « Mon jardin » sans montant tant que rien n'est évité (au lieu de « 0 g »).
 - Pas du curseur de distance : 1 % de la course (sinon les flèches ne bougeaient pas la
   valeur aux petites distances).
+
+**Ajustements après relecture (2026-10-05)** :
+
+- Objets : « aucune nouvelle fabrication » remplace « zéro émission » pour « garder » et
+  « d’occasion sans colis » (hypothèse de méthode : entretien et fin de vie non comptés) ;
+  « zéro émission » reste réservé à la marche.
+- Avion : libellé « Avion », précision « trajet court » (nouveau champ `detail` des gestes,
+  réglé dans `scripts/build-gestures.ts`, données régénérées), affichée sous le libellé dans
+  les cartes des écrans 02 et 03.
+- Gardés : pastille sur le 03b, textes ajoutés de l'étape 2.
