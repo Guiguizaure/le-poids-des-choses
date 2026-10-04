@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
 import { Icon } from "@/components/ui/buttons";
+import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
+import { useSearchParam } from "@/lib/hooks/useSearchParam";
 import { useJournal } from "@/lib/journal/useJournal";
 
 const RECENT_COUNT = 5;
@@ -28,7 +30,7 @@ function PillButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="border-encre text-legende text-encre hover:bg-blanc rounded-full border px-3 py-1.5 leading-[1.3] font-semibold transition-colors disabled:opacity-40"
+      className="press border-encre text-legende text-encre hover:bg-blanc rounded-full border px-3 py-1.5 leading-[1.3] font-semibold transition-colors disabled:opacity-40"
     >
       {children}
     </button>
@@ -53,6 +55,22 @@ export function GardenScreen() {
   );
   const visible = showAll ? newestFirst : newestFirst.slice(0, RECENT_COUNT);
   const hasEntries = journal.entries.length > 0;
+  // Arrivée depuis « Aller la planter » : /jardin?nouveau=<id de l'entrée>.
+  const nouveau = useSearchParam("nouveau");
+  const revealId =
+    nouveau && journal.entries.some((entry) => entry.id === nouveau)
+      ? nouveau
+      : null;
+
+  useEffect(() => {
+    if (!nouveau || !journal.ready) return;
+    // Une fois la plante plantée et l'animal arrivé, on retire le paramètre de l'URL.
+    const timer = window.setTimeout(
+      () => window.history.replaceState(null, "", "/jardin"),
+      4000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [nouveau, journal.ready]);
   const upcoming = nextAnimal(garden.lightChoiceCount);
   const today = new Date(now);
 
@@ -76,7 +94,7 @@ export function GardenScreen() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
+    <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center px-5 pt-[22px] pb-2">
         <Link
           href="/comparer"
@@ -93,11 +111,7 @@ export function GardenScreen() {
         </h1>
       </div>
 
-      <Garden
-        entries={journal.entries}
-        now={now}
-        highlightId={journal.lastAddedId}
-      />
+      <Garden entries={journal.entries} now={now} highlightId={revealId} />
       {upcoming && journal.ready ? (
         // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
         <p className="text-legende text-texte-attenue px-5 pt-2">
@@ -139,7 +153,7 @@ export function GardenScreen() {
               aria-label="Bilan"
             >
               <p className="font-titre text-chiffre-xl text-encre">
-                {formatMass(garden.totalAvoidedKg)}
+                <CountUp value={garden.totalAvoidedKg} format={formatMass} />
               </p>
               <p className="text-corps-s text-texte-attenue leading-[1.4]">
                 de CO2e évités depuis ton premier choix
