@@ -99,6 +99,10 @@ describe("pictos et catégories", () => {
       }
     }
   });
+  it("aucun geste n'affiche plus picto-generique", () => {
+    for (const gesture of getGestures())
+      expect(pictoFor(gesture.id)).not.toBe("picto-generique");
+  });
   it("la liste des pictos à fournir est à jour (aucun n'existe déjà, tous servent)", () => {
     const wanted = new Set(getGestures().map((g) => `picto-${g.id}`));
     for (const name of PENDING_PICTOS) {
@@ -122,5 +126,26 @@ describe("pictos et catégories", () => {
         gestureB: "repas-vegetarien",
       }),
     ).toBe("Manger");
+  });
+});
+
+describe("objets : libellés courts, accord tiré du nom", () => {
+  const object = (
+    id: string,
+    modeA: "neuf" | "garder" | "occasion-livree",
+    modeB: "occasion" | "neuf" | "garder",
+    chosen: "a" | "b",
+  ) =>
+    entryTitle({ ...base, gestureA: id, gestureB: id, modeA, modeB, chosen });
+  it("masculin, féminin, pluriel", () => {
+    expect(object("smartphone", "neuf", "occasion", "a")).toBe(
+      "Smartphone neuf plutôt que d’occasion",
+    );
+    expect(object("television", "neuf", "garder", "b")).toBe(
+      "Télévision gardée plutôt que neuve",
+    );
+    expect(object("chaussures", "occasion-livree", "neuf", "a")).toBe(
+      "Chaussures de sport d’occasion livrées plutôt que neuves",
+    );
   });
 });

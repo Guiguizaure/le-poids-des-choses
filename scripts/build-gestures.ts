@@ -118,43 +118,43 @@ export const SELECTION: readonly Selection[] = [
     label: "Repas au poisson blanc (cabillaud)",
   },
 
-  { ...habit, sourceId: "jeans", id: "jean", label: "Jean neuf" },
+  { ...habit, sourceId: "jeans", id: "jean", label: "Jean" },
   {
     ...habit,
     sourceId: "tshirtencoton",
     id: "tshirt",
-    label: "T-shirt en coton neuf",
+    label: "T-shirt en coton",
   },
   {
     ...habit,
     sourceId: "pullenlaine",
     id: "pull",
-    label: "Pull en laine neuf",
+    label: "Pull en laine",
   },
   {
     ...habit,
     sourceId: "chaussuresdesport",
     id: "chaussures",
-    label: "Chaussures de sport neuves",
+    label: "Chaussures de sport",
   },
 
   {
     ...equipement,
     sourceId: "smartphone",
     id: "smartphone",
-    label: "Smartphone neuf",
+    label: "Smartphone",
   },
   {
     ...equipement,
     sourceId: "ordinateurportable",
     id: "ordinateur-portable",
-    label: "Ordinateur portable neuf",
+    label: "Ordinateur portable",
   },
   {
     ...equipement,
     sourceId: "television",
     id: "television",
-    label: "Télévision neuve",
+    label: "Télévision",
   },
 
   {

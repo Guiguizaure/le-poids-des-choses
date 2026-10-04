@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T14:50:31.270Z",
+  "downloadedAt": "2026-10-04T15:18:26.668Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -161,7 +161,7 @@
     },
     {
       "id": "jean",
-      "label": "Jean neuf",
+      "label": "Jean",
       "category": "habillement",
       "unit": "objet",
       "kgCo2ePerUnit": 25.09,
@@ -207,7 +207,7 @@
     },
     {
       "id": "tshirt",
-      "label": "T-shirt en coton neuf",
+      "label": "T-shirt en coton",
       "category": "habillement",
       "unit": "objet",
       "kgCo2ePerUnit": 6.434,
@@ -253,7 +253,7 @@
     },
     {
       "id": "pull",
-      "label": "Pull en laine neuf",
+      "label": "Pull en laine",
       "category": "habillement",
       "unit": "objet",
       "kgCo2ePerUnit": 56.7,
@@ -299,7 +299,7 @@
     },
     {
       "id": "chaussures",
-      "label": "Chaussures de sport neuves",
+      "label": "Chaussures de sport",
       "category": "habillement",
       "unit": "objet",
       "kgCo2ePerUnit": 20.13,
@@ -345,7 +345,7 @@
     },
     {
       "id": "smartphone",
-      "label": "Smartphone neuf",
+      "label": "Smartphone",
       "category": "numerique",
       "unit": "objet",
       "kgCo2ePerUnit": 80.16,
@@ -391,7 +391,7 @@
     },
     {
       "id": "ordinateur-portable",
-      "label": "Ordinateur portable neuf",
+      "label": "Ordinateur portable",
       "category": "numerique",
       "unit": "objet",
       "kgCo2ePerUnit": 192.6,
@@ -437,7 +437,7 @@
     },
     {
       "id": "television",
-      "label": "Télévision neuve",
+      "label": "Télévision",
       "category": "numerique",
       "unit": "objet",
       "kgCo2ePerUnit": 369.7,
