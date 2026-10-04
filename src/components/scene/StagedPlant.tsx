@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { useGust } from "@/components/motion/gust";
 import { gsap, useGSAP } from "@/components/motion/gsap";
@@ -48,6 +48,8 @@ type StagedPlantProps<S extends string> = {
    * au lieu de grossir avec la plante.
    */
   zoom?: number;
+  /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
+  strokeScale?: number;
 };
 
 /**
@@ -66,6 +68,7 @@ export function StagedPlant<S extends string>({
   still = false,
   popIn = false,
   zoom = 1,
+  strokeScale = 1,
 }: StagedPlantProps<S>) {
   const ref = useRef<HTMLDivElement>(null);
   const sparkleRef = useRef<HTMLDivElement>(null);
@@ -74,6 +77,23 @@ export function StagedPlant<S extends string>({
   const firstName = illustrationFor(stages[0]);
   const spec = getSpec(firstName);
   const origin = anchorAsCssOrigin(firstName);
+
+  // Agrandie, la plante garde l'épaisseur de trait du jardin : seule la forme grossit.
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root || strokeScale === 1) return;
+    const stroked = root.querySelectorAll<SVGElement>(
+      "[data-stage] [stroke-width]",
+    );
+    for (const element of stroked) {
+      element.style.strokeWidth = String(
+        Number(element.getAttribute("stroke-width")) * strokeScale,
+      );
+    }
+    return () => {
+      for (const element of stroked) element.style.strokeWidth = "";
+    };
+  }, [strokeScale]);
 
   const reduceRef = useMotion(
     ref,

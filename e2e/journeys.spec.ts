@@ -46,7 +46,21 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   await expect(page.getByText("1 choix noté")).toBeVisible();
 });
 
-test("petit choix : une petite pousse, agrandie dans la vitrine", async ({
+/** Épaisseur à l'écran (px) du trait de la pousse affichée, une fois sa croissance finie. */
+function stemStroke(page: import("@playwright/test").Page) {
+  return page
+    .locator("[data-stage='pousse'] [stroke-width]")
+    .first()
+    .evaluate((element) => {
+      const matrix = (element as SVGGraphicsElement).getScreenCTM()!;
+      return (
+        parseFloat(getComputedStyle(element).strokeWidth) *
+        Math.hypot(matrix.a, matrix.b)
+      );
+    });
+}
+
+test("petit choix : une petite pousse, agrandie dans la vitrine, au trait du jardin", async ({
   page,
 }) => {
   await page.goto("/comparer?a=velo&b=voiture&q=2");
@@ -70,6 +84,19 @@ test("petit choix : une petite pousse, agrandie dans la vitrine", async ({
       }),
     )
     .toBeGreaterThan(80);
+
+  // Le trait n'est pas agrandi : même épaisseur que dans le jardin (à l'écran, à la mise en
+  // page près : la vitrine et la scène n'ont pas tout à fait la même échelle).
+  await expect.poll(() => stemStroke(page)).toBeLessThan(3);
+  const inVitrine = await stemStroke(page);
+  await page.getByRole("link", { name: "Aller la planter" }).click();
+  await expect(page).toHaveURL(/\/jardin/);
+  await expect(
+    page.getByRole("img", { name: /Jardin : 1 plante/ }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => Math.abs((await stemStroke(page)) - inVitrine))
+    .toBeLessThan(0.5);
 });
 
 test("choix plus lourd : la balance se pose, c'est noté, rien ne pousse", async ({

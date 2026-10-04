@@ -397,7 +397,7 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
 - Cloudflare Web Analytics annoncé dans les mentions légales : à activer dans le tableau de
   bord Cloudflare Pages au lancement (aucun script ajouté au code).
 
-## 2026-10-05 — Lot 7 : qualité avant lancement (branche feat/quality)
+## 2026-10-04 — Lot 7 : qualité avant lancement (branche feat/quality)
 
 **Demandé** : Lighthouse ≥ 95 partout, axe et contraste, focus, clavier, tests de bout en
 bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final, licences.
@@ -436,7 +436,7 @@ bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final
 - Duel et jardin restent au seuil de 95 : leur contenu dépend de l'URL ou du carnet, lus
   côté client dans un export statique ; le socle React/Next représente l'essentiel du JS.
 
-## 2026-10-05 — Lot 5d : révélation et micro-interactions (branche feat/reveal)
+## 2026-10-04 — Lot 5d : révélation et micro-interactions (branche feat/reveal)
 
 **Demandé** : carte de révélation après un choix (maquettes 05a v2 et 05b v2), arrivée dans
 le jardin par `?nouveau=`, micro-interactions discrètes, sans régression Lighthouse.
@@ -499,3 +499,32 @@ pousser… » sinon, « … va grandir… » quand le jardin est plein.
   dessin agrandi, sans retouche.
 - Dans Chrome, l'onglet piloté était ralenti (la carte encore en train de tomber après 3 s) :
   vérification visuelle faite avec Playwright ; le choix noté dans Chrome a été effacé.
+
+## 2026-10-04 — Lot 5d, derniers ajustements : trait constant, dates du journal (branche feat/reveal)
+
+**Demandé** : dans la vitrine, garder l'épaisseur des traits constante quand la plante est
+agrandie, pour que la pousse ait le même trait que dans le jardin ; corriger les dates des
+entrées des lots 7 et 5d (2026-10-04 et non 2026-10-05).
+
+**Proposé / fait** :
+
+- `vitrineFit` renvoie `strokeScale` : le facteur qui ramène chaque trait du SVG à son
+  épaisseur dans le jardin. Le jardin dessine le cadre d'une plante à `PLANT_FRAME_WIDTH`
+  unités de scène (60 pour un arbre de 120, 30 pour une fleur de 60), soit à moitié : un
+  trait de 4 y fait 2 unités. `StagedPlant` l'applique aux éléments qui ont un
+  `stroke-width` (les tiges), seule la forme est agrandie.
+- Préféré à `vector-effect: non-scaling-stroke`, qui fixerait le trait en pixels d'écran
+  (4 px) au lieu de suivre l'échelle du jardin (environ 2 px sur téléphone).
+- L'emprise générée sépare la forme et le trait (`stroke`, plus grande demi-épaisseur), pour
+  que la plante occupe toujours la hauteur de la vitrine sans dépasser.
+- Tests : `strokeScale × zoom` vaut l'échelle du jardin pour les 15 dessins ; parcours d'un
+  petit choix : le trait de la pousse mesuré à l'écran dans la vitrine puis dans le jardin
+  diffère de moins de 0,5 px (avant : 3 à 4 px de plus dans la vitrine).
+- Dates des entrées des lots 7 et 5d corrigées.
+- Vérifié sur l'export statique (captures Playwright, Pixel 7) : pousses et fleurs ont des
+  tiges fines comme dans le jardin.
+
+**Gardé / changé** :
+
+- Les dates des lots 5, 5b, 5c et 6 portent aussi 2026-10-05 : laissées telles quelles en
+  attendant confirmation.

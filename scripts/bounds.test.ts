@@ -5,13 +5,25 @@ import { contentBounds } from "./bounds";
 import { pathToPoints } from "./scene-geometry";
 
 describe("emprise du dessin des plantes", () => {
-  it("formes simples, avec la moitié du trait", () => {
-    const svg = `<svg><rect x="10" y="20" width="5" height="5" stroke-width="2"/><circle cx="40" cy="40" r="4"/></svg>`;
-    expect(contentBounds(svg)).toEqual({ x: 9, y: 19, width: 35, height: 25 });
+  it("formes simples ; le trait est compté à part", () => {
+    const svg = `<svg><rect x="10" y="20" width="5" height="5" stroke-width="2"/><path d="M40 40 L44 44" stroke-width="4"/></svg>`;
+    expect(contentBounds(svg)).toEqual({
+      x: 10,
+      y: 20,
+      width: 34,
+      height: 24,
+      stroke: 2,
+    });
   });
   it("ellipse tournée : on prend le plus grand rayon", () => {
     const svg = `<svg><ellipse cx="50" cy="50" rx="10" ry="4" transform="rotate(25 50 50)"/></svg>`;
-    expect(contentBounds(svg)).toEqual({ x: 40, y: 40, width: 20, height: 20 });
+    expect(contentBounds(svg)).toEqual({
+      x: 40,
+      y: 40,
+      width: 20,
+      height: 20,
+      stroke: 0,
+    });
   });
   it("chemins avec courbes quadratiques", () => {
     const points = pathToPoints("M0 0 Q 10 20 20 0");

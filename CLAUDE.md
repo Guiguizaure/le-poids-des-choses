@@ -162,7 +162,8 @@ Prettier, pnpm. Site statique
     choix léger → vitrine avec la plante EXACTE du jardin (`revealForEntry` : même calcul
     que `buildGarden`, jardin avec / sans l'entrée) mise à l'échelle pour occuper la hauteur
     de la vitrine quel que soit son stade (`vitrineFit` ; une pousse est agrandie, l'éclat
-    garde sa taille via `zoom` ; dans le jardin, vraie taille), titre selon le stade (« Une
+    garde sa taille via `zoom` et les traits l'épaisseur du jardin via `strokeScale` ; dans
+    le jardin, vraie taille), titre selon le stade (« Une
     petite pousse va sortir de terre », « Un arbre / Une fleur va pousser… », « … va
     grandir… » jardin plein), éclat, animal débloqué qui entre,
     « Et un papillon arrive ! », « Aller la planter » → `/jardin?nouveau=<id>` ; choix lourd

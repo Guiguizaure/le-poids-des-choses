@@ -132,6 +132,7 @@ function Vitrine({
               className="w-full"
               popIn
               zoom={fit.zoom}
+              strokeScale={fit.strokeScale}
             />
           ) : (
             <Flower
@@ -140,6 +141,7 @@ function Vitrine({
               className="w-full"
               popIn
               zoom={fit.zoom}
+              strokeScale={fit.strokeScale}
             />
           )}
         </div>

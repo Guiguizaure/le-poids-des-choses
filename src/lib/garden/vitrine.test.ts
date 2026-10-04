@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PLANT_BOUNDS } from "@/lib/illustrations/bounds.generated";
 import { getSpec, type IllustrationName } from "@/lib/illustrations/specs";
+import { PLANT_FRAME_WIDTH } from "./model";
 import { VITRINE, vitrineFit } from "./vitrine";
 
 const PLANTS = Object.keys(PLANT_BOUNDS) as IllustrationName[];
@@ -9,11 +10,13 @@ const PLANTS = Object.keys(PLANT_BOUNDS) as IllustrationName[];
 function placed(name: IllustrationName) {
   const fit = vitrineFit(name);
   const b = PLANT_BOUNDS[name];
+  const stroke = b.stroke * fit.strokeScale * fit.zoom;
   return {
     fit,
-    top: fit.top + b.y * fit.zoom,
-    left: fit.left + b.x * fit.zoom,
-    right: fit.left + (b.x + b.width) * fit.zoom,
+    // Le trait n'est pas agrandi : sa demi-épaisseur (celle du jardin) s'ajoute telle quelle.
+    top: fit.top + b.y * fit.zoom - stroke,
+    left: fit.left + b.x * fit.zoom - stroke,
+    right: fit.left + (b.x + b.width) * fit.zoom + stroke,
   };
 }
 
@@ -49,6 +52,15 @@ describe("vitrine de révélation", () => {
     expect(vitrineFit("arbre-1-pousse").zoom).toBeGreaterThan(2.5);
     expect(vitrineFit("fleur-1-pousse").zoom).toBeGreaterThan(3.5);
     expect(vitrineFit("arbre-1-grand").zoom).toBeCloseTo(130 / 146, 3);
+  });
+  it.each(PLANTS)("%s : trait à l'épaisseur du jardin", (name) => {
+    const fit = vitrineFit(name);
+    const type = name.startsWith("arbre-") ? "tree" : "flower";
+    // Dans la vitrine, une unité du SVG vaut `zoom` unités ; dans le jardin, cadre / largeur.
+    expect(fit.strokeScale * fit.zoom).toBeCloseTo(
+      PLANT_FRAME_WIDTH[type] / getSpec(name).width,
+      10,
+    );
   });
   it("refuse ce qui n'est pas une plante", () => {
     expect(() => vitrineFit("papillon" as IllustrationName)).toThrow(
