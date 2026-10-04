@@ -83,3 +83,23 @@ garde-fou contre les données fictives.
   impactco2.fr : « 1 smartphone », « 1 ordinateur portable », « 1 télévision ») : 22 gestes.
 - Le numérique mêle donc usages (`heure`) et équipements (`objet`) : l'interface devra
   comparer deux gestes de même unité.
+
+## 2026-10-04 — Lot 2c : occasion et « garder le mien » (branche feat/data-objets)
+
+**Demandé** : ajouter aux objets les modes « d'occasion » et « garder le mien », sans inventer
+de valeur.
+
+**Proposé / fait** :
+
+- Repérage du CSV : aucune ligne « occasion », « reconditionné » ou « seconde main ». La
+  thématique « Livraison » contient des colis (1, 2, 15, 30 kg) en livraison à domicile,
+  point de retrait, magasin et click & collect. Unité vérifiée sur impactco2.fr : « 1 livraison ».
+- Modèle : `AcquisitionMode`, `ModeValue` (avec `method`, `sourceId`, `parts`) ; 4 modes sur
+  les 7 objets : neuf (CSV), occasion (0, hypothèse), occasion livrée (0 + colis du CSV),
+  garder (0).
+- `withMode`, `compareModes`, `acquisitionModes` dans `src/lib/calc/modes.ts`.
+- `docs/methode.md` (brouillon).
+
+**Gardé / changé** : à relire — livraison à domicile (et non point relais) ; taille du colis
+par objet (1 kg vêtements et smartphone, 2 kg chaussures et portable, 15 kg télévision) ;
+« occasion » sans livraison séparée de « occasion livrée ».

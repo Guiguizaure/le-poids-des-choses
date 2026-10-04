@@ -80,6 +80,64 @@ describe("données générées (Impact CO2)", () => {
   });
 });
 
+describe("modes d'acquisition des objets", () => {
+  const objets = () => getGestures().filter((g) => g.unit === "objet");
+  it("seuls les objets ont des modes", () => {
+    for (const g of getGestures()) {
+      expect(g.modes === undefined).toBe(g.unit !== "objet");
+    }
+  });
+  it("neuf = valeur du CSV, occasion et garder = hypothèses à 0", () => {
+    for (const g of objets()) {
+      expect(g.modes?.neuf).toMatchObject({
+        kgCo2e: g.kgCo2ePerUnit,
+        method: "impactco2",
+        sourceId: g.sourceId,
+      });
+      expect(g.modes?.occasion).toEqual({
+        kgCo2e: 0,
+        method: "hypothese-occasion",
+      });
+      expect(g.modes?.garder).toEqual({
+        kgCo2e: 0,
+        method: "hypothese-garder",
+      });
+    }
+  });
+  it("occasion livrée : fabrication à 0 (hypothèse) + colis sourcé Livraison", () => {
+    for (const g of objets()) {
+      const livree = g.modes?.["occasion-livree"];
+      expect(livree?.method).toBe("hypothese-occasion");
+      expect(livree?.parts).toHaveLength(2);
+      const [fab, colis] = livree!.parts!;
+      expect(fab).toMatchObject({ kgCo2e: 0, method: "hypothese-occasion" });
+      expect(colis.method).toBe("impactco2");
+      expect(colis.sourceId).toMatch(/^livraisondomicile/);
+      expect(colis.sourceUrl).toMatch(
+        /^https:\/\/impactco2\.fr\/outils\/livraison\//,
+      );
+      expect(livree?.kgCo2e).toBe(colis.kgCo2e);
+      expect(colis.kgCo2e).toBeGreaterThan(0);
+    }
+  });
+  it("toute valeur 'impactco2' a une source ; toute valeur est ≥ 0", () => {
+    for (const g of objets()) {
+      for (const value of Object.values(g.modes ?? {})) {
+        expect(value.kgCo2e).toBeGreaterThanOrEqual(0);
+        if (value.method === "impactco2") expect(value.sourceId).toBeTruthy();
+        for (const part of value.parts ?? []) {
+          if (part.method === "impactco2") expect(part.sourceId).toBeTruthy();
+        }
+      }
+    }
+  });
+  it("l'occasion livrée reste moins lourde que le neuf", () => {
+    for (const g of objets()) {
+      expect(g.modes!["occasion-livree"]!.kgCo2e).toBeLessThan(g.kgCo2ePerUnit);
+    }
+  });
+});
+
 describe("adaptateur", () => {
   it("getGesture", () => {
     expect(getGesture("tgv")?.label).toBe("TGV");

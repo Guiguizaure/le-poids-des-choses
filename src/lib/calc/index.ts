@@ -9,3 +9,9 @@ export {
   type GardenTotals,
 } from "./garden";
 export { formatMass } from "./format";
+export {
+  ACQUISITION_MODE_LABELS,
+  acquisitionModes,
+  compareModes,
+  withMode,
+} from "./modes";

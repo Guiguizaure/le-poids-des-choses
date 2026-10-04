@@ -53,7 +53,7 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
   `gardenStage`, `isAsleep`, `formatMass`)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
 - `scripts` — scripts de données (locaux)
-- `docs` — conventions et `journal.md`
+- `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
 
 ## Conventions
 
@@ -72,5 +72,11 @@ Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème da
   ou change de thématique. Valeurs arrondies à 4 chiffres significatifs, date de
   téléchargement en tête du fichier. Pas de source, pas de geste : ne jamais ajouter de
   valeur à la main dans le JSON généré.
+- Objets (unité `objet`) : chaque geste porte `modes` (`neuf`, `occasion`, `occasion-livree`,
+  `garder`), chaque valeur avec `method` (`impactco2` + `sourceId`, ou `hypothese-occasion` /
+  `hypothese-garder`). `withMode` / `compareModes` (`src/lib/calc/modes.ts`) comparent les
+  modes d'un même objet. Le colis de l'option « livrée » est choisi par objet dans
+  `PARCEL_BY_GESTURE_ID` (script) ; pas de ligne adaptée = pas d'option, jamais de valeur
+  inventée. Hypothèses détaillées dans `docs/methode.md`.
 - Le site est en `noindex` tant qu'il n'est pas lancé (`metadata.robots` du layout).
 - SVG : voir `docs/svg-conventions.md`.

@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T10:13:13.163Z",
+  "downloadedAt": "2026-10-04T10:23:13.767Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -168,7 +168,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "jeans",
-      "sourceUrl": "https://impactco2.fr/outils/habillement/jeans"
+      "sourceUrl": "https://impactco2.fr/outils/habillement/jeans",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 25.09,
+          "method": "impactco2",
+          "sourceId": "jeans",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/jeans"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "tshirt",
@@ -180,7 +214,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "tshirtencoton",
-      "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton"
+      "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 6.434,
+          "method": "impactco2",
+          "sourceId": "tshirtencoton",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "pull",
@@ -192,7 +260,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "pullenlaine",
-      "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine"
+      "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 56.7,
+          "method": "impactco2",
+          "sourceId": "pullenlaine",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "chaussures",
@@ -204,7 +306,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "chaussuresdesport",
-      "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport"
+      "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 20.13,
+          "method": "impactco2",
+          "sourceId": "chaussuresdesport",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 1.075,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 2kg)",
+              "kgCo2e": 1.075,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile2kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile2kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "streaming",
@@ -240,7 +376,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "smartphone",
-      "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone"
+      "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 80.16,
+          "method": "impactco2",
+          "sourceId": "smartphone",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "ordinateur-portable",
@@ -252,7 +422,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "ordinateurportable",
-      "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable"
+      "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 192.6,
+          "method": "impactco2",
+          "sourceId": "ordinateurportable",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 1.075,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 2kg)",
+              "kgCo2e": 1.075,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile2kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile2kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     },
     {
       "id": "television",
@@ -264,7 +468,41 @@
       "source": "impactco2",
       "fictive": false,
       "sourceId": "television",
-      "sourceUrl": "https://impactco2.fr/outils/numerique/television"
+      "sourceUrl": "https://impactco2.fr/outils/numerique/television",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 369.7,
+          "method": "impactco2",
+          "sourceId": "television",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/television"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 7.155,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Fabrication évitée (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 15kg)",
+              "kgCo2e": 7.155,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile15kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
     }
   ]
 }

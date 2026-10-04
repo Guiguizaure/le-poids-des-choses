@@ -1,7 +1,13 @@
 // Lancé à la main : `pnpm build-gestures`. Télécharge le CSV Impact CO2 (ADEME) et écrit
 // src/lib/data/gestures.generated.json. Aucune clé API nécessaire.
 import { writeFileSync } from "node:fs";
-import type { Category, Gesture, Unit } from "../src/lib/data/types";
+import type {
+  AcquisitionMode,
+  Category,
+  Gesture,
+  ModeValue,
+  Unit,
+} from "../src/lib/data/types";
 
 const CSV_URL = "https://impactco2.fr/equivalents.csv";
 const OUTPUT = new URL(
@@ -154,6 +160,22 @@ export const SELECTION: readonly Selection[] = [
   },
 ];
 
+/**
+ * Colis (ligne « Livraison à domicile » du CSV) retenu pour chaque objet, selon son poids
+ * approximatif emballé. Hypothèse de taille à relire : sans entrée ici, pas d'option
+ * « occasion livrée » pour l'objet (aucun transport n'est inventé).
+ */
+export const PARCEL_BY_GESTURE_ID: Readonly<Record<string, string>> = {
+  jean: "livraisondomicile",
+  tshirt: "livraisondomicile",
+  pull: "livraisondomicile",
+  chaussures: "livraisondomicile2kg",
+  smartphone: "livraisondomicile",
+  "ordinateur-portable": "livraisondomicile2kg",
+  television: "livraisondomicile15kg",
+};
+const PARCEL_THEME = "Livraison";
+
 /** Analyse CSV minimale (RFC 4180 : guillemets, virgules et retours à la ligne dans les champs). */
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = [];
@@ -195,6 +217,7 @@ export function roundSignificant(value: number, digits = 4): number {
 export function buildGestures(
   csv: string,
   selection: readonly Selection[] = SELECTION,
+  parcels: Readonly<Record<string, string>> = PARCEL_BY_GESTURE_ID,
 ): Gesture[] {
   const [header, ...rows] = parseCsv(csv);
   const col = (name: string) => {
@@ -214,20 +237,23 @@ export function buildGestures(
   ];
   const byId = new Map(rows.map((r) => [r[iId]?.trim(), r]));
 
-  return selection.map((sel) => {
-    const row = byId.get(sel.sourceId);
-    if (!row) throw new Error(`ID « ${sel.sourceId} » absent du CSV.`);
-    if (row[iTheme].trim() !== sel.theme) {
+  const lookup = (sourceId: string, theme: string) => {
+    const row = byId.get(sourceId);
+    if (!row) throw new Error(`ID « ${sourceId} » absent du CSV.`);
+    if (row[iTheme].trim() !== theme) {
       throw new Error(
-        `« ${sel.sourceId} » est dans « ${row[iTheme]} », attendu « ${sel.theme} » (${row[iLabel]}).`,
+        `« ${sourceId} » est dans « ${row[iTheme]} », attendu « ${theme} » (${row[iLabel]}).`,
       );
     }
     const value = Number(row[iValue]);
     if (!Number.isFinite(value) || value < 0)
-      throw new Error(
-        `Valeur invalide pour « ${sel.sourceId} » : ${row[iValue]}`,
-      );
-    return {
+      throw new Error(`Valeur invalide pour « ${sourceId} » : ${row[iValue]}`);
+    return { value, label: row[iLabel].trim(), url: row[iUrl].trim() };
+  };
+
+  return selection.map((sel) => {
+    const { value, url } = lookup(sel.sourceId, sel.theme);
+    const gesture: Gesture = {
       id: sel.id,
       label: sel.label,
       category: sel.category,
@@ -237,8 +263,45 @@ export function buildGestures(
       source: "impactco2",
       fictive: false,
       sourceId: sel.sourceId,
-      sourceUrl: row[iUrl].trim(),
+      sourceUrl: url,
     };
+
+    if (sel.unit === "objet") {
+      const modes: Partial<Record<AcquisitionMode, ModeValue>> = {
+        neuf: {
+          kgCo2e: gesture.kgCo2ePerUnit,
+          method: "impactco2",
+          sourceId: sel.sourceId,
+          sourceUrl: url,
+        },
+        occasion: { kgCo2e: 0, method: "hypothese-occasion" },
+      };
+      const parcelId = parcels[sel.id];
+      if (parcelId) {
+        const parcel = lookup(parcelId, PARCEL_THEME);
+        modes["occasion-livree"] = {
+          kgCo2e: roundSignificant(parcel.value),
+          method: "hypothese-occasion",
+          parts: [
+            {
+              label: "Fabrication évitée (hypothèse)",
+              kgCo2e: 0,
+              method: "hypothese-occasion",
+            },
+            {
+              label: parcel.label,
+              kgCo2e: roundSignificant(parcel.value),
+              method: "impactco2",
+              sourceId: parcelId,
+              sourceUrl: parcel.url,
+            },
+          ],
+        };
+      }
+      modes.garder = { kgCo2e: 0, method: "hypothese-garder" };
+      gesture.modes = modes;
+    }
+    return gesture;
   });
 }
 
