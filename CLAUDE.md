@@ -51,10 +51,12 @@ Prettier, pnpm. Site statique
 - `src/app` — pages et layout ; `/labo` : banc d'essai des illustrations et animations
   (noindex, non liée)
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
-- `src/components/scene` — `Tree`, `Scale`, `Butterfly`, `Bird`, `Sparkle` (animés)
-- `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement)
+- `src/components/scene` — `Tree`, `Flower` (via `StagedPlant`), `Scale`, `Butterfly`, `Bird`,
+  `Bee`, `Ladybug`, `Snail`, `Hedgehog`, `Sparkle`, `Wind` (animés)
+- `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement),
+  `gust.ts` (`playGust`, `useGust`, `useAutoGusts`)
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
-- `src/lib/geometry` — géométrie pure (balance)
+- `src/lib/geometry` — géométrie pure (balance, délais et inclinaisons du coup de vent)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
   uniquement), adaptateur (`index.ts` : `getGestures`,
   `getGesture`, `getGesturesByCategory`, `hasFictiveData`) ; le reste du code ne lit les
@@ -100,3 +102,12 @@ Prettier, pnpm. Site statique
   PascalCase.
 - Lot interface (à venir) : pour les objets, trois options (Neuf / D'occasion / Je garde le
   mien), avec sous « D'occasion » un interrupteur « Livré en colis » activé par défaut.
+- Coup de vent : `playGust(scene)` ; chaque plante réagit quand le front l'atteint
+  (`gustDelay`, selon sa position x) et se couche de 6 à 10° ; papillon et abeille sont
+  déportés. Rafales automatiques (`useAutoGusts`) toutes les 8 à 15 s, onglet visible
+  seulement. Rien en mouvement réduit.
+- Pousse : `GROWTH` (`StagedPlant`) — 0,7 s, montée depuis le pied avec dépassement
+  (`back.out`), puis éclat. Le balancement au repos reste calme (±1,5°).
+- Lot jardin (à venir) : les animaux arrivent un par un au fil des choix légers, avec un
+  message d'arrivée. Ordre provisoire : papillon, coccinelle, oiseau, escargot, abeille,
+  hérisson. Le coup de vent sera aussi déclenché quand on valide un choix.
