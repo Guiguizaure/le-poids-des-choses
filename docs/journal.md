@@ -27,3 +27,28 @@ Vitest, thème Figma, page provisoire, arborescence, docs), sans aucune fonction
   `prettier-plugin-tailwindcss`.
 - Premier commit sur `main` (accord reçu). Push bloqué : clé d'hôte SSH GitHub inconnue.
 - Nouvelle règle : messages de commit conventionnels, travail uniquement sur branches.
+
+## 2026-10-04 — Lot 2 : données et calculs (branche feat/data)
+
+**Demandé** : couche de données et calculs sans interface ; repérage du CSV Impact CO2 ;
+garde-fou contre les données fictives.
+
+**Proposé / fait** :
+
+- Types (`Category`, `Gesture`, `JournalEntry`), 21 gestes de test tous `fictive: true`,
+  adaptateur de données (`getGestures`, `getGesture`, `getGesturesByCategory`,
+  `hasFictiveData`).
+- Calculs purs : `emissions`, `compare`, `avoidedKg`, `gardenTotals`, `gardenStage`
+  (seuils provisoires 1 / 10 / 50 / 150 / 400 kg), `isAsleep` (21 jours), `formatMass`.
+- `scripts/check-data.ts` branché sur `pnpm build` ; n'échoue qu'avec `STRICT_DATA=1`.
+- 50 tests Vitest, dont les cas limites et le garde-fou (y compris le script lui-même).
+
+**Gardé / changé** :
+
+- Choix de conception : à égalité, `lighter` vaut `'a'` (écart 0, donc rien d'évité) ; « choix
+  léger » = entrée avec `avoidedKg > 0` ; `almostEqual` compare l'écart au plus lourd.
+- Ajout de `tsx` pour lancer le script ; `esbuild` refusé dans `pnpm-workspace.yaml`
+  (son script d'installation est inutile et bloquait `pnpm install`).
+- `vitest.config.ts` renommé en `.mts` (avertissement ESM). `src/lib/calc/example.test.ts`
+  (test d'exemple du lot 1) supprimé, remplacé par les vrais tests.
+- CSV Impact CO2 : voir le résumé de la session (colonnes, unités, langue).
