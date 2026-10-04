@@ -548,6 +548,29 @@ avec la règle : lot 1 le 2026-10-03, tous les autres lots et ajustements (2, 2b
 - Les dates des tests (`compare.test.ts`, `journal.test.ts`, `display.test.ts`) et de
   téléchargement du CSV ne sont pas des dates de session : inchangées.
 
+## 2026-10-04 — Lot final avant lancement (branche fix/launch)
+
+**Demandé** : retirer l'éclat de la vitrine de la carte de révélation (la pousse de la plante
+et l'arrivée de l'animal suffisent) en le gardant dans le jardin ; remplir les mentions
+légales et vérifier que `STRICT_DATA=1 pnpm build` passe.
+
+**Proposé / fait** :
+
+- Vitrine : `sparkle={false}` sur la plante. Le jardin garde l'éclat quand la plante pousse
+  à sa place (`/jardin?nouveau=…`).
+- La prop `zoom` de `StagedPlant`, `Tree` et `Flower` ne servait qu'à garder l'éclat de la
+  vitrine à sa taille habituelle : retirée. `vitrineFit` garde son `zoom` pour placer la
+  plante ; `strokeScale` reste (trait du jardin).
+- L'éclat d'une plante porte `data-sparkle` ; le test de parcours d'un petit choix vérifie
+  qu'il n'y en a aucun dans la vitrine et qu'il apparaît dans le jardin.
+- `src/lib/legal.ts` rempli (nom, SIRET, adresse, e-mail). `STRICT_DATA=1 pnpm build` passe
+  (« Données : aucune valeur fictive. », « Mentions légales : complètes. ») ; le test du
+  garde-fou attend maintenant un succès en mode strict.
+
+**Gardé / changé** :
+
+- Adresse reprise telle que donnée : « 193 impasse d’azur, 83140, Six-Fours-Les-Plages ».
+
 ## 2026-10-04 — Lot V2-1 : briques V1.1 (branche feat/v1-1)
 
 **Demandé** : retirer l'éclat de la vitrine s'il est encore sur main ; envol de l'oiseau ;

@@ -231,8 +231,8 @@ describe("scripts/check-data.ts", () => {
   it("sort en 0 sans STRICT_DATA", () => {
     expect(run(undefined)).toBe(0);
   });
-  it("avec STRICT_DATA=1 : échoue tant que les mentions légales ne sont pas remplies", () => {
-    // Aucune donnée fictive : seul l'état des mentions légales décide.
-    expect(run("1")).toBe(missingLegalFields().length > 0 ? 1 : 0);
+  it("avec STRICT_DATA=1 : passe (aucune donnée fictive, mentions légales remplies)", () => {
+    expect(missingLegalFields()).toEqual([]);
+    expect(run("1")).toBe(0);
   });
 }, 30_000);

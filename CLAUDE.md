@@ -23,9 +23,9 @@ Projet indépendant, non affilié à l'ADEME.
   `pnpm build`) fait échouer la construction s'il reste une donnée fictive OU un
   emplacement des mentions légales ([NOM], [SIRET], [ADRESSE], [EMAIL] dans
   `src/lib/legal.ts`), mais seulement si `STRICT_DATA=1` est défini (à activer chez
-  Cloudflare au lancement). Aujourd'hui, `STRICT_DATA=1 pnpm build` échoue donc tant que
-  les mentions légales ne sont pas remplies ; `pnpm build` passe. Toujours bloquant, même
-  sans `STRICT_DATA` : un gabarit « Le savais-tu ? » qui référence un geste disparu.
+  Cloudflare au lancement). Les mentions légales sont remplies : `STRICT_DATA=1 pnpm build`
+  passe (un test le vérifie). Toujours bloquant, même sans `STRICT_DATA` : un gabarit « Le
+  savais-tu ? » qui référence un geste ou un produit de saison disparu.
 - **Pas de `SITE_LAUNCHED=1` tant que l'ADEME n'a pas confirmé les conditions de
   réutilisation** des données Impact CO2 (demande en cours, octobre 2026). `DATA_LICENSE`
   reste à null d'ici là.
