@@ -50,8 +50,9 @@ Prettier, pnpm. Site statique
 
 ## Arborescence
 
-- `src/app` — pages et layout ; `/jardin` (Mon jardin) ; `/labo` : banc d'essai des
-  illustrations, animations et du carnet (noindex, non liée)
+- `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
+  de comparaison), `/jardin` (Mon jardin), `/methode` (PROVISOIRE, complétée au lot
+  pages), `/labo` (banc d'essai des illustrations, animations et du carnet ; non liée)
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
 - `src/components/scene` — `Tree`, `Flower` (via `StagedPlant`), `Scale`, `Butterfly`, `Bird`,
   `Bee`, `Ladybug`, `Snail`, `Hedgehog`, `Sparkle`, `Wind` (animés)
@@ -64,6 +65,13 @@ Prettier, pnpm. Site statique
 - `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
   endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes (`text.ts`)
 - `src/components/garden` — `<Garden entries now highlightId />`, écran `/jardin`
+- `src/components/compare` — parcours : `CompareFlow` (piloté par l'URL), `GestureChooser`
+  (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a / 05b)
+- `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
+  « Mon jardin · X kg évités »
+- `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
+  (`tiltFor`), phrase de résultat et équivalence (`sentence.ts`), noms et accords
+  (`nouns.ts`), URL (`url.ts`), entrées du carnet (`duelEntry`, `objectEntry`)
 - `src/lib/geometry` — géométrie pure (balance, délais et inclinaisons du coup de vent)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
   uniquement), adaptateur (`index.ts` : `getGestures`,
@@ -109,8 +117,22 @@ Prettier, pnpm. Site statique
   `Sparkle`). Restent en français : les noms de fichiers d'illustration, les `data-part` (noms
   de calques) et les valeurs qui les reprennent (`stage="pousse"`). Fichiers composants en
   PascalCase.
-- Lot interface (à venir) : pour les objets, trois options (Neuf / D'occasion / Je garde le
-  mien), avec sous « D'occasion » un interrupteur « Livré en colis » activé par défaut.
+- Maquettes Figma (fichier `PZ5vEqe5GthiUzst3AfsYU`, page « Écrans mobiles · Papiers
+  découpés ») : 01 Accueil, 02 Choisir un geste, 03 Duel, 03b Duel objet, 04 Mon jardin,
+  05a / 05b Choix noté, 07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
+  toucher à un écran ; tutoiement et textes repris tels quels.
+- Parcours de comparaison (`/comparer`, état dans l'URL, lu côté client) :
+  - `?a=tgv` : second geste parmi ceux de MÊME UNITÉ ; `?a=tgv&b=avion&q=50` : duel ;
+    `?objet=jean&option=occasion&colis=1` : duel objet. URL invalide → premier choix avec
+    `?lien=invalide`. Navigation par `history.pushState` / `replaceState` (Next les
+    synchronise avec `useSearchParams`, sans recharger).
+  - Curseurs : distance 1 à 1 000 km (échelle logarithmique, défaut 50), durée 1 à 10 h ;
+    rien pour les repas et les objets.
+  - Balance : inclinaison ∝ log du rapport, maximale à partir de ×50 (`TILT_MAX_RATIO`).
+  - Objets : Neuf / D'occasion (interrupteur « Livré en colis », activé par défaut) / Je
+    garde le mien. L'option retenue est comparée au neuf ; le neuf, à l'occasion telle que
+    réglée (donc un choix plus lourd).
+  - « Je choisis … » : `useJournal().add(…)`, puis 05a (plante, rafale, animal) ou 05b.
 - Coup de vent : `playGust(scene)` ; chaque plante réagit quand le front l'atteint
   (`gustDelay`, selon sa position x) et se couche de 6 à 10° ; papillon et abeille sont
   déportés. Rafales automatiques (`useAutoGusts`) toutes les 8 à 15 s, onglet visible
@@ -135,5 +157,5 @@ Prettier, pnpm. Site statique
     coccinelle 3, oiseau 5, escargot 8, abeille 12, hérisson 20 ; message d'arrivée ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
-- Lot duel (5, à venir) : valider un choix appelle `useJournal().add(…)` ; le jardin réagit
-  seul (pousse, éclat, rafale, message). Le bandeau d'installation viendra au lot pages.
+- Lot pages (à venir) : page Méthode complète (remplace `/methode` provisoire), bandeau
+  d'installation et manifeste ; levée du `noindex` au lancement.
