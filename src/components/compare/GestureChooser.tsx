@@ -172,7 +172,7 @@ export function GestureChooser({
                   {badge ? (
                     <span
                       aria-hidden
-                      className="bg-tomate text-creme text-legende flex size-6 items-center justify-center rounded-full font-semibold"
+                      className="bg-tomate text-encre text-legende flex size-6 items-center justify-center rounded-full font-semibold"
                     >
                       {badge}
                     </span>
