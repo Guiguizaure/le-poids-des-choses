@@ -194,3 +194,43 @@ endormies, vent), composants animés, pousse plus marquée, coup de vent manuel 
   feuilles.
 - Orientation de la coccinelle : déjà faite dans le commit précédent (`headingAngle`), rien
   à changer.
+
+## 2026-10-04 — Lot 4 : le jardin et le carnet (branche feat/garden)
+
+**Demandé** : carnet sur l'appareil (localStorage versionné, export/import, repli en
+mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la maquette
+« 04 · Mon jardin », simulateur de carnet dans /labo, tests.
+
+**Proposé / fait** :
+
+- Maquette lue avec le connecteur Figma (offre Professional) : mise en page, textes et
+  styles repris ; icône de retour téléchargée dans `public/icons/retour.svg`.
+- `src/lib/journal` : format `{ version: 1, entries }` sous `lpdc:journal:v1`, validation
+  (entrées invalides ignorées et conservées), mécanisme de migration, stockage persistant
+  demandé au premier ajout, export JSON et import fusionnant par id, hook `useJournal`
+  (`useSyncExternalStore`, carnet partagé entre /jardin et /labo). `JournalEntry` gagne
+  `modeA` / `modeB` pour les objets.
+- `src/lib/garden` : `buildGarden` (une plante par choix léger, type et emplacement tirés
+  de l'id, stade selon les kg, 40 emplacements sur la ligne des collines, plafond qui fait
+  grandir les plus anciennes, animaux, endormissement), textes et description accessible.
+- `<Garden>` : pousse + éclat à l'arrivée d'une entrée, rafale, message d'arrivée d'un
+  animal (annonce `aria-live` séparée de la bulle visuelle), brume quand il s'assoupit,
+  rafales automatiques quand il est éveillé.
+- /jardin : bilan (`formatMass`), compteurs, 5 dernières entrées et « Tout voir », état vide
+  avec lien vers /, boutons Exporter / Importer discrets à la place du bandeau.
+- /labo : « Simulateur de carnet » (choix léger petit, moyen, gros ; choix lourd ; vieillir ;
+  vider en deux temps) avec un jardin.
+- Vérifié dans Chrome sur l'export statique : état vide, jardin rempli, carnet, « Tout
+  voir », endormissement et réveil, import (identique, nouveau, illisible).
+
+**Gardé / changé** :
+
+- Fleurs plafonnées à « fleurie » (niveau 1) : les faire « grandir » au-delà ne changeait
+  rien à l'écran.
+- Tailles revues après essai : arbres 60, fleurs 30 (unités de scène), écart 45 entre
+  emplacements, bords dans la scène.
+- « Vieillir la dernière entrée » recule tout le carnet : reculer une seule entrée ne
+  suffisait pas à assoupir le jardin et la faisait changer de place dans l'ordre.
+- Catégorie numérique affichée « Écrans » (absente de la maquette, à valider).
+- « Exporter » reste aussi dans la barre du haut, comme sur la maquette (doublon possible
+  avec les boutons du bas).

@@ -48,14 +48,20 @@ Prettier, pnpm. Site statique
 
 ## Arborescence
 
-- `src/app` — pages et layout ; `/labo` : banc d'essai des illustrations et animations
-  (noindex, non liée)
+- `src/app` — pages et layout ; `/jardin` (Mon jardin) ; `/labo` : banc d'essai des
+  illustrations, animations et du carnet (noindex, non liée)
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
 - `src/components/scene` — `Tree`, `Flower` (via `StagedPlant`), `Scale`, `Butterfly`, `Bird`,
   `Bee`, `Ladybug`, `Snail`, `Hedgehog`, `Sparkle`, `Wind` (animés)
 - `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement),
   `gust.ts` (`playGust`, `useGust`, `useAutoGusts`)
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
+- `src/lib/journal` — carnet sur l'appareil : format et validation (`schema.ts`), fusion,
+  export et import (`merge.ts`), stockage avec repli en mémoire (`store.ts`), création
+  d'une entrée (`entry.ts`), textes d'une entrée (`display.ts`), hook `useJournal`
+- `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
+  endormissement), géométrie de la scène (`scene.ts`), textes (`text.ts`)
+- `src/components/garden` — `<Garden entries now highlightId />`, écran `/jardin`
 - `src/lib/geometry` — géométrie pure (balance, délais et inclinaisons du coup de vent)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
   uniquement), adaptateur (`index.ts` : `getGestures`,
@@ -109,6 +115,22 @@ Prettier, pnpm. Site statique
   seulement. Rien en mouvement réduit.
 - Pousse : `GROWTH` (`StagedPlant`) — 0,7 s, montée depuis le pied avec dépassement
   (`back.out`), puis éclat. Le balancement au repos reste calme (±1,5°).
-- Lot jardin (à venir) : les animaux arrivent un par un au fil des choix légers, avec un
-  message d'arrivée. Ordre provisoire : papillon, coccinelle, oiseau, escargot, abeille,
-  hérisson. Le coup de vent sera aussi déclenché quand on valide un choix.
+- Carnet : `localStorage`, clé versionnée `lpdc:journal:v1` (`{ version: 1, entries }`).
+  Il ne fait que s'allonger ; entrées invalides ignorées mais conservées ; une future v2
+  lira l'ancienne clé via `MIGRATIONS`. Stockage indisponible (navigation privée) : carnet
+  en mémoire et message. Stockage persistant demandé au premier ajout. Export JSON, import
+  qui fusionne par id. Les kg évités sont figés dans l'entrée au moment du choix.
+- Jardin (`buildGarden`, déterministe : même carnet = même jardin) :
+  - une plante par choix léger (`avoidedKg > 0`) ; un choix lourd ne change rien ;
+  - type (arbre ou fleur 1-3) tiré de l'id de l'entrée ; stade selon les kg du choix
+    (`PLANT_STAGE_KG`, provisoire : < 1 kg pousse, 1-20 jeune/fleurie, > 20 grand) ;
+  - 40 emplacements (`GARDEN_SLOTS`, 5 rangées) posés sur la ligne des collines de
+    `scene-paysage` (`src/lib/garden/scene.ts` : à mettre à jour si les collines changent) ;
+    les plus grands vers l'arrière ; au-delà de 40, les nouveaux choix font grandir les
+    plus anciennes plantes ;
+  - animaux selon le nombre de choix légers (`ANIMAL_UNLOCKS`, provisoire) : papillon 1,
+    coccinelle 3, oiseau 5, escargot 8, abeille 12, hérisson 20 ; message d'arrivée ;
+  - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
+    animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
+- Lot duel (5, à venir) : valider un choix appelle `useJournal().add(…)` ; le jardin réagit
+  seul (pousse, éclat, rafale, message). Le bandeau d'installation viendra au lot pages.
