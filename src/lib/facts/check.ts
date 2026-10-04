@@ -8,9 +8,12 @@ export function checkFacts(
   message: string;
 } {
   if (missing.length === 0)
-    return { ok: true, message: "Le savais-tu ? : tous les gestes existent." };
+    return {
+      ok: true,
+      message: "Le savais-tu ? : tous les gestes et produits existent.",
+    };
   return {
     ok: false,
-    message: `Le savais-tu ? : gabarit(s) sur un geste disparu, à corriger dans src/lib/facts/templates.ts (${missing.join(", ")}).`,
+    message: `Le savais-tu ? : gabarit(s) sur un geste ou un produit disparu, à corriger dans src/lib/facts/templates.ts (${missing.join(", ")}).`,
   };
 }

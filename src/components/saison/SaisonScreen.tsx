@@ -81,7 +81,8 @@ export function SaisonScreen() {
           <>
             <p className="text-corps-m text-encre leading-[1.4]">
               {products.length} produits de saison en {monthName}, du plus léger
-              au plus lourd. L’impact est donné pour 1 kg de produit, en CO2e.
+              au plus lourd. L’impact est donné pour 1&nbsp;kg de produit, en
+              CO2e.
             </p>
 
             {groups.map(({ category, products: list }) => (
