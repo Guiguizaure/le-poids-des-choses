@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -13,6 +14,7 @@ import { Landscape } from "@/components/scene/Landscape";
 import { playGust, useAutoGusts } from "@/components/motion/gust";
 import { gsap, useGSAP } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { Bee } from "@/components/scene/Bee";
 import { Bird } from "@/components/scene/Bird";
 import { Butterfly } from "@/components/scene/Butterfly";
@@ -32,6 +34,7 @@ import {
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
 import { arrivalMessage, gardenDescription } from "@/lib/garden/text";
+import { FlightPath, FlyButton, useAutoFlights } from "./BirdFlight";
 
 type GardenProps = {
   entries: readonly JournalEntry[];
@@ -76,14 +79,26 @@ function Plant({
   );
 }
 
-function Animal({ animal }: { animal: GardenAnimal }) {
+function Animal({
+  animal,
+  flying,
+  onLanded,
+}: {
+  animal: GardenAnimal;
+  flying: boolean;
+  onLanded: () => void;
+}) {
   switch (animal.kind) {
     case "butterfly":
       return <Butterfly className="w-full" />;
     case "ladybug":
       return <Ladybug className="w-full" />;
     case "bird":
-      return <Bird asleep={animal.asleep} className="w-full" />;
+      return (
+        <FlightPath flying={flying} onLanded={onLanded}>
+          <Bird asleep={animal.asleep} flying={flying} className="w-full" />
+        </FlightPath>
+      );
     case "snail":
       return <Snail asleep={animal.asleep} className="w-full" />;
     case "bee":
@@ -125,6 +140,7 @@ const REVEAL_DELAY_MS = 700;
  * `highlightId` (choix qu'on vient de faire) : la scène s'affiche d'abord sans ce choix, puis sa
  * plante pousse à sa place (éclat), une rafale passe et l'animal éventuel entre par le bord,
  * avec le message d'arrivée. Assoupi : brume, animaux endormis ou partis, plus de vent.
+ * L'oiseau s'envole de temps en temps, ou quand on le touche (bouton posé sur lui).
  */
 export function Garden({
   entries,
@@ -169,6 +185,19 @@ export function Garden({
   const awake = !garden.asleep && garden.plants.length > 0;
 
   useAutoGusts(awake, sceneRef);
+
+  // Envol de l'oiseau (V1.1) : de temps en temps, ou quand on le touche. Jamais quand le jardin
+  // dort ni en mouvement réduit : il reste posé.
+  const reduced = useReducedMotion();
+  const canFly =
+    !reduced &&
+    !garden.asleep &&
+    garden.animals.some((animal) => animal.kind === "bird");
+  const [flying, setFlying] = useState(false);
+  if (flying && !canFly) setFlying(false);
+  const startFlight = useCallback(() => setFlying(true), []);
+  const land = useCallback(() => setFlying(false), []);
+  useAutoFlights(canFly && !flying, startFlight);
 
   useEffect(() => {
     if (!revealed || garden.asleep) return;
@@ -223,7 +252,7 @@ export function Garden({
         {garden.animals.map((animal) =>
           arrived.includes(animal.kind) ? (
             <Entering key={animal.kind} box={animal.box}>
-              <Animal animal={animal} />
+              <Animal animal={animal} flying={flying} onLanded={land} />
             </Entering>
           ) : (
             <div
@@ -231,7 +260,7 @@ export function Garden({
               className="absolute"
               style={place(animal.box)}
             >
-              <Animal animal={animal} />
+              <Animal animal={animal} flying={flying} onLanded={land} />
             </div>
           ),
         )}
@@ -250,6 +279,11 @@ export function Garden({
           {message}
         </p>
       </div>
+      {canFly ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 aspect-[390/300]">
+          <FlyButton flying={flying} onFly={startFlight} />
+        </div>
+      ) : null}
       {/* Annonce pour les lecteurs d'écran (toujours présente) ; la bulle visible est décorative. */}
       <p role="status" aria-live="polite" className="sr-only">
         {message}

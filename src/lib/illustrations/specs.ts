@@ -84,6 +84,21 @@ export const ILLUSTRATION_SPECS = {
 
   oiseau: bird,
   "oiseau-endormi": bird,
+  // En vol (V1.1) : mêmes cadre et calques de tête que oiseau.svg ; les deux ailes battent en
+  // scaleY autour de l'épaule (28, 30), en décalé.
+  "oiseau-vol": {
+    width: 64,
+    height: 48,
+    parts: [
+      "aile-arriere",
+      "queue",
+      "corps",
+      "tete",
+      "bec",
+      "oeil",
+      "aile-avant",
+    ],
+  },
   // Le corps est l'axe de battement des ailes (x = 32).
   papillon: {
     width: 64,

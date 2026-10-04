@@ -97,8 +97,8 @@ describe("checkAgainstSpec", () => {
 describe("illustrations du dépôt", () => {
   const files = readdirSync(DIR).filter((file) => file.endsWith(".svg"));
 
-  it("68 fichiers, exactement ceux de specs.ts", () => {
-    expect(files).toHaveLength(68);
+  it("69 fichiers, exactement ceux de specs.ts", () => {
+    expect(files).toHaveLength(69);
     expect(files.map((file) => file.replace(/\.svg$/, "")).sort()).toEqual(
       [...ILLUSTRATION_NAMES].sort(),
     );

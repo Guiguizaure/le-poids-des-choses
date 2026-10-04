@@ -209,8 +209,14 @@ Prettier, pnpm. Site statique
     silhouette) ;
   - places (`ANIMAL_PLACES`) : papillon et abeille dans la bande de ciel, au-dessus des plus
     hauts feuillages ; coccinelle, escargot, hérisson et oiseau au sol ;
-  - oiseau au sol pour la V1 (posé sur la colline verte, sautille, picore, dort au sol).
-    **V1.1 : l'envol de l'oiseau** (vol dans le ciel, retour au sol) ;
+  - oiseau posé sur la colline verte (sautille, picore, dort au sol). Envol (V1.1) :
+    toutes les 40 à 90 s (`flightDelay`, graine tirée une fois par session dans
+    `sessionStorage`) ou quand on le touche (bouton « Faire s’envoler l’oiseau », posé sur
+    lui hors de la scène `role="img"`), il passe sur `oiseau-vol` (ailes en scaleY de 1 à
+    -0,6 autour de 28,30, en décalé), décolle sous le soleil, boucle dans la bande de ciel
+    et revient se poser (`src/lib/geometry/flight.ts` : trajet testé, jamais devant le
+    soleil ni hors scène ; `data-flight` donne la phase). Jamais quand le jardin dort ni en
+    mouvement réduit (pas de bouton) ;
   - petites bêtes cernées d'encre 1,5 px (`vector-effect="non-scaling-stroke"` : le trait
     reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres

@@ -14,6 +14,7 @@ import { Sparkle } from "@/components/scene/Sparkle";
 import { Bird } from "@/components/scene/Bird";
 import { Butterfly } from "@/components/scene/Butterfly";
 import { AnimalsLab } from "./AnimalsLab";
+import { BirdFlightLab } from "./BirdFlightLab";
 import { GustLab } from "./GustLab";
 import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
@@ -176,6 +177,7 @@ export function LaboControls() {
 
         <JournalSimulator />
         <AnimalsLab />
+        <BirdFlightLab />
         <GustLab />
       </div>
     </MotionProvider>
