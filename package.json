@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "tsx scripts/check-data.ts && next build",
     "lint": "eslint",
+    "check-data": "tsx scripts/check-data.ts",
     "test": "vitest run",
     "format": "prettier --write ."
   },
