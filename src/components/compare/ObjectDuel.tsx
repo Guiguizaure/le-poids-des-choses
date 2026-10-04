@@ -98,7 +98,7 @@ export function ObjectDuel({
         : `Je garde ${possessive(noun, "moi")}`;
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
+    <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
         <div className="flex items-center gap-1">
           <IconLink
@@ -138,7 +138,7 @@ export function ObjectDuel({
                 key={item.id}
                 className={`bg-blanc has-[input[type=radio]:focus-visible]:outline-outremer rounded-[18px] has-[input[type=radio]:focus-visible]:outline-2 has-[input[type=radio]:focus-visible]:outline-offset-2 ${
                   checked
-                    ? "border-tomate border-2 p-[13px]"
+                    ? "border-tomate animate-select border-2 p-[13px] motion-reduce:animate-none"
                     : "border-encre border p-3.5"
                 }`}
               >

@@ -107,7 +107,7 @@ export function Duel({
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
+    <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between px-5 pt-[22px] pb-3">
         <Logo />
         <GardenPill />
