@@ -200,6 +200,23 @@ export function unlockedAnimals(lightChoiceCount: number): AnimalKind[] {
   ).map((unlock) => unlock.kind);
 }
 
+/** Illustration d'un animal éveillé (aussi utilisée pour sa silhouette à venir). */
+export function animalIllustration(kind: AnimalKind): IllustrationName {
+  return ANIMAL_ILLUSTRATION[kind];
+}
+
+export type NextAnimal = { kind: AnimalKind; remaining: number };
+
+/** Prochain animal à s'installer et nombre de choix légers qui manquent (null : tous là). */
+export function nextAnimal(lightChoiceCount: number): NextAnimal | null {
+  const next = ANIMAL_UNLOCKS.find(
+    (unlock) => lightChoiceCount < unlock.lightChoices,
+  );
+  return next
+    ? { kind: next.kind, remaining: next.lightChoices - lightChoiceCount }
+    : null;
+}
+
 export function animalBox(kind: AnimalKind): Box {
   const place = ANIMAL_PLACES[kind];
   const name = ANIMAL_ILLUSTRATION[kind];

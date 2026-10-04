@@ -8,13 +8,15 @@ import {
   gardenSignature,
   levelForKg,
   maxLevel,
+  nextAnimal,
+  animalIllustration,
   MAX_PLANT_WIDTH,
   MAX_PLANTS,
   plantKindFor,
   stageFor,
 } from "./model";
 import { SCENE, surfaceY } from "./scene";
-import { arrivalMessage, gardenDescription } from "./text";
+import { arrivalMessage, gardenDescription, nextAnimalMessage } from "./text";
 
 const DAY = 24 * 60 * 60 * 1000;
 const start = Date.UTC(2026, 0, 1);
@@ -269,5 +271,32 @@ describe("ligne des collines (extraite du SVG)", () => {
     expect(surfaceY(280)).toBeCloseTo(186.9, 0); // sommet de la colline avant ((255 + 6×165 + 250) / 8)
     expect(surfaceY(-100)).toBe(240); // hors des collines : le sol
     expect(surfaceY(195)).toBeLessThan(240);
+  });
+});
+
+describe("prochain animal", () => {
+  it("jardin vide : le papillon, dans 1 choix léger", () => {
+    expect(nextAnimal(0)).toEqual({ kind: "butterfly", remaining: 1 });
+    expect(nextAnimalMessage(nextAnimal(0))).toBe(
+      "Encore 1 choix léger avant l’arrivée du papillon",
+    );
+  });
+  it("compte les choix légers qui manquent, avec les bons articles", () => {
+    expect(nextAnimalMessage(nextAnimal(1))).toBe(
+      "Encore 2 choix légers avant l’arrivée de la coccinelle",
+    );
+    expect(nextAnimalMessage(nextAnimal(4))).toBe(
+      "Encore 1 choix léger avant l’arrivée de l’oiseau",
+    );
+    expect(nextAnimalMessage(nextAnimal(12))).toBe(
+      "Encore 8 choix légers avant l’arrivée du hérisson",
+    );
+  });
+  it("rien quand tous les animaux sont là", () => {
+    expect(nextAnimal(20)).toBeNull();
+    expect(nextAnimalMessage(nextAnimal(57))).toBe("");
+  });
+  it("la silhouette prend la place de l'animal attendu", () => {
+    expect(animalIllustration("ladybug")).toBe("coccinelle");
   });
 });

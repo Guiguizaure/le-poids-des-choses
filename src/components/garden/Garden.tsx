@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
+import { Landscape } from "@/components/scene/Landscape";
 import { playGust, useAutoGusts } from "@/components/motion/gust";
 import { gsap, useGSAP } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
@@ -16,14 +17,21 @@ import { Tree } from "@/components/scene/Tree";
 import { Wind } from "@/components/scene/Wind";
 import type { JournalEntry } from "@/lib/data/types";
 import {
+  animalBox,
+  animalIllustration,
   animalsArrivedWith,
+  nextAnimal,
   buildGarden,
   type Box,
   type GardenAnimal,
   type GardenPlant,
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
-import { arrivalMessage, gardenDescription } from "@/lib/garden/text";
+import {
+  arrivalMessage,
+  gardenDescription,
+  nextAnimalMessage,
+} from "@/lib/garden/text";
 
 type GardenProps = {
   entries: readonly JournalEntry[];
@@ -31,6 +39,8 @@ type GardenProps = {
   now: number;
   /** Entrée qui vient d'être ajoutée : sa plante pousse, une rafale passe, un animal arrive. */
   highlightId?: string | null;
+  /** Affiche la silhouette et le message du prochain animal (par défaut oui). */
+  showNext?: boolean;
   className?: string;
 };
 
@@ -94,6 +104,7 @@ export function Garden({
   entries,
   now,
   highlightId = null,
+  showNext = true,
   className = "",
 }: GardenProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -112,6 +123,7 @@ export function Garden({
     [entries, highlightId],
   );
   const awake = !garden.asleep && garden.plants.length > 0;
+  const upcoming = showNext ? nextAnimal(garden.lightChoiceCount) : null;
 
   useAutoGusts(awake, sceneRef);
 
@@ -154,10 +166,7 @@ export function Garden({
         aria-label={gardenDescription(garden)}
         className="relative aspect-[390/300] w-full overflow-hidden"
       >
-        <Illustration
-          name="scene-paysage"
-          className="absolute inset-0 block h-full w-full"
-        />
+        <Landscape className="absolute inset-0" still={garden.asleep} />
         <Wind className="absolute inset-x-0 top-[30%]" />
         {garden.plants.map((plant) => (
           <div key={plant.id} className="absolute" style={place(plant.box)}>
@@ -173,25 +182,46 @@ export function Garden({
             <Animal animal={animal} />
           </div>
         ))}
+        {upcoming ? (
+          // Le prochain animal, en silhouette immobile à sa future place.
+          <div
+            className="pointer-events-none absolute"
+            style={{
+              ...place(animalBox(upcoming.kind)),
+              opacity: 0.16,
+              filter: "brightness(0)",
+            }}
+          >
+            <Illustration
+              name={animalIllustration(upcoming.kind)}
+              className="block h-auto w-full"
+            />
+          </div>
+        ) : null}
         <div
           className="pointer-events-none absolute inset-x-0 top-1/2 transition-opacity duration-1000"
           style={{ opacity: garden.asleep ? 1 : 0 }}
         >
           <Illustration name="brume" className="block h-auto w-full" />
         </div>
+        <p
+          ref={messageRef}
+          aria-hidden
+          className="bg-encre text-creme text-corps-s absolute bottom-3 left-1/2 w-max max-w-[90%] -translate-x-1/2 rounded-full px-4 py-2 text-center font-semibold"
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          {message}
+        </p>
       </div>
       {/* Annonce pour les lecteurs d'écran (toujours présente) ; la bulle visible est décorative. */}
       <p role="status" aria-live="polite" className="sr-only">
         {message}
       </p>
-      <p
-        ref={messageRef}
-        aria-hidden
-        className="bg-encre text-creme text-corps-s absolute bottom-3 left-1/2 w-max max-w-[90%] -translate-x-1/2 rounded-full px-4 py-2 text-center font-semibold"
-        style={{ opacity: 0, visibility: "hidden" }}
-      >
-        {message}
-      </p>
+      {upcoming ? (
+        <p className="text-legende text-texte-attenue px-5 pt-2">
+          {nextAnimalMessage(upcoming)}
+        </p>
+      ) : null}
     </div>
   );
 }
