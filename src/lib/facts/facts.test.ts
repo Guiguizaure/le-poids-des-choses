@@ -27,6 +27,8 @@ describe("Le savais-tu ? : gabarits", () => {
       // Les phrases au pluriel (« 12 repas végétariens ») demandent plus d'une unité.
       if (template.kind !== "mass") expect(fact.value).toBeGreaterThan(1.5);
       expect(fact.text).not.toMatch(/NaN|Infinity|undefined|\{|\}/);
+      // La valeur ne se sépare jamais de son unité en fin de ligne.
+      expect(fact.text).not.toMatch(/\d (km|g|kg|t)\b/);
       expect(fact.source.url).toMatch(/^https:\/\/impactco2\.fr\//);
     },
   );

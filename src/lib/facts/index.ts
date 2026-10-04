@@ -25,12 +25,15 @@ export function readableNumber(value: number): string {
   return NUMBER.format(Math.round(value * 10) / 10);
 }
 
+/** Espace insécable entre la valeur et son unité (« 27 000 km » ne se coupe pas). */
+const NBSP = "\u00a0";
+
 function formatValue(kind: FactKind, value: number): string {
   switch (kind) {
     case "km":
-      return `${readableNumber(value)} km`;
+      return `${readableNumber(value)}${NBSP}km`;
     case "mass":
-      return formatMass(value);
+      return formatMass(value).replace(" ", NBSP);
     case "count":
     case "ratio":
       return readableNumber(value);
