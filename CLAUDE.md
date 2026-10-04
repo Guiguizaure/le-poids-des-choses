@@ -52,6 +52,14 @@ Prettier, pnpm. Site statique
 - `pnpm build-gestures` — à la main : télécharge le CSV Impact CO2 et régénère
   `src/lib/data/gestures.generated.json` (jamais pendant le build). Commite le fichier généré.
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
+- `pnpm e2e` — tests de bout en bout et accessibilité (Playwright + axe, Chromium « Pixel 7 »
+  et WebKit « iPhone 14 ») sur `out/`, servi par `e2e/static-server.mjs` avec les en-têtes
+  de `public/_headers` ; toute erreur de console (CSP comprise) fait échouer un test.
+  Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
+  les liens avec Tab).
+- `pnpm lighthouse` — scores Lighthouse mobile (accueil, duel, jardin, méthode) sur
+  `pnpm serve:out` (port 4322) ; construire avec `SITE_LAUNCHED=1` pour le SEO.
+- `pnpm captures` — captures du README (`docs/captures/`)
 - `pnpm lint` · `pnpm test` · `pnpm format`
 
 ## Arborescence
@@ -202,3 +210,16 @@ Prettier, pnpm. Site statique
 - Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
   (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
   d’accueil » ; masqué si installé ou fermé). Pas de service worker pour l'instant.
+- Qualité :
+  - CI GitHub Actions (`.github/workflows/ci.yml`) : lint, tests, build, bout en bout à
+    chaque demande de fusion ;
+  - `public/_headers` : CSP (scripts et styles en ligne autorisés, nécessaires à l'export
+    Next ; Cloudflare Web Analytics autorisé), Referrer-Policy, Permissions-Policy,
+    nosniff, cache immuable de `/_next/static/*` ;
+  - performance : la 404 racine est embarquée dans toutes les pages, elle doit rester sans
+    composant client ; l'écran de résultat est chargé à la demande ; les animations
+    d'ambiance démarrent deux images après l'affichage (`useMotion`) ;
+  - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
+    (à compléter si une nouvelle paire apparaît).
+- Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
+  droits réservés (`LICENSE`).
