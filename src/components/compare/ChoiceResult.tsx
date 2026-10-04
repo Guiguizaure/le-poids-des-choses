@@ -31,6 +31,7 @@ import { VITRINE, vitrineFit } from "@/lib/garden/vitrine";
 import { entryTitle } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { useFocusTitle } from "./useFocusTitle";
+import { DataCredit } from "@/components/ui/DataCredit";
 
 const FLYERS: readonly AnimalKind[] = ["butterfly", "bee"];
 
@@ -282,6 +283,7 @@ export function ChoiceResult({
           )}
           <TextButton onClick={onCompareAgain}>Comparer autre chose</TextButton>
         </section>
+        <DataCredit independent className="mt-4 text-center" />
       </div>
     </main>
   );

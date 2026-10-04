@@ -99,7 +99,19 @@ test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au 
   ).toBeVisible();
   // Dans le jardin, la plante pousse à sa place avec l'éclat.
   await expect(page.locator("[data-sparkle]")).toHaveCount(1);
-  await expect(page.locator("[data-sparkle]")).toBeVisible();
+  // L'éclat ne dure qu'un instant : on le guette à chaque image (rien ne le rate sous charge).
+  await page.waitForFunction(
+    () => {
+      const sparkle = document.querySelector("[data-sparkle]");
+      return (
+        sparkle !== null &&
+        getComputedStyle(sparkle).visibility === "visible" &&
+        Number(getComputedStyle(sparkle).opacity) > 0
+      );
+    },
+    undefined,
+    { polling: "raf", timeout: 10_000 },
+  );
   await expect
     .poll(async () => Math.abs((await stemStroke(page)) - inVitrine))
     .toBeLessThan(0.5);

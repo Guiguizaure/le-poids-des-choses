@@ -63,6 +63,46 @@ try {
   await page.goto(`${BASE}/jardin`);
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}jardin.png` });
+
+  // Duel avec la carte « Le savais-tu ? » (sous les boutons de choix).
+  await page.goto(`${BASE}/comparer?a=tgv&b=avion&q=300`);
+  const fact = page.getByRole("complementary", { name: "Le savais-tu ?" });
+  await fact.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}comparer-savais-tu.png` });
+
+  // Fruits et légumes de saison (mois fixé pour des captures stables) et leur méthode.
+  await page.goto(`${BASE}/saison?mois=10`);
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}saison.png` });
+  await page.goto(`${BASE}/methode#saison`);
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}methode-saison.png` });
+
+  // Jardin, oiseau en vol au milieu de sa boucle (animations normales).
+  const moving = await browser.newContext({ ...devices["iPhone 14"] });
+  await moving.addInitScript((entries) => {
+    localStorage.setItem(
+      "lpdc:journal:v1",
+      JSON.stringify({ version: 1, entries }),
+    );
+    localStorage.setItem("lpdc:install-banner:dismissed", "1");
+  }, JOURNAL);
+  const garden = await moving.newPage();
+  await garden.goto(`${BASE}/jardin`);
+  await garden.waitForTimeout(1500);
+  await garden
+    .getByRole("button", { name: "Faire s’envoler l’oiseau" })
+    .click();
+  // Milieu de la boucle : en haut, quand il repart vers la droite.
+  await garden.waitForFunction(() => {
+    const bird = document.querySelector('[data-flight="boucle"]');
+    const body = bird?.firstElementChild;
+    if (!body) return false;
+    const transform = getComputedStyle(body).transform;
+    return transform === "none" || new DOMMatrix(transform).a > 0;
+  });
+  await garden.screenshot({ path: `${OUT}jardin-oiseau-en-vol.png` });
 } finally {
   await browser.close();
 }

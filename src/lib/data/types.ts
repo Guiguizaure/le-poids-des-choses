@@ -81,3 +81,24 @@ export type JournalEntry = {
   modeA?: AcquisitionMode;
   modeB?: AcquisitionMode;
 };
+
+/**
+ * Produit de l'outil « Fruits et légumes de saison » d'Impact CO2 (API publique), tel que
+ * l'écrit `pnpm build-saison` dans saison.generated.json.
+ */
+export type SeasonalProduct = {
+  /** Identifiant de l'API (« pomme », « manguebateau »). */
+  slug: string;
+  /** Nom renvoyé par l'API (« Mangue (importée par avion) »). */
+  label: string;
+  /** Catégorie de l'API, telle quelle (« fruits », « légumes »…). */
+  category: string;
+  /** Mois de saison (1 à 12). */
+  months: number[];
+  /** kg CO2e par kg de produit. */
+  kgCo2ePerKg: number;
+  source: GestureSource;
+  fictive: boolean;
+  /** Fiche Impact CO2 du produit (colonne URL du CSV public), si elle existe. */
+  sourceUrl?: string;
+};

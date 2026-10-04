@@ -21,6 +21,8 @@ import type { Choice } from "@/lib/data/types";
 import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
 import { DuelScene } from "./DuelScene";
 import { useFocusTitle } from "./useFocusTitle";
+import { FactCard } from "@/components/facts/FactCard";
+import { DataCredit } from "@/components/ui/DataCredit";
 
 type DuelProps = {
   a: string;
@@ -181,9 +183,8 @@ export function Duel({
         >
           Je choisis {(heavier === "a" ? nouns.a : nouns.b).text}
         </TextButton>
-        <p className="text-texte-attenue text-center text-[11px]">
-          Données : Impact CO2 (ADEME) · projet indépendant
-        </p>
+        <FactCard related={[a, b]} className="mt-2" />
+        <DataCredit independent className="text-center" />
       </div>
     </main>
   );

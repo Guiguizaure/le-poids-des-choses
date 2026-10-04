@@ -174,8 +174,9 @@ export const SLEEPERS: readonly AnimalKind[] = ["bird", "snail", "hedgehog"];
  * d'appui au sol pour les autres.
  * - Papillon et abeille volent dans la bande de ciel, au-dessus des plus hauts feuillages
  *   (le haut du plus haut cadre d'arbre est vers y = 105), sans se poser sur une plante.
- * - Coccinelle, escargot, hérisson et (V1) oiseau restent au sol. L'oiseau, bleu, se pose
- *   sur la colline verte (il disparaîtrait sur la bleue) ; l'envol est prévu pour la V1.1.
+ * - Coccinelle, escargot, hérisson et oiseau sont posés au sol. L'oiseau, bleu, se pose
+ *   sur la colline verte (il disparaîtrait sur la bleue) ; il s'envole de temps en temps
+ *   (V1.1, `src/lib/geometry/flight.ts`) et revient à cette place.
  */
 export const ANIMAL_PLACES: Record<
   AnimalKind,

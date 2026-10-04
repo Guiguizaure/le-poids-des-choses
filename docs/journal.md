@@ -570,3 +570,162 @@ légales et vérifier que `STRICT_DATA=1 pnpm build` passe.
 **Gardé / changé** :
 
 - Adresse reprise telle que donnée : « 193 impasse d’azur, 83140, Six-Fours-Les-Plages ».
+
+## 2026-10-04 — Lot V2-1 : briques V1.1 (branche feat/v1-1)
+
+**Demandé** : retirer l'éclat de la vitrine s'il est encore sur main ; envol de l'oiseau ;
+fruits et légumes de saison (vérifier d'abord la source et la montrer avant de coder
+l'interface) ; « Le savais-tu ? » avec des faits calculés depuis nos données ;
+vérifications complètes, captures, journal, push de feat/v1-1.
+
+**Proposé / fait** :
+
+- Éclat : fix/launch n'était pas fusionnée, main avait encore l'éclat dans la vitrine.
+  Même changement repris sur feat/v1-1 (fichiers identiques à fix/launch, sans les mentions
+  légales), pour que les deux fusions ne se contredisent pas.
+- Envol de l'oiseau : `oiseau-vol.svg` (archive dézippée telle quelle), spec,
+  `pnpm illustrations` (69 illustrations). Trajet pur et testé
+  (`src/lib/geometry/flight.ts`) : décollage vers la gauche sous le soleil, boucle dans la
+  bande de ciel (y ≤ 105, comme le papillon et l'abeille), retour exact à sa place ; jamais
+  devant le soleil, halo compris (rayon 56), ni hors scène. Ailes en scaleY de 1 à -0,6
+  autour de (28, 30), en décalé. Envols spontanés toutes les 40 à 90 s (graine tirée une
+  fois par session dans `sessionStorage`, délais reproductibles), onglet visible seulement.
+  Bouton « Faire s’envoler l’oiseau » posé sur lui, hors de la scène (`role="img"`
+  masquerait un bouton intérieur), focus visible, sans effet pendant le vol. Ni bouton ni
+  envol quand le jardin dort ou en mouvement réduit. Démo dans /labo (carnet en mémoire).
+- « Le savais-tu ? » : 10 gabarits (`src/lib/facts`). Seule la prémisse est rédigée (« un
+  jean neuf », « un repas ») ; la valeur vient des données via `src/lib/calc`, arrondie
+  lisiblement. Chaque fait renvoie à la fiche Impact CO2 du geste source et à
+  `/methode#savais-tu` (nouvelle section). Choix sans hasard : graine du jour sur les
+  duels (en préférant un fait sur les gestes comparés), dernier choix noté sur /jardin.
+  Carte discrète sous les boutons du duel et du duel objet, et sur /jardin. Un gabarit sur
+  un geste disparu fait échouer `check-data`, donc `pnpm build` (vérifié en renommant un
+  geste, puis remis).
+- Fruits et légumes de saison : source vérifiée, interface non codée (voir plus bas).
+- Vérifications : lint, typecheck, 423 tests unitaires, 68 tests de bout en bout
+  (Chromium et WebKit, axe compris, dont le jardin avec l'oiseau), Lighthouse mobile
+  (3 passages, `SITE_LAUNCHED=1`) : Accueil 97-100, Comparer 95-96, Duel 95, Jardin 94-96,
+  Méthode 98-100 ; accessibilité, bonnes pratiques et SEO à 100. `STRICT_DATA=1 pnpm
+build` : seule l'erreur des mentions légales (attendue). Captures : duel avec « Le
+  savais-tu ? », jardin avec l'oiseau en vol au milieu de sa boucle.
+
+**Source « Fruits et légumes de saison » (vérifiée le 2026-10-04)** :
+
+- API publique `https://impactco2.fr/api/v1/fruitsetlegumes?month=1…12` : par produit,
+  `name`, `slug`, `months` (mois de saison), `ecv` (kg CO2e par kg, confirmé sur la fiche :
+  « 408 g CO₂e par kg » pour la pomme), `category` (fruits, légumes, herbes, fruits à
+  coque, pommes de terre et tubercules, pâtes riz et céréales). Sans `month`, seul le mois
+  courant est renvoyé : il faut interroger les 12 mois. Union : 76 produits, cohérente
+  (chaque produit est renvoyé pour chacun de ses mois), valeurs identiques aux 76 lignes
+  « Fruits et légumes » du CSV public (qui, lui, n'a pas les mois). Source affichée :
+  Agribalyse 3.2, mise à jour le 15/01/2025.
+- Sans clé, l'API répond avec un avertissement : l'accès anonyme peut être coupé ; une clé
+  gratuite s'obtient auprès de l'équipe Impact CO2.
+- Licence : aucune licence ouverte affichée pour l'API ni le CSV. Les mentions légales
+  d'impactco2.fr autorisent la réutilisation non commerciale et pédagogique avec mention
+  de l'ADEME, et demandent une licence pour un usage commercial ou promotionnel (même
+  gratuit pour des tiers). Le code du site Impact CO2 est sous MIT.
+- Origine : la donnée ne donne pas la provenance, sauf deux lignes qui la portent dans le
+  nom (« Mangue (importée par avion) », « Mangue (importée par bateau) »).
+
+**Gardé / changé** :
+
+- Fruits et légumes de saison : arrêt avant le script et l'interface, en attente de tes
+  décisions (clé d'API, licence, mangues) ; donc pas de /saison, ni de Lighthouse, de
+  capture ou de test e2e de /saison dans ce lot.
+- Le libellé du bouton prend l'apostrophe typographique du site : « Faire s’envoler
+  l’oiseau ».
+- `oiseau-vol.svg` a un trait encre de 1,5 sur l'aile avant, sans
+  `vector-effect="non-scaling-stroke"` (contrairement au papillon) : gardé tel que livré.
+- « 27 000 km » se coupait en fin de ligne sur la capture : espace insécable ajouté.
+
+## 2026-10-04 — Lot V2-1, suite : fruits et légumes de saison (branche feat/v1-1)
+
+**Demandé** : décisions sur la source des fruits et légumes de saison (pas de clé d'API
+pour l'instant, licence en cours auprès de l'ADEME, mangues gardées, toutes les catégories
+de l'API), contour de l'aile avant d'oiseau-vol ; puis le point 2 du lot (script, /saison,
+encarts, /methode#saison, tests) et toutes les vérifications.
+
+**Règle ajoutée** : pas de `SITE_LAUNCHED=1` tant que l'ADEME n'a pas confirmé les
+conditions de réutilisation des données Impact CO2. `DATA_LICENSE` reste à null. (Aussi
+dans CLAUDE.md.)
+
+**Proposé / fait** :
+
+- Accès anonyme vérifié avant de commencer : l'API répond (HTTP 200, avec l'avertissement).
+- `pnpm build-saison` : les 12 mois de l'API, sans clé ; `IMPACTCO2_API_KEY` lue dans
+  `.env.local` seulement si elle existe (envoyée en `Authorization: Bearer`, jamais écrite
+  ni affichée). Fiches des produits depuis la colonne URL du CSV public. Échoue sans rien
+  écrire si l'API refuse l'accès (401, 403), si une catégorie inconnue apparaît, si une
+  valeur est invalide ou si les mois sont incohérents. 76 produits, aucune donnée fictive ;
+  la garde `STRICT_DATA` couvre aussi ces produits. Fichier généré ignoré par Prettier.
+- Catégories : celles de l'API, dans l'ordre de ses ids, intitulé = nom de l'API avec une
+  majuscule (« Pommes de terre et autres tubercules »…), aucune inventée.
+- /saison « De saison en octobre » : tous les produits du mois, regroupés par catégorie,
+  du plus léger au plus lourd au kg, puce et barre de la couleur de la catégorie ; mois dans
+  l'URL (`?mois=10`, sinon le mois courant) avec un sélecteur, retour arrière compris ;
+  lien vers l'outil Impact CO2. Les deux mangues restent telles quelles. Ajoutée au sitemap
+  (rempli seulement au lancement).
+- Encart « Ce mois-ci, c’est la saison de… » sur l'accueil et /comparer : les 3 produits
+  les plus légers au kg parmi ceux qui ont une saison (complétés au besoin par ceux de
+  toute l'année), place réservée pour que rien ne bouge.
+- /methode#saison : la donnée ne précise pas l’origine des produits, sauf pour la mangue,
+  où elle distingue l’import par avion et l’import par bateau.
+- Crédit `DataCredit` : « Données : Impact CO2 – ADEME » (lien) et date de téléchargement,
+  sur le duel, le duel objet, la carte de révélation (légère ou lourde), /saison et
+  /methode (#sources et #saison). Testé de bout en bout.
+- « Le savais-tu ? » : gabarit des deux mangues (« … émet 16 fois plus … »), rapport
+  calculé par `compare()` depuis les deux lignes des données ; `emissions()` et `compare()`
+  acceptent désormais tout ce qui a une valeur unitaire. Un produit disparu fait échouer le
+  build, comme un geste.
+- Aile avant d'oiseau-vol : `vector-effect="non-scaling-stroke"`, comme le papillon.
+- Vérifications : lint, typecheck, 444 tests unitaires, 86 tests de bout en bout (Chromium
+  et WebKit, axe compris, /saison et /saison?mois=5 inclus). Lighthouse mobile, 3 passages
+  sur le build normal (noindex) : Accueil 97-100, Comparer 95-96, Duel 94-95, Jardin
+  94-95, De saison 97, Méthode 98-100 ; accessibilité et bonnes pratiques à 100 ; SEO 66-69,
+  uniquement `is-crawlable` (le noindex). `STRICT_DATA=1 pnpm build` : seule l'erreur des
+  mentions légales. Captures : /saison (octobre) et /methode#saison.
+
+**Gardé / changé** :
+
+- Lighthouse mesuré sans `SITE_LAUNCHED=1`, pour respecter la nouvelle règle à la lettre
+  (le lot précédent l'avait fait sur un build local) : le SEO reste bas jusqu'au lancement.
+- Le gabarit des mangues porte à 11 le nombre de faits (10 sur les gestes, 1 sur les
+  produits de saison) ; le test l'écrit ainsi.
+- Deux échecs ponctuels sous la charge de la suite complète, non reproduits isolément :
+  une erreur de console sur l'accueil (WebKit, 1 fois, message non conservé) et l'éclat du
+  jardin manqué par `toBeVisible` (WebKit) ; ce dernier test guette désormais l'éclat à
+  chaque image. Les deux suites complètes suivantes : 86/86.
+- « 1 kg » se coupait en fin de ligne sur /saison : espace insécable.
+
+## 2026-10-05 — Lot V2-1, fusion de main et dernières retouches (branche feat/v1-1)
+
+**Demandé** : ramener main (fix/launch fusionnée) dans feat/v1-1 par fusion, en gardant
+les deux côtés des conflits ; afficher les deux dates des données de saison ; joindre le
+texte complet de toute erreur console au rapport Playwright ; relancer toutes les
+vérifications (`STRICT_DATA=1 pnpm build` doit passer).
+
+**Proposé / fait** :
+
+- Fusion de main (sans rebase). Conflits : CLAUDE.md (mentions légales remplies et garde-fou
+  des faits, plus la règle ADEME), journal (entrée fix/launch remise avant les entrées V2-1,
+  ordre chronologique), `e2e/journeys.spec.ts` (même vérification de l'éclat des deux
+  côtés : gardée dans sa version image par image, `toBeVisible` l'avait manquée une fois).
+- Données de saison : « Données Agribalyse 3.2 (mise à jour du 15/01/2025), récupérées le
+  4 octobre 2026 » sur /saison et /methode#saison. `SAISON_BASE` (src/lib/saison/index.ts)
+  cite la page lue le 2026-10-05 (https://impactco2.fr/outils/fruitsetlegumes et les
+  fiches produits) ; `pnpm build-saison` rappelle de la relire.
+- Rapport Playwright : chaque erreur console (texte, emplacement, page, pile d'une
+  exception) est jointe au test (`erreurs-console.txt`), même tolérée ; vérifié sur le test
+  de la 404. Rapport HTML activé et conservé en CI à chaque passage.
+- Vérifications : lint, typecheck, 444 tests unitaires, 2 suites de bout en bout complètes
+  (86/86, Chromium et WebKit, axe compris), `pnpm build` et `STRICT_DATA=1 pnpm build`
+  passent (« Mentions légales : complètes »). Lighthouse mobile, 3 passages sur le build
+  normal (noindex) : Accueil 97-100, Comparer 95-96, Duel 94, Jardin 92-95, De saison 97,
+  Méthode 97-100 ; accessibilité et bonnes pratiques à 100 ; SEO 66-69 (noindex). Captures
+  mises à jour.
+
+**Gardé / changé** :
+
+- L'erreur console WebKit de l'accueil n'est pas revenue sur ces deux suites ; si elle
+  revient, son texte complet sera dans le rapport.

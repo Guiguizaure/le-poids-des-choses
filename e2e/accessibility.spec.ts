@@ -26,6 +26,12 @@ const PAGES = [
     heading: "Neuf, d’occasion, ou tu gardes le tien ?",
   },
   { name: "jardin vide", path: "/jardin", heading: "Mon jardin" },
+  { name: "de saison", path: "/saison", heading: /^De saison en / },
+  {
+    name: "de saison (mai)",
+    path: "/saison?mois=5",
+    heading: "De saison en mai",
+  },
   { name: "méthode", path: "/methode", heading: "Méthode et sources" },
   {
     name: "mentions légales",
@@ -83,6 +89,25 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     ]);
     await page.goto("/jardin");
     await expect(page.getByRole("heading", { name: "Carnet" })).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+
+  test("jardin avec l'oiseau (bouton d'envol) et « Le savais-tu ? »", async ({
+    page,
+  }) => {
+    await seedJournal(
+      page,
+      Array.from({ length: 5 }, (_, i) =>
+        entry(`axe-oiseau-${i}`, 4.1, 10 + i),
+      ),
+    );
+    await page.goto("/jardin");
+    await expect(
+      page.getByRole("button", { name: "Faire s’envoler l’oiseau" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("complementary", { name: "Le savais-tu ?" }),
+    ).toBeVisible();
     await expectNoAxeViolations(page);
   });
 

@@ -1,7 +1,8 @@
 // `pnpm lighthouse` (JavaScript pur : tsx injecte des aides que Lighthouse ne sait pas
 // exécuter dans la page) : scores Lighthouse (profil mobile) des pages principales, sur l'export
 // statique servi en local (`pnpm build` puis `pnpm serve:out`, ou BASE_URL=…).
-// Construire avec SITE_LAUNCHED=1 pour mesurer le SEO tel qu'il sera au lancement.
+// Construire avec SITE_LAUNCHED=1 pour mesurer le SEO tel qu'il sera au lancement — pas avant
+// la réponse de l'ADEME (voir CLAUDE.md) : d'ici là, le SEO est mesuré avec le noindex.
 import * as chromeLauncher from "chrome-launcher";
 import lighthouse from "lighthouse";
 
@@ -11,8 +12,10 @@ const BASE = (process.env.BASE_URL ?? "http://localhost:4322").replace(
 );
 const PAGES = [
   ["Accueil", "/"],
+  ["Comparer (choix des gestes)", "/comparer"],
   ["Duel (TGV, avion)", "/comparer?a=tgv&b=avion&q=300"],
   ["Mon jardin", "/jardin"],
+  ["De saison", "/saison"],
   ["Méthode", "/methode"],
 ];
 const CATEGORIES = ["performance", "accessibility", "best-practices", "seo"];

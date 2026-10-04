@@ -8,3 +8,4 @@ test-results
 playwright-report
 blob-report
 src/lib/illustrations/bounds.generated.ts
+src/lib/data/saison.generated.json

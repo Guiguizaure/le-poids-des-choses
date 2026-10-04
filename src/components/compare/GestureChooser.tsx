@@ -18,6 +18,7 @@ import { getGesture } from "@/lib/data";
 import type { Category } from "@/lib/data/types";
 import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
 import { useFocusTitle } from "./useFocusTitle";
+import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
 
 type GestureChooserProps = {
   /** Premier geste déjà choisi (lien partagé, retour depuis le duel). */
@@ -217,6 +218,7 @@ export function GestureChooser({
               ? "Ensuite, choisis la seconde option."
               : "Retouche un geste pour le retirer."}
         </p>
+        <SeasonTeaser className="mt-2" />
       </div>
     </main>
   );

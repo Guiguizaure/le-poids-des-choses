@@ -245,6 +245,15 @@ function OiseauEndormi({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function OiseauVol({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
+      {children}
+      <g data-part="aile-arriere"><path d="M30 28 C 26 16, 30 6, 40 2 C 42 12, 38 22, 34 29 Z" fill="#FF8FB1" /></g><g data-part="queue"><path d="M14 32 L1 28 L6 40 Z" fill="#2D4BFF" /></g><g data-part="corps"><ellipse cx="28" cy="32" rx="17" ry="10" transform="rotate(-8 28 32)" fill="#2D4BFF" /></g><g data-part="tete"><circle cx="46" cy="24" r="8.5" fill="#2D4BFF" /></g><g data-part="bec"><path d="M53.5 22 L62 24.5 L53.5 27.5 Z" fill="#FFC93C" /></g><g data-part="oeil"><circle cx="48" cy="22" r="2" fill="#1F1A17" /></g><g data-part="aile-avant"><path d="M26 30 C 18 20, 18 8, 26 1 C 32 10, 32 22, 31 31 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" /></g>
+    </svg>
+  );
+}
+
 function Papillon({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={48} viewBox="0 0 64 48" fill="none" {...svgProps}>
@@ -650,6 +659,7 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "herisson-endormi": HerissonEndormi,
   "oiseau": Oiseau,
   "oiseau-endormi": OiseauEndormi,
+  "oiseau-vol": OiseauVol,
   "papillon": Papillon,
   "picto-avion": PictoAvion,
   "picto-biere": PictoBiere,

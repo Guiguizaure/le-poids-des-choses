@@ -51,9 +51,10 @@ rectangle `sol` (commandes de chemin M, L, H, V, C, Z ; un arc ou une courbe qua
 
 ## Contours
 
-Les petites bêtes (papillon, coccinelle, escargot) ont un contour encre de 1,5 avec
-`vector-effect="non-scaling-stroke"` sur leurs formes principales : le trait garde environ
-1,5 px à l'écran, même quand la bête est affichée petite.
+Les petites bêtes (papillon, coccinelle, escargot, aile avant de l'oiseau en vol) ont un
+contour encre de 1,5 avec `vector-effect="non-scaling-stroke"` sur leurs formes
+principales : le trait garde environ 1,5 px à l'écran, même quand la bête est affichée
+petite.
 
 ## Couleurs
 
