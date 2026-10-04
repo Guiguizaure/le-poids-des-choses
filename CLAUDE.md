@@ -10,7 +10,10 @@ Projet indépendant, non affilié à l'ADEME.
 
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
-  (`feat/…`, `fix/…`), fusionnées par demande de fusion relue par l'utilisateur.
+  (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
+  l'utilisateur. Depuis le premier commit, plus aucun travail directement sur `main`.
+- Messages de commit au format conventionnel, en français : `feat:`, `fix:`, `chore:`,
+  `docs:`, `refactor:`, `test:`…
 - Ne lance pas `pnpm dev` : l'utilisateur le lance dans un autre onglet. `build`, `lint`
   et `test` sont autorisés.
 - Aucun secret dans le dépôt (`.env*` ignorés). La clé API ADEME ne sert qu'au script de
