@@ -103,3 +103,35 @@ de valeur.
 **Gardé / changé** : à relire — livraison à domicile (et non point relais) ; taille du colis
 par objet (1 kg vêtements et smartphone, 2 kg chaussures et portable, 15 kg télévision) ;
 « occasion » sans livraison séparée de « occasion livrée ».
+
+## 2026-10-04 — Lot 3 : illustrations et premières animations (branche feat/illustrations)
+
+**Demandé** : intégrer 47 SVG provisoires, chaîne de conversion SVG → composants sans id en
+double, animations GSAP (arbre, balance, papillon, oiseau, éclat) respectant
+prefers-reduced-motion, page /labo, tests.
+
+**Proposé / fait** :
+
+- Zip décompressé dans `public/illustrations` (47 SVG, dont `picto-occasion`, `picto-garder`).
+- `src/lib/illustrations/specs.ts` : contrat de chaque fichier (taille, point d'appui,
+  calques). `scripts/build-illustrations.ts` (`pnpm illustrations`, lancé aussi par
+  `pnpm build`) : id → `data-part`, id référencés gardés et préfixés par instance, attributs
+  convertis, vérification du contrat. Composant `<Illustration name title? />`.
+- GSAP 3.15 + `@gsap/react` ; `useMotion` (gsap.matchMedia + simulation via
+  `MotionProvider`).
+- `Arbre` (fondu + montée depuis le pied, balancement, éclat quand il grandit), `Balance`
+  (géométrie pure `beamPosition`, rebond élastique), `Papillon`, `Oiseau` (sautille / respire
+  endormi), `Eclat`.
+- `/labo` (noindex) avec contrôles et la grille des 47 illustrations.
+- Vérifié dans Chrome sur l'export statique (`out/` servi temporairement, sans `pnpm dev`) :
+  crochet du plateau confondu avec l'extrémité du fléau pendant l'animation, mode réduit qui
+  coupe balancement et ailes, éclat centré au sommet du feuillage.
+
+**Gardé / changé** :
+
+- Ajouts au contrat, à valider : extrémités du fléau en 40,40 et 240,40 ; axe du papillon
+  x = 32 ; centre de l'éclat 40,50 (déduits des dessins).
+- Le rebond élastique de la balance dépasse brièvement les 12° (environ 14°) avant de se
+  poser.
+- `docs/svg-conventions.md` réécrit pour l'export Figma (remplace les consignes Illustrator).
+- Noms de composants en français (`Arbre`, `Balance`…), par cohérence avec les illustrations.
