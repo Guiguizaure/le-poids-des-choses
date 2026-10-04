@@ -1,0 +1,3 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1"/></g><g id="objet"><path d="M21 13 H43 L46 52 H36 L32 28 L28 52 H18 Z" fill="#2D4BFF"/><path d="M21 19 H43" stroke="#FFF3DC" stroke-width="2" stroke-dasharray="2 2"/><path d="M32 19 V28" stroke="#FFF3DC" stroke-width="2"/></g>
+</svg>
