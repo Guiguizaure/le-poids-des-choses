@@ -31,7 +31,7 @@ function attribute(tag: string, name: string): string | null {
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /**
- * Chemin SVG → points (commandes M, L, H, V, C, Z, absolues ou relatives). Les courbes sont
+ * Chemin SVG → points (commandes M, L, H, V, C, Q, Z, absolues ou relatives). Les courbes sont
  * échantillonnées. Une commande non prise en charge lève une erreur explicite.
  */
 export function pathToPoints(d: string): XY[] {
@@ -77,6 +77,25 @@ export function pathToPoints(d: string): XY[] {
         y = oy + number();
         push(x, y);
         break;
+      case "Q": {
+        const [x1, y1, x2, y2] = [
+          ox + number(),
+          oy + number(),
+          ox + number(),
+          oy + number(),
+        ];
+        for (let step = 1; step <= CURVE_STEPS; step++) {
+          const t = step / CURVE_STEPS;
+          const u = 1 - t;
+          push(
+            u * u * x + 2 * u * t * x1 + t * t * x2,
+            u * u * y + 2 * u * t * y1 + t * t * y2,
+          );
+        }
+        x = x2;
+        y = y2;
+        break;
+      }
       case "C": {
         const [x1, y1, x2, y2, x3, y3] = [
           ox + number(),

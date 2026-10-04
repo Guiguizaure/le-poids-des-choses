@@ -22,21 +22,110 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   ).toBeVisible();
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
 
+  // Révélation : la plante exacte que ce choix fera pousser, et le papillon qui arrive.
   await expect(
-    page.getByRole("heading", { name: "Une plante pousse dans ton jardin" }),
+    page.getByRole("heading", {
+      name: /(Un arbre|Une fleur) va pousser dans ton jardin/,
+    }),
+  ).toBeFocused();
+  await expect(page.getByText("Et un papillon arrive !")).toBeVisible();
+  await page.getByRole("link", { name: "Aller la planter" }).click();
+
+  // Le jardin s'ouvre sur ?nouveau=…, la plante pousse, l'animal arrive, puis l'URL se nettoie.
+  await expect(page).toHaveURL(/\/jardin\?nouveau=/);
+  await expect(
+    page.getByRole("img", { name: "Jardin : 1 plante, 1 animal" }),
   ).toBeVisible();
   await expect(
     page
       .getByRole("status")
       .filter({ hasText: "Un papillon s’est installé dans ton jardin" }),
   ).toBeAttached();
-  await page.getByRole("link", { name: "Voir mon jardin" }).click();
-
-  await expect(
-    page.getByRole("img", { name: "Jardin : 1 plante, 1 animal" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/jardin$/, { timeout: 8000 });
   await expect(page.getByText("TGV plutôt qu’avion")).toBeVisible();
   await expect(page.getByText("1 choix noté")).toBeVisible();
+});
+
+/** Épaisseur à l'écran (px) du trait de la pousse affichée, une fois sa croissance finie. */
+function stemStroke(page: import("@playwright/test").Page) {
+  return page
+    .locator("[data-stage='pousse'] [stroke-width]")
+    .first()
+    .evaluate((element) => {
+      const matrix = (element as SVGGraphicsElement).getScreenCTM()!;
+      return (
+        parseFloat(getComputedStyle(element).strokeWidth) *
+        Math.hypot(matrix.a, matrix.b)
+      );
+    });
+}
+
+test("petit choix : une petite pousse, agrandie dans la vitrine, au trait du jardin", async ({
+  page,
+}) => {
+  await page.goto("/comparer?a=velo&b=voiture&q=2");
+  await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Une petite pousse va sortir de terre" }),
+  ).toBeFocused();
+  // La pousse occupe la hauteur de la vitrine (dans le jardin, elle garde sa vraie taille).
+  const plant = page.locator("[data-stage='pousse']").first();
+  await expect(plant).toBeVisible();
+  // Mesure après la pousse depuis le pied (animation d'échelle).
+  await expect
+    .poll(() =>
+      plant.locator("svg > *").evaluateAll((nodes) => {
+        // Hauteur de tout le dessin (union des formes).
+        const rects = nodes.map((n) => n.getBoundingClientRect());
+        return (
+          Math.max(...rects.map((r) => r.bottom)) -
+          Math.min(...rects.map((r) => r.top))
+        );
+      }),
+    )
+    .toBeGreaterThan(80);
+
+  // Le trait n'est pas agrandi : même épaisseur que dans le jardin (à l'écran, à la mise en
+  // page près : la vitrine et la scène n'ont pas tout à fait la même échelle).
+  await expect.poll(() => stemStroke(page)).toBeLessThan(3);
+  const inVitrine = await stemStroke(page);
+  await page.getByRole("link", { name: "Aller la planter" }).click();
+  await expect(page).toHaveURL(/\/jardin/);
+  await expect(
+    page.getByRole("img", { name: /Jardin : 1 plante/ }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => Math.abs((await stemStroke(page)) - inVitrine))
+    .toBeLessThan(0.5);
+});
+
+test("choix plus lourd : la balance se pose, c'est noté, rien ne pousse", async ({
+  page,
+}) => {
+  await page.goto("/comparer?a=avion&b=tgv&q=300");
+  await page.getByRole("button", { name: "Je choisis l’avion" }).click();
+  await expect(page.getByRole("heading", { name: "C’est noté" })).toBeFocused();
+  await expect(page.getByText("Noté", { exact: true })).toBeVisible();
+  await expect(page.getByText(/rien n’est retiré à ton jardin/)).toBeVisible();
+  await page.getByRole("link", { name: "Voir mon jardin" }).click();
+  await expect(page.getByRole("img", { name: "Jardin vide" })).toBeVisible();
+});
+
+test.describe("animations réduites", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("la révélation s'affiche sans attendre et reste complète", async ({
+    page,
+  }) => {
+    await page.goto("/comparer?a=tgv&b=avion&q=300");
+    await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+    await expect(
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
+    ).toBeVisible();
+    await expect(page.getByText("Et un papillon arrive !")).toBeVisible({
+      timeout: 1500,
+    });
+  });
 });
 
 test("URL partagée : le duel s'ouvre directement, la quantité suit l'URL", async ({

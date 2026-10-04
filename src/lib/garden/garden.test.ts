@@ -11,13 +11,20 @@ import {
   PLANT_FRAME_WIDTH,
   maxLevel,
   nextAnimal,
+  revealForEntry,
   MAX_PLANT_WIDTH,
   MAX_PLANTS,
   plantKindFor,
   stageFor,
 } from "./model";
 import { SCENE, surfaceY } from "./scene";
-import { arrivalMessage, gardenDescription, nextAnimalMessage } from "./text";
+import {
+  arrivalExclamation,
+  arrivalMessage,
+  gardenDescription,
+  nextAnimalMessage,
+  revealTitle,
+} from "./text";
 
 const DAY = 24 * 60 * 60 * 1000;
 const start = Date.UTC(2026, 0, 1);
@@ -333,5 +340,80 @@ describe("prochain animal", () => {
   it("rien quand tous les animaux sont là", () => {
     expect(nextAnimal(20)).toBeNull();
     expect(nextAnimalMessage(nextAnimal(57))).toBe("");
+  });
+});
+
+describe("révélation d'un choix", () => {
+  it("choix léger : la plante exacte que le jardin fera pousser", () => {
+    const list = entries(3, (i) => [0.5, 4, 50][i]);
+    for (const e of list) {
+      const reveal = revealForEntry(list, e.id, soon)!;
+      const inGarden = buildGarden(list, soon).plants.find(
+        (p) => p.id === e.id,
+      )!;
+      expect(reveal.isNew).toBe(true);
+      expect(reveal.plant.kind).toEqual(inGarden.kind);
+      expect(reveal.plant.stage).toBe(inGarden.stage);
+      expect(reveal.plant.slot).toEqual(inGarden.slot);
+    }
+  });
+  it("choix lourd : rien ne pousse", () => {
+    const list = [...entries(2), ...entries(1, 0, "lourd")];
+    expect(revealForEntry(list, "lourd0", soon)).toBeNull();
+    expect(revealForEntry(list, "inconnu", soon)).toBeNull();
+  });
+  it("annonce l'animal débloqué par ce choix", () => {
+    const list = entries(3);
+    expect(revealForEntry(list, "e0", soon)!.animals).toEqual(["butterfly"]);
+    expect(revealForEntry(list, "e1", soon)!.animals).toEqual([]);
+    expect(revealForEntry(list, "e2", soon)!.animals).toEqual(["ladybug"]);
+  });
+  it("jardin plein : le choix fait grandir la plus ancienne plante", () => {
+    const list = entries(41, 0.5);
+    const reveal = revealForEntry(list, "e40", soon)!;
+    expect(reveal.isNew).toBe(false);
+    expect(reveal.plant.id).toBe("e0");
+    expect(reveal.plant.level).toBe(1);
+  });
+  it("textes : titre selon la plante et son stade, arrivée accordée", () => {
+    const tree = {
+      plant: { kind: { type: "tree" as const }, stage: "jeune" },
+      isNew: true,
+    };
+    const flower = {
+      plant: { kind: { type: "flower" as const }, stage: "fleurie" },
+      isNew: true,
+    };
+    const sprout = {
+      plant: { kind: { type: "tree" as const }, stage: "pousse" },
+      isNew: true,
+    };
+    expect(revealTitle(tree)).toBe("Un arbre va pousser dans ton jardin");
+    expect(revealTitle(flower)).toBe("Une fleur va pousser dans ton jardin");
+    expect(revealTitle(sprout)).toBe("Une petite pousse va sortir de terre");
+    expect(
+      revealTitle({
+        ...sprout,
+        plant: { ...sprout.plant, kind: { type: "flower" } },
+      }),
+    ).toBe("Une petite pousse va sortir de terre");
+    // Jardin plein : la plus ancienne plante grandit, quel que soit son stade.
+    expect(revealTitle({ ...tree, isNew: false })).toBe(
+      "Un arbre va grandir dans ton jardin",
+    );
+    expect(revealTitle({ ...flower, isNew: false })).toBe(
+      "Une fleur va grandir dans ton jardin",
+    );
+    expect(revealTitle({ ...sprout, isNew: false })).toBe(
+      "Un arbre va grandir dans ton jardin",
+    );
+    // Une pousse de révélation correspond bien à un petit choix (moins de 1 kg).
+    const small = entries(1, 0.5);
+    expect(revealTitle(revealForEntry(small, "e0", soon)!)).toBe(
+      "Une petite pousse va sortir de terre",
+    );
+    expect(arrivalExclamation("butterfly")).toBe("Et un papillon arrive !");
+    expect(arrivalExclamation("ladybug")).toBe("Et une coccinelle arrive !");
+    expect(arrivalExclamation("hedgehog")).toBe("Et un hérisson arrive !");
   });
 });

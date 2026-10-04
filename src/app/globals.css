@@ -36,6 +36,29 @@
   --text-corps-s--line-height: 1.45;
   --text-legende: 12px;
   --text-legende--line-height: 1.4;
+
+  /* Micro-interactions (classes animate-*) : coupées en animations réduites (motion-reduce). */
+  --animate-enter: enter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  --animate-select: select 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+
+  /* Part d'une opacité non nulle : le texte reste visible dès la première image (LCP). */
+  @keyframes enter {
+    from {
+      opacity: 0.35;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0);
+    }
+  }
+  @keyframes select {
+    40% {
+      transform: scale(0.95);
+    }
+  }
 }
 
 body {
@@ -92,4 +115,22 @@ body {
   outline: 2px solid var(--color-outremer);
   outline-offset: 4px;
   border-radius: 4px;
+}
+
+/* Boutons et cartes : légère élévation au survol, léger écrasement au toucher. */
+@utility press {
+  transition: transform 150ms ease;
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
 }

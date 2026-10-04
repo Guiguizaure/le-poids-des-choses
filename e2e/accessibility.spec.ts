@@ -41,6 +41,19 @@ const PAGES = [
 ];
 
 async function expectNoAxeViolations(page: import("@playwright/test").Page) {
+  // Les apparitions (fondu, pop) doivent être finies : un texte encore en fondu fausserait
+  // la mesure de contraste.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter(
+          (animation) =>
+            animation.effect?.getComputedTiming().iterations !== Infinity,
+        )
+        .map((animation) => animation.finished),
+    ),
+  );
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
     .analyze();
@@ -77,8 +90,9 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     await page.goto("/comparer?a=tgv&b=avion&q=300");
     await page.getByRole("button", { name: "Je choisis le TGV" }).click();
     await expect(
-      page.getByRole("heading", { name: "Une plante pousse dans ton jardin" }),
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
     ).toBeVisible();
+    await expect(page.getByText("Et un papillon arrive !")).toBeVisible();
     await expectNoAxeViolations(page);
   });
 });
@@ -164,10 +178,10 @@ test.describe("parcours complet au clavier", () => {
     await tabTo(page, "Je choisis le TGV");
     await page.keyboard.press("Enter");
     await expect(
-      page.getByRole("heading", { name: "Une plante pousse dans ton jardin" }),
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
     ).toBeFocused();
 
-    await tabTo(page, "Voir mon jardin");
+    await tabTo(page, "Aller la planter");
     await page.keyboard.press("Enter");
     await expect(
       page.getByRole("heading", { name: "Mon jardin" }),

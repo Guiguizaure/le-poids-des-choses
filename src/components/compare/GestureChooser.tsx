@@ -88,7 +88,7 @@ export function GestureChooser({
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col">
+    <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between px-5 pt-[22px] pb-2">
         <IconLink href={backHref} label="Retour" icon="retour" />
         <p className="text-corps-s text-encre leading-[1.3] font-semibold">
@@ -128,7 +128,7 @@ export function GestureChooser({
               type="button"
               aria-pressed={category === id}
               onClick={() => setCategory(id)}
-              className={`border-encre text-corps-s focus-visible:outline-outremer rounded-full border px-3.5 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 ${
+              className={`press border-encre text-corps-s focus-visible:outline-outremer rounded-full border px-3.5 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 ${
                 category === id ? "bg-encre text-creme" : "bg-blanc text-encre"
               }`}
             >
@@ -158,9 +158,9 @@ export function GestureChooser({
                 aria-pressed={badge !== null}
                 disabled={!selectable}
                 onClick={() => toggle(gesture.id)}
-                className={`bg-blanc focus-visible:outline-outremer flex flex-col items-start gap-2.5 rounded-[18px] text-left transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-35 ${
+                className={`press bg-blanc focus-visible:outline-outremer flex flex-col items-start gap-2.5 rounded-[18px] text-left focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-35 ${
                   badge
-                    ? "border-tomate border-2 p-[15px]"
+                    ? "border-tomate animate-select border-2 p-[15px] motion-reduce:animate-none"
                     : "border-encre border p-4"
                 }`}
               >
@@ -172,7 +172,7 @@ export function GestureChooser({
                   {badge ? (
                     <span
                       aria-hidden
-                      className="bg-tomate text-encre text-legende flex size-6 items-center justify-center rounded-full font-semibold"
+                      className="bg-tomate text-encre text-legende animate-pop flex size-6 items-center justify-center rounded-full font-semibold motion-reduce:animate-none"
                     >
                       {badge}
                     </span>

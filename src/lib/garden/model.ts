@@ -347,3 +347,40 @@ export function gardenSignature(state: GardenState): number {
       .join("|"),
   );
 }
+
+// ---- Révélation d'un choix ----------------------------------------------------------------
+
+export type Reveal = {
+  /** Plante que ce choix fait pousser, ou fait grandir (jardin plein), à son stade final. */
+  plant: GardenPlant;
+  /** Vrai si c'est une nouvelle plante ; faux si le choix fait grandir une plante existante. */
+  isNew: boolean;
+  /** Animaux qui s'installent grâce à ce choix. */
+  animals: AnimalKind[];
+};
+
+/**
+ * Ce que l'entrée `entryId` apporte au jardin : même calcul que `buildGarden`, en comparant le
+ * jardin avec et sans cette entrée. Null pour un choix plus lourd (rien ne pousse).
+ */
+export function revealForEntry(
+  entries: readonly JournalEntry[],
+  entryId: string,
+  now: Date = new Date(),
+): Reveal | null {
+  if (!entries.some((entry) => entry.id === entryId && isLight(entry)))
+    return null;
+  const before = buildGarden(
+    entries.filter((entry) => entry.id !== entryId),
+    now,
+  );
+  const after = buildGarden(entries, now);
+  const animals = animalsArrivedWith(entries, entryId);
+  const fresh = after.plants.find((plant) => plant.id === entryId);
+  if (fresh) return { plant: fresh, isNew: true, animals };
+  const grown = after.plants.find((plant) => {
+    const previous = before.plants.find((p) => p.id === plant.id);
+    return previous && previous.level !== plant.level;
+  });
+  return grown ? { plant: grown, isNew: false, animals } : null;
+}

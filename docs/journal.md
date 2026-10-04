@@ -246,7 +246,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - `gardenStage` et `GARDEN_STAGE_THRESHOLDS_KG` retirés avec leurs tests (remplacés par le
   modèle par plante).
 
-## 2026-10-05 — Lot 5 : le parcours de comparaison (branche feat/duel)
+## 2026-10-04 — Lot 5 : le parcours de comparaison (branche feat/duel)
 
 **Demandé** : accueil (01 / 07), choix des gestes (02), duel (03), duel objet (03b), résultats
 (05a / 05b) d'après les maquettes ; URL partageable ; ajout au carnet ; accessibilité ; tests.
@@ -281,7 +281,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
 - Pas du curseur de distance : 1 % de la course (sinon les flèches ne bougeaient pas la
   valeur aux petites distances).
 
-**Ajustements après relecture (2026-10-05)** :
+**Ajustements après relecture (2026-10-04)** :
 
 - Objets : « aucune nouvelle fabrication » remplace « zéro émission » pour « garder » et
   « d’occasion sans colis » (hypothèse de méthode : entretien et fin de vie non comptés) ;
@@ -291,7 +291,7 @@ mémoire), modèle pur du jardin, composant `<Garden>`, page /jardin d'après la
   les cartes des écrans 02 et 03.
 - Gardés : pastille sur le 03b, textes ajoutés de l'étape 2.
 
-## 2026-10-05 — Lot 5b : retours de test (branche feat/feedback-1)
+## 2026-10-04 — Lot 5b : retours de test (branche feat/feedback-1)
 
 **Demandé** : scène plus vivante, numérique recentré sur les appareils, choix des deux gestes
 sur un seul écran, prochain animal en silhouette, nouvelles comparaisons « Boire » et « Se
@@ -324,7 +324,7 @@ faire livrer » si le CSV le permet.
 - Libellés des livraisons : « En magasin à pied / en voiture », « Point relais à pied / en
   voiture », précision du trajet en voiture et du colis d'1 kg en ligne secondaire.
 
-**Ajustements après relecture (2026-10-05)** :
+**Ajustements après relecture (2026-10-04)** :
 
 - 14 pictos « Boire » et « Se faire livrer » intégrés depuis
   `le-poids-des-choses-pictos-boire-livrer.zip` (64×64, `fond` et `objet`) ; contrat à 68
@@ -334,7 +334,7 @@ faire livrer » si le CSV le permet.
   tirent désormais l'accord de `objectNoun` (« Télévision gardée plutôt que neuve »).
 - Pas de Click & Collect.
 
-## 2026-10-05 — Lot 5c : retours de test (branche feat/feedback-2)
+## 2026-10-04 — Lot 5c : retours de test (branche feat/feedback-2)
 
 **Demandé** : message du prochain animal seulement sur /jardin, plus de silhouettes,
 petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
@@ -363,7 +363,7 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
 - Escargot endormi cerné aussi, par cohérence avec l'escargot éveillé.
 - Note V1.1 dans CLAUDE.md : envol de l'oiseau.
 
-## 2026-10-05 — Lot 6 : pages et finitions (branche feat/pages)
+## 2026-10-04 — Lot 6 : pages et finitions (branche feat/pages)
 
 **Demandé** : pages Méthode et Mentions légales, 404 illustrée, pied de page, installation
 (PWA), images de partage, lancement préparé (SITE_LAUNCHED).
@@ -397,7 +397,7 @@ petites bêtes plus lisibles, oiseau au sol (V1), halo du soleil visible.
 - Cloudflare Web Analytics annoncé dans les mentions légales : à activer dans le tableau de
   bord Cloudflare Pages au lancement (aucun script ajouté au code).
 
-## 2026-10-05 — Lot 7 : qualité avant lancement (branche feat/quality)
+## 2026-10-04 — Lot 7 : qualité avant lancement (branche feat/quality)
 
 **Demandé** : Lighthouse ≥ 95 partout, axe et contraste, focus, clavier, tests de bout en
 bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final, licences.
@@ -435,3 +435,115 @@ bout (Chromium et WebKit), CI, en-têtes de sécurité et de cache, README final
   scripts que Next insère dans chaque page de l'export.
 - Duel et jardin restent au seuil de 95 : leur contenu dépend de l'URL ou du carnet, lus
   côté client dans un export statique ; le socle React/Next représente l'essentiel du JS.
+
+## 2026-10-04 — Lot 5d : révélation et micro-interactions (branche feat/reveal)
+
+**Demandé** : carte de révélation après un choix (maquettes 05a v2 et 05b v2), arrivée dans
+le jardin par `?nouveau=`, micro-interactions discrètes, sans régression Lighthouse.
+
+**Proposé / fait** :
+
+- `revealForEntry` (pure, testée) : la plante exacte qu'un choix fait pousser, ou fait
+  grandir quand le jardin est plein, et l'animal débloqué ; textes « Une fleur va pousser
+  dans ton jardin », « Et un papillon arrive ! » (accords).
+- Carte de révélation : posée comme un papier (descente, légère rotation, petit rebond),
+  vitrine (bout de colline, plante qui pousse avec l'éclat, animal qui entre en volant ou en
+  marchant) ; choix lourd : balance qui oscille puis se stabilise. Focus sur le titre de la
+  carte, arrivée de l'animal annoncée (`aria-live`).
+- `/jardin?nouveau=<id>` : scène sans le choix, puis plante, rafale, animal par le bord,
+  message, URL nettoyée. Sans paramètre, rien ne change.
+- Micro-interactions en CSS (aucune bibliothèque) et compteur du total évité en GSAP.
+- Vérifié dans Chrome : carte, éclat, papillon, arrivée au jardin, URL nettoyée, compteur ;
+  choix lourd avec focus sur « C’est noté ».
+- Lighthouse (5 passages, build `SITE_LAUNCHED=1`) : Accueil 97-100, Duel 95, Jardin
+  94-96, Méthode 98-100 ; accessibilité, bonnes pratiques et SEO à 100.
+
+**Gardé / changé** :
+
+- L'apparition des pages partait d'une opacité nulle : le duel tombait à 92-93 (LCP
+  retardé) ; elle part maintenant de 0,35.
+- Le test axe attend la fin des apparitions : sinon, un texte en plein fondu faisait
+  échouer le contraste de temps en temps.
+- La légende « Animation : … » des maquettes est une note de conception, non affichée.
+
+## 2026-10-04 — Lot 5d, ajustement : la plante à l'échelle de la vitrine (branche feat/reveal)
+
+**Demandé** : dans la vitrine de la carte de révélation, mettre la plante à l'échelle pour
+qu'elle occupe la hauteur de la vitrine quel que soit son stade (une pousse est donc
+agrandie ; dans le jardin, elle garde sa vraie taille). Titre selon le stade : « Une petite
+pousse va sortir de terre » pour une pousse, « Une fleur va pousser… » et « Un arbre va
+pousser… » sinon, « … va grandir… » quand le jardin est plein.
+
+**Proposé / fait** :
+
+- `pnpm illustrations` calcule l'emprise réelle du dessin de chaque arbre et de chaque fleur
+  (rectangles, cercles, ellipses, chemins échantillonnés, plus la moitié du trait) dans
+  `src/lib/illustrations/bounds.generated.ts` ; les courbes quadratiques (Q) sont prises en
+  charge. Un test échoue si le fichier n'est pas à jour.
+- `vitrineFit` (pure, testée sur les 15 dessins) : pied au sommet de la colline, hauteur du
+  dessin 130 sur 190, largeur bornée à 120 pour laisser passer l'animal. Une pousse d'arbre
+  est agrandie environ 3 fois, une pousse de fleur 4 à 5 fois ; un grand arbre garde à peu
+  près sa taille.
+- `zoom` sur `Tree` / `Flower` : l'éclat garde sa taille habituelle sur une plante agrandie.
+  Le jardin ne passe pas de `zoom` : rien n'y change.
+- `revealTitle` selon le stade et le jardin plein (« Une fleur va grandir… » remplace « Une
+  fleur va s’épanouir… »).
+- Test de parcours : un petit choix (vélo plutôt que voiture sur 2 km) affiche la petite
+  pousse, plus haute que 80 px dans la vitrine.
+- Vérifié sur l'export statique (captures Playwright, Pixel 7) : pousses, fleurs fleuries et
+  grands arbres occupent tous la hauteur de la vitrine.
+
+**Gardé / changé** :
+
+- Les traits grossissent avec la pousse agrandie (épaisseur proportionnelle) : c'est le
+  dessin agrandi, sans retouche.
+- Dans Chrome, l'onglet piloté était ralenti (la carte encore en train de tomber après 3 s) :
+  vérification visuelle faite avec Playwright ; le choix noté dans Chrome a été effacé.
+
+## 2026-10-04 — Lot 5d, derniers ajustements : trait constant, dates du journal (branche feat/reveal)
+
+**Demandé** : dans la vitrine, garder l'épaisseur des traits constante quand la plante est
+agrandie, pour que la pousse ait le même trait que dans le jardin ; corriger les dates des
+entrées des lots 7 et 5d (2026-10-04 et non 2026-10-05).
+
+**Proposé / fait** :
+
+- `vitrineFit` renvoie `strokeScale` : le facteur qui ramène chaque trait du SVG à son
+  épaisseur dans le jardin. Le jardin dessine le cadre d'une plante à `PLANT_FRAME_WIDTH`
+  unités de scène (60 pour un arbre de 120, 30 pour une fleur de 60), soit à moitié : un
+  trait de 4 y fait 2 unités. `StagedPlant` l'applique aux éléments qui ont un
+  `stroke-width` (les tiges), seule la forme est agrandie.
+- Préféré à `vector-effect: non-scaling-stroke`, qui fixerait le trait en pixels d'écran
+  (4 px) au lieu de suivre l'échelle du jardin (environ 2 px sur téléphone).
+- L'emprise générée sépare la forme et le trait (`stroke`, plus grande demi-épaisseur), pour
+  que la plante occupe toujours la hauteur de la vitrine sans dépasser.
+- Tests : `strokeScale × zoom` vaut l'échelle du jardin pour les 15 dessins ; parcours d'un
+  petit choix : le trait de la pousse mesuré à l'écran dans la vitrine puis dans le jardin
+  diffère de moins de 0,5 px (avant : 3 à 4 px de plus dans la vitrine).
+- Dates des entrées des lots 7 et 5d corrigées.
+- Vérifié sur l'export statique (captures Playwright, Pixel 7) : pousses et fleurs ont des
+  tiges fines comme dans le jardin.
+
+**Gardé / changé** :
+
+- Les dates des lots 5, 5b, 5c et 6 portent aussi 2026-10-05 : laissées telles quelles en
+  attendant confirmation.
+
+## 2026-10-04 — Lot 5d, dates du journal (branche feat/reveal)
+
+**Demandé** : corriger aussi les dates des lots 5, 5b, 5c et 6, puis vérifier tout le journal
+avec la règle : lot 1 le 2026-10-03, tous les autres lots et ajustements (2, 2b, 2c, 3, 3b,
+4, 5, 5b, 5c, 5d, 6, 7) le 2026-10-04.
+
+**Proposé / fait** :
+
+- Entrées des lots 5, 5b, 5c et 6, et notes « Ajustements après relecture » des lots 5 et
+  5b, ramenées au 2026-10-04.
+- Vérification par script de chaque titre d'entrée et de chaque note datée : les 13 lots
+  sont présents, toutes les dates suivent la règle. Les mentions de 2026-10-05 qui restent
+  décrivent l'erreur corrigée, ce ne sont pas des dates d'entrée.
+
+**Gardé / changé** :
+
+- Les dates des tests (`compare.test.ts`, `journal.test.ts`, `display.test.ts`) et de
+  téléchargement du CSV ne sont pas des dates de session : inchangées.

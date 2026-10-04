@@ -11,7 +11,7 @@ export function ContentPage({
   children: ReactNode;
 }) {
   return (
-    <main className="mx-auto flex w-full max-w-[640px] flex-col">
+    <main className="animate-enter mx-auto flex w-full max-w-[640px] flex-col motion-reduce:animate-none">
       <div className="flex items-center px-5 pt-[22px] pb-2">
         <Link
           href="/"

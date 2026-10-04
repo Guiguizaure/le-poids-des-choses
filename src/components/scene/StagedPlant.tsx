@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { useGust } from "@/components/motion/gust";
 import { gsap, useGSAP } from "@/components/motion/gsap";
@@ -43,6 +43,13 @@ type StagedPlantProps<S extends string> = {
   still?: boolean;
   /** À l'apparition, la plante pousse depuis son pied (avec l'éclat). */
   popIn?: boolean;
+  /**
+   * Agrandissement du dessin (vitrine de révélation) : l'éclat garde sa taille habituelle
+   * au lieu de grossir avec la plante.
+   */
+  zoom?: number;
+  /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
+  strokeScale?: number;
 };
 
 /**
@@ -60,6 +67,8 @@ export function StagedPlant<S extends string>({
   sparkle,
   still = false,
   popIn = false,
+  zoom = 1,
+  strokeScale = 1,
 }: StagedPlantProps<S>) {
   const ref = useRef<HTMLDivElement>(null);
   const sparkleRef = useRef<HTMLDivElement>(null);
@@ -68,6 +77,23 @@ export function StagedPlant<S extends string>({
   const firstName = illustrationFor(stages[0]);
   const spec = getSpec(firstName);
   const origin = anchorAsCssOrigin(firstName);
+
+  // Agrandie, la plante garde l'épaisseur de trait du jardin : seule la forme grossit.
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root || strokeScale === 1) return;
+    const stroked = root.querySelectorAll<SVGElement>(
+      "[data-stage] [stroke-width]",
+    );
+    for (const element of stroked) {
+      element.style.strokeWidth = String(
+        Number(element.getAttribute("stroke-width")) * strokeScale,
+      );
+    }
+    return () => {
+      for (const element of stroked) element.style.strokeWidth = "";
+    };
+  }, [strokeScale]);
 
   const reduceRef = useMotion(
     ref,
@@ -139,7 +165,7 @@ export function StagedPlant<S extends string>({
 
   const sparkleOver = (layer: HTMLElement, reduce: boolean) => {
     if (!sparkle || !sparkleRef.current) return;
-    placeSparkle(sparkleRef.current, layer, spec.width, spec.height);
+    placeSparkle(sparkleRef.current, layer, spec.width, spec.height, zoom);
     playSparkle(sparkleRef.current, reduce).delay(reduce ? 0 : 0.25);
   };
 
@@ -260,7 +286,7 @@ export function StagedPlant<S extends string>({
           className="pointer-events-none absolute"
           style={{
             ...sparkleHiddenStyle,
-            width: `${(getSpec("eclat").width / spec.width) * 100}%`,
+            width: `${(getSpec("eclat").width / zoom / spec.width) * 100}%`,
             aspectRatio: "1",
           }}
         >
@@ -277,6 +303,7 @@ function placeSparkle(
   stageLayer: HTMLElement,
   frameWidth: number,
   frameHeight: number,
+  zoom: number,
 ) {
   const sparkleSpec = getSpec("eclat");
   const anchor = sparkleSpec.anchor ?? {
@@ -289,8 +316,8 @@ function placeSparkle(
     frameHeight,
   );
   gsap.set(sparkleElement, {
-    left: `${((frameWidth / 2 - anchor.x) / frameWidth) * 100}%`,
-    top: `${((top - anchor.y) / frameHeight) * 100}%`,
+    left: `${((frameWidth / 2 - anchor.x / zoom) / frameWidth) * 100}%`,
+    top: `${((top - anchor.y / zoom) / frameHeight) * 100}%`,
   });
 }
 

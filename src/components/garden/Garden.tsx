@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { Landscape } from "@/components/scene/Landscape";
 import { playGust, useAutoGusts } from "@/components/motion/gust";
@@ -86,10 +93,38 @@ function Animal({ animal }: { animal: GardenAnimal }) {
   }
 }
 
+/** Un animal qui vient de s'installer entre par le bord droit de la scène. */
+function Entering({ box, children }: { box: Box; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduceRef = useMotion(ref, () => {});
+  useGSAP(
+    () => {
+      if (reduceRef.current || !ref.current) return;
+      // Assez loin pour partir hors de la scène, à droite.
+      const offscreen = ((SCENE.width - box.x) / box.width) * 100 + 30;
+      gsap.fromTo(
+        ref.current,
+        { xPercent: offscreen },
+        { xPercent: 0, duration: 1.6, ease: "power2.out", delay: 0.3 },
+      );
+    },
+    { scope: ref },
+  );
+  return (
+    <div ref={ref} className="absolute" style={place(box)}>
+      {children}
+    </div>
+  );
+}
+
+/** Délai avant que le nouveau choix apparaisse : la scène s'affiche d'abord sans lui. */
+const REVEAL_DELAY_MS = 700;
+
 /**
- * Le jardin : scene-paysage, une plante par choix léger, les animaux installés. Quand une
- * entrée arrive, sa plante pousse (avec l'éclat), une rafale passe et un éventuel nouvel animal
- * est annoncé. Assoupi : brume, animaux endormis ou partis, plus de vent.
+ * Le jardin : scene-paysage, une plante par choix léger, les animaux installés. Avec
+ * `highlightId` (choix qu'on vient de faire) : la scène s'affiche d'abord sans ce choix, puis sa
+ * plante pousse à sa place (éclat), une rafale passe et l'animal éventuel entre par le bord,
+ * avec le message d'arrivée. Assoupi : brume, animaux endormis ou partis, plus de vent.
  */
 export function Garden({
   entries,
@@ -99,29 +134,48 @@ export function Garden({
 }: GardenProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const messageRef = useRef<HTMLParagraphElement>(null);
-  const garden = useMemo(
-    () => buildGarden(entries, new Date(now)),
-    [entries, now],
-  );
-  const message = useMemo(
+  // Choix à révéler : retenu une fois (l'URL peut ensuite perdre son paramètre), puis masqué
+  // le temps que la scène s'affiche.
+  const [revealId, setRevealId] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  if (highlightId && highlightId !== revealId) {
+    setRevealId(highlightId);
+    setPending(true);
+  }
+
+  useEffect(() => {
+    if (!pending) return;
+    const timer = window.setTimeout(() => setPending(false), REVEAL_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [pending]);
+
+  const visibleEntries = useMemo(
     () =>
-      highlightId
-        ? animalsArrivedWith(entries, highlightId)
-            .map(arrivalMessage)
-            .join(". ")
-        : "",
-    [entries, highlightId],
+      pending && revealId
+        ? entries.filter((entry) => entry.id !== revealId)
+        : entries,
+    [entries, pending, revealId],
   );
+  const garden = useMemo(
+    () => buildGarden(visibleEntries, new Date(now)),
+    [visibleEntries, now],
+  );
+  const revealed = revealId && !pending ? revealId : null;
+  const arrived = useMemo(
+    () => (revealed ? animalsArrivedWith(entries, revealed) : []),
+    [entries, revealed],
+  );
+  const message = arrived.map(arrivalMessage).join(". ");
   const awake = !garden.asleep && garden.plants.length > 0;
 
   useAutoGusts(awake, sceneRef);
 
   useEffect(() => {
-    if (!highlightId || garden.asleep) return;
+    if (!revealed || garden.asleep) return;
     // La rafale passe une fois la nouvelle plante sortie de terre.
     const timer = window.setTimeout(() => playGust(sceneRef.current), 700);
     return () => window.clearTimeout(timer);
-  }, [highlightId, garden.asleep]);
+  }, [revealed, garden.asleep]);
 
   const reduceRef = useMotion(sceneRef, () => {});
   useGSAP(
@@ -139,12 +193,12 @@ export function Garden({
             y: 0,
             duration: reduce ? 0.2 : 0.5,
             ease: "back.out(1.6)",
-            delay: 0.9,
+            delay: 1.4,
           },
         )
         .to(element, { autoAlpha: 0, duration: 0.4 }, "+=5");
     },
-    { dependencies: [message, highlightId] },
+    { dependencies: [message, revealed] },
   );
 
   return (
@@ -162,15 +216,25 @@ export function Garden({
             <Plant
               plant={plant}
               still={garden.asleep}
-              popIn={plant.id === highlightId}
+              popIn={plant.id === revealed}
             />
           </div>
         ))}
-        {garden.animals.map((animal) => (
-          <div key={animal.kind} className="absolute" style={place(animal.box)}>
-            <Animal animal={animal} />
-          </div>
-        ))}
+        {garden.animals.map((animal) =>
+          arrived.includes(animal.kind) ? (
+            <Entering key={animal.kind} box={animal.box}>
+              <Animal animal={animal} />
+            </Entering>
+          ) : (
+            <div
+              key={animal.kind}
+              className="absolute"
+              style={place(animal.box)}
+            >
+              <Animal animal={animal} />
+            </div>
+          ),
+        )}
         <div
           className="pointer-events-none absolute inset-x-0 top-1/2 transition-opacity duration-1000"
           style={{ opacity: garden.asleep ? 1 : 0 }}
