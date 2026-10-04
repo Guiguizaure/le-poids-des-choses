@@ -73,5 +73,13 @@ garde-fou contre les données fictives.
   streaming ou de visioconférence) : le CSV n'a pas de colonne d'unité.
 - Choix à relire : voiture = `voiturethermique` (identique à « Moyenne – Diesel ») ; poisson
   = cabillaud ; pull = laine ; chaussures = sport. Rien d'autre à l'heure dans « Usage
-  numérique » : seulement streaming et visioconférence.
+  numérique » : seulement streaming et visioconférence (puis équipements, voir plus bas).
 - Vélo mécanique n'est pas à 0 (0,00017 kg/km) ; seule la marche donne `ratio: null`.
+
+**Ajustements après relecture (2026-10-04)** :
+
+- Libellé « Repas au poisson blanc (cabillaud) ».
+- Ajout de 3 équipements de la thématique « Numérique », unité `objet` (confirmée sur
+  impactco2.fr : « 1 smartphone », « 1 ordinateur portable », « 1 télévision ») : 22 gestes.
+- Le numérique mêle donc usages (`heure`) et équipements (`objet`) : l'interface devra
+  comparer deux gestes de même unité.
