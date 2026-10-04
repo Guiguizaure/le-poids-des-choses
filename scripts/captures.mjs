@@ -71,6 +71,14 @@ try {
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}comparer-savais-tu.png` });
 
+  // Fruits et légumes de saison (mois fixé pour des captures stables) et leur méthode.
+  await page.goto(`${BASE}/saison?mois=10`);
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}saison.png` });
+  await page.goto(`${BASE}/methode#saison`);
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}methode-saison.png` });
+
   // Jardin, oiseau en vol au milieu de sa boucle (animations normales).
   const moving = await browser.newContext({ ...devices["iPhone 14"] });
   await moving.addInitScript((entries) => {
