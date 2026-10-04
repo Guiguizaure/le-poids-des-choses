@@ -93,6 +93,11 @@ export function Duel({
         </p>
         <h2 className="font-titre text-titre-m text-encre break-words">
           {gesture.label}
+          {gesture.detail ? (
+            <span className="text-legende text-texte-attenue font-texte block font-normal">
+              {gesture.detail}
+            </span>
+          ) : null}
         </h2>
         <p className="text-corps-s text-encre font-semibold">
           {formatMass(kg)} CO2e

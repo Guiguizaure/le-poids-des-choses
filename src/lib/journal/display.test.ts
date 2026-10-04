@@ -22,7 +22,7 @@ const base: JournalEntry = {
 
 describe("entryTitle", () => {
   it("élision devant une voyelle", () => {
-    expect(entryTitle(base)).toBe("TGV plutôt qu’avion (court courrier)");
+    expect(entryTitle(base)).toBe("TGV plutôt qu’avion");
   });
   it("garde les sigles en majuscules", () => {
     expect(

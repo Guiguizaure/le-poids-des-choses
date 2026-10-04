@@ -134,8 +134,15 @@ export function GestureChooser({
                       </span>
                     ) : null}
                   </span>
-                  <span className="text-corps-m text-encre leading-[1.3] font-semibold">
-                    {gesture.label}
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-corps-m text-encre leading-[1.3] font-semibold">
+                      {gesture.label}
+                    </span>
+                    {gesture.detail ? (
+                      <span className="text-legende text-texte-attenue">
+                        {gesture.detail}
+                      </span>
+                    ) : null}
                   </span>
                 </label>
               );

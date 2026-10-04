@@ -41,6 +41,8 @@ export type Gesture = {
   id: string;
   /** Libellé affiché, en français. */
   label: string;
+  /** Précision affichée en second (ex. « trajet court » pour l'avion). */
+  detail?: string;
   category: Category;
   unit: Unit;
   kgCo2ePerUnit: number;

@@ -21,6 +21,8 @@ type Selection = {
   theme: string;
   id: string;
   label: string;
+  /** Précision affichée sous le libellé (cartes du parcours). */
+  detail?: string;
   category: Category;
   unit: Unit;
   defaultQuantity: number;
@@ -64,7 +66,8 @@ export const SELECTION: readonly Selection[] = [
     ...transport,
     sourceId: "avion-courtcourrier",
     id: "avion",
-    label: "Avion (court courrier)",
+    label: "Avion",
+    detail: "trajet court",
   },
   {
     ...transport,
@@ -256,6 +259,7 @@ export function buildGestures(
     const gesture: Gesture = {
       id: sel.id,
       label: sel.label,
+      ...(sel.detail ? { detail: sel.detail } : {}),
       category: sel.category,
       unit: sel.unit,
       kgCo2ePerUnit: roundSignificant(value),
