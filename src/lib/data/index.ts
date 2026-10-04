@@ -26,4 +26,14 @@ export function hasFictiveData(): boolean {
   );
 }
 
-export type { Category, Choice, Gesture, JournalEntry, Unit } from "./types";
+export type {
+  AcquisitionMode,
+  Category,
+  Choice,
+  Gesture,
+  JournalEntry,
+  ModeValue,
+  Unit,
+  ValueMethod,
+  ValuePart,
+} from "./types";
