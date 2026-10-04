@@ -51,7 +51,7 @@ Prettier, pnpm. Site statique
 - `src/app` — pages et layout ; `/labo` : banc d'essai des illustrations et animations
   (noindex, non liée)
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
-- `src/components/scene` — `Arbre`, `Balance`, `Papillon`, `Oiseau`, `Eclat` (animés)
+- `src/components/scene` — `Tree`, `Scale`, `Butterfly`, `Bird`, `Sparkle` (animés)
 - `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement)
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
 - `src/lib/geometry` — géométrie pure (balance)
@@ -94,7 +94,9 @@ Prettier, pnpm. Site statique
 - Animations : GSAP via `useMotion` (`gsap.matchMedia`). Tout mouvement est coupé ou réduit à
   un fondu court sous `prefers-reduced-motion` (ou `MotionProvider forceReduced`). Les
   calculs géométriques vont dans des fonctions pures testées (`src/lib/geometry`).
-- Composants de scène : noms français (`Arbre`, `Balance`…) car ils reprennent les noms des
-  illustrations ; fichiers composants en PascalCase.
+- Code en anglais sans exception (composants : `Tree`, `Scale`, `Butterfly`, `Bird`,
+  `Sparkle`). Restent en français : les noms de fichiers d'illustration, les `data-part` (noms
+  de calques) et les valeurs qui les reprennent (`stage="pousse"`). Fichiers composants en
+  PascalCase.
 - Lot interface (à venir) : pour les objets, trois options (Neuf / D'occasion / Je garde le
   mien), avec sous « D'occasion » un interrupteur « Livré en colis » activé par défaut.

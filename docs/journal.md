@@ -135,3 +135,9 @@ prefers-reduced-motion, page /labo, tests.
   poser.
 - `docs/svg-conventions.md` réécrit pour l'export Figma (remplace les consignes Illustrator).
 - Noms de composants en français (`Arbre`, `Balance`…), par cohérence avec les illustrations.
+
+**Ajustement après relecture (2026-10-04)** : composants renommés en anglais pour respecter la
+règle « code en anglais » sans exception : `Tree`, `Scale`, `Butterfly`, `Bird`, `Sparkle`
+(et `playSparkle`, prop `sparkle` de `Tree`). Le français reste pour les fichiers
+d'illustration et les `data-part`. Exception retirée de `CLAUDE.md`. Rebond de la balance
+gardé tel quel.
