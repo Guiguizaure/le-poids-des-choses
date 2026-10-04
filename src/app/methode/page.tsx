@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   ContentPage,
   ExternalLink,
   Section,
 } from "@/components/ui/ContentPage";
+import { DataCredit } from "@/components/ui/DataCredit";
 import generated from "@/lib/data/gestures.generated.json";
+import { SAISON_DOWNLOADED_AT, SAISON_TOOL_URL } from "@/lib/saison";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -50,6 +53,7 @@ export default function MethodePage() {
           d’Impact CO2 ; chaque geste y renvoie à sa page sur impactco2.fr, où
           sa valeur est détaillée.
         </p>
+        <DataCredit />
         {DATA_LICENSE ? (
           <p className="text-corps-s text-texte-attenue">
             {DATA_LICENSE.url ? (
@@ -139,6 +143,34 @@ export default function MethodePage() {
           Il ne montre que les choix que tu notes ici. Ce n’est pas ton
           empreinte carbone, juste une trace de ce que tu as évité.
         </p>
+      </Section>
+
+      <Section id="saison" title="Fruits et légumes de saison">
+        <p>
+          La page{" "}
+          <Link
+            href="/saison"
+            className="font-semibold underline underline-offset-2"
+          >
+            De saison
+          </Link>{" "}
+          reprend l’outil{" "}
+          <ExternalLink href={SAISON_TOOL_URL}>
+            Fruits et légumes de saison
+          </ExternalLink>{" "}
+          d’Impact CO2 : pour chaque produit, ses mois de saison et son impact
+          en kg de CO2e par kilo, classés du plus léger au plus lourd, avec les
+          catégories de l’outil.
+        </p>
+        <p>
+          La donnée ne précise pas l’origine des produits, sauf pour la mangue,
+          où elle distingue l’import par avion et l’import par bateau. Le site
+          ne compare donc pas les provenances d’un même produit.
+        </p>
+        <DataCredit
+          downloadedAt={SAISON_DOWNLOADED_AT}
+          href={SAISON_TOOL_URL}
+        />
       </Section>
 
       <Section id="savais-tu" title="« Le savais-tu ? »">

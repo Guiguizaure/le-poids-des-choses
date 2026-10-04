@@ -26,6 +26,12 @@ const PAGES = [
     heading: "Neuf, d’occasion, ou tu gardes le tien ?",
   },
   { name: "jardin vide", path: "/jardin", heading: "Mon jardin" },
+  { name: "de saison", path: "/saison", heading: /^De saison en / },
+  {
+    name: "de saison (mai)",
+    path: "/saison?mois=5",
+    heading: "De saison en mai",
+  },
   { name: "méthode", path: "/methode", heading: "Méthode et sources" },
   {
     name: "mentions légales",

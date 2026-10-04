@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PrimaryLink, TextLink } from "@/components/ui/buttons";
 import { COMPARE_PATH } from "@/lib/compare/url";
 import { HomeScene } from "./HomeScene";
+import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
 
 const INTRO =
   "Avant un trajet, un repas ou un achat, pose deux options sur la balance. Ton jardin grandit avec tout ce que tu évites.";
@@ -55,6 +56,7 @@ export function HomeScreen() {
               Comment ça marche ?
             </TextLink>
           </div>
+          <SeasonTeaser className="mt-2" />
           <p className="text-legende text-texte-attenue text-center lg:text-left">
             Données publiques de l’ADEME · Projet indépendant
           </p>
