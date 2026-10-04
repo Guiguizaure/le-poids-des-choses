@@ -52,10 +52,17 @@ const equipement = {
   unit: "objet",
   defaultQuantity: 1,
 } as const;
-const numerique = {
-  theme: "Usage numérique",
-  category: "numerique",
-  unit: "heure",
+const boisson = {
+  theme: "Boisson",
+  category: "boisson",
+  unit: "litre",
+  defaultQuantity: 1,
+} as const;
+// Livraison d'un même achat (colis d'1 kg) : le CSV donne un total par livraison ou achat.
+const livraison = {
+  theme: "Livraison",
+  category: "livraison",
+  unit: "achat",
   defaultQuantity: 1,
 } as const;
 
@@ -132,18 +139,6 @@ export const SELECTION: readonly Selection[] = [
   },
 
   {
-    ...numerique,
-    sourceId: "streamingvideo",
-    id: "streaming",
-    label: "Streaming vidéo",
-  },
-  {
-    ...numerique,
-    sourceId: "visioconference",
-    id: "visio",
-    label: "Visioconférence",
-  },
-  {
     ...equipement,
     sourceId: "smartphone",
     id: "smartphone",
@@ -160,6 +155,72 @@ export const SELECTION: readonly Selection[] = [
     sourceId: "television",
     id: "television",
     label: "Télévision neuve",
+  },
+
+  {
+    ...boisson,
+    sourceId: "eaudurobinet",
+    id: "eau-robinet",
+    label: "Eau du robinet",
+  },
+  {
+    ...boisson,
+    sourceId: "eauenbouteille",
+    id: "eau-bouteille",
+    label: "Eau en bouteille",
+  },
+  { ...boisson, sourceId: "cafe", id: "cafe", label: "Café" },
+  { ...boisson, sourceId: "the", id: "the", label: "Thé" },
+  { ...boisson, sourceId: "soda", id: "soda", label: "Soda" },
+  { ...boisson, sourceId: "biere", id: "biere", label: "Bière" },
+  { ...boisson, sourceId: "vin", id: "vin", label: "Vin" },
+  {
+    ...boisson,
+    sourceId: "laitdevache",
+    id: "lait-vache",
+    label: "Lait de vache",
+  },
+  {
+    ...boisson,
+    sourceId: "soja",
+    id: "boisson-soja",
+    label: "Boisson au soja",
+  },
+
+  {
+    ...livraison,
+    sourceId: "livraisondomicile",
+    id: "livraison-domicile",
+    label: "Livraison à domicile",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "pointrelaisdouce",
+    id: "point-relais-pied",
+    label: "Point relais à pied",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "pointrelais",
+    id: "point-relais-voiture",
+    label: "Point relais en voiture",
+    detail: "3,5 km en voiture, colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "magasindouce",
+    id: "magasin-pied",
+    label: "En magasin à pied",
+    detail: "colis d’1 kg",
+  },
+  {
+    ...livraison,
+    sourceId: "magasin",
+    id: "magasin-voiture",
+    label: "En magasin en voiture",
+    detail: "15 km en voiture, colis d’1 kg",
   },
 ];
 

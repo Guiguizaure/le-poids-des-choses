@@ -13,15 +13,17 @@ import type { NewEntry } from "@/lib/journal/entry";
 export const CATEGORY_ORDER: readonly Category[] = [
   "transport",
   "alimentation",
+  "boisson",
   "habillement",
   "numerique",
+  "livraison",
 ];
 
 export function gesturesIn(category: Category): Gesture[] {
   return getGestures().filter((gesture) => gesture.category === category);
 }
 
-/** Seconds possibles : même unité (km avec km, repas avec repas, heure avec heure). */
+/** Seconds possibles : même unité (km avec km, repas avec repas, litre avec litre…). */
 export function compatibleGestures(firstId: string): Gesture[] {
   const first = getGesture(firstId);
   if (!first || first.unit === "objet") return [];
@@ -52,14 +54,6 @@ export const SLIDERS: Partial<Record<Unit, QuantitySlider>> = {
     unit: "km",
     label: "Distance",
     logarithmic: true,
-  },
-  heure: {
-    min: 1,
-    max: 10,
-    default: 1,
-    unit: "h",
-    label: "Durée",
-    logarithmic: false,
   },
 };
 

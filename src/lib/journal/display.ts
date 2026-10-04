@@ -11,6 +11,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   alimentation: "Manger",
   habillement: "S’habiller",
   numerique: "Numérique",
+  boisson: "Boire",
+  livraison: "Se faire livrer",
 };
 
 const VOWEL = /^[aàâeéèêëiîïoôuùûüyhœæ]/i;

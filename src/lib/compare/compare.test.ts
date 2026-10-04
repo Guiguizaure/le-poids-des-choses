@@ -111,15 +111,42 @@ describe("resultSentence", () => {
       /^Le repas végétarien est 5,8 fois plus léger que le repas au bœuf, soit 4,1 kg/,
     );
   });
-  it("heures : « sur cette durée »", () => {
-    const c = compare(getGesture("streaming")!, 2, getGesture("visio")!, 2);
+  it("boissons : « pour un litre », accord au féminin", () => {
+    const c = compare(
+      getGesture("eau-bouteille")!,
+      1,
+      getGesture("eau-robinet")!,
+      1,
+    );
     expect(
       resultSentence(
         c,
-        { a: gestureNoun("streaming"), b: gestureNoun("visio") },
-        "heure",
+        { a: gestureNoun("eau-bouteille"), b: gestureNoun("eau-robinet") },
+        "litre",
       ),
-    ).toMatch(/^Sur cette durée, /);
+    ).toBe(
+      "Pour un litre, l’eau du robinet est plus de 100 fois plus légère que l’eau en bouteille, soit 321 g de CO2e en moins.",
+    );
+  });
+  it("livraisons : « pour un même achat »", () => {
+    const c = compare(
+      getGesture("magasin-voiture")!,
+      1,
+      getGesture("point-relais-pied")!,
+      1,
+    );
+    expect(
+      resultSentence(
+        c,
+        {
+          a: gestureNoun("magasin-voiture"),
+          b: gestureNoun("point-relais-pied"),
+        },
+        "achat",
+      ),
+    ).toBe(
+      "Pour un même achat, le point relais à pied est 7,3 fois plus léger que l’achat en magasin en voiture, soit 4,2 kg de CO2e en moins.",
+    );
   });
   it("formatRatio", () => {
     expect(formatRatio(1.84)).toBe("1,8");
@@ -182,7 +209,7 @@ describe("équivalence en voiture thermique", () => {
 });
 
 describe("filtrage par unité", () => {
-  it("km avec km, repas avec repas, heure avec heure", () => {
+  it("km avec km, repas avec repas, litre avec litre, achat avec achat", () => {
     for (const first of getGestures().filter((g) => g.unit !== "objet")) {
       const seconds = compatibleGestures(first.id);
       expect(seconds.length).toBeGreaterThan(0);
@@ -190,12 +217,21 @@ describe("filtrage par unité", () => {
         seconds.every((g) => g.unit === first.unit && g.id !== first.id),
       ).toBe(true);
     }
-    expect(compatibleGestures("streaming").map((g) => g.id)).toEqual(["visio"]);
+    expect(
+      compatibleGestures("eau-robinet").every((g) => g.category === "boisson"),
+    ).toBe(true);
+    expect(compatibleGestures("livraison-domicile").map((g) => g.id)).toEqual([
+      "point-relais-pied",
+      "point-relais-voiture",
+      "magasin-pied",
+      "magasin-voiture",
+    ]);
   });
   it("les objets n'ont pas de second geste ; unités différentes refusées", () => {
     expect(compatibleGestures("jean")).toEqual([]);
     expect(areComparable("tgv", "repas-boeuf")).toBe(false);
-    expect(areComparable("streaming", "smartphone")).toBe(false);
+    expect(areComparable("eau-robinet", "livraison-domicile")).toBe(false);
+    expect(compatibleGestures("smartphone")).toEqual([]);
     expect(areComparable("tgv", "avion")).toBe(true);
   });
   it("chaque geste comparable a un nom avec article", () => {
@@ -213,10 +249,10 @@ describe("curseurs et inclinaison", () => {
     expect(quantityFromPosition(km, positionFromQuantity(km, 50))).toBe(50);
     expect(km.default).toBe(50);
   });
-  it("durée : 1 à 10 h", () => {
-    const h = SLIDERS.heure!;
-    expect([h.min, h.max]).toEqual([1, 10]);
-    expect(quantityFromPosition(h, 500)).toBe(6);
+  it("seules les distances ont un curseur (plus de durée)", () => {
+    expect(Object.keys(SLIDERS)).toEqual(["km"]);
+    expect(isValidQuantity("litre", 1)).toBe(true);
+    expect(isValidQuantity("achat", 2)).toBe(false);
   });
   it("quantités valides selon l'unité", () => {
     expect(isValidQuantity("km", 50)).toBe(true);

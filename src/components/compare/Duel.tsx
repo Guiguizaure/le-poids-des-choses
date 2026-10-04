@@ -151,7 +151,7 @@ export function Duel({
               max={SLIDER_STEPS}
               step={SLIDER_STEPS / 100}
               value={positionFromQuantity(slider, quantity)}
-              aria-valuetext={`${quantity} ${slider.unit === "h" ? (quantity > 1 ? "heures" : "heure") : "kilomètres"}`}
+              aria-valuetext={`${quantity} ${quantity > 1 ? "kilomètres" : "kilomètre"}`}
               onChange={(event) =>
                 setQuantity(
                   quantityFromPosition(slider, Number(event.target.value)),

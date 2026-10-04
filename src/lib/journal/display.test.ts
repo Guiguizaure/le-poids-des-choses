@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { JournalEntry } from "@/lib/data/types";
-import { ILLUSTRATION_SPECS } from "@/lib/illustrations/specs";
+import { ILLUSTRATION_SPECS, PENDING_PICTOS } from "@/lib/illustrations/specs";
 import { getGestures } from "@/lib/data";
 import {
   entryCategory,
@@ -90,11 +90,20 @@ describe("relativeDay", () => {
 });
 
 describe("pictos et catégories", () => {
-  it("chaque geste a un picto qui existe", () => {
+  it("chaque geste a son picto, ou figure dans la liste des pictos à fournir", () => {
     for (const gesture of getGestures()) {
       const picto = pictoFor(gesture.id);
       expect(picto in ILLUSTRATION_SPECS).toBe(true);
-      expect(picto).not.toBe("picto-generique");
+      if (picto === "picto-generique") {
+        expect(PENDING_PICTOS).toContain(`picto-${gesture.id}`);
+      }
+    }
+  });
+  it("la liste des pictos à fournir est à jour (aucun n'existe déjà, tous servent)", () => {
+    const wanted = new Set(getGestures().map((g) => `picto-${g.id}`));
+    for (const name of PENDING_PICTOS) {
+      expect(name in ILLUSTRATION_SPECS).toBe(false);
+      expect(wanted.has(name)).toBe(true);
     }
   });
   it("modes : occasion et garder", () => {

@@ -17,8 +17,9 @@ export default function MethodePage() {
       </h1>
       <p className="text-corps-m text-encre leading-[1.4]">
         Les chiffres viennent des données publiques Impact CO2 de l’ADEME, en
-        kilos de CO2e par kilomètre, par repas, par heure ou par objet. Le poids
-        des choses est un projet indépendant, non affilié à l’ADEME.
+        kilos de CO2e par kilomètre, par repas, par litre, par achat ou par
+        objet. Le poids des choses est un projet indépendant, non affilié à
+        l’ADEME.
       </p>
       <p className="text-corps-m text-encre leading-[1.4]">
         Pour un objet d’occasion, on compte zéro nouvelle fabrication, plus

@@ -1,5 +1,5 @@
 {
-  "downloadedAt": "2026-10-04T14:14:10.423Z",
+  "downloadedAt": "2026-10-04T14:50:31.270Z",
   "source": "https://impactco2.fr/equivalents.csv",
   "gestures": [
     {
@@ -344,30 +344,6 @@
       }
     },
     {
-      "id": "streaming",
-      "label": "Streaming vidéo",
-      "category": "numerique",
-      "unit": "heure",
-      "kgCo2ePerUnit": 0.06402,
-      "defaultQuantity": 1,
-      "source": "impactco2",
-      "fictive": false,
-      "sourceId": "streamingvideo",
-      "sourceUrl": "https://impactco2.fr/outils/usagenumerique/streamingvideo"
-    },
-    {
-      "id": "visio",
-      "label": "Visioconférence",
-      "category": "numerique",
-      "unit": "heure",
-      "kgCo2ePerUnit": 0.05706,
-      "defaultQuantity": 1,
-      "source": "impactco2",
-      "fictive": false,
-      "sourceId": "visioconference",
-      "sourceUrl": "https://impactco2.fr/outils/usagenumerique/visioconference"
-    },
-    {
       "id": "smartphone",
       "label": "Smartphone neuf",
       "category": "numerique",
@@ -504,6 +480,179 @@
           "method": "hypothese-garder"
         }
       }
+    },
+    {
+      "id": "eau-robinet",
+      "label": "Eau du robinet",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.000132,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "eaudurobinet",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/eaudurobinet"
+    },
+    {
+      "id": "eau-bouteille",
+      "label": "Eau en bouteille",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.3207,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "eauenbouteille",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/eauenbouteille"
+    },
+    {
+      "id": "cafe",
+      "label": "Café",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.6355,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "cafe",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/cafe"
+    },
+    {
+      "id": "the",
+      "label": "Thé",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.04359,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "the",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/the"
+    },
+    {
+      "id": "soda",
+      "label": "Soda",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.4933,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "soda",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/soda"
+    },
+    {
+      "id": "biere",
+      "label": "Bière",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 1.347,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "biere",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/biere"
+    },
+    {
+      "id": "vin",
+      "label": "Vin",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 1.269,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "vin",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/vin"
+    },
+    {
+      "id": "lait-vache",
+      "label": "Lait de vache",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 1.151,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "laitdevache",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/laitdevache"
+    },
+    {
+      "id": "boisson-soja",
+      "label": "Boisson au soja",
+      "category": "boisson",
+      "unit": "litre",
+      "kgCo2ePerUnit": 0.4272,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "soja",
+      "sourceUrl": "https://impactco2.fr/outils/boisson/soja"
+    },
+    {
+      "id": "livraison-domicile",
+      "label": "Livraison à domicile",
+      "detail": "colis d’1 kg",
+      "category": "livraison",
+      "unit": "achat",
+      "kgCo2ePerUnit": 0.722,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "livraisondomicile",
+      "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+    },
+    {
+      "id": "point-relais-pied",
+      "label": "Point relais à pied",
+      "detail": "colis d’1 kg",
+      "category": "livraison",
+      "unit": "achat",
+      "kgCo2ePerUnit": 0.6561,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "pointrelaisdouce",
+      "sourceUrl": "https://impactco2.fr/outils/livraison/pointrelaisdouce"
+    },
+    {
+      "id": "point-relais-voiture",
+      "label": "Point relais en voiture",
+      "detail": "3,5 km en voiture, colis d’1 kg",
+      "category": "livraison",
+      "unit": "achat",
+      "kgCo2ePerUnit": 1.652,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "pointrelais",
+      "sourceUrl": "https://impactco2.fr/outils/livraison/pointrelais"
+    },
+    {
+      "id": "magasin-pied",
+      "label": "En magasin à pied",
+      "detail": "colis d’1 kg",
+      "category": "livraison",
+      "unit": "achat",
+      "kgCo2ePerUnit": 0.5448,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "magasindouce",
+      "sourceUrl": "https://impactco2.fr/outils/livraison/magasindouce"
+    },
+    {
+      "id": "magasin-voiture",
+      "label": "En magasin en voiture",
+      "detail": "15 km en voiture, colis d’1 kg",
+      "category": "livraison",
+      "unit": "achat",
+      "kgCo2ePerUnit": 4.812,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "magasin",
+      "sourceUrl": "https://impactco2.fr/outils/livraison/magasin"
     }
   ]
 }

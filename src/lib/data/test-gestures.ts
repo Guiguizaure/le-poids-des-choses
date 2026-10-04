@@ -6,7 +6,6 @@ import type { Gesture } from "./types";
 const km = { unit: "km", defaultQuantity: 10 } as const;
 const repas = { unit: "repas", defaultQuantity: 1 } as const;
 const objet = { unit: "objet", defaultQuantity: 1 } as const;
-const heure = { unit: "heure", defaultQuantity: 1 } as const;
 const fictif = { source: "fictive", fictive: true } as const;
 
 export const testGestures: readonly Gesture[] = [
@@ -152,12 +151,12 @@ export const testGestures: readonly Gesture[] = [
     ...fictif,
   },
 
-  // Numérique (kg CO2e par heure)
+  // Numérique (kg CO2e par appareil)
   {
     id: "visio",
     label: "Visioconférence",
     category: "numerique",
-    ...heure,
+    ...objet,
     kgCo2ePerUnit: 0.06,
     ...fictif,
   },
@@ -165,7 +164,7 @@ export const testGestures: readonly Gesture[] = [
     id: "streaming",
     label: "Streaming vidéo",
     category: "numerique",
-    ...heure,
+    ...objet,
     kgCo2ePerUnit: 0.07,
     ...fictif,
   },
@@ -173,7 +172,7 @@ export const testGestures: readonly Gesture[] = [
     id: "appel",
     label: "Appel audio",
     category: "numerique",
-    ...heure,
+    ...objet,
     kgCo2ePerUnit: 0.01,
     ...fictif,
   },
@@ -181,7 +180,7 @@ export const testGestures: readonly Gesture[] = [
     id: "musique",
     label: "Musique en ligne",
     category: "numerique",
-    ...heure,
+    ...objet,
     kgCo2ePerUnit: 0.02,
     ...fictif,
   },

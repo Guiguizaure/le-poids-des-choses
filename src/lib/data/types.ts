@@ -1,7 +1,13 @@
 export type Category =
-  "transport" | "alimentation" | "habillement" | "numerique";
+  | "transport"
+  | "alimentation"
+  | "habillement"
+  | "numerique"
+  | "boisson"
+  | "livraison";
 
-export type Unit = "km" | "repas" | "objet" | "heure";
+/** km : trajets ; repas ; objet : modes d'acquisition ; litre : boissons ; achat : livraisons. */
+export type Unit = "km" | "repas" | "objet" | "litre" | "achat";
 
 export type GestureSource = "fictive" | "impactco2";
 
