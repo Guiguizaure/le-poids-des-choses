@@ -262,3 +262,12 @@ describe("bords de la scène", () => {
     }
   });
 });
+
+describe("ligne des collines (extraite du SVG)", () => {
+  it("suit le dessin : crêtes des collines, sol ailleurs", () => {
+    expect(surfaceY(114)).toBeCloseTo(175, 0); // sommet de la colline arrière
+    expect(surfaceY(280)).toBeCloseTo(186.9, 0); // sommet de la colline avant ((255 + 6×165 + 250) / 8)
+    expect(surfaceY(-100)).toBe(240); // hors des collines : le sol
+    expect(surfaceY(195)).toBeLessThan(240);
+  });
+});
