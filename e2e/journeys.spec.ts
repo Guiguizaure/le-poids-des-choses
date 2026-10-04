@@ -22,21 +22,57 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   ).toBeVisible();
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
 
+  // Révélation : la plante exacte que ce choix fera pousser, et le papillon qui arrive.
   await expect(
-    page.getByRole("heading", { name: "Une plante pousse dans ton jardin" }),
+    page.getByRole("heading", {
+      name: /(Un arbre|Une fleur) va pousser dans ton jardin/,
+    }),
+  ).toBeFocused();
+  await expect(page.getByText("Et un papillon arrive !")).toBeVisible();
+  await page.getByRole("link", { name: "Aller la planter" }).click();
+
+  // Le jardin s'ouvre sur ?nouveau=…, la plante pousse, l'animal arrive, puis l'URL se nettoie.
+  await expect(page).toHaveURL(/\/jardin\?nouveau=/);
+  await expect(
+    page.getByRole("img", { name: "Jardin : 1 plante, 1 animal" }),
   ).toBeVisible();
   await expect(
     page
       .getByRole("status")
       .filter({ hasText: "Un papillon s’est installé dans ton jardin" }),
   ).toBeAttached();
-  await page.getByRole("link", { name: "Voir mon jardin" }).click();
-
-  await expect(
-    page.getByRole("img", { name: "Jardin : 1 plante, 1 animal" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/jardin$/, { timeout: 8000 });
   await expect(page.getByText("TGV plutôt qu’avion")).toBeVisible();
   await expect(page.getByText("1 choix noté")).toBeVisible();
+});
+
+test("choix plus lourd : la balance se pose, c'est noté, rien ne pousse", async ({
+  page,
+}) => {
+  await page.goto("/comparer?a=avion&b=tgv&q=300");
+  await page.getByRole("button", { name: "Je choisis l’avion" }).click();
+  await expect(page.getByRole("heading", { name: "C’est noté" })).toBeFocused();
+  await expect(page.getByText("Noté", { exact: true })).toBeVisible();
+  await expect(page.getByText(/rien n’est retiré à ton jardin/)).toBeVisible();
+  await page.getByRole("link", { name: "Voir mon jardin" }).click();
+  await expect(page.getByRole("img", { name: "Jardin vide" })).toBeVisible();
+});
+
+test.describe("animations réduites", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("la révélation s'affiche sans attendre et reste complète", async ({
+    page,
+  }) => {
+    await page.goto("/comparer?a=tgv&b=avion&q=300");
+    await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+    await expect(
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
+    ).toBeVisible();
+    await expect(page.getByText("Et un papillon arrive !")).toBeVisible({
+      timeout: 1500,
+    });
+  });
 });
 
 test("URL partagée : le duel s'ouvre directement, la quantité suit l'URL", async ({
