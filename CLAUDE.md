@@ -128,8 +128,8 @@ Prettier, pnpm. Site statique
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
 - Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.
   Le site ne mesure qu'un écart avec l'autre option comparée : « X kg de CO2e d’écart avec
-  les autres options » (bilan), « Mon jardin · X kg d’écart » (pastille), « +X kg d’écart »
-  (carte de révélation) ; expliqué dans /methode#ecart. Le champ `avoidedKg` garde son nom
+  les autres options » (bilan), « Mon jardin · X kg d’écart » (pastille), « X kg d’écart »
+  (carte de révélation, sans « + ») ; expliqué dans /methode#ecart. Le champ `avoidedKg` garde son nom
   (carnets et exports existants) mais désigne cet écart.
 - Règle du jardin : choisir le plus léger ajoute l'écart (lourd − léger) en kg ; choisir le plus
   lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours

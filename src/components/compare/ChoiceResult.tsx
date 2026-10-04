@@ -240,7 +240,7 @@ export function ChoiceResult({
               light ? "bg-pomme-douce" : "bg-creme"
             }`}
           >
-            {light ? `+${formatMass(entry.avoidedKg)} d’écart` : "Noté"}
+            {light ? `${formatMass(entry.avoidedKg)} d’écart` : "Noté"}
           </p>
 
           {reveal ? (
