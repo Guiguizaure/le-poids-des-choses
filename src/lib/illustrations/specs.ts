@@ -40,6 +40,8 @@ const bird = {
 const critter = (parts: readonly string[]) =>
   ({ width: 64, height: 48, anchor: { x: 32, y: 48 }, parts }) as const;
 const picto = { width: 64, height: 64, parts: ["fond", "objet"] } as const;
+const produce = (parts: readonly string[]) =>
+  ({ width: 80, height: 80, parts }) as const;
 
 export const ILLUSTRATION_SPECS = {
   "scene-paysage": {
@@ -182,6 +184,15 @@ export const ILLUSTRATION_SPECS = {
   "picto-point-relais-voiture": picto,
   "picto-magasin-pied": picto,
   "picto-magasin-voiture": picto,
+
+  // Fruits et légumes flottants de l'encart de saison (décoratifs, sans cagette).
+  "saison-pomme": produce(["fruit", "queue", "feuille", "reflet"]),
+  "saison-poire": produce(["fruit", "queue", "feuille", "tache"]),
+  "saison-carotte": produce(["fanes", "racine", "stries"]),
+  "saison-courge": produce(["fruit", "cotes", "queue"]),
+  "saison-raisin": produce(["feuille", "tige", "grains", "reflets"]),
+  "saison-poireau": produce(["feuilles", "fut", "racines"]),
+  "saison-tomate": produce(["fruit", "collerette", "reflet"]),
 } as const satisfies Record<string, IllustrationSpec>;
 
 export type IllustrationName = keyof typeof ILLUSTRATION_SPECS;
