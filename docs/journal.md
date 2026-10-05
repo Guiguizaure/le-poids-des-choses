@@ -1021,3 +1021,65 @@ Accueil 99, Mon jardin 93, Méthode 95-97 ; accessibilité et bonnes pratiques �
   (moins d'1,5 s en tout), sans éclat, rafale ni message d'animal ; un jardin ouvert après la
   connexion s'affiche simplement rempli.
 - Le texte du bandeau « Garde ton jardin » (maquette 04) est inchangé.
+
+## 2026-10-05 — Encart de saison : du plus léger au plus lourd, fruits et légumes flottants (branche feat/saison-accueil)
+
+**Demandé** : (1) remplacer les 3 produits de l'encart « Ce mois-ci, c'est la saison de… »
+(accueil et /comparer) par deux repères calculés : le produit de saison le plus léger et le
+plus lourd au kilo, valeurs arrondies comme sur /saison, ton neutre, égalité → ordre
+alphabétique, lien /saison et crédit gardés ; (2) fruits et légumes dessinés (zip
+`le-poids-des-choses-saison`, sans la cagette) qui flottent à droite de l'encart, seulement
+ceux de saison, animés avec GSAP (flottement, parallaxe, rebond au toucher, fondu décalé,
+pause onglet caché, rien en mouvement réduit), décoratifs, sans décalage de mise en page ;
+(3) vérifications, captures, démo /labo.
+
+**Fait** :
+
+- `seasonRange` (`src/lib/saison`) : parmi les produits de saison ce mois-ci, **hors
+  produits disponibles toute l'année**, le plus léger et le plus lourd au kg ; [] si aucun,
+  un seul s'il n'y en a qu'un. Avec les produits de toute l'année, le plus lourd serait la
+  mangue importée par avion tous les mois (11,7 kg) : ni « de saison », ni informatif.
+  Octobre : Ail (384 g CO2e/kg) … Noisette (4,8 kg CO2e/kg).
+- `formatPerKilo` : `formatMass` (même arrondi que /saison, donc « 384 g » sous 1 kg et non
+  « 0,38 kg ») suivi de « CO2e/kg », espaces insécables avant les unités.
+- Encart : titre « De saison en octobre », puis « Du plus léger au plus lourd au kilo : » et
+  les deux produits sur deux lignes (hauteur fixe de trois lignes réservée, le mois n'étant
+  connu que côté client) ; `DataCredit` de la saison (base Agribalyse, date) ajouté, puisque
+  des valeurs sont affichées. Même composant sur /comparer.
+- Dessins : 7 SVG 80×80 ajoutés aux specs (`saison-pomme`, `poire`, `carotte`, `courge`,
+  `raisin`, `poireau`, `tomate`) ; `saison-cagette.svg` n'est pas copié dans
+  `public/illustrations` (le build refuse tout fichier sans spec). Correspondance explicite
+  `SEASON_DRAWINGS` (dessin → slug, testée sur les noms et les données) ; `drawnForMonth` :
+  de saison ce mois-ci, saison la plus courte d'abord (octobre : raisin, courge, carotte,
+  poire, poireau), 5 au plus ; moins de 3 → ceux de toute l'année (aucun aujourd'hui) ;
+  aucun (mai) → mois le plus proche, celui qui en a le plus, sinon le mois à venir (mai :
+  avril, poireau et pomme). Juin et juillet n'ont que la tomate : un seul produit flotte.
+- `FloatingProduce` : zone fixe 210×160 à droite dès 28rem de large (requête de conteneur
+  sur l'encart, donc juste aussi sur /comparer), rangée de 3 (76 px) sous le texte en
+  dessous, masquée sous 15rem. Places, tailles (50 à 72 px), inclinaisons, flottement et
+  parallaxe dans `src/lib/geometry/float.ts`, avec un test qui vérifie l'absence de
+  chevauchement au pire du mouvement (rotation, dérives en opposition, écart de parallaxe).
+  Calques : place (inclinaison CSS) › parallaxe › flottement › rebond. Flottement en pause
+  quand l'onglet est caché ou la zone hors de l'écran ; rebond au `pointerdown`, sans focus
+  ni rôle ; tout immobile et visible en mouvement réduit.
+- /labo : panneau « Encart de saison », mois au choix, en large et en étroit (prop `month`
+  de `SeasonTeaser`, id du titre par `useId`).
+- Tests : unitaires (mois sans produit, égalité, un seul produit, données réelles de chaque
+  mois, correspondance des dessins, repli sur le mois le plus proche, places) ; bout en bout
+  de l'encart réécrits (deux valeurs croissantes, espaces insécables, crédit, dessins
+  aria-hidden et sans élément focalisable, mouvement réduit : immobiles et sans rebond).
+
+**Vérifications** : lint, typecheck, 632 tests unitaires, `STRICT_DATA=1 pnpm build`, CLS
+mesuré à 0 sur / et /comparer (ordinateur et Pixel 7). Bout en bout : 143 passés, 14 ignorés,
+1 échec sous forte charge (charge ~30) dans `compte-webkit` (préchargement de
+/confidentialite interrompu, sans rapport avec l'encart) ; relancés seuls, `compte-webkit`
+et `partage` (Chromium) passent. Lighthouse mobile sur `serve:out` (noindex) : Accueil 97
+puis 99, Comparer 93, autres pages 93-99 ; accessibilité et bonnes pratiques 100. Mesuré
+d'abord par erreur sur `e2e/static-server.mjs` (sans compression) : ~80 partout, y compris
+sur les pages non touchées. Captures `accueil.png` et `accueil-mobile.png` régénérées.
+
+**Gardé / changé** :
+
+- La formulation est découpée en titre (« De saison en octobre ») et texte (« Du plus
+  léger au plus lourd au kilo : … ») : un titre de section reste lisible au lecteur d'écran.
+- Les valeurs sous 1 kg s'écrivent en grammes, comme sur /saison.
