@@ -66,7 +66,6 @@ export function HomeScreen() {
           </div>
           <Link
             href="/connexion"
-            prefetch={false}
             className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
           >
             J’ai déjà un jardin ?{" "}

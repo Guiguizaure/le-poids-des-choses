@@ -36,7 +36,8 @@ const IMPACT_CO2 = "https://impactco2.fr";
 
 // Papiers découpés : petits à côté des titres sur mobile (masqués sous 360 px de large), dans
 // les marges sur grand écran.
-const INLINE = "size-11 max-[359px]:hidden lg:absolute lg:size-24";
+const INLINE =
+  "-my-2 size-11 max-[359px]:hidden lg:absolute lg:my-0 lg:size-24";
 const RIGHT = `${INLINE} lg:-top-3 lg:-right-36`;
 const LEFT = `${INLINE} lg:-top-3 lg:-left-36`;
 

@@ -25,10 +25,12 @@ describe("bandeau d'installation", () => {
     expect(installMode(base)).toBe("hidden");
   });
   it("accès permanent : reste disponible une fois le bandeau fermé", () => {
-    expect(installAccess({ ...base, canPrompt: true, dismissed: true })).toBe(
-      "prompt",
-    );
-    expect(installAccess({ ...base, ios: true, dismissed: true })).toBe("ios");
+    const androidClosed = { ...base, canPrompt: true, dismissed: true };
+    const iphoneClosed = { ...base, ios: true, dismissed: true };
+    expect(installMode(androidClosed)).toBe("hidden");
+    expect(installAccess(androidClosed)).toBe("prompt");
+    expect(installMode(iphoneClosed)).toBe("hidden");
+    expect(installAccess(iphoneClosed)).toBe("ios");
   });
   it("accès permanent : masqué si l'app est installée ou impossible à installer", () => {
     expect(installAccess({ ...base, canPrompt: true, standalone: true })).toBe(

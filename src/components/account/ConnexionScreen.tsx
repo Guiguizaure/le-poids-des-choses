@@ -5,6 +5,7 @@ import { SignInForm } from "@/components/account/AccountSection";
 import { PrimaryLink } from "@/components/ui/buttons";
 import { plural } from "@/lib/garden/text";
 import { accountApi, type ApiError } from "@/lib/sync/api";
+import { getBrowserStore } from "@/lib/journal/browser";
 import { getSyncEngine } from "@/lib/sync/browser";
 import { errorMessage } from "@/lib/sync/messages";
 import { useAccount } from "@/lib/sync/useAccount";
@@ -59,34 +60,48 @@ export function ConnexionScreen() {
 
   useEffect(() => {
     let cancelled = false;
-    const token = takeToken();
-    if (!token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- le fragment n'est lisible qu'ici, après l'hydratation
-      setState({ step: "form" });
-      return;
-    }
-    setState({ step: "verifying" });
-    void verify(token).then(async (result) => {
-      if (cancelled) return;
-      if (!result.ok) {
-        setState({ step: "error", error: result.error });
-        return;
-      }
-      const { email } = result.data;
-      const engine = getSyncEngine();
-      if (engine.getSnapshot().email !== email) engine.signedIn(email);
-      setState({ step: "syncing", email });
-      const outcome = await engine.sync();
-      if (cancelled) return;
-      setState({
-        step: "done",
-        email,
-        received: engine.getSnapshot().received,
-        synced: outcome === "ok",
+    const open = (token: string) => {
+      setState({ step: "verifying" });
+      void verify(token).then(async (result) => {
+        if (cancelled) return;
+        if (!result.ok) {
+          setState({ step: "error", error: result.error });
+          return;
+        }
+        const { email } = result.data;
+        // Choix retrouvés : comptés sur le carnet de l'appareil, qu'ils arrivent par cette
+        // synchro ou par celle d'un autre onglet ouvert sur le jardin.
+        const store = getBrowserStore();
+        const before = new Set(store.getEntries().map((entry) => entry.id));
+        const engine = getSyncEngine();
+        if (engine.getSnapshot().email !== email) engine.signedIn(email);
+        setState({ step: "syncing", email });
+        const outcome = await engine.sync();
+        if (cancelled) return;
+        setState({
+          step: "done",
+          email,
+          received: store.getEntries().filter((entry) => !before.has(entry.id))
+            .length,
+          synced: outcome === "ok",
+        });
       });
-    });
+    };
+
+    const token = takeToken();
+    if (token) open(token);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- le fragment n'est lisible qu'ici, après l'hydratation
+    else setState({ step: "form" });
+
+    // Lien ouvert dans un onglet déjà sur /connexion : seul le fragment change, la page ne se
+    // recharge pas.
+    const onHashChange = () => {
+      if (readToken()) open(takeToken()!);
+    };
+    window.addEventListener("hashchange", onHashChange);
     return () => {
       cancelled = true;
+      window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
 
