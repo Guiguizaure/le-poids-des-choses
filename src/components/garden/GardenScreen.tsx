@@ -1,14 +1,24 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
+import { CARNET_PATH } from "@/components/garden/CarnetScreen";
+import { MilestoneCard } from "@/components/garden/MilestoneCard";
+import { SkyPicker } from "@/components/garden/SkyPicker";
+import { ShareSheet } from "@/components/garden/share/ShareSheet";
+import { useShareSupport } from "@/components/garden/share/useShareSupport";
+import { useSky } from "@/components/garden/useSky";
+import { WeekChart } from "@/components/garden/WeekChart";
 import { Icon } from "@/components/ui/buttons";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
+import { effectiveSky } from "@/lib/garden/skies";
+import { siteHost } from "@/lib/share/card";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
@@ -39,10 +49,13 @@ function PillButton({
 }
 
 /** Page « Mon jardin » (maquette 04 · Mon jardin). */
-export function GardenScreen() {
+export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const journal = useJournal();
   const now = useNow();
-  const [showAll, setShowAll] = useState(false);
+  // Partage : le bouton n'existe que sur mobile ou appli installée (voir useShareSupport).
+  const shareSupported = useShareSupport();
+  const [shareOpen, setShareOpen] = useState(0);
+  const shareButton = useRef<HTMLButtonElement>(null);
   const [importMessage, setImportMessage] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -54,7 +67,7 @@ export function GardenScreen() {
     () => [...journal.entries].reverse(),
     [journal.entries],
   );
-  const visible = showAll ? newestFirst : newestFirst.slice(0, RECENT_COUNT);
+  const visible = newestFirst.slice(0, RECENT_COUNT);
   const hasEntries = journal.entries.length > 0;
   // Arrivée depuis « Aller la planter » : /jardin?nouveau=<id de l'entrée>.
   const nouveau = useSearchParam("nouveau");
@@ -73,6 +86,9 @@ export function GardenScreen() {
     return () => window.clearTimeout(timer);
   }, [nouveau, journal.ready]);
   const upcoming = nextAnimal(garden.lightChoiceCount);
+  const [chosenSky, setSky] = useSky();
+  const sky = effectiveSky(chosenSky, garden.lightChoiceCount);
+  const canShare = shareSupported && journal.ready && hasEntries;
   const today = new Date(now);
 
   const onImport = async (file: File | undefined) => {
@@ -96,7 +112,7 @@ export function GardenScreen() {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
-      <div className="flex items-center px-5 pt-[22px] pb-2">
+      <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2">
         <Link
           href="/comparer"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
@@ -104,7 +120,44 @@ export function GardenScreen() {
           <Icon name="retour" />
           Comparer
         </Link>
+        {canShare ? (
+          // Maquette 09a (mobile, appli installée) : « Exporter » puis « Partager ».
+          <>
+            <PillButton onClick={journal.exportFile}>Exporter</PillButton>
+            <button
+              ref={shareButton}
+              type="button"
+              onClick={() => setShareOpen((count) => count + 1)}
+              className="press bg-encre text-creme focus-visible:outline-outremer flex h-[30px] shrink-0 items-center gap-1.5 rounded-full py-1.5 pr-3.5 pl-3 text-[14px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <Image
+                src="/icons/partager.svg"
+                alt=""
+                width={15}
+                height={15}
+                className="block"
+                unoptimized
+              />
+              Partager
+            </button>
+          </>
+        ) : null}
       </div>
+      {shareOpen > 0 ? (
+        <ShareSheet
+          key={shareOpen}
+          garden={garden}
+          sky={sky}
+          unlockedCount={garden.unlocked.length}
+          siteHost={siteHost(siteUrl)}
+          siteUrl={siteUrl}
+          onClose={() => {
+            setShareOpen(0);
+            // Le focus revient sur le bouton qui a ouvert la feuille.
+            requestAnimationFrame(() => shareButton.current?.focus());
+          }}
+        />
+      ) : null}
 
       <div className="px-5 pt-2 pb-1">
         <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
@@ -112,7 +165,12 @@ export function GardenScreen() {
         </h1>
       </div>
 
-      <Garden entries={journal.entries} now={now} highlightId={revealId} />
+      <Garden
+        entries={journal.entries}
+        now={now}
+        highlightId={revealId}
+        sky={sky}
+      />
       {upcoming && journal.ready ? (
         // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
         <p className="text-legende text-texte-attenue px-5 pt-2">
@@ -157,7 +215,8 @@ export function GardenScreen() {
                 <CountUp value={garden.totalAvoidedKg} format={formatMass} />
               </p>
               <p className="text-corps-s text-texte-attenue leading-[1.4]">
-                de CO2e évités depuis ton premier choix
+                de CO2e d’écart avec les autres options, depuis ton premier
+                choix
               </p>
               <p className="text-corps-s text-encre flex flex-wrap gap-x-4 gap-y-1 pt-2 leading-[1.3] font-semibold">
                 <span>
@@ -170,6 +229,8 @@ export function GardenScreen() {
               </p>
             </section>
 
+            <MilestoneCard entries={journal.entries} />
+
             <section
               className="flex flex-col gap-4"
               aria-labelledby="carnet-titre"
@@ -181,18 +242,14 @@ export function GardenScreen() {
                 >
                   Carnet
                 </h2>
-                {newestFirst.length > RECENT_COUNT ? (
-                  <button
-                    type="button"
-                    aria-expanded={showAll}
-                    aria-controls="carnet-entrees"
-                    onClick={() => setShowAll((value) => !value)}
-                    className="text-corps-s leading-[1.3] font-semibold underline"
-                  >
-                    {showAll ? "Voir moins" : "Tout voir"}
-                  </button>
-                ) : null}
+                <Link
+                  href={CARNET_PATH}
+                  className="text-corps-s leading-[1.3] font-semibold underline"
+                >
+                  Tout voir
+                </Link>
               </div>
+              {now ? <WeekChart entries={journal.entries} now={today} /> : null}
               <ul id="carnet-entrees" className="flex flex-col gap-2">
                 {visible.map((entry) => (
                   <EntryRow key={entry.id} entry={entry} now={today} />
@@ -204,6 +261,14 @@ export function GardenScreen() {
               </p>
             </section>
           </>
+        ) : null}
+
+        {hasEntries ? (
+          <SkyPicker
+            value={sky}
+            lightChoiceCount={garden.lightChoiceCount}
+            onChange={setSky}
+          />
         ) : null}
 
         {journal.ready ? (

@@ -145,7 +145,13 @@ export default function MethodePage() {
       <Section id="jardin" title="Et ton jardin ?">
         <p>
           Il ne montre que les choix que tu notes ici. Ce n’est pas ton
-          empreinte carbone, juste une trace de ce que tu as évité.
+          empreinte carbone, juste la trace des écarts entre les options que tu
+          as comparées.
+        </p>
+        <p id="ecart" className="scroll-mt-6">
+          Le site ne mesure pas des kilos évités ou économisés : il compte
+          l’écart entre l’option que tu choisis et l’autre option comparée, sans
+          savoir ce que tu aurais fait sans lui.
         </p>
       </Section>
 

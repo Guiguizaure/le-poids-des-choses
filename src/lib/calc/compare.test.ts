@@ -67,7 +67,7 @@ describe("avoidedKg", () => {
   it("choix lourd : 0, jamais négatif", () => {
     expect(avoidedKg(c, "a")).toBe(0);
   });
-  it("choix léger face à un vélo à 0 : tout le lourd est évité", () => {
+  it("choix léger face à un vélo à 0 : l’écart vaut tout le lourd", () => {
     expect(avoidedKg(compare(avion, 10, velo, 10), "b")).toBeCloseTo(2);
   });
 });

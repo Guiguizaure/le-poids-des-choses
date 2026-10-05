@@ -729,3 +729,139 @@ vérifications (`STRICT_DATA=1 pnpm build` doit passer).
 
 - L'erreur console WebKit de l'accueil n'est pas revenue sur ces deux suites ; si elle
   revient, son texte complet sera dans le rapport.
+
+## 2026-10-05 — Lot V2-4, point 0 : formulation honnête (branche feat/journal-partage)
+
+**Demandé** : le site ne peut pas affirmer que des kg ont été « évités » : lister toutes
+les occurrences (« évité », « économisé », « sauvé »…), proposer une reformulation sur
+l'écart avec l'autre option, l'appliquer partout et l'expliquer dans /methode ; s'arrêter
+là pour validation avant la suite du lot.
+
+**Proposé / fait** :
+
+- Inventaire (UI, méta, OG, docs, code, tests) : 39 occurrences de « évité(s) » / « évite »,
+  aucune de « économisé », « sauvé », « épargné » ou « gagné » au sens des kg. L'image de
+  partage (OG) et le manifeste ne disaient « évités » que via `SITE_DESCRIPTION`.
+- Reformulation appliquée : « X kg de CO2e d’écart avec les autres options » (bilan de
+  /jardin), « Mon jardin · X kg d’écart » (pastille), « +X kg d’écart » (carte de
+  révélation), « Ton jardin grandit chaque fois que tu choisis la plus légère » (accueil),
+  descriptions du site et de /jardin, deux faits « Le savais-tu ? » (« c’est X de CO2e
+  d’écart »), labo, README, CLAUDE.md (avec la règle d'écriture), commentaires et titres de
+  tests.
+- /methode#ecart : « Le site ne mesure pas des kilos évités ou économisés : il compte l’écart
+  entre l’option que tu choisis et l’autre option comparée, sans savoir ce que tu aurais
+  fait sans lui. »
+- Vérifications : lint, typecheck, 444 tests unitaires, 86 tests de bout en bout ; captures
+  du duel et du jardin refaites.
+
+**Gardé / changé** :
+
+- Gardé : « soit X de CO2e en moins » dans la phrase du duel (comparaison explicite avec
+  l'autre option), le nom du champ `avoidedKg` (carnets et exports existants ; commentaire
+  précisé), les anciennes entrées du journal (historique).
+- En attente : le libellé « Fabrication évitée (hypothèse) » des données générées (non
+  affiché sur le site) ; le changer demande de relancer `pnpm build-gestures`.
+- Écart avec la maquette Figma 03, qui écrivait « X kg évités » dans la pastille.
+
+## 2026-10-05 — Lot V2-4 : carnet analysé, paliers, ciels, partage (branche feat/journal-partage)
+
+**Demandé** : points 1 à 5 du lot V2-4 après validation du point 0 ; décisions : libellé
+« Pas de nouvelle fabrication (hypothèse) » avec données regénérées, « en moins » gardé dans
+la phrase du duel, Figma déjà à jour, carte de révélation sans « + ».
+
+**Fait et commité** :
+
+- Libellé des données : seuls ce libellé (7 objets) et la date de téléchargement changent
+  (date acceptée : « téléchargées le 5 octobre 2026 »). Carte de révélation : « X kg
+  d’écart ».
+- Point 1 : `src/lib/journal/analysis.ts` (tri date, écart, catégorie ; filtres catégorie
+  et choix légers ou notés ; vue dans l'URL ; choix légers par jour sur 7 jours), page
+  /jardin/carnet (« Tout voir »), graphique de la semaine en barres SVG avec tableau masqué
+  et état vide, aussi dans la section Carnet de /jardin. Tests unitaires et e2e.
+- Point 2 : paliers 10, 50, 100, 250, 500, 1000 kg CO2e (`src/lib/milestones`), carte
+  « Palier franchi » sur /jardin quand le dernier choix léger en franchit un, équivalence
+  calculée (70 km en voiture thermique, 10 repas au bœuf, 16 T-shirts en coton neufs,
+  10 jeans neufs, 2 200 km en avion, 7 000 km en voiture), garde-fou du build. Tests.
+- Point 3 : ciels Jour, Aube rose (15), Midi soleil (30), Nuit encre (50) ; pas de ciel
+  outremer (la colline du fond est outremer) ; choix sur /jardin gardé sous `lpdc:ciel:v1` ;
+  démo /labo. Tests.
+- Point 4, partie pure : maquettes Figma lues (41:60, 41:183, 42:60, 42:233) ;
+  `src/lib/share/card.ts` (description de dessin 1080×1350 : en-tête, pastilles accordées,
+  jardin à y = 360, bandeau encre, variante endormie) et `src/lib/share/garden-svg.ts`
+  (même jardin que `<Garden>`, ciel appliqué, brume, contours des petites bêtes à
+  l'échelle) ; `animalIllustration` dans le modèle. Tests unitaires sans navigateur.
+
+**Reprise après la mise en veille du Mac** : état écrit ici et travail fini commité
+(composition de la carte), puis suite du point 4.
+
+- Point 4, partie navigateur : `public/icons/partager.svg` (icône de la maquette 09a),
+  `src/components/garden/share/` : `renderShareCard.ts` (canvas 1080×1350, polices attendues
+  avec document.fonts, PNG), `useShareSupport.ts` (canShare avec un PNG ET pointeur tactile
+  ou appli installée), `ShareSheet.tsx` (feuille 09b : aperçu, confidentialité, « Partager
+  l’image », « Annuler », `<dialog>` modal, focus piégé, Échap, retour du focus, AbortError
+  sans effet, autre erreur : message discret). Barre du haut de /jardin : « Exporter » et
+  « Partager » sur mobile seulement ; domaine de la carte dérivé de `SITE_URL` (passé par
+  la page). Titre de la carte réduit s'il déborde : « Mon jardin se repose » dépassait à
+  104 px (police plus large dans le navigateur que dans Figma).
+- Images générées dans .tmp/ : `partage-eveille.png` et `partage-endormi.png` (1080×1350),
+  plus `partage-feuille-*.png`.
+- Point 5 : lint, typecheck, 494 tests unitaires, 110 tests de bout en bout (Chromium et
+  WebKit, axe compris, dont la feuille de partage ouverte), `STRICT_DATA=1 pnpm build`
+  passe en entier. Lighthouse mobile (3 passages, build normal avec noindex, règle
+  ADEME) : Jardin 92-94, Carnet 95-96 (autres pages : Accueil 97-100, Comparer 90-95,
+  Duel 94-96, Saison 97-98, Méthode 98-100) ; accessibilité et bonnes pratiques à 100, SEO
+  66-69 (noindex). Captures : carnet, feuille de partage, jardin et duel mis à jour ;
+  carnet de démonstration des captures corrigé (jean sans modes : « Jean plutôt que
+  jean »).
+
+**Gardé / changé** :
+
+- Maquette 09a : « Exporter » revient dans la barre du haut, à côté de « Partager », sur
+  mobile seulement ; la section de sauvegarde du bas reste.
+- Carte endormie : la maquette garde la coccinelle ; l'image suit le vrai rendu du jardin
+  (seuls oiseau, escargot et hérisson restent, endormis).
+- Ciel « Midi soleil » : les feuillages jaunes et l'abeille ressortent moins sur le ciel
+  jaune.
+- Le bouton « Partager » n'apparaît que si le carnet a au moins un choix (pas d'image d'un
+  jardin vide).
+- Tests e2e : le parcours au clavier dans la feuille (Tab) n'est vérifié que sous Chromium,
+  comme les autres tests clavier (WebKit ne parcourt pas les boutons avec Tab).
+
+## 2026-10-05 — Correctif : partage du jardin bloqué sur téléphone (branche feat/journal-partage)
+
+**Demandé** : sur la preview, « Partager » restait sur « Préparation de l’image » puis
+affichait « L’image n’a pas pu être préparée ». Piste proposée : la CSP de `public/_headers`
+(img-src, font-src) qui bloquerait blob: / data:, non appliquée par le serveur des tests.
+
+**Constaté** :
+
+- Piste CSP écartée : la preview renvoie exactement les en-têtes de `public/_headers`
+  (`img-src 'self' data: blob:` y est déjà), et `e2e/static-server.mjs` les appliquait déjà.
+  Le parcours rejoué sur la preview elle-même (Chromium « Pixel 7 » et WebKit « iPhone 14 »,
+  `.tmp/repro-partage.mjs`) produisait bien l’image : le test e2e générait déjà le vrai PNG
+  (seul `navigator.share` est simulé).
+- Vraie cause : les polices de repli de next/font sont déclarées en `src: local(Arial)`,
+  police absente d’Android. `renderShareCard` demandait `document.fonts.load()` avec toute
+  la pile (« Bricolage Grotesque », « Bricolage Grotesque Fallback ») ; dans Chromium, une
+  police correspondante qui échoue fait rejeter tout le chargement (`NetworkError`, vérifié
+  dans `.tmp/font-load.mjs` ; WebKit, lui, résout). Invisible sur ordinateur, où Arial
+  existe. L’erreur était avalée sans trace.
+
+**Fait** :
+
+- `renderShareCard.ts` : seules les vraies polices sont chargées (première famille de la
+  pile), une police non chargée n’empêche plus l’image (avertissement en console) ; étapes
+  nommées (illustrations, image du jardin, dessin, PNG) avec la cause ; SVG chargé par
+  l’événement `load` plutôt que `decode()` (refusé pour les SVG par d’anciens Safari),
+  adresse blob gardée jusqu’au dessin ; repli de `roundRect` pour Safari < 16.
+- `ShareSheet.tsx` : `console.error` avec l’étape et la cause, à l’écran le message discret
+  reste le même ; échec de `navigator.share` (hors annulation) aussi journalisé.
+- Tests e2e : « police de repli absente (Android, sans Arial) » (CSS servie sans Arial,
+  vrai PNG 1080×1350 généré, CSP de production vérifiée sur la réponse) — échouait avant
+  le correctif sous Chromium ; « image impossible à préparer » (illustration en 500 :
+  message discret, étape dans la console).
+- Vérifications : lint, typecheck, 494 tests unitaires, 114 tests de bout en bout (Chromium
+  et WebKit), `STRICT_DATA=1 pnpm build`.
+
+**Gardé / changé** : CSP inchangée (rien à élargir). Le dessin de la carte garde la pile
+complète (repli si la police manque).

@@ -3,7 +3,7 @@
 # Le poids des choses
 
 Comparateur carbone illustré : deux gestes du quotidien sur une balance, un choix noté, un
-jardin dessiné qui grandit avec les kg de CO2e évités. Projet vitrine pour webjuno.com.
+jardin dessiné qui grandit à chaque choix plus léger. Projet vitrine pour webjuno.com.
 Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
@@ -68,15 +68,18 @@ Prettier, pnpm. Site statique
   de `public/_headers` ; toute erreur de console (CSP comprise) fait échouer un test.
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
   les liens avec Tab).
-- `pnpm lighthouse` — scores Lighthouse mobile (accueil, duel, jardin, méthode) sur
-  `pnpm serve:out` (port 4322) ; construire avec `SITE_LAUNCHED=1` pour le SEO.
-- `pnpm captures` — captures du README (`docs/captures/`)
+- `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
+  carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; SEO mesuré avec le noindex
+  tant que `SITE_LAUNCHED=1` est interdit (règle ADEME).
+- `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
+  partage (partage de fichiers simulé)
 - `pnpm lint` · `pnpm test` · `pnpm format`
 
 ## Arborescence
 
 - `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
-  de comparaison), `/jardin` (Mon jardin), `/saison` (fruits et légumes de saison),
+  de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
+  voir »), `/saison` (fruits et légumes de saison),
   `/methode` (maquette 06), `/mentions-legales`,
   404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
   noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
@@ -93,14 +96,22 @@ Prettier, pnpm. Site statique
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
 - `src/lib/journal` — carnet sur l'appareil : format et validation (`schema.ts`), fusion,
   export et import (`merge.ts`), stockage avec repli en mémoire (`store.ts`), création
-  d'une entrée (`entry.ts`), textes d'une entrée (`display.ts`), hook `useJournal`
+  d'une entrée (`entry.ts`), textes d'une entrée (`display.ts`), hook `useJournal`, carnet
+  analysé (`analysis.ts` : tri, filtres, vue dans l'URL, choix légers sur 7 jours)
+- `src/lib/milestones` — paliers de l'écart cumulé et leur équivalence calculée, garde-fou
+  du build (`check.ts`)
+- `src/lib/share` — carte de partage sans navigateur : description de dessin (`card.ts`)
+  et jardin en SVG statique (`garden-svg.ts`)
 - `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
-  endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes (`text.ts`)
-- `src/components/garden` — `<Garden entries now highlightId />`, écran `/jardin`
+  endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes
+  (`text.ts`), ciels à débloquer (`skies.ts`)
+- `src/components/garden` — `<Garden entries now highlightId sky />`, écran `/jardin`,
+  `CarnetScreen` (`/jardin/carnet`), `WeekChart`, `MilestoneCard`, `SkyPicker` et
+  `useSky`, partage (`share/` : `renderShareCard`, `useShareSupport`, `ShareSheet`)
 - `src/components/compare` — parcours : `CompareFlow` (piloté par l'URL), `GestureChooser`
   (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a v2 / 05b v2, carte de révélation)
 - `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
-  « Mon jardin · X kg évités »
+  « Mon jardin · X kg d’écart »
 - `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
   (`tiltFor`), phrase de résultat et équivalence (`sentence.ts`), noms et accords
   (`nouns.ts`), URL (`url.ts`), entrées du carnet (`duelEntry`, `objectEntry`)
@@ -126,7 +137,12 @@ Prettier, pnpm. Site statique
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
-- Règle du jardin : choisir le plus léger ajoute (lourd − léger) kg évités ; choisir le plus
+- Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.
+  Le site ne mesure qu'un écart avec l'autre option comparée : « X kg de CO2e d’écart avec
+  les autres options » (bilan), « Mon jardin · X kg d’écart » (pastille), « X kg d’écart »
+  (carte de révélation, sans « + ») ; expliqué dans /methode#ecart. Le champ `avoidedKg` garde son nom
+  (carnets et exports existants) mais désigne cet écart.
+- Règle du jardin : choisir le plus léger ajoute l'écart (lourd − léger) en kg ; choisir le plus
   lourd ajoute 0 et ne retire jamais rien. Le carnet ne fait que s'allonger. Après 21 jours
   sans entrée le jardin s'assoupit (`isAsleep`), il ne meurt jamais. Stades : par plante
   (`PLANT_STAGE_KG`, voir le modèle du jardin plus bas).
@@ -206,7 +222,7 @@ Prettier, pnpm. Site statique
   Il ne fait que s'allonger ; entrées invalides ignorées mais conservées ; une future v2
   lira l'ancienne clé via `MIGRATIONS`. Stockage indisponible (navigation privée) : carnet
   en mémoire et message. Stockage persistant demandé au premier ajout. Export JSON, import
-  qui fusionne par id. Les kg évités sont figés dans l'entrée au moment du choix.
+  qui fusionne par id. L'écart (kg) est figé dans l'entrée au moment du choix.
 - Jardin (`buildGarden`, déterministe : même carnet = même jardin) :
   - une plante par choix léger (`avoidedKg > 0`) ; un choix lourd ne change rien ;
   - type (arbre ou fleur 1-3) tiré de l'id de l'entrée ; stade selon les kg du choix
@@ -268,7 +284,7 @@ Prettier, pnpm. Site statique
   - micro-interactions (CSS, `globals.css`) : `press` (survol / toucher), `animate-enter`
     (apparition des pages et étapes, depuis une opacité de 0,35 pour ne pas retarder le
     LCP), `animate-pop` (badges), `animate-select` (cartes choisies) — toujours avec
-    `motion-reduce:animate-none` ; compteur du total évité (`CountUp`) ;
+    `motion-reduce:animate-none` ; compteur de l'écart cumulé (`CountUp`) ;
   - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
     (à compléter si une nouvelle paire apparaît).
 - « Le savais-tu ? » : aucun chiffre écrit à la main. Un gabarit ne rédige que la prémisse
@@ -280,5 +296,28 @@ Prettier, pnpm. Site statique
   Un gabarit porte sur des gestes (`gestures`) ou sur des produits de saison (`products`,
   slugs de l'API : celui des deux mangues) ; un geste ou un produit disparu fait échouer
   le build.
+- Carnet analysé : section Carnet de /jardin (graphique de la semaine, 5 derniers choix,
+  « Tout voir » → /jardin/carnet). Sur /jardin/carnet : tri (date par défaut, écart,
+  catégorie) et filtres (catégorie, choix légers ou notés) dans l'URL
+  (`?tri=ecart&categorie=transport&choix=legers`, `pushState` puis `popstate`).
+  Graphique en barres SVG faites main (outremer, aujourd'hui en tomate), tableau masqué
+  visuellement, état vide.
+- Paliers : 10, 50, 100, 250, 500, 1000 kg CO2e d'écart cumulé. Carte « Palier franchi »
+  sur /jardin quand le dernier choix léger en franchit un (le plus haut), équivalence
+  calculée comme « Le savais-tu ? » (`MILESTONE_EQUIVALENCES`) ; un geste disparu fait
+  échouer le build.
+- Ciels : Jour, Aube rose (15 choix légers), Midi soleil (30), Nuit encre (50) ; couleurs
+  de la palette seulement, variables `--sky-*` sur la scène (calques ciel, soleil, halo,
+  nuages, vent) ; collines et sol inchangés ; pas de ciel outremer (la colline du fond y
+  disparaîtrait). Choix gardé sous `lpdc:ciel:v1` (`{ version: 1, sky }`) ; un ciel
+  verrouillé n'est jamais appliqué. Le ciel s'applique aussi à l'image de partage.
+- Partage du jardin (maquettes 41:310, 42:60 « 09a », 42:233 « 09b ») : « Exporter » et
+  « Partager » (encre) dans la barre du haut de /jardin seulement si `navigator.canShare`
+  accepte un PNG ET `(pointer: coarse)` ou `(display-mode: standalone)` ; ordinateur
+  inchangé (l'export reste en bas). PNG 1080×1350 dessiné sur un canvas : même jardin
+  (`composeGardenSvg`), même ciel, polices attendues (`document.fonts`), titre réduit s'il
+  déborde, domaine dérivé de `SITE_URL` (passé par la page). Aucun kg ni choix lourd sur
+  l'image. Feuille modale (`<dialog>`) : focus piégé, Échap, retour du focus ; AbortError
+  sans effet, autre erreur : message discret.
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
   droits réservés (`LICENSE`).

@@ -10,7 +10,7 @@ import type { NewEntry } from "@/lib/journal";
 import { useJournal } from "@/lib/journal/useJournal";
 import { Panel, ToggleButton } from "./ui";
 
-// Choix types, calculés avec les vraies données (kg évités indicatifs).
+// Choix types, calculés avec les vraies données (écarts indicatifs).
 const PRESETS: { label: string; entry: NewEntry }[] = [
   {
     label: "Choix léger · petit (vélo plutôt que voiture, 3 km)",
@@ -62,7 +62,7 @@ export function JournalSimulator() {
       <p className="text-corps-s text-encre font-semibold">
         {journal.entries.length} choix · {garden.plants.length} plantes ·{" "}
         {garden.unlocked.length} animaux · {formatMass(garden.totalAvoidedKg)}{" "}
-        évités
+        d’écart
         {garden.asleep ? " · assoupi" : ""}
       </p>
       <div className="flex flex-wrap gap-2">

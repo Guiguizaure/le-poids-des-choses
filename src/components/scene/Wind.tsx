@@ -67,6 +67,7 @@ export function Wind({
       ref={ref}
       className={`pointer-events-none ${className}`}
       style={{ opacity: 0, visibility: "hidden" }}
+      data-wind
       aria-hidden
     >
       <Illustration

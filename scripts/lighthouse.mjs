@@ -15,6 +15,7 @@ const PAGES = [
   ["Comparer (choix des gestes)", "/comparer"],
   ["Duel (TGV, avion)", "/comparer?a=tgv&b=avion&q=300"],
   ["Mon jardin", "/jardin"],
+  ["Carnet", "/jardin/carnet"],
   ["De saison", "/saison"],
   ["Méthode", "/methode"],
 ];

@@ -134,3 +134,24 @@ body {
     }
   }
 }
+
+/*
+ * Ciels du jardin (src/lib/garden/skies.ts) : la scène porte data-sky et les variables
+ * --sky-* ; elles recolorent les calques du paysage et le vent. Collines et sol ne changent
+ * pas.
+ */
+[data-sky] [data-part="ciel"] > * {
+  fill: var(--sky-ciel);
+}
+[data-sky] [data-part="soleil"] > * {
+  fill: var(--sky-soleil);
+}
+[data-sky] [data-part="halo-soleil"] > * {
+  fill: var(--sky-halo);
+}
+[data-sky] [data-part^="nuage-"] > * {
+  fill: var(--sky-nuage);
+}
+[data-sky] [data-wind] path {
+  stroke: var(--sky-vent);
+}

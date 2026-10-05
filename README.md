@@ -1,16 +1,16 @@
 # Le poids des choses
 
 Un comparateur carbone illustré : pose deux gestes du quotidien sur une balance, note ton
-choix, et un jardin dessiné grandit avec les kilos de CO2e que tu évites.
+choix, et un jardin dessiné grandit chaque fois que tu choisis l'option la plus légère.
 
 Projet vitrine du portfolio [webjuno.com](https://webjuno.com). Projet indépendant, non
 affilié à l'ADEME.
 
 ![Accueil : le titre et une balance animée posée dans un paysage de papiers découpés](docs/captures/accueil.png)
 
-| Le duel                                                                                                             | Le jardin                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| ![Duel TGV contre avion : la balance penche, « le TGV est 77 fois plus léger que l’avion »](docs/captures/duel.png) | ![Jardin : plantes, papillon, coccinelle, oiseau et bilan de 100,8 kg évités](docs/captures/jardin.png) |
+| Le duel                                                                                                             | Le jardin                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Duel TGV contre avion : la balance penche, « le TGV est 77 fois plus léger que l’avion »](docs/captures/duel.png) | ![Jardin : plantes, papillon, coccinelle, oiseau et bilan de 100,8 kg de CO2e d’écart avec les autres options](docs/captures/jardin.png) |
 
 ## Fonctionnalités
 
@@ -68,7 +68,7 @@ Carbone, Agribalyse), récupéré par `pnpm build-gestures` et versionné
 (occasion = pas de nouvelle fabrication, colis, trajets des achats), ce qui n'est pas compté
 et les limites sont expliqués sur la page [/methode](src/app/methode/page.tsx) et dans
 [docs/methode.md](docs/methode.md). Le jardin n'est pas une empreinte carbone : il ne garde
-que la trace de ce que tu as évité.
+que la trace des écarts entre les options comparées, pas des kilos évités.
 
 ## Comment j'ai travaillé avec l'IA
 

@@ -332,7 +332,7 @@ describe("URL partageable", () => {
 
 describe("ajout au carnet depuis le duel", () => {
   const now = new Date("2026-10-05T10:00:00Z");
-  it("choix léger : kg évités = écart", () => {
+  it("choix léger : écart compté = écart", () => {
     const entry = createEntry(duelEntry("avion", "tgv", 300, "b"), {
       now,
       id: "1",
@@ -360,7 +360,7 @@ describe("ajout au carnet depuis le duel", () => {
       2,
     );
   });
-  it("objet gardé : tout le neuf est évité", () => {
+  it("objet gardé : l’écart vaut tout le neuf", () => {
     const entry = createEntry(objectEntry("television", "garder", false), {
       now,
     });

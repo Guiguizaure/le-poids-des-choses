@@ -40,6 +40,7 @@ describe("lancement (SITE_LAUNCHED)", () => {
       "https://x.fr",
       "https://x.fr/comparer",
       "https://x.fr/jardin",
+      "https://x.fr/jardin/carnet",
       "https://x.fr/saison",
       "https://x.fr/methode",
       "https://x.fr/mentions-legales",

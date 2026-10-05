@@ -33,6 +33,7 @@ import {
   type GardenPlant,
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
+import { DEFAULT_SKY, skyStyle, type SkyId } from "@/lib/garden/skies";
 import { arrivalMessage, gardenDescription } from "@/lib/garden/text";
 import { FlightPath, FlyButton, useAutoFlights } from "./BirdFlight";
 
@@ -42,6 +43,8 @@ type GardenProps = {
   now: number;
   /** Entrée qui vient d'être ajoutée : sa plante pousse, une rafale passe, un animal arrive. */
   highlightId?: string | null;
+  /** Ciel du jardin (débloqué par les choix légers ; voir src/lib/garden/skies.ts). */
+  sky?: SkyId;
   className?: string;
 };
 
@@ -146,6 +149,7 @@ export function Garden({
   entries,
   now,
   highlightId = null,
+  sky = DEFAULT_SKY,
   className = "",
 }: GardenProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -237,6 +241,8 @@ export function Garden({
         role="img"
         aria-label={gardenDescription(garden)}
         className="relative aspect-[390/300] w-full overflow-hidden"
+        data-sky={sky}
+        style={skyStyle(sky) as CSSProperties}
       >
         <Landscape className="absolute inset-0" still={garden.asleep} />
         <Wind className="absolute inset-x-0 top-[30%]" />

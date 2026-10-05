@@ -30,7 +30,12 @@ const JOURNAL = [
   entry("capture-b", "repas-boeuf", "repas-vegetarien", 1, "b", 4.12, 40),
   entry("capture-c", "voiture", "velo", 8, "b", 1.14, 30),
   entry("capture-d", "repas-boeuf", "repas-poulet", 1, "b", 3.51, 20),
-  entry("capture-e", "jean", "jean", 1, "b", 25.09, 10),
+  // Jean : gardé plutôt qu'acheté neuf (modes d'acquisition, comme dans le parcours).
+  {
+    ...entry("capture-e", "jean", "jean", 1, "b", 25.09, 10),
+    modeA: "neuf",
+    modeB: "garder",
+  },
   entry("capture-f", "avion", "tgv", 100, "a", 0, 5),
 ];
 
@@ -103,6 +108,34 @@ try {
     return transform === "none" || new DOMMatrix(transform).a > 0;
   });
   await garden.screenshot({ path: `${OUT}jardin-oiseau-en-vol.png` });
+
+  // Carnet analysé (« Tout voir »), trié par écart.
+  await page.goto(`${BASE}/jardin/carnet?tri=ecart`);
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${OUT}carnet.png` });
+
+  // Feuille de partage (mobile : partage de fichiers simulé, rien n'est envoyé).
+  const sharing = await browser.newContext({
+    ...devices["iPhone 14"],
+    reducedMotion: "reduce",
+  });
+  await sharing.addInitScript((entries) => {
+    localStorage.setItem(
+      "lpdc:journal:v1",
+      JSON.stringify({ version: 1, entries }),
+    );
+    localStorage.setItem("lpdc:install-banner:dismissed", "1");
+    Object.defineProperty(navigator, "canShare", {
+      configurable: true,
+      value: () => true,
+    });
+  }, JOURNAL);
+  const share = await sharing.newPage();
+  await share.goto(`${BASE}/jardin`);
+  await share.getByRole("button", { name: "Partager", exact: true }).click();
+  await share.locator("[data-share-preview]").waitFor({ timeout: 15_000 });
+  await share.waitForTimeout(300);
+  await share.screenshot({ path: `${OUT}partage.png` });
 } finally {
   await browser.close();
 }

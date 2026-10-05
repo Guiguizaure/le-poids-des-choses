@@ -36,14 +36,14 @@ describe("modes d'acquisition", () => {
     );
     expect(emissions(withMode(jean, "garder")!, 2)).toBe(0);
   });
-  it("neuf vs garder : tout est évité en gardant, ratio null", () => {
+  it("neuf vs garder : l’écart vaut tout le neuf, ratio null", () => {
     const c = compareModes(jean, 1, "neuf", "garder")!;
     expect(c.lighter).toBe("b");
     expect(c.ratio).toBeNull();
     expect(avoidedKg(c, "b")).toBeCloseTo(jean.kgCo2ePerUnit);
     expect(avoidedKg(c, "a")).toBe(0);
   });
-  it("neuf vs occasion livrée : on évite neuf − colis", () => {
+  it("neuf vs occasion livrée : écart = neuf − colis", () => {
     const livre = jean.modes!["occasion-livree"]!.kgCo2e;
     const c = compareModes(jean, 1, "neuf", "occasion-livree")!;
     expect(c.differenceKg).toBeCloseTo(jean.kgCo2ePerUnit - livre);
@@ -54,7 +54,7 @@ describe("modes d'acquisition", () => {
     expect(c.lighter).toBe("b");
     expect(c.differenceKg).toBeCloseTo(jean.modes!["occasion-livree"]!.kgCo2e);
   });
-  it("deux modes à 0 (occasion vs garder) : égaux, rien d'évité", () => {
+  it("deux modes à 0 (occasion vs garder) : égaux, aucun écart", () => {
     const c = compareModes(jean, 1, "occasion", "garder")!;
     expect(c.differenceKg).toBe(0);
     expect(c.almostEqual).toBe(true);
