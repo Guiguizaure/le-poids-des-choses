@@ -6,6 +6,7 @@ import {
   Section,
 } from "@/components/ui/ContentPage";
 import { DataCredit } from "@/components/ui/DataCredit";
+import { PaperCutout } from "@/components/ui/PaperCutout";
 import generated from "@/lib/data/gestures.generated.json";
 import {
   SAISON_BASE,
@@ -33,6 +34,12 @@ const DATA_LICENSE: { text: string; url?: string } | null = {
 const REPOSITORY = "https://github.com/Guiguizaure/le-poids-des-choses";
 const IMPACT_CO2 = "https://impactco2.fr";
 
+// Papiers découpés : petits à côté des titres sur mobile (masqués sous 360 px de large), dans
+// les marges sur grand écran.
+const INLINE = "size-11 max-[359px]:hidden lg:absolute lg:size-24";
+const RIGHT = `${INLINE} lg:-top-3 lg:-right-36`;
+const LEFT = `${INLINE} lg:-top-3 lg:-left-36`;
+
 const updatedOn = new Intl.DateTimeFormat("fr-FR", {
   day: "2-digit",
   month: "2-digit",
@@ -43,7 +50,10 @@ const updatedOn = new Intl.DateTimeFormat("fr-FR", {
 /** Page 06 · Méthode et sources (maquette), complétée d'après docs/methode.md. */
 export default function MethodePage() {
   return (
-    <ContentPage title="Méthode et sources">
+    <ContentPage
+      title="Méthode et sources"
+      decoration={<PaperCutout name="oiseau" tilt={-7} className={RIGHT} />}
+    >
       <p className="text-legende text-texte-attenue leading-[1.3] font-semibold">
         Données mises à jour le {updatedOn}
       </p>
@@ -94,7 +104,11 @@ export default function MethodePage() {
         </ul>
       </Section>
 
-      <Section id="hypotheses" title="Nos hypothèses">
+      <Section
+        id="hypotheses"
+        title="Nos hypothèses"
+        decoration={<PaperCutout name="coccinelle" tilt={9} className={LEFT} />}
+      >
         <p id="occasion" className="scroll-mt-6">
           <strong>L’occasion.</strong> Acheter un objet déjà fabriqué ne
           provoque pas de nouvelle fabrication : on compte 0 kg pour la
@@ -144,7 +158,17 @@ export default function MethodePage() {
         </p>
       </Section>
 
-      <Section id="jardin" title="Et ton jardin ?">
+      <Section
+        id="jardin"
+        title="Et ton jardin ?"
+        decoration={
+          <PaperCutout
+            name="balance"
+            tilt={-4}
+            className="h-9 w-14 max-[359px]:hidden lg:absolute lg:-top-1 lg:-right-44 lg:h-20 lg:w-32"
+          />
+        }
+      >
         <p>
           Il ne montre que les choix que tu notes ici. Ce n’est pas ton
           empreinte carbone, juste la trace des écarts entre les options que tu
@@ -157,7 +181,17 @@ export default function MethodePage() {
         </p>
       </Section>
 
-      <Section id="saison" title="Fruits et légumes de saison">
+      <Section
+        id="saison"
+        title="Fruits et légumes de saison"
+        decoration={
+          <PaperCutout
+            name="picto-repas-vegetalien"
+            tilt={8}
+            className={LEFT}
+          />
+        }
+      >
         <p>
           La page{" "}
           <Link
@@ -215,6 +249,13 @@ export default function MethodePage() {
           webjuno.com.
         </p>
       </aside>
+      <div className="flex justify-end pr-2">
+        <PaperCutout
+          name="escargot"
+          tilt={-4}
+          className="h-12 w-16 lg:h-16 lg:w-20"
+        />
+      </div>
     </ContentPage>
   );
 }
