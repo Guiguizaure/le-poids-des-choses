@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { test as base, expect, type Page } from "@playwright/test";
 
 /**
@@ -75,6 +76,55 @@ export function entry(id: string, avoidedKg: number, minutesAgo = 5) {
     chosen: avoidedKg > 0 ? "b" : "a",
     avoidedKg,
   };
+}
+
+/**
+ * Réponse d'erreur attendue (lien déjà utilisé, limite atteinte, session supprimée…) : le
+ * navigateur l'écrit en console (« status of 400 ») ; seules ces lignes sont tolérées.
+ */
+export function acceptStatus(errors: string[], ...statuses: number[]) {
+  const others = errors.filter(
+    (message) =>
+      !statuses.some((status) => message.includes(`status of ${status}`)),
+  );
+  errors.splice(0, errors.length, ...others);
+}
+
+/**
+ * WebKit écrit en console le préchargement d'une page (fichier RSC de Next) interrompu par une
+ * navigation (« … due to access control checks. ») ; seules ces lignes sont tolérées.
+ */
+export function acceptCancelledPrefetch(errors: string[]) {
+  const others = errors.filter(
+    (message) =>
+      !/__next\.[^ ]*\.txt\?[^ ]*_rsc=[^ ]* due to access control checks\.$/.test(
+        message,
+      ),
+  );
+  errors.splice(0, errors.length, ...others);
+}
+
+export async function expectNoAxeViolations(page: Page) {
+  // Les apparitions (fondu, pop) doivent être finies : un texte encore en fondu fausserait
+  // la mesure de contraste.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter(
+          (animation) =>
+            animation.effect?.getComputedTiming().iterations !== Infinity,
+        )
+        .map((animation) => animation.finished),
+    ),
+  );
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  const summary = results.violations.map(
+    (v) => `${v.id} : ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`,
+  );
+  expect(summary).toEqual([]);
 }
 
 /** Après la visite volontaire d'une page inexistante : seul le 404 du document est toléré. */

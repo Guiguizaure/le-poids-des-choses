@@ -44,9 +44,12 @@ describe("lancement (SITE_LAUNCHED)", () => {
       "https://x.fr/saison",
       "https://x.fr/methode",
       "https://x.fr/mentions-legales",
+      "https://x.fr/confidentialite",
     ]);
     expect(urls.some((url) => url.includes("labo"))).toBe(false);
     expect(PUBLIC_PATHS).not.toContain("/labo");
+    expect(PUBLIC_PATHS).not.toContain("/connexion");
+    expect(PUBLIC_PATHS).toContain("/confidentialite");
   });
   it("adresse du site : variable SITE_URL, sinon Cloudflare Pages", () => {
     expect(siteUrl({})).toBe(DEFAULT_SITE_URL);

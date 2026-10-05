@@ -27,7 +27,7 @@ export function isLaunched(
   return env.SITE_LAUNCHED === "1";
 }
 
-/** Pages publiques (le sitemap au lancement) : /labo n'y figure jamais. */
+/** Pages publiques (le sitemap au lancement) : /labo et /connexion n'y figurent jamais. */
 export const PUBLIC_PATHS = [
   "/",
   "/comparer",
@@ -36,6 +36,7 @@ export const PUBLIC_PATHS = [
   "/saison",
   "/methode",
   "/mentions-legales",
+  "/confidentialite",
 ] as const;
 
 export function robotsMeta(launched: boolean): Metadata["robots"] {

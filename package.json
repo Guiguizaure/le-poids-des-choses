@@ -16,6 +16,10 @@
     "serve:out": "serve out -l 4322 --no-clipboard",
     "lighthouse": "node scripts/lighthouse.mjs",
     "e2e": "playwright test",
+    "db:migrate:local": "wrangler d1 migrations apply lpdc-local --local -c wrangler.local.toml",
+    "db:migrate:production": "wrangler d1 migrations apply lpdc-production --remote -c wrangler.local.toml --env production",
+    "db:migrate:preview": "wrangler d1 migrations apply lpdc-preview --remote -c wrangler.local.toml --env preview",
+    "pages:dev": "wrangler pages dev out --port 8788 --d1 DB=lpdc-local --compatibility-date 2026-10-01",
     "captures": "node scripts/captures.mjs"
   },
   "dependencies": {
@@ -43,7 +47,8 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "wrangler": "^4.147.0"
   },
   "packageManager": "pnpm@11.3.0"
 }

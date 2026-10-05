@@ -3,36 +3,10 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { gardenTotals, type GardenTotals } from "@/lib/calc";
 import type { JournalEntry } from "@/lib/data/types";
+import { afterEntryAdded } from "@/lib/sync/browser";
+import { getBrowserStore } from "./browser";
 import { createEntry, type NewEntry } from "./entry";
 import { exportFileName, exportJournal } from "./merge";
-import { STORAGE_KEY } from "./schema";
-import {
-  createJournalStore,
-  requestPersistentStorage,
-  type JournalStore,
-} from "./store";
-
-let browserStore: JournalStore | null = null;
-
-/** Carnet unique de la page, partagé par tous les composants (et entre /jardin et /labo). */
-function getBrowserStore(): JournalStore {
-  if (!browserStore) {
-    let storage: Storage | null = null;
-    try {
-      storage = window.localStorage;
-    } catch {
-      // Accès refusé (navigation privée stricte) : carnet en mémoire.
-    }
-    const store = createJournalStore(storage, {
-      requestPersistence: requestPersistentStorage,
-    });
-    window.addEventListener("storage", (event) => {
-      if (event.key === STORAGE_KEY) store.reload();
-    });
-    browserStore = store;
-  }
-  return browserStore;
-}
 
 type Snapshot = {
   /** Faux pendant le rendu serveur et l'hydratation : le carnet n'est pas encore lu. */
@@ -107,6 +81,8 @@ export function useJournal(): UseJournal {
   const add = useCallback((input: NewEntry) => {
     const entry = createEntry(input);
     getBrowserStore().add(entry);
+    // Compte connecté : l'entrée part vers le compte (ou attend le retour en ligne).
+    afterEntryAdded(entry);
     return entry;
   }, []);
 

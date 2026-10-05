@@ -24,6 +24,7 @@ import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
 import { useJournal } from "@/lib/journal/useJournal";
 import { FactCard } from "@/components/facts/FactCard";
+import { AccountSection } from "@/components/account/AccountSection";
 
 const RECENT_COUNT = 5;
 
@@ -284,6 +285,8 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         ) : null}
 
         <InstallBanner />
+
+        {journal.ready ? <AccountSection /> : null}
 
         {journal.ready ? (
           <section
