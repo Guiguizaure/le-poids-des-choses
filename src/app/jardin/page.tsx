@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, siteUrl } from "@/lib/site";
 import { GardenScreen } from "@/components/garden/GardenScreen";
 
 export const metadata: Metadata = pageMetadata({
@@ -10,5 +10,5 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function JardinPage() {
-  return <GardenScreen />;
+  return <GardenScreen siteUrl={siteUrl()} />;
 }

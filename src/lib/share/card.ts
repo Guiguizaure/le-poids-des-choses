@@ -159,7 +159,15 @@ export function shareCardLayout(
   });
   y += kickerSize * LINE.texte + CARD.gap;
 
-  const titleSize = input.asleep ? 104 : 128;
+  // Taille de la maquette (128, ou 104 endormi), réduite si le titre déborde des marges :
+  // le rendu des polices du navigateur peut être plus large que celui de Figma.
+  const baseSize = input.asleep ? 104 : 128;
+  const maxWidth = CARD.width - 2 * CARD.padX;
+  const titleWidth = measure(texts.title, `800 ${baseSize}px ${fonts.titre}`);
+  const titleSize =
+    titleWidth > maxWidth
+      ? Math.floor((baseSize * maxWidth) / titleWidth)
+      : baseSize;
   ops.push({
     type: "text",
     text: texts.title,

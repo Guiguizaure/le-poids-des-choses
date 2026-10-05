@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Garden } from "@/components/garden/Garden";
@@ -8,6 +9,8 @@ import { InstallBanner } from "@/components/garden/InstallBanner";
 import { CARNET_PATH } from "@/components/garden/CarnetScreen";
 import { MilestoneCard } from "@/components/garden/MilestoneCard";
 import { SkyPicker } from "@/components/garden/SkyPicker";
+import { ShareSheet } from "@/components/garden/share/ShareSheet";
+import { useShareSupport } from "@/components/garden/share/useShareSupport";
 import { useSky } from "@/components/garden/useSky";
 import { WeekChart } from "@/components/garden/WeekChart";
 import { Icon } from "@/components/ui/buttons";
@@ -15,6 +18,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
 import { effectiveSky } from "@/lib/garden/skies";
+import { siteHost } from "@/lib/share/card";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
@@ -45,9 +49,13 @@ function PillButton({
 }
 
 /** Page « Mon jardin » (maquette 04 · Mon jardin). */
-export function GardenScreen() {
+export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const journal = useJournal();
   const now = useNow();
+  // Partage : le bouton n'existe que sur mobile ou appli installée (voir useShareSupport).
+  const shareSupported = useShareSupport();
+  const [shareOpen, setShareOpen] = useState(0);
+  const shareButton = useRef<HTMLButtonElement>(null);
   const [importMessage, setImportMessage] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -80,6 +88,7 @@ export function GardenScreen() {
   const upcoming = nextAnimal(garden.lightChoiceCount);
   const [chosenSky, setSky] = useSky();
   const sky = effectiveSky(chosenSky, garden.lightChoiceCount);
+  const canShare = shareSupported && journal.ready && hasEntries;
   const today = new Date(now);
 
   const onImport = async (file: File | undefined) => {
@@ -103,7 +112,7 @@ export function GardenScreen() {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
-      <div className="flex items-center px-5 pt-[22px] pb-2">
+      <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2">
         <Link
           href="/comparer"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
@@ -111,7 +120,44 @@ export function GardenScreen() {
           <Icon name="retour" />
           Comparer
         </Link>
+        {canShare ? (
+          // Maquette 09a (mobile, appli installée) : « Exporter » puis « Partager ».
+          <>
+            <PillButton onClick={journal.exportFile}>Exporter</PillButton>
+            <button
+              ref={shareButton}
+              type="button"
+              onClick={() => setShareOpen((count) => count + 1)}
+              className="press bg-encre text-creme focus-visible:outline-outremer flex h-[30px] shrink-0 items-center gap-1.5 rounded-full py-1.5 pr-3.5 pl-3 text-[14px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <Image
+                src="/icons/partager.svg"
+                alt=""
+                width={15}
+                height={15}
+                className="block"
+                unoptimized
+              />
+              Partager
+            </button>
+          </>
+        ) : null}
       </div>
+      {shareOpen > 0 ? (
+        <ShareSheet
+          key={shareOpen}
+          garden={garden}
+          sky={sky}
+          unlockedCount={garden.unlocked.length}
+          siteHost={siteHost(siteUrl)}
+          siteUrl={siteUrl}
+          onClose={() => {
+            setShareOpen(0);
+            // Le focus revient sur le bouton qui a ouvert la feuille.
+            requestAnimationFrame(() => shareButton.current?.focus());
+          }}
+        />
+      ) : null}
 
       <div className="px-5 pt-2 pb-1">
         <h1 className="font-titre text-titre-l text-encre leading-[1.1]">

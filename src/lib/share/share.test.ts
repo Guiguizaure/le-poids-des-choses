@@ -65,13 +65,28 @@ describe("carte de partage : composition", () => {
     expect(garden).toBe(1);
   });
   it("endormi : « Mon jardin se repose » et la phrase de réveil (maquette 41:183)", () => {
-    const ops = shareCardLayout({ ...AWAKE, asleep: true }, measure, FONTS);
+    // Mesure étroite : le titre tient dans les marges, il garde sa taille de maquette.
+    const narrow = (text: string, font: string) =>
+      text.length * Number(font.match(/(\d+)px/)![1]) * 0.4;
+    const ops = shareCardLayout({ ...AWAKE, asleep: true }, narrow, FONTS);
     expect(texts(ops)).toContain("Mon jardin se repose");
     expect(texts(ops).at(-1)).toBe("Il se réveille au prochain choix léger.");
     const title = ops.find(
       (op) => op.type === "text" && op.text === "Mon jardin se repose",
     );
     expect(title).toMatchObject({ font: "800 104px Bricolage" });
+  });
+  it("titre réduit s'il déborde des marges (936 px), jamais agrandi", () => {
+    const wide = (text: string, font: string) =>
+      text.length * Number(font.match(/(\d+)px/)![1]) * 0.6;
+    const ops = shareCardLayout({ ...AWAKE, asleep: true }, wide, FONTS);
+    const title = ops.find(
+      (op): op is Extract<DrawOp, { type: "text" }> =>
+        op.type === "text" && op.text === "Mon jardin se repose",
+    )!;
+    const size = Number(title.font.match(/(\d+)px/)![1]);
+    expect(size).toBeLessThan(104);
+    expect(wide(title.text, title.font)).toBeLessThanOrEqual(936);
   });
   it("accords des pastilles au singulier et au pluriel", () => {
     expect(
