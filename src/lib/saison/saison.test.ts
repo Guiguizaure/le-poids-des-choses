@@ -6,9 +6,12 @@ import {
   monthOf,
   parseMonth,
   productsForMonth,
+  formatPerKilo,
   SEASON_CATEGORIES,
-  seasonHighlights,
+  seasonRange,
 } from "./index";
+import { drawnForMonth, SEASON_DRAWINGS } from "./drawn";
+import { ILLUSTRATION_SPECS } from "@/lib/illustrations/specs";
 
 const product = (
   slug: string,
@@ -87,18 +90,120 @@ describe("regroupement par catégorie de l'API", () => {
   });
 });
 
-describe("encart « Ce mois-ci, c'est la saison de… »", () => {
-  it("trois produits de saison, les plus légers, en préférant ceux qui ont une saison", () => {
-    expect(seasonHighlights(10, 3, LIST).map((p) => p.slug)).toEqual([
-      "ail",
-      "poire",
-      "carotte",
+describe("encart de saison : du plus léger au plus lourd au kilo", () => {
+  const slugs = (list: SeasonalProduct[]) => list.map((p) => p.slug);
+
+  it("le plus léger et le plus lourd parmi les produits de saison ce mois-ci", () => {
+    // La banane (toute l'année) et la fraise (pas en octobre) sont exclues.
+    expect(slugs(seasonRange(10, LIST))).toEqual(["ail", "courge"]);
+    expect(slugs(seasonRange(5, LIST))).toEqual(["fraise"]);
+  });
+  it("mois sans produit : aucun repère", () => {
+    expect(seasonRange(6, [product("pomme", 0.4, [9, 10])])).toEqual([]);
+    expect(seasonRange(6, [])).toEqual([]);
+    // Seulement des produits de toute l'année : rien non plus.
+    expect(seasonRange(6, [LIST[3]])).toEqual([]);
+  });
+  it("un seul produit : un seul repère", () => {
+    expect(slugs(seasonRange(9, [product("raisin", 0.5, [9, 10])]))).toEqual([
+      "raisin",
     ]);
-    // Peu de produits saisonniers : on complète avec ceux de toute l'année.
-    expect(seasonHighlights(5, 3, LIST).map((p) => p.slug)).toEqual([
-      "fraise",
-      "banane",
+  });
+  it("à égalité, ordre alphabétique", () => {
+    const tie = [
+      product("navet", 0.4, [3]),
+      product("cresson", 2, [3]),
+      product("blette", 0.4, [3]),
+      product("asperge", 2, [3]),
+      product("radis", 1, [3]),
+    ];
+    expect(slugs(seasonRange(3, tie))).toEqual(["blette", "asperge"]);
+    // Deux produits au même impact : le premier puis le second par ordre alphabétique.
+    expect(
+      slugs(seasonRange(3, [product("b", 1, [3]), product("a", 1, [3])])),
+    ).toEqual(["a", "b"]);
+  });
+  it("valeur arrondie comme sur /saison, espaces insécables avant les unités", () => {
+    expect(formatPerKilo(0.3835)).toBe("384 g CO2e/kg");
+    expect(formatPerKilo(4.811)).toBe("4,8 kg CO2e/kg");
+  });
+  it("données actuelles : deux repères chaque mois, le plus léger d'abord", () => {
+    for (let month = 1; month <= 12; month++) {
+      const [lightest, heaviest] = seasonRange(month);
+      expect(heaviest.kgCo2ePerKg).toBeGreaterThan(lightest.kgCo2ePerKg);
+      for (const p of [lightest, heaviest]) {
+        expect(p.months).toContain(month);
+        expect(p.months.length).toBeLessThan(12);
+      }
+    }
+  });
+});
+
+describe("fruits et légumes dessinés", () => {
+  it("chaque dessin correspond, par son nom, à un produit des données", () => {
+    for (const [name, slug] of Object.entries(SEASON_DRAWINGS)) {
+      expect(name in ILLUSTRATION_SPECS, name).toBe(true);
+      expect(name).toBe(`saison-${slug}`);
+      const found = getSeasonalProducts().find((p) => p.slug === slug);
+      expect(found?.label.toLowerCase(), slug).toBe(slug);
+    }
+  });
+  it("pas de cagette", () => {
+    expect(Object.keys(ILLUSTRATION_SPECS)).not.toContain("saison-cagette");
+  });
+
+  const DRAWN = [
+    product("pomme", 0.41, [1, 2, 3, 4, 8, 9, 10, 11, 12]),
+    product("poire", 0.39, [1, 2, 3, 8, 9, 10, 11, 12]),
+    product("carotte", 0.4, [1, 2, 3, 9, 10, 11, 12], "légumes"),
+    product("courge", 0.64, [1, 9, 10, 11, 12], "légumes"),
+    product("raisin", 0.51, [9, 10]),
+    product("poireau", 0.61, [1, 2, 3, 4, 9, 10, 11, 12], "légumes"),
+    product("tomate", 0.63, [6, 7, 8, 9], "légumes"),
+  ];
+
+  it("seulement ceux de saison ce mois-ci, saison la plus courte d'abord, 5 au plus", () => {
+    expect(drawnForMonth(10, DRAWN)).toEqual([
+      "saison-raisin",
+      "saison-courge",
+      "saison-carotte",
+      "saison-poire",
+      "saison-poireau",
     ]);
+    expect(drawnForMonth(10, DRAWN, 3)).toHaveLength(3);
+    expect(drawnForMonth(4, DRAWN)).toEqual(["saison-poireau", "saison-pomme"]);
+  });
+  it("moins de 3 : complétés par ceux de toute l'année", () => {
+    const withYearRound = [
+      ...DRAWN.filter((p) => p.slug !== "poireau"),
+      product("poireau", 0.61, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+    ];
+    expect(drawnForMonth(4, withYearRound)).toEqual([
+      "saison-pomme",
+      "saison-poireau",
+    ]);
+    // Déjà 3 de saison : on ne complète pas.
+    expect(drawnForMonth(8, withYearRound)).toEqual([
+      "saison-tomate",
+      "saison-poire",
+      "saison-pomme",
+    ]);
+  });
+  it("aucun ce mois-ci : ceux du mois le plus proche", () => {
+    // Mai : avril (pomme, poireau) et juin (tomate) sont à un mois ; avril en a le plus.
+    expect(drawnForMonth(5, DRAWN)).toEqual(["saison-poireau", "saison-pomme"]);
+    // À égalité, le mois à venir.
+    const two = [product("pomme", 0.4, [4]), product("tomate", 0.6, [6])];
+    expect(drawnForMonth(5, two)).toEqual(["saison-tomate"]);
+    // Plus loin : on cherche jusqu'à trouver.
+    expect(drawnForMonth(1, [product("tomate", 0.6, [7])])).toEqual([
+      "saison-tomate",
+    ]);
+    expect(drawnForMonth(5, [])).toEqual([]);
+  });
+  it("données actuelles : au moins un dessin chaque mois", () => {
+    for (let month = 1; month <= 12; month++)
+      expect(drawnForMonth(month).length).toBeGreaterThan(0);
   });
 });
 
