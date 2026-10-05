@@ -15,7 +15,24 @@ import {
 import { loadTurnstile, TURNSTILE_SITE_KEY } from "@/lib/sync/turnstile";
 import { useAccount } from "@/lib/sync/useAccount";
 
-const TITLE = "Retrouve ton jardin sur un autre appareil";
+/** Ancre de la section (lien « Se connecter » / adresse de l'en-tête). */
+export const ACCOUNT_ANCHOR = "compte";
+
+const TITLES = {
+  // En bas d'un jardin qui pousse : le garder ailleurs aussi.
+  default: "Retrouve ton jardin sur un autre appareil",
+  // En haut d'un jardin vide, et sur /connexion : retrouver un jardin commencé ailleurs.
+  retrouver: "Retrouve ton jardin",
+} as const;
+
+const INTROS = {
+  default:
+    "Reçois un lien par e-mail, sans mot de passe : ton carnet sera gardé avec ton adresse, et tu le retrouveras partout où tu te connectes. C’est facultatif : ton jardin reste aussi sur cet appareil.",
+  retrouver:
+    "Ton jardin pousse déjà sur un autre appareil ? Reçois un lien par e-mail, sans mot de passe : ouvre-le ici et tes choix reviendront. C’est facultatif : sans compte, ton jardin reste sur l’appareil où tu le fais pousser.",
+} as const;
+
+export type AccountVariant = keyof typeof TITLES;
 
 const PILL =
   "press border-encre text-legende text-encre hover:bg-creme rounded-full border px-3 py-1.5 leading-[1.3] font-semibold transition-colors disabled:opacity-40 focus-visible:outline-outremer focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -46,10 +63,26 @@ function download(blob: Blob, fileName: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Section du bas de /jardin : compte facultatif (lien magique) et synchro du carnet. */
-export function AccountSection() {
+/**
+ * Section de /jardin : compte facultatif (lien magique) et synchro du carnet. En bas d'un
+ * jardin qui pousse ; en haut d'un jardin vide (`retrouver`), pour retrouver celui d'un autre
+ * appareil.
+ */
+export function AccountSection({
+  variant = "default",
+}: {
+  variant?: AccountVariant;
+}) {
   const account = useAccount();
   const [message, setMessage] = useState("");
+  const section = useRef<HTMLElement>(null);
+
+  // Arrivée par /jardin#compte (lien de l'en-tête) : la section n'existe qu'après la lecture
+  // du compte, le navigateur n'a donc pas pu la trouver lui-même.
+  useEffect(() => {
+    if (account.ready && window.location.hash === `#${ACCOUNT_ANCHOR}`)
+      section.current?.scrollIntoView({ block: "start" });
+  }, [account.ready]);
 
   // Compte connecté sur cet appareil : synchro à l'ouverture du jardin.
   useEffect(() => {
@@ -65,19 +98,21 @@ export function AccountSection() {
 
   return (
     <section
-      className="bg-blanc flex flex-col items-start gap-3 rounded-[20px] p-5"
+      ref={section}
+      id={ACCOUNT_ANCHOR}
+      className="bg-blanc flex scroll-mt-6 flex-col items-start gap-3 rounded-[20px] p-5"
       aria-labelledby="compte-titre"
     >
       <h2
         id="compte-titre"
         className="font-titre text-titre-m text-encre leading-[1.1]"
       >
-        {TITLE}
+        {TITLES[variant]}
       </h2>
       {account.email ? (
         <SignedIn email={account.email} onMessage={setMessage} />
       ) : (
-        <SignedOut onMessage={setMessage} />
+        <SignInForm intro={INTROS[variant]} onMessage={setMessage} />
       )}
       <p
         role="status"
@@ -90,7 +125,17 @@ export function AccountSection() {
   );
 }
 
-function SignedOut({ onMessage }: { onMessage: (text: string) => void }) {
+/**
+ * Formulaire « Recevoir un lien » (section de /jardin, /connexion sans jeton). Turnstile n'est
+ * chargé qu'au premier usage : quand on entre dans le champ ou qu'on envoie.
+ */
+export function SignInForm({
+  intro = INTROS.default,
+  onMessage,
+}: {
+  intro?: string;
+  onMessage: (text: string) => void;
+}) {
   const [email, setEmail] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [busy, setBusy] = useState<"" | "verification" | "envoi">("");
@@ -193,11 +238,7 @@ function SignedOut({ onMessage }: { onMessage: (text: string) => void }) {
 
   return (
     <>
-      <p className="text-corps-s text-texte-attenue leading-[1.4]">
-        Reçois un lien par e-mail, sans mot de passe : ton carnet sera gardé
-        avec ton adresse, et tu le retrouveras partout où tu te connectes. C’est
-        facultatif : ton jardin reste aussi sur cet appareil.
-      </p>
+      <p className="text-corps-s text-texte-attenue leading-[1.4]">{intro}</p>
       <form
         onSubmit={submit}
         noValidate

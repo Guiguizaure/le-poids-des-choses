@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountLink } from "@/components/account/AccountLink";
 import { PrimaryLink, TextLink } from "@/components/ui/buttons";
 import { COMPARE_PATH } from "@/lib/compare/url";
 import { HomeScene } from "./HomeScene";
@@ -29,12 +30,19 @@ export function HomeScreen() {
             <li>
               <Link href="/methode">Méthode</Link>
             </li>
+            <li>
+              <AccountLink large />
+            </li>
           </ul>
         </nav>
       </header>
 
       <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col lg:max-w-none lg:flex-row lg:items-center lg:gap-16 lg:px-20">
-        <div className="lg:order-2 lg:w-[44%] lg:max-w-[560px] lg:shrink-0">
+        <div className="relative lg:order-2 lg:w-[44%] lg:max-w-[560px] lg:shrink-0">
+          {/* En-tête mobile : lien discret posé sur le ciel de la scène. */}
+          <div className="absolute top-4 right-6 z-10 lg:hidden">
+            <AccountLink />
+          </div>
           <HomeScene />
         </div>
 
@@ -56,6 +64,16 @@ export function HomeScreen() {
               Comment ça marche ?
             </TextLink>
           </div>
+          <Link
+            href="/connexion"
+            prefetch={false}
+            className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
+          >
+            J’ai déjà un jardin ?{" "}
+            <span className="font-semibold underline underline-offset-2">
+              Le retrouver
+            </span>
+          </Link>
           <SeasonTeaser className="mt-2" />
           <p className="text-legende text-texte-attenue text-center lg:text-left">
             Données publiques de l’ADEME · Projet indépendant

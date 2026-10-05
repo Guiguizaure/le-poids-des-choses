@@ -43,6 +43,11 @@ type GardenProps = {
   now: number;
   /** Entrée qui vient d'être ajoutée : sa plante pousse, une rafale passe, un animal arrive. */
   highlightId?: string | null;
+  /**
+   * Choix arrivés d'un coup pendant la visite (synchro du compte, import) : leurs plantes
+   * apparaissent ensemble en fondu, sans éclat, rafale ni message par plante.
+   */
+  arriving?: readonly string[];
   /** Ciel du jardin (débloqué par les choix légers ; voir src/lib/garden/skies.ts). */
   sky?: SkyId;
   className?: string;
@@ -135,6 +140,15 @@ function Entering({ box, children }: { box: Box; children: ReactNode }) {
   );
 }
 
+const NONE: readonly string[] = [];
+
+/** Arrivée groupée : toutes les plantes en moins d'1,5 s, quel que soit leur nombre. */
+export const ARRIVAL = {
+  duration: 0.6,
+  spread: 0.9,
+  maxStagger: 0.08,
+} as const;
+
 /** Délai avant que le nouveau choix apparaisse : la scène s'affiche d'abord sans lui. */
 const REVEAL_DELAY_MS = 700;
 
@@ -149,6 +163,7 @@ export function Garden({
   entries,
   now,
   highlightId = null,
+  arriving = NONE,
   sky = DEFAULT_SKY,
   className = "",
 }: GardenProps) {
@@ -234,6 +249,42 @@ export function Garden({
     { dependencies: [message, revealed] },
   );
 
+  // Arrivée groupée (synchro) : un fondu commun, depuis un rien plus bas, en léger décalé.
+  useGSAP(
+    () => {
+      const scene = sceneRef.current;
+      if (!scene || arriving.length === 0) return;
+      const ids = new Set(arriving);
+      const targets = Array.from(
+        scene.querySelectorAll<HTMLElement>("[data-plant]"),
+      ).filter(
+        (element) =>
+          ids.has(element.dataset.plant ?? "") &&
+          element.dataset.plant !== revealed,
+      );
+      if (targets.length === 0) return;
+      if (reduceRef.current) {
+        gsap.fromTo(targets, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
+        return;
+      }
+      gsap.fromTo(
+        targets,
+        { autoAlpha: 0, yPercent: 8 },
+        {
+          autoAlpha: 1,
+          yPercent: 0,
+          duration: ARRIVAL.duration,
+          ease: "power1.out",
+          stagger: Math.min(
+            ARRIVAL.maxStagger,
+            ARRIVAL.spread / targets.length,
+          ),
+        },
+      );
+    },
+    { dependencies: [arriving] },
+  );
+
   return (
     <div className={`relative ${className}`}>
       <div
@@ -247,7 +298,12 @@ export function Garden({
         <Landscape className="absolute inset-0" still={garden.asleep} />
         <Wind className="absolute inset-x-0 top-[30%]" />
         {garden.plants.map((plant) => (
-          <div key={plant.id} className="absolute" style={place(plant.box)}>
+          <div
+            key={plant.id}
+            className="absolute"
+            style={place(plant.box)}
+            data-plant={plant.id}
+          >
             <Plant
               plant={plant}
               still={garden.asleep}

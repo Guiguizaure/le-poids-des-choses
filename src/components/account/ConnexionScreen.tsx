@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SignInForm } from "@/components/account/AccountSection";
 import { PrimaryLink } from "@/components/ui/buttons";
 import { plural } from "@/lib/garden/text";
 import { accountApi, type ApiError } from "@/lib/sync/api";
 import { getSyncEngine } from "@/lib/sync/browser";
 import { errorMessage } from "@/lib/sync/messages";
+import { useAccount } from "@/lib/sync/useAccount";
 
 type State =
+  | { step: "starting" }
+  | { step: "form" }
   | { step: "verifying" }
   | { step: "syncing"; email: string }
   | { step: "done"; email: string; received: number; synced: boolean }
@@ -38,20 +42,31 @@ function takeToken(): string | null {
   return fresh ?? lastToken;
 }
 
-function verify(token: string | null): Verification {
-  if (!token) return Promise.resolve({ ok: false, error: "invalid-link" });
+function verify(token: string): Verification {
   if (!verifications.has(token))
     verifications.set(token, accountApi.verify(token));
   return verifications.get(token)!;
 }
 
-/** Page /connexion : ouverte depuis le lien reçu par e-mail. */
+const TITLE_CLASS = "font-titre text-titre-l text-encre leading-[1.1]";
+
+/**
+ * Page /connexion : ouverte depuis le lien reçu par e-mail (#jeton=…), ou sans jeton pour
+ * demander un lien et retrouver son jardin sur cet appareil.
+ */
 export function ConnexionScreen() {
-  const [state, setState] = useState<State>({ step: "verifying" });
+  const [state, setState] = useState<State>({ step: "starting" });
 
   useEffect(() => {
     let cancelled = false;
-    void verify(takeToken()).then(async (result) => {
+    const token = takeToken();
+    if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- le fragment n'est lisible qu'ici, après l'hydratation
+      setState({ step: "form" });
+      return;
+    }
+    setState({ step: "verifying" });
+    void verify(token).then(async (result) => {
       if (cancelled) return;
       if (!result.ok) {
         setState({ step: "error", error: result.error });
@@ -77,11 +92,15 @@ export function ConnexionScreen() {
 
   return (
     <main className="animate-enter mx-auto flex w-full max-w-[430px] flex-col gap-4 px-6 pt-10 pb-10 motion-reduce:animate-none">
+      {state.step === "starting" ? (
+        <h1 className={TITLE_CLASS}>Connexion</h1>
+      ) : null}
+
+      {state.step === "form" ? <RequestLink /> : null}
+
       {state.step === "verifying" ? (
         <>
-          <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
-            Connexion
-          </h1>
+          <h1 className={TITLE_CLASS}>Connexion</h1>
           <p role="status" className="text-corps-m text-encre">
             On ouvre ton jardin…
           </p>
@@ -121,12 +140,56 @@ export function ConnexionScreen() {
           </h1>
           <p role="status" className="text-corps-m text-encre leading-[1.4]">
             {state.error === "invalid-link"
-              ? "Un lien de connexion est valable 15 minutes et ne sert qu’une fois. Demande un nouveau lien depuis ton jardin : ça ne prend qu’un instant."
+              ? "Un lien de connexion est valable 15 minutes et ne sert qu’une fois. Demande un nouveau lien ci-dessous : ça ne prend qu’un instant."
               : errorMessage(state.error)}
           </p>
-          <PrimaryLink href="/jardin">Aller à mon jardin</PrimaryLink>
+          <FormCard />
         </>
       ) : null}
     </main>
+  );
+}
+
+/** Sans jeton : demander un lien (déjà connecté sur cet appareil : aller au jardin). */
+function RequestLink() {
+  const account = useAccount();
+  return (
+    <>
+      <h1 className={TITLE_CLASS}>Retrouve ton jardin</h1>
+      {account.ready && account.email ? (
+        <>
+          <p className="text-corps-m text-encre leading-[1.4]">
+            Tu es déjà connecté avec{" "}
+            <strong className="break-all">{account.email}</strong> sur cet
+            appareil : ton jardin s’y synchronise.
+          </p>
+          <PrimaryLink href="/jardin">Voir mon jardin</PrimaryLink>
+        </>
+      ) : (
+        <FormCard />
+      )}
+    </>
+  );
+}
+
+function FormCard() {
+  const [message, setMessage] = useState("");
+  return (
+    <section
+      aria-label="Recevoir un lien de connexion"
+      className="bg-blanc flex flex-col items-start gap-3 rounded-[20px] p-5"
+    >
+      <SignInForm
+        intro="Ton jardin pousse déjà sur un autre appareil ? Reçois un lien par e-mail, sans mot de passe : ouvre-le ici et tes choix reviendront."
+        onMessage={setMessage}
+      />
+      <p
+        role="status"
+        aria-live="polite"
+        className="text-corps-s text-encre empty:hidden"
+      >
+        {message}
+      </p>
+    </section>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AccountLink } from "@/components/account/AccountLink";
 import { Icon } from "@/components/ui/buttons";
 import { DataCredit } from "@/components/ui/DataCredit";
 import { formatMass } from "@/lib/calc";
@@ -40,7 +41,7 @@ export function SaisonScreen() {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[640px] flex-col motion-reduce:animate-none">
-      <div className="flex items-center px-5 pt-[22px] pb-2">
+      <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
         <Link
           href="/"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
@@ -48,6 +49,7 @@ export function SaisonScreen() {
           <Icon name="retour" />
           Retour
         </Link>
+        <AccountLink />
       </div>
 
       <div className="flex flex-col gap-5 px-6 pt-3 pb-9">
