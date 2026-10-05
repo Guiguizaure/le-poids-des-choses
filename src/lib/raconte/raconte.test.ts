@@ -5,6 +5,7 @@ import { createEntry } from "@/lib/journal/entry";
 import { ALTERNATIVES, alternativeFor } from "./alternatives";
 import {
   catalogIds,
+  normalizeForMatch,
   parseDetection,
   parseDetections,
   RACONTE_MAX_GESTURES,
@@ -110,6 +111,56 @@ describe("parseDetection : validation stricte", () => {
     expect(jean(null)?.mode).toBeNull();
     expect(jean("occasion-livree")).toBeNull();
     expect(parseDetection(item({ mode: "neuf" }), TEXT)?.mode).toBeNull();
+  });
+});
+
+describe("extrait : comparaison normalisée des deux côtés", () => {
+  const found = (text: string, excerpt: string) =>
+    parseDetection(item({ gestureId: "cafe", excerpt }), text) !== null;
+
+  it("NFC : lettre accentuée composée ou décomposée", () => {
+    const composed = "un café";
+    const decomposed = "un cafe\u0301";
+    expect(composed).not.toBe(decomposed);
+    expect(found(composed, decomposed)).toBe(true);
+    expect(found(decomposed, composed)).toBe(true);
+  });
+
+  it("apostrophes droites ou typographiques", () => {
+    expect(found("J’ai bu un café", "J'ai bu un café")).toBe(true);
+    expect(found("J'ai bu un café", "J’ai bu un café")).toBe(true);
+    expect(found("Jʼai bu un café", "J'ai bu")).toBe(true);
+  });
+
+  it("guillemets droits, anglais ou français (avec leurs espaces)", () => {
+    const text = "un café « serré » au bar";
+    expect(found(text, 'café "serré"')).toBe(true);
+    expect(found(text, "café “serré”")).toBe(true);
+    expect(found('un café "serré" au bar', "café « serré »")).toBe(true);
+    expect(found("un café « serré » au bar", "café « serré »")).toBe(true);
+  });
+
+  it("espaces multiples, insécables, fines et retours à la ligne", () => {
+    expect(found("un  café\u00a0au\nbar", "un café au bar")).toBe(true);
+    expect(found("un café au bar", "un\u202fcafé  au\tbar")).toBe(true);
+  });
+
+  it("casse et tirets", () => {
+    expect(
+      found("UN CAFÉ à Toulon–Marseille", "un café à toulon-marseille"),
+    ).toBe(true);
+  });
+
+  it("un extrait vraiment absent reste rejeté", () => {
+    expect(found("un thé au bar", "un café")).toBe(false);
+    expect(found("un café", "deux cafés")).toBe(false);
+  });
+
+  it("normalizeForMatch est idempotente", () => {
+    const value = " J’ai  bu « un café »\u00a0– vite ";
+    expect(normalizeForMatch(normalizeForMatch(value))).toBe(
+      normalizeForMatch(value),
+    );
   });
 });
 

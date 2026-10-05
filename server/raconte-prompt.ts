@@ -84,7 +84,7 @@ Règles :
 6. certainty : "explicit" si le geste est nommé ; "inferred" s'il est déduit (« un burger » → repas-boeuf, « le train » → ter).
 7. quantity : seulement pour un trajet, la distance en kilomètres si elle est écrite en chiffres ou en lettres (« 12 km », « vingt kilomètres ») ; sinon null. Ne convertis jamais une durée ni un lieu en distance (« une heure de vélo », « Toulon–Marseille » → null). Pour tout autre geste : null.
 8. mode : seulement pour un objet, "neuf", "occasion" (« d'occasion », « de seconde main ») ou "garder" (« je garde le mien », « je l'ai fait réparer au lieu d'en racheter ») si c'est écrit ; sinon null. Pour tout autre geste : null.
-9. Si aucun geste du catalogue n'est raconté, ou si le texte est vide, hors sujet ou dans une autre langue sans geste reconnaissable, renvoie une liste vide.`;
+9. Le récit peut être écrit en français ou dans une autre langue, en anglais notamment : analyse-le de la même façon, avec un extrait copié dans la langue du récit. Si aucun geste du catalogue n'est raconté, ou si le texte est vide ou hors sujet, renvoie une liste vide.`;
 }
 
 /** Message de la personne : le texte (déjà nettoyé) entouré de sa balise. */

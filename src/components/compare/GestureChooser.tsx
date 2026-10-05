@@ -18,6 +18,7 @@ import { getGesture } from "@/lib/data";
 import type { Category } from "@/lib/data/types";
 import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
 import { useFocusTitle } from "./useFocusTitle";
+import { RaconteLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
 
 type GestureChooserProps = {
@@ -218,6 +219,7 @@ export function GestureChooser({
               ? "Ensuite, choisis la seconde option."
               : "Retouche un geste pour le retirer."}
         </p>
+        <RaconteLink className="mt-2" />
         <SeasonTeaser className="mt-2" />
       </div>
     </main>

@@ -211,6 +211,15 @@ function logRaconte(outcome: string, counters: Record<string, unknown> = {}) {
   console.log(JSON.stringify({ raconte: outcome, ...counters }));
 }
 
+/** GET /api/raconte → { enabled } : l'écran prévient tout de suite si la fonction est coupée. */
+export const handleRaconteStatus = route(async ({ env }) =>
+  json({
+    enabled:
+      env.AI_ENABLED === "1" &&
+      Boolean(env.DB && env.ANTHROPIC_API_KEY && env.TURNSTILE_SECRET_KEY),
+  }),
+);
+
 /**
  * POST /api/raconte : { text, turnstileToken } → { gestures }. Ordre : coupe-circuit
  * AI_ENABLED, texte, limite par IP, Turnstile, limite par compte, plafond global, Claude.

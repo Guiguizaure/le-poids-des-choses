@@ -8,6 +8,7 @@
     "lint": "eslint",
     "build-gestures": "tsx scripts/build-gestures.ts",
     "build-saison": "tsx scripts/build-saison.ts",
+    "raconte:eval": "tsx scripts/raconte-eval.ts",
     "check-data": "tsx scripts/check-data.ts",
     "test": "vitest run",
     "format": "prettier --write .",

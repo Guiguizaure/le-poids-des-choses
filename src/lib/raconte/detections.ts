@@ -40,14 +40,21 @@ export function catalogIds(): string[] {
   return getGestures().map((gesture) => gesture.id);
 }
 
-/** Texte comparable : minuscules, apostrophes et espaces uniformisés. */
+/**
+ * Texte comparable, appliqué au texte et à l'extrait : NFC, minuscules, apostrophes et
+ * guillemets droits ou typographiques confondus (espaces intérieurs des guillemets français
+ * compris), tirets confondus, espaces multiples et insécables réduits à une espace.
+ */
 export function normalizeForMatch(value: string): string {
   return value
     .normalize("NFC")
     .toLowerCase()
-    .replace(/[’‘`´]/g, "'")
-    .replace(/[«»“”]/g, '"')
-    .replace(/[\s  ]+/g, " ")
+    .replace(/[’‘‚‛`´ʼ′]/g, "'")
+    .replace(/[«»“”„‟″]/g, '"')
+    .replace(/[‐‑‒–—―−]/g, "-")
+    .replace(/[\s\u00a0\u202f\u2007\u2009\u200a]+/g, " ")
+    .replace(/" /g, '"')
+    .replace(/ "/g, '"')
     .trim();
 }
 
