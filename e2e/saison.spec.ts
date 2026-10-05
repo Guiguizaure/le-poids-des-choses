@@ -112,14 +112,37 @@ test("/saison : les deux mangues gardées telles quelles, l'origine expliquée",
 });
 
 for (const path of ["/", "/comparer"]) {
-  test(`encart « Ce mois-ci, c'est la saison de… » sur ${path}`, async ({
+  test(`encart de saison sur ${path} : du plus léger au plus lourd au kilo`, async ({
     page,
   }) => {
     await page.goto(path);
+    const current = MONTHS[new Date().getMonth()];
     const teaser = page.getByRole("complementary", {
-      name: "Ce mois-ci, c’est la saison de…",
+      name: `De saison en ${current}`,
     });
-    await expect(teaser.getByRole("listitem")).toHaveCount(3);
+    const range = teaser.locator("[data-season-range]");
+    await expect(range).toContainText("Du plus léger au plus lourd au kilo :");
+    // Deux repères, arrondis comme sur /saison, espace insécable avant les unités.
+    const values = (await range.innerText()).match(
+      /[\d,]+ (?:g|kg|t) CO2e\/kg/g,
+    );
+    expect(values).toHaveLength(2);
+    expect(grams(values![0])).toBeLessThan(grams(values![1]));
+    await expectCredit(teaser);
+    await expect(teaser.locator("[data-credit]")).toContainText(SEASON_DATES);
+
+    // Fruits et légumes dessinés : décoratifs, jamais focalisables, apparus en fondu.
+    const produce = teaser.locator("[data-floating-produce]");
+    await expect(produce).toHaveAttribute("aria-hidden", "true");
+    await produce.scrollIntoViewIfNeeded();
+    const items = produce.locator("[data-produce]");
+    expect(await items.count()).toBeGreaterThan(0);
+    await expect(items.first().locator('[data-layer="bounce"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await expect(produce.locator("a, button, [tabindex]")).toHaveCount(0);
+
     await teaser
       .getByRole("link", { name: "Tous les fruits et légumes de saison" })
       .click();
@@ -129,6 +152,37 @@ for (const path of ["/", "/comparer"]) {
     ).toBeVisible();
   });
 }
+
+test.describe("encart de saison en mouvement réduit", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("les fruits et légumes sont visibles et immobiles", async ({ page }) => {
+    await page.goto("/");
+    const items = page.locator("[data-floating-produce] [data-produce]");
+    await items.first().scrollIntoViewIfNeeded();
+    await expect(items.first().locator('[data-layer="bounce"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await page.waitForTimeout(400);
+    const transforms = await items.evaluateAll((elements) =>
+      elements.flatMap((element) =>
+        ["parallax", "float", "bounce"].map(
+          (name) =>
+            (element.querySelector(`[data-layer="${name}"]`) as HTMLElement)
+              .style.transform,
+        ),
+      ),
+    );
+    expect(transforms.every((value) => value === "")).toBe(true);
+    // Toucher un produit ne le fait pas rebondir.
+    await items.first().click({ force: true });
+    await page.waitForTimeout(200);
+    await expect(
+      items.first().locator('[data-layer="bounce"]'),
+    ).not.toHaveAttribute("style", /translate/);
+  });
+});
 
 test("crédit des données, avec lien et date, sur chaque résultat et sur /methode", async ({
   page,

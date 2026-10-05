@@ -1,5 +1,6 @@
 // Fruits et légumes de saison : lecture des données (saison.generated.json, écrit par
 // `pnpm build-saison`), filtrage par mois, tri par impact au kg, regroupement par catégorie.
+import { formatMass } from "@/lib/calc";
 import generated from "@/lib/data/saison.generated.json";
 import type { SeasonalProduct } from "@/lib/data/types";
 import {
@@ -93,20 +94,33 @@ export function groupByCategory(
   })).filter((group) => group.products.length > 0);
 }
 
+/** Disponible toute l'année : pas « de saison » au sens de l'encart de l'accueil. */
+export function isYearRound(product: SeasonalProduct): boolean {
+  return product.months.length >= 12;
+}
+
 /**
- * Trois produits pour l'encart « Ce mois-ci, c'est la saison de… » : les plus légers au kg
- * parmi ceux qui ont une saison (pas disponibles toute l'année), complétés au besoin par les
- * autres.
+ * Repères de l'encart de l'accueil et de /comparer : parmi les produits qui ont une saison et
+ * sont de saison ce mois-là (ceux de toute l'année sont exclus), le plus léger et le plus
+ * lourd au kg. À égalité d'impact, le premier par ordre alphabétique. [] si aucun produit,
+ * un seul produit s'il n'y en a qu'un.
  */
-export function seasonHighlights(
+export function seasonRange(
   month: number,
-  count = 3,
   list: readonly SeasonalProduct[] = products,
 ): SeasonalProduct[] {
-  const inSeason = productsForMonth(month, list);
-  const seasonal = inSeason.filter((product) => product.months.length < 12);
-  const yearRound = inSeason.filter((product) => product.months.length === 12);
-  return [...seasonal, ...yearRound].slice(0, count);
+  const inSeason = productsForMonth(month, list).filter((p) => !isYearRound(p));
+  if (inSeason.length < 2) return inSeason;
+  const lightest = inSeason[0];
+  const rest = inSeason.slice(1);
+  const max = rest[rest.length - 1].kgCo2ePerKg;
+  const heaviest = rest.find((p) => p.kgCo2ePerKg === max)!;
+  return [lightest, heaviest];
+}
+
+/** Impact au kg, arrondi comme sur /saison : « 384 g CO2e/kg », « 4,8 kg CO2e/kg ». */
+export function formatPerKilo(kgCo2ePerKg: number): string {
+  return `${formatMass(kgCo2ePerKg).replace(" ", " ")} CO2e/kg`;
 }
 
 /** Lien vers /saison pour un mois donné. */

@@ -1,0 +1,3 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fruit"><path d="M40 26 C 26 18, 12 28, 14 46 C 16 62, 28 72, 40 68 C 52 72, 64 62, 66 46 C 68 28, 54 18, 40 26 Z" fill="#FF4F2E" stroke="#1F1A17" stroke-width="1.5"/></g><g id="queue"><path d="M40 27 C 40 20, 42 14, 45 10" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></g><g id="feuille"><path d="M44 16 C 50 8, 60 8, 64 12 C 58 18, 50 20, 44 16 Z" fill="#1B6B45"/></g><g id="reflet"><ellipse cx="28" cy="40" rx="4" ry="7" transform="rotate(20 28 40)" fill="#FFF3DC" opacity="0.6"/></g>
+</svg>

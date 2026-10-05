@@ -614,6 +614,69 @@ function PictoVoiture({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonCarotte({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fanes"><path d="M40 22 C 34 12, 30 6, 26 4 M40 22 C 40 12, 40 6, 41 2 M40 22 C 46 12, 52 6, 56 5" stroke="#2FBF71" strokeWidth="5" strokeLinecap="round" /></g><g data-part="racine"><path d="M28 24 C 34 20, 46 20, 52 24 C 50 40, 44 60, 40 76 C 36 60, 30 40, 28 24 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="stries"><path d="M33 34 H39 M43 44 H48 M35 52 H40 M41 62 H44" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function SaisonCourge({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M40 28 C 52 24, 72 30, 72 50 C 72 68, 54 72, 40 70 C 26 72, 8 68, 8 50 C 8 30, 28 24, 40 28 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="cotes"><path d="M28 30 C 20 40, 20 60, 28 70 M52 30 C 60 40, 60 60, 52 70 M40 28 V70" stroke="#FF4F2E" strokeWidth="2.5" strokeLinecap="round" /></g><g data-part="queue"><path d="M38 28 C 37 20, 40 14, 46 12 L48 16 C 43 18, 42 22, 43 28 Z" fill="#1B6B45" /></g>
+    </svg>
+  );
+}
+
+function SaisonPoire({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M40 14 C 32 14, 30 26, 30 32 C 30 38, 18 44, 18 56 C 18 68, 28 74, 40 74 C 52 74, 62 68, 62 56 C 62 44, 50 38, 50 32 C 50 26, 48 14, 40 14 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="queue"><path d="M40 15 C 40 10, 42 6, 45 4" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuille"><path d="M42 9 C 46 2, 55 2, 58 5 C 54 10, 47 12, 42 9 Z" fill="#2FBF71" /></g><g data-part="tache"><circle cx="48" cy="58" r="2" fill="#2FBF71" /><circle cx="32" cy="62" r="1.6" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function SaisonPoireau({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuilles"><path d="M36 40 C 30 26, 20 14, 8 6 C 22 10, 34 20, 40 32 Z" fill="#1B6B45" /><path d="M42 40 C 46 24, 56 12, 72 6 C 60 14, 50 26, 46 40 Z" fill="#2FBF71" /><path d="M38 40 C 38 26, 40 14, 42 4 C 44 16, 44 28, 43 40 Z" fill="#1B6B45" /></g><g data-part="fut"><rect x="34" y="38" width="12" height="32" rx="5" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="racines"><path d="M36 70 L32 76 M40 70 V77 M44 70 L48 76" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function SaisonPomme({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M40 26 C 26 18, 12 28, 14 46 C 16 62, 28 72, 40 68 C 52 72, 64 62, 66 46 C 68 28, 54 18, 40 26 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="queue"><path d="M40 27 C 40 20, 42 14, 45 10" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuille"><path d="M44 16 C 50 8, 60 8, 64 12 C 58 18, 50 20, 44 16 Z" fill="#1B6B45" /></g><g data-part="reflet"><ellipse cx="28" cy="40" rx="4" ry="7" transform="rotate(20 28 40)" fill="#FFF3DC" opacity="0.6" /></g>
+    </svg>
+  );
+}
+
+function SaisonRaisin({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuille"><path d="M42 6 C 52 2, 66 8, 64 18 C 58 20, 48 18, 42 14 Z" fill="#2FBF71" /></g><g data-part="tige"><path d="M40 6 V18" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="grains"><circle cx="30" cy="24" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="42" cy="22" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="54" cy="26" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="24" cy="36" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="36" cy="34" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="48" cy="34" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="60" cy="38" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="30" cy="46" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="42" cy="46" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="54" cy="48" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="36" cy="58" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="48" cy="58" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="42" cy="69" r="7.5" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="reflets"><circle cx="28" cy="22" r="1.8" fill="#FFF3DC" /><circle cx="46" cy="32" r="1.8" fill="#FFF3DC" /><circle cx="34" cy="56" r="1.8" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function SaisonTomate({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M40 22 C 58 20, 70 32, 68 48 C 66 64, 54 72, 40 72 C 26 72, 14 64, 12 48 C 10 32, 22 20, 40 22 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="collerette"><path d="M40 26 L34 18 L40 22 L44 14 L44 22 L52 18 L46 26 L54 28 L44 29 L40 34 L36 29 L26 28 Z" fill="#2FBF71" /></g><g data-part="reflet"><ellipse cx="26" cy="42" rx="4" ry="7" transform="rotate(20 26 42)" fill="#FFF3DC" opacity="0.6" /></g>
+    </svg>
+  );
+}
+
 function ScenePaysage({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={390} height={300} viewBox="0 0 390 300" fill="none" {...svgProps}>
@@ -700,6 +763,13 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "picto-vin": PictoVin,
   "picto-visio": PictoVisio,
   "picto-voiture": PictoVoiture,
+  "saison-carotte": SaisonCarotte,
+  "saison-courge": SaisonCourge,
+  "saison-poire": SaisonPoire,
+  "saison-poireau": SaisonPoireau,
+  "saison-pomme": SaisonPomme,
+  "saison-raisin": SaisonRaisin,
+  "saison-tomate": SaisonTomate,
   "scene-paysage": ScenePaysage,
   "vent": Vent,
 };

@@ -292,8 +292,18 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   l'API (`SEASON_CATEGORIES`, intitulé = nom de l'API avec majuscule, ordre des ids de
   l'API), triés par impact au kg ; puces colorées, pas d'illustration. Les deux mangues
   (avion, bateau) restent telles quelles ; aucune autre provenance (voir
-  /methode#saison). Encart `SeasonTeaser` sur l'accueil et /comparer : les 3 produits les
-  plus légers au kg parmi ceux qui ont une saison (complétés par ceux de toute l'année).
+  /methode#saison). Encart `SeasonTeaser` sur l'accueil et /comparer : « De saison en
+  octobre » puis « Du plus léger au plus lourd au kilo : Ail (384 g CO2e/kg) … Noisette
+  (4,8 kg CO2e/kg) » (`seasonRange` : produits de saison ce mois-ci hors toute l'année,
+  égalité → ordre alphabétique ; `formatPerKilo` = `formatMass` + espaces insécables), lien
+  /saison et `DataCredit`. Fruits et légumes dessinés flottants (`FloatingProduce`,
+  `saison-*.svg` 80×80, pas de cagette) : correspondance `SEASON_DRAWINGS`
+  (`src/lib/saison/drawn.ts`), `drawnForMonth` (de saison ce mois-ci, saison la plus courte
+  d'abord, 5 au plus ; moins de 3 → toute l'année ; aucun → mois le plus proche) ; places,
+  flottement et parallaxe dans `src/lib/geometry/float.ts` (sans chevauchement, testé) ;
+  4-5 à droite dès 28rem de large (requête de conteneur), rangée de 3 en dessous, masqués
+  sous 15rem ; fondu décalé à l'entrée, rebond au toucher, pause onglet caché ou hors écran,
+  immobiles en mouvement réduit ; démo dans /labo.
 - Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
   (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
   d’accueil » ; masqué si installé ou fermé). Accès permanent « Installer l’appli »
