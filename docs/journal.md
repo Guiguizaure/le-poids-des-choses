@@ -763,7 +763,7 @@ là pour validation avant la suite du lot.
   affiché sur le site) ; le changer demande de relancer `pnpm build-gestures`.
 - Écart avec la maquette Figma 03, qui écrivait « X kg évités » dans la pastille.
 
-## 2026-10-05 — Lot V2-4 : carnet analysé, paliers, ciels, partage (branche feat/journal-partage, en cours)
+## 2026-10-05 — Lot V2-4 : carnet analysé, paliers, ciels, partage (branche feat/journal-partage)
 
 **Demandé** : points 1 à 5 du lot V2-4 après validation du point 0 ; décisions : libellé
 « Pas de nouvelle fabrication (hypothèse) » avec données regénérées, « en moins » gardé dans
@@ -791,22 +791,28 @@ la phrase du duel, Figma déjà à jour, carte de révélation sans « + ».
   (même jardin que `<Garden>`, ciel appliqué, brume, contours des petites bêtes à
   l'échelle) ; `animalIllustration` dans le modèle. Tests unitaires sans navigateur.
 
-**Écrit, pas encore commité (point 4, partie navigateur)** :
+**Reprise après la mise en veille du Mac** : état écrit ici et travail fini commité
+(composition de la carte), puis suite du point 4.
 
-- `public/icons/partager.svg` (icône de la maquette 09a), `src/components/garden/share/` :
-  `renderShareCard.ts` (canvas, polices attendues avec document.fonts, PNG),
-  `useShareSupport.ts` (canShare avec un PNG ET pointeur tactile ou appli installée),
-  `ShareSheet.tsx` (feuille 09b : aperçu, confidentialité, « Partager l’image »,
-  « Annuler », focus piégé, Échap, AbortError sans effet).
-
-**Reste à faire** :
-
-- Point 4 : barre du haut de /jardin (« Exporter » et « Partager » en encre, seulement si
-  le partage est possible ; ordinateur inchangé), `siteUrl` passé depuis la page, retour du
-  focus sur le bouton, tests e2e mobile (partage simulé : PNG 1080×1350) et bureau (bouton
-  absent), deux images dans .tmp/ (éveillé, endormi).
-- Point 5 : lint, typecheck, unitaires, e2e (Chromium, WebKit, axe), Lighthouse /jardin et
-  /jardin/carnet, `STRICT_DATA=1 pnpm build`, captures, CLAUDE.md, push, PR et preview.
+- Point 4, partie navigateur : `public/icons/partager.svg` (icône de la maquette 09a),
+  `src/components/garden/share/` : `renderShareCard.ts` (canvas 1080×1350, polices attendues
+  avec document.fonts, PNG), `useShareSupport.ts` (canShare avec un PNG ET pointeur tactile
+  ou appli installée), `ShareSheet.tsx` (feuille 09b : aperçu, confidentialité, « Partager
+  l’image », « Annuler », `<dialog>` modal, focus piégé, Échap, retour du focus, AbortError
+  sans effet, autre erreur : message discret). Barre du haut de /jardin : « Exporter » et
+  « Partager » sur mobile seulement ; domaine de la carte dérivé de `SITE_URL` (passé par
+  la page). Titre de la carte réduit s'il déborde : « Mon jardin se repose » dépassait à
+  104 px (police plus large dans le navigateur que dans Figma).
+- Images générées dans .tmp/ : `partage-eveille.png` et `partage-endormi.png` (1080×1350),
+  plus `partage-feuille-*.png`.
+- Point 5 : lint, typecheck, 494 tests unitaires, 110 tests de bout en bout (Chromium et
+  WebKit, axe compris, dont la feuille de partage ouverte), `STRICT_DATA=1 pnpm build`
+  passe en entier. Lighthouse mobile (3 passages, build normal avec noindex, règle
+  ADEME) : Jardin 92-94, Carnet 95-96 (autres pages : Accueil 97-100, Comparer 90-95,
+  Duel 94-96, Saison 97-98, Méthode 98-100) ; accessibilité et bonnes pratiques à 100, SEO
+  66-69 (noindex). Captures : carnet, feuille de partage, jardin et duel mis à jour ;
+  carnet de démonstration des captures corrigé (jean sans modes : « Jean plutôt que
+  jean »).
 
 **Gardé / changé** :
 
@@ -816,3 +822,7 @@ la phrase du duel, Figma déjà à jour, carte de révélation sans « + ».
   (seuls oiseau, escargot et hérisson restent, endormis).
 - Ciel « Midi soleil » : les feuillages jaunes et l'abeille ressortent moins sur le ciel
   jaune.
+- Le bouton « Partager » n'apparaît que si le carnet a au moins un choix (pas d'image d'un
+  jardin vide).
+- Tests e2e : le parcours au clavier dans la feuille (Tab) n'est vérifié que sous Chromium,
+  comme les autres tests clavier (WebKit ne parcourt pas les boutons avec Tab).
