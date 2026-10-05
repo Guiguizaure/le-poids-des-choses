@@ -826,3 +826,42 @@ la phrase du duel, Figma déjà à jour, carte de révélation sans « + ».
   jardin vide).
 - Tests e2e : le parcours au clavier dans la feuille (Tab) n'est vérifié que sous Chromium,
   comme les autres tests clavier (WebKit ne parcourt pas les boutons avec Tab).
+
+## 2026-10-05 — Correctif : partage du jardin bloqué sur téléphone (branche feat/journal-partage)
+
+**Demandé** : sur la preview, « Partager » restait sur « Préparation de l’image » puis
+affichait « L’image n’a pas pu être préparée ». Piste proposée : la CSP de `public/_headers`
+(img-src, font-src) qui bloquerait blob: / data:, non appliquée par le serveur des tests.
+
+**Constaté** :
+
+- Piste CSP écartée : la preview renvoie exactement les en-têtes de `public/_headers`
+  (`img-src 'self' data: blob:` y est déjà), et `e2e/static-server.mjs` les appliquait déjà.
+  Le parcours rejoué sur la preview elle-même (Chromium « Pixel 7 » et WebKit « iPhone 14 »,
+  `.tmp/repro-partage.mjs`) produisait bien l’image : le test e2e générait déjà le vrai PNG
+  (seul `navigator.share` est simulé).
+- Vraie cause : les polices de repli de next/font sont déclarées en `src: local(Arial)`,
+  police absente d’Android. `renderShareCard` demandait `document.fonts.load()` avec toute
+  la pile (« Bricolage Grotesque », « Bricolage Grotesque Fallback ») ; dans Chromium, une
+  police correspondante qui échoue fait rejeter tout le chargement (`NetworkError`, vérifié
+  dans `.tmp/font-load.mjs` ; WebKit, lui, résout). Invisible sur ordinateur, où Arial
+  existe. L’erreur était avalée sans trace.
+
+**Fait** :
+
+- `renderShareCard.ts` : seules les vraies polices sont chargées (première famille de la
+  pile), une police non chargée n’empêche plus l’image (avertissement en console) ; étapes
+  nommées (illustrations, image du jardin, dessin, PNG) avec la cause ; SVG chargé par
+  l’événement `load` plutôt que `decode()` (refusé pour les SVG par d’anciens Safari),
+  adresse blob gardée jusqu’au dessin ; repli de `roundRect` pour Safari < 16.
+- `ShareSheet.tsx` : `console.error` avec l’étape et la cause, à l’écran le message discret
+  reste le même ; échec de `navigator.share` (hors annulation) aussi journalisé.
+- Tests e2e : « police de repli absente (Android, sans Arial) » (CSS servie sans Arial,
+  vrai PNG 1080×1350 généré, CSP de production vérifiée sur la réponse) — échouait avant
+  le correctif sous Chromium ; « image impossible à préparer » (illustration en 500 :
+  message discret, étape dans la console).
+- Vérifications : lint, typecheck, 494 tests unitaires, 114 tests de bout en bout (Chromium
+  et WebKit), `STRICT_DATA=1 pnpm build`.
+
+**Gardé / changé** : CSP inchangée (rien à élargir). Le dessin de la carte garde la pile
+complète (repli si la police manque).

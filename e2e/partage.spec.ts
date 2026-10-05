@@ -129,7 +129,10 @@ test.describe("partage du jardin (mobile)", () => {
     await expect(sheet).toHaveCount(0);
   });
 
-  test("autre erreur de partage : message discret", async ({ page }) => {
+  test("autre erreur de partage : message discret", async ({
+    page,
+    consoleErrors,
+  }) => {
     await fakeShare(page, "error");
     await seedJournal(page, TWELVE);
     await page.goto("/jardin");
@@ -142,6 +145,32 @@ test.describe("partage du jardin (mobile)", () => {
     await expect(sheet.getByRole("status")).toHaveText(
       "Le partage n’a pas abouti. Tu peux réessayer.",
     );
+    // L'erreur détaillée reste dans la console (attendue ici, donc tolérée).
+    expect(consoleErrors).toEqual([
+      expect.stringContaining("Partage du jardin en échec."),
+    ]);
+    consoleErrors.length = 0;
+  });
+
+  test("image impossible à préparer : message discret, cause dans la console", async ({
+    page,
+    consoleErrors,
+  }) => {
+    await page.route("**/illustrations/scene-paysage.svg", (route) =>
+      route.fulfill({ status: 500 }),
+    );
+    await fakeShare(page);
+    await seedJournal(page, TWELVE);
+    await page.goto("/jardin");
+    await page.getByRole("button", { name: "Partager", exact: true }).click();
+    const sheet = page.getByRole("dialog", { name: "Partager mon jardin" });
+    await expect(sheet.getByRole("status")).toHaveText(
+      "L’image n’a pas pu être préparée. Réessaie dans un instant.",
+    );
+    const logged = consoleErrors.join("\n");
+    expect(logged).toContain("étape « illustrations » en échec");
+    // Seules erreurs tolérées : la ressource refusée (500) et le détail du rendu.
+    consoleErrors.length = 0;
   });
 
   test("axe : barre du haut et feuille de partage ouverte", async ({
@@ -175,6 +204,41 @@ test.describe("partage du jardin (mobile)", () => {
           `${v.id} : ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`,
       ),
     ).toEqual([]);
+  });
+
+  test("police de repli absente (Android, sans Arial) : le PNG est quand même produit", async ({
+    page,
+  }) => {
+    // Les polices de repli de next/font pointent vers local(Arial), absente d'Android : son
+    // chargement échoue, et Chromium refusait alors tout document.fonts.load (feuille bloquée
+    // sur « L’image n’a pas pu être préparée »). On retire Arial comme sur un téléphone Android.
+    await page.route("**/_next/static/**/*.css", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        body: (await response.text()).replaceAll(
+          "local(Arial)",
+          "local(Police-Absente-Du-Telephone)",
+        ),
+      });
+    });
+    await fakeShare(page);
+    await seedJournal(page, TWELVE);
+    const response = await page.goto("/jardin");
+    // Mêmes en-têtes qu'en production (public/_headers) : le rendu se fait sous la vraie CSP.
+    expect(response?.headers()["content-security-policy"]).toContain(
+      "img-src 'self' data: blob:",
+    );
+    await page.getByRole("button", { name: "Partager", exact: true }).click();
+    const sheet = page.getByRole("dialog", { name: "Partager mon jardin" });
+    await expect(sheet.locator("[data-share-preview]")).toBeVisible({
+      timeout: 10_000,
+    });
+    await sheet.getByRole("button", { name: "Partager l’image" }).click();
+    const shared = (await page.evaluate(
+      () => (window as unknown as { __shared: unknown }).__shared,
+    )) as Shared;
+    expect(shared).toMatchObject({ width: 1080, height: 1350 });
   });
 
   test("jardin endormi : l'image se prépare aussi", async ({ page }) => {

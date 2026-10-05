@@ -53,11 +53,16 @@ export function ShareSheet({
           previewUrl: url,
         });
       })
-      .catch(() => {
-        if (!cancelled)
-          setMessage(
-            "L’image n’a pas pu être préparée. Réessaie dans un instant.",
-          );
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        // Détail complet (étape et cause) pour le débogage ; message discret à l'écran.
+        console.error(
+          error,
+          error instanceof Error ? { cause: error.cause } : undefined,
+        );
+        setMessage(
+          "L’image n’a pas pu être préparée. Réessaie dans un instant.",
+        );
       });
     return () => {
       cancelled = true;
@@ -83,6 +88,7 @@ export function ShareSheet({
     } catch (error) {
       // Partage annulé par l'utilisateur : rien ne se passe.
       if (error instanceof DOMException && error.name === "AbortError") return;
+      console.error("Partage du jardin en échec.", error);
       setMessage("Le partage n’a pas abouti. Tu peux réessayer.");
     }
   };
