@@ -142,6 +142,10 @@ for (const path of ["/", "/comparer"]) {
       "1",
     );
     await expect(produce.locator("a, button, [tabindex]")).toHaveCount(0);
+    // Le mois en étiquette de papier découpé, comme dans le titre.
+    const tag = produce.locator("[data-month-tag]");
+    await expect(tag).toHaveText(current);
+    await expect(tag).toHaveCSS("opacity", "1");
 
     await teaser
       .getByRole("link", { name: "Tous les fruits et légumes de saison" })
@@ -164,6 +168,9 @@ test.describe("encart de saison en mouvement réduit", () => {
       "opacity",
       "1",
     );
+    await expect(
+      page.locator("[data-floating-produce] [data-month-tag]"),
+    ).toHaveCSS("opacity", "1");
     await page.waitForTimeout(400);
     const transforms = await items.evaluateAll((elements) =>
       elements.flatMap((element) =>

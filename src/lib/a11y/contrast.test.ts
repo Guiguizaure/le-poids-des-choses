@@ -70,7 +70,8 @@ const PAIRS: {
     text: "encre",
     background: "soleil",
     minimum: 4.5,
-    where: "bandeau « Garde ton jardin »",
+    where:
+      "bandeau « Garde ton jardin », étiquette du mois de l’encart de saison",
   },
   {
     text: "encre",
