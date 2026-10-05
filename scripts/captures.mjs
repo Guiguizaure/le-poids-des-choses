@@ -49,6 +49,10 @@ try {
   await desktop.goto(`${BASE}/`);
   await desktop.waitForTimeout(800);
   await desktop.screenshot({ path: `${OUT}accueil.png` });
+  // Méthode sur ordinateur : papiers découpés dans les marges.
+  await desktop.goto(`${BASE}/methode`);
+  await desktop.waitForTimeout(600);
+  await desktop.screenshot({ path: `${OUT}methode-ordinateur.png` });
 
   const mobile = await browser.newContext({
     ...devices["iPhone 14"],
@@ -62,6 +66,13 @@ try {
     localStorage.setItem("lpdc:install-banner:dismissed", "1");
   }, JOURNAL);
   const page = await mobile.newPage();
+  // Accueil et Méthode sur mobile (carnet sans compte : « Se connecter » dans l'en-tête).
+  await page.goto(`${BASE}/`);
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${OUT}accueil-mobile.png`, fullPage: true });
+  await page.goto(`${BASE}/methode`);
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}methode-mobile.png` });
   await page.goto(`${BASE}/comparer?a=tgv&b=avion&q=300`);
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}duel.png` });

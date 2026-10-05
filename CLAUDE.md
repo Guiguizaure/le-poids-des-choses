@@ -95,8 +95,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
   de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
   voir »), `/saison` (fruits et légumes de saison),
-  `/methode` (maquette 06), `/mentions-legales`, `/confidentialite`, `/connexion` (lien
-  magique ; toujours noindex et hors sitemap),
+  `/methode` (maquette 06, papiers découpés `PaperCutout`), `/mentions-legales`,
+  `/confidentialite`, `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
+  jeton ; toujours noindex et hors sitemap),
   404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
   noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
   commun (`SiteFooter`) dans le layout
@@ -295,7 +296,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   plus légers au kg parmi ceux qui ont une saison (complétés par ceux de toute l'année).
 - Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
   (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
-  d’accueil » ; masqué si installé ou fermé). Pas de service worker pour l'instant.
+  d’accueil » ; masqué si installé ou fermé). Accès permanent « Installer l’appli »
+  (`InstallButton`, règle `installAccess`) dans le pied de page et la sauvegarde de /jardin,
+  même bandeau fermé : invite mémorisée, ou aide en deux gestes (en mots) sur iPhone et iPad ;
+  masqué si installé ou impossible. État partagé : `src/components/install/useInstall.ts`,
+  chargé par le pied de page (l'invite est gardée sur toutes les pages). Pas de service
+  worker pour l'instant.
+- Papiers découpés (`PaperCutout`, /methode) : illustrations existantes, 4 à 6 au plus,
+  aria-hidden, cadre de taille fixe, rotation et ombre encre (`drop-shadow`) ; à côté des
+  titres sur mobile (masquées sous 360 px), dans les marges dès `lg` ; se posent à l'entrée
+  dans l'écran (`useMotion`, IntersectionObserver), rien en mouvement réduit.
 - Qualité :
   - CI GitHub Actions (`.github/workflows/ci.yml`) : lint, tests, build, bout en bout à
     chaque demande de fusion ;
@@ -361,6 +371,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     va dans `conflicts` (jamais affichée, dans l'export du compte) ;
   - synchro à la connexion (tout le carnet), après chaque choix si connecté, à l'ouverture
     de /jardin et au retour en ligne ; file d'attente dans `lpdc:compte:v1` ;
+  - retrouver son jardin : « J’ai déjà un jardin ? Le retrouver » (accueil) et
+    `AccountLink` dans les en-têtes (accueil, pages de texte, /saison, carnet) vers
+    /connexion, ou l'adresse connectée (tronquée sur mobile) vers `/jardin#compte` ;
+    /jardin vide : section « Retrouve ton jardin » en haut (`AccountSection
+variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet, import) :
+    fondu groupé (`Garden arriving`) et un seul message « Ton jardin est de retour : N
+    choix retrouvés. » ;
   - entretien au plus une fois par jour, déclenché par les appels à l'API (pas de cron dans
     Pages) : comptes inactifs depuis 24 mois supprimés, liens et sessions expirés, compteurs
     de plus de 2 jours ;
