@@ -26,9 +26,10 @@ Projet indépendant, non affilié à l'ADEME.
   Cloudflare au lancement). Les mentions légales sont remplies : `STRICT_DATA=1 pnpm build`
   passe (un test le vérifie). Toujours bloquant, même sans `STRICT_DATA` : un gabarit « Le
   savais-tu ? » qui référence un geste ou un produit de saison disparu.
-- **Pas de `SITE_LAUNCHED=1` tant que l'ADEME n'a pas confirmé les conditions de
-  réutilisation** des données Impact CO2 (demande en cours, octobre 2026). `DATA_LICENSE`
-  reste à null d'ici là.
+- Données Impact CO2 : réutilisation autorisée par l'équipe Impact CO2 de l'ADEME (e-mail
+  du 5 octobre 2026), gratuite, avec la mention « Données : Impact CO2 – ADEME »
+  (`DataCredit`) ; affichée sur /methode (`DATA_LICENSE`). La clé `IMPACTCO2_API_KEY` vit
+  dans `.env.local` seulement : jamais affichée ni commitée.
 - Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
@@ -69,8 +70,8 @@ Prettier, pnpm. Site statique
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
   les liens avec Tab).
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
-  carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; SEO mesuré avec le noindex
-  tant que `SITE_LAUNCHED=1` est interdit (règle ADEME).
+  carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; construire avec
+  `SITE_LAUNCHED=1` pour mesurer le SEO sans le noindex.
 - `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
   partage (partage de fichiers simulé)
 - `pnpm lint` · `pnpm test` · `pnpm format`
@@ -251,13 +252,14 @@ Prettier, pnpm. Site statique
     reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
     animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
-- Lancement (pas avant la réponse de l'ADEME, voir Règles) : `SITE_LAUNCHED=1` au build
-  retire le noindex, remplit sitemap.xml et ouvre robots.txt (sauf /labo). Sans elle, tout reste en noindex. Penser aussi à `SITE_URL` si
+- Lancement (`SITE_LAUNCHED=1`, activé par l'utilisateur dans Cloudflare) : au build, elle
+  retire le noindex, remplit sitemap.xml et ouvre robots.txt (sauf /labo). Sans elle, tout
+  reste en noindex. Penser aussi à `SITE_URL` si
   le domaine n'est pas `le-poids-des-choses.pages.dev`, à `STRICT_DATA=1`, et à activer
   Cloudflare Web Analytics dans le tableau de bord Pages (annoncé dans les mentions
   légales).
-- Méthode : la mention de licence exacte des données ADEME est attendue ; emplacement
-  `DATA_LICENSE` dans `src/app/methode/page.tsx` (null : rien n'est affiché).
+- Méthode : conditions de réutilisation des données ADEME dans `DATA_LICENSE`
+  (`src/app/methode/page.tsx`), affichées dans #sources.
 - Crédit des données (`DataCredit`) : « Données : Impact CO2 – ADEME » (lien) et la date
   de téléchargement des données affichées, sur chaque résultat (duel, duel objet, carte de
   révélation), sur /saison et sur /methode (#sources et #saison). Testé de bout en bout.

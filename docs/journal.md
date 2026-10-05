@@ -865,3 +865,28 @@ affichait « L’image n’a pas pu être préparée ». Piste proposée : la CS
 
 **Gardé / changé** : CSP inchangée (rien à élargir). Le dessin de la carte garde la pile
 complète (repli si la police manque).
+
+## 2026-10-05 — Autorisation de l'ADEME (branche chore/licence-ademe)
+
+**Demandé** : l'équipe Impact CO2 de l'ADEME a répondu par e-mail le 5 octobre 2026 à la
+demande de réutilisation (usage en portfolio) : réutilisation gratuite et sans limite, mention
+« Données : Impact CO2 – ADEME » validée. Renseigner `DATA_LICENSE` et l'afficher sur
+/methode, retirer la règle « pas de `SITE_LAUNCHED` » de CLAUDE.md, relancer
+`pnpm build-gestures` et `pnpm build-saison` avec la clé (dans `.env.local`, jamais affichée
+ni commitée) et vérifier que seules les dates changent.
+
+**Fait** :
+
+- `DATA_LICENSE` (/methode#sources) : « Réutilisation des données autorisée par l’équipe
+  Impact CO2 de l’ADEME (e-mail du 5 octobre 2026), gratuitement, avec la mention « Données :
+  Impact CO2 – ADEME ». » Vérifié de bout en bout (`e2e/saison.spec.ts`).
+- CLAUDE.md : règle d'attente remplacée par l'autorisation ; lancement (`SITE_LAUNCHED=1`)
+  activé par l'utilisateur dans Cloudflare. README (licences) et commentaire de
+  `scripts/lighthouse.mjs` mis à jour.
+- Données regénérées : aucune valeur ne change (34 gestes, 76 produits). Seuls changent les
+  deux `downloadedAt` et `authenticated: true` dans `saison.generated.json` (requête faite
+  avec la clé). La date affichée des données de saison passe au 5 octobre 2026.
+- Vérifications : lint, typecheck, 494 tests unitaires, `STRICT_DATA=1 pnpm build`, 114 tests
+  de bout en bout (Chromium et WebKit, axe compris). Au premier passage, trois tests axe
+  WebKit (accueil, choix des gestes, duel) ont échoué, puis sont passés seuls et dans un
+  second passage complet, sans changement de code.
