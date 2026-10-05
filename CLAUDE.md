@@ -15,9 +15,12 @@ Projet indépendant, non affilié à l'ADEME.
 - Messages de commit au format conventionnel, en français : `feat:`, `fix:`, `chore:`,
   `docs:`, `refactor:`, `test:`…
 - Ne lance pas `pnpm dev` : l'utilisateur le lance dans un autre onglet. `build`, `lint`
-  et `test` sont autorisés.
-- Aucun secret dans le dépôt (`.env*` ignorés). La clé API ADEME ne sert qu'au script de
-  données, en local.
+  et `test` sont autorisés, ainsi que `wrangler pages dev` sur un port dédié pour les tests
+  (à arrêter ensuite). Si une commande wrangler demande une connexion au compte Cloudflare,
+  s'arrêter et donner la commande à l'utilisateur.
+- Aucun secret dans le dépôt (`.env*`, `.dev.vars` ignorés). La clé API ADEME ne sert qu'au
+  script de données, en local. Clés et secrets du compte : `.dev.vars` en local et secrets
+  Cloudflare (saisis par l'utilisateur), jamais ailleurs.
 - Toute valeur de test porte `fictive: true` (et `source: "fictive"`) et n'est jamais citée.
   Elles vivent dans `src/lib/data/test-gestures.ts`. `scripts/check-data.ts` (lancé par
   `pnpm build`) fait échouer la construction s'il reste une donnée fictive OU un
@@ -37,7 +40,8 @@ Projet indépendant, non affilié à l'ADEME.
 
 Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème dans
 `src/app/globals.css`, bloc `@theme`), GSAP + `@gsap/react` (animations), Vitest, ESLint,
-Prettier, pnpm. Site statique
+Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et D1 (base
+`DB`), e-mails Resend, anti-robot Turnstile. Site statique
 (`output: 'export'`, images non optimisées) hébergé sur Cloudflare Pages.
 
 ## Commandes
@@ -67,12 +71,19 @@ Prettier, pnpm. Site statique
   et WebKit « iPhone 14 ») sur `out/`, servi par `e2e/static-server.mjs` avec les en-têtes
   de `public/_headers` ; toute erreur de console (CSP comprise) fait échouer un test.
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
-  les liens avec Tab).
+  les liens avec Tab). Le compte (`e2e/compte.spec.ts`, projets `compte-chromium` et
+  `compte-webkit`, 2 workers chacun) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
+  en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
+  Resend et faux siteverify, port 4330) ; Turnstile est simulé par une route Playwright.
+  Aucun vrai e-mail, aucune connexion à Cloudflare.
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
   carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; SEO mesuré avec le noindex
   tant que `SITE_LAUNCHED=1` est interdit (règle ADEME).
 - `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
   partage (partage de fichiers simulé)
+- `pnpm db:migrate:local` — applique `migrations/` à la base D1 locale (`wrangler.local.toml`)
+- `pnpm pages:dev` — export + Pages Functions en local (port 8788, base locale, `.dev.vars`
+  d'après `.dev.vars.example`) ; `pnpm build` avant
 - `pnpm lint` · `pnpm test` · `pnpm format`
 
 ## Arborescence
@@ -80,7 +91,8 @@ Prettier, pnpm. Site statique
 - `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
   de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
   voir »), `/saison` (fruits et légumes de saison),
-  `/methode` (maquette 06), `/mentions-legales`,
+  `/methode` (maquette 06), `/mentions-legales`, `/confidentialite`, `/connexion` (lien
+  magique ; toujours noindex et hors sitemap),
   404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
   noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
   commun (`SiteFooter`) dans le layout
@@ -127,6 +139,13 @@ Prettier, pnpm. Site statique
   `isAsleep`, `formatMass`, modes d'acquisition)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
 - `scripts` — scripts de données et de conversion des illustrations
+- `functions/api` — Pages Functions (routes minces) ; `server/` — logique de l'API (auth,
+  limites, carnet, e-mail, entretien, origines), testée sur une D1 locale
+  (`server/testing/d1.ts`, `getPlatformProxy`) ; `migrations/` — schéma D1 versionné ;
+  `wrangler.local.toml` — configuration LOCALE seulement (voir Compte)
+- `src/lib/sync` — compte côté navigateur : fusion (`merge.ts`), forme canonique, état de
+  synchro (`lpdc:compte:v1`), client de l'API, moteur de synchro (`engine.ts`), textes,
+  Turnstile ; `src/components/account` — `AccountSection` (/jardin), `ConnexionScreen`
 - `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
 
 ## Conventions
@@ -319,5 +338,36 @@ Prettier, pnpm. Site statique
   déborde, domaine dérivé de `SITE_URL` (passé par la page). Aucun kg ni choix lourd sur
   l'image. Feuille modale (`<dialog>`) : focus piégé, Échap, retour du focus ; AbortError
   sans effet, autre erreur : message discret.
+- Compte (lot V2-2, facultatif ; le carnet local reste la source principale) :
+  - routes : `POST /api/auth/link` (e-mail + Turnstile, réponse identique que l'adresse ait un
+    compte ou non), `POST /api/auth/verify`, `GET /api/auth/session`,
+    `POST /api/auth/logout`, `POST /api/journal/sync` (`since`, `entries`, 200 au plus),
+    `GET /api/account/export`, `DELETE /api/account` (`{ confirm: "supprimer" }`) ;
+  - lien magique vers `/connexion#jeton=…` (fragment : jamais envoyé au serveur ni ouvert par
+    les antivirus de messagerie), 15 min, usage unique ; seules les empreintes SHA-256 des
+    jetons sont en base ; cookie `__Host-lpdc_session` (HttpOnly, Secure, SameSite=Lax,
+    90 jours) ; Origin vérifiée sur tout POST/DELETE ; origines autorisées
+    (`server/origin.ts`) : lepoidsdeschoses.com, www, le-poids-des-choses.pages.dev et
+    `*.le-poids-des-choses.pages.dev` (localhost seulement avec `ALLOW_LOCALHOST=1`) ;
+  - limites (`server/config.ts`) : liens 3/15 min et 10/24 h par e-mail, 10/15 min et
+    50/24 h par IP ; vérifications 30/15 min par IP ; clés HMAC (`HASH_SECRET`) ;
+  - carnet en base append-only, une ligne par version d'entrée ; conflit (même id, contenu
+    différent) : les deux versions gardées ; côté appareil, la version locale reste, l'autre
+    va dans `conflicts` (jamais affichée, dans l'export du compte) ;
+  - synchro à la connexion (tout le carnet), après chaque choix si connecté, à l'ouverture
+    de /jardin et au retour en ligne ; file d'attente dans `lpdc:compte:v1` ;
+  - entretien au plus une fois par jour, déclenché par les appels à l'API (pas de cron dans
+    Pages) : comptes inactifs depuis 24 mois supprimés, liens et sessions expirés, compteurs
+    de plus de 2 jours ;
+  - `wrangler.local.toml` n'a pas de `pages_build_output_dir` et n'est pas nommé
+    `wrangler.toml` : Pages ne le lit jamais ; liaisons, variables et secrets restent dans le
+    tableau de bord (base liée sous le nom `DB`) ; `wrangler pages dev` reçoit la base par
+    `--d1 DB=lpdc-local` ;
+  - secrets : `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `HASH_SECRET` ; variable de build
+    `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (sans elle : clé de test, avertissement au build) ;
+    expéditeur `connexion@lepoidsdeschoses.com` ;
+  - /confidentialite (pied de page, formulaire) et mentions légales : un seul cookie, posé
+    seulement à la connexion ; Turnstile chargé seulement quand le formulaire sert (CSP :
+    `challenges.cloudflare.com` en script et frame).
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
   droits réservés (`LICENSE`).

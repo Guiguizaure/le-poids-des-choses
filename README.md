@@ -23,8 +23,12 @@ affilié à l'ADEME.
 - **Le carnet et le jardin** : chaque choix plus léger fait pousser une plante ; un choix plus
   lourd est simplement noté, rien n'est retiré. Les animaux arrivent au fil des choix ;
   après trois semaines sans visite, le jardin s'assoupit sous la brume.
-- **Tout reste sur l'appareil** : carnet dans le navigateur, export et import en fichier,
-  aucun compte, aucun cookie. Installable sur l'écran d'accueil.
+- **Le carnet reste sur l'appareil** : carnet dans le navigateur, export et import en
+  fichier. Installable sur l'écran d'accueil.
+- **Compte facultatif** pour retrouver son jardin sur un autre appareil : lien magique par
+  e-mail (sans mot de passe), synchronisation append-only qui n'écrase jamais une entrée
+  locale, file d'attente hors ligne, export et suppression immédiate du compte. Un seul
+  cookie, posé seulement à la connexion.
 - **URL partageable** pour chaque comparaison, accessible au clavier et aux lecteurs
   d'écran, animations coupées si le système le demande.
 
@@ -32,6 +36,8 @@ affilié à l'ADEME.
 
 - [Next.js](https://nextjs.org) 16 (App Router) + React 19 + TypeScript, export 100 %
   statique hébergé sur Cloudflare Pages
+- Compte : Cloudflare Pages Functions + D1 (migrations versionnées), e-mails Resend,
+  anti-robot Turnstile
 - Tailwind CSS 4 (thème issu des variables Figma)
 - GSAP + `@gsap/react` pour les animations (balance, plantes, animaux, vent, ciel)
 - Vitest (tests unitaires), Playwright + axe (bout en bout et accessibilité, Chromium et
@@ -43,10 +49,15 @@ affilié à l'ADEME.
 ```
 public/illustrations/   SVG dessinés (un fichier par stade, calques nommés)
 scripts/                données (CSV Impact CO2), conversion des SVG, images, garde-fous
-src/app/                pages : accueil, /comparer, /jardin, /methode, /mentions-legales, 404
+src/app/                pages : accueil, /comparer, /jardin, /saison, /methode, /connexion,
+                        /confidentialite, /mentions-legales, 404
+functions/api/          Pages Functions (routes du compte), logique dans server/
+server/                 API du compte : liens magiques, sessions, limites, carnet, entretien
+migrations/             schéma D1 versionné
 src/components/         écrans (compare, garden, home), scène animée (scene), interface (ui)
 src/lib/                logique pure et testée : calc, compare, garden, journal, data, site
-e2e/                    tests Playwright et serveur de test (en-têtes Cloudflare)
+e2e/                    tests Playwright, serveur de test (en-têtes Cloudflare), wrangler pages
+                        dev et faux Resend / Turnstile pour le compte
 docs/                   méthode, conventions SVG, journal de bord
 ```
 
@@ -99,6 +110,7 @@ pnpm test            # tests unitaires (Vitest)
 pnpm e2e             # tests de bout en bout et accessibilité (après pnpm build)
 pnpm lighthouse      # scores Lighthouse mobile (après pnpm build et pnpm serve:out)
 pnpm format          # Prettier
+pnpm pages:dev       # export + Pages Functions en local (après pnpm build et db:migrate:local)
 
 pnpm build-gestures  # régénère les données depuis le CSV Impact CO2 (à la main)
 pnpm illustrations   # reconvertit les SVG après un nouvel export

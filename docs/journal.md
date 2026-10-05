@@ -865,3 +865,70 @@ affichait « L’image n’a pas pu être préparée ». Piste proposée : la CS
 
 **Gardé / changé** : CSP inchangée (rien à élargir). Le dessin de la carte garde la pile
 complète (repli si la police manque).
+
+## 2026-10-05 — Lot V2-2 : compte optionnel, lien magique, synchronisation (branche feat/comptes)
+
+**Demandé** : compte facultatif (lien magique par e-mail, Turnstile, Resend) pour retrouver son
+jardin sur un autre appareil, le carnet local restant la source principale ; Pages Functions
+et D1 à côté de l'export statique ; fusion append-only par id ; export, déconnexion,
+suppression ; page /confidentialite ; section en bas de /jardin ; tests unitaires, Functions
+sur D1 locale avec faux Resend, e2e complet. Point 1 (schéma, routes) validé avec décisions :
+purge des comptes inactifs déclenchée par les appels à l'API (au plus une fois par jour),
+liaisons D1 dans le tableau de bord (le fichier wrangler ne doit pas devenir la source de
+vérité), expéditeur connexion@lepoidsdeschoses.com sans mail d'avertissement, origine
+le-poids-des-choses.pages.dev gardée, getPlatformProxy pour les tests.
+
+**Fait** :
+
+- `migrations/0001_comptes.sql` : `users`, `login_tokens`, `sessions`, `journal_entries` (une
+  ligne par version, `seq` pour la synchro incrémentale), `rate_limits`, `maintenance`.
+- `wrangler.local.toml` (local seulement) : pas nommé `wrangler.toml` et sans
+  `pages_build_output_dir` ; d'après la doc Cloudflare (« Wrangler configuration » des
+  Pages Functions), sans cette clé le fichier ne sert qu'en local. `wrangler pages dev`
+  n'accepte pas de fichier personnalisé : la base lui est passée par `--d1 DB=lpdc-local`
+  (vérifié : même base locale que les migrations). Les options `-b` l'emportent sur
+  `.dev.vars` (vérifié) : les tests ne peuvent jamais utiliser une vraie clé Resend.
+- `server/` (logique, types D1 minimaux, sans types globaux de Workers) et `functions/api/`
+  (routes minces, middleware : en-têtes, erreurs, entretien quotidien). Lien vers
+  `/connexion#jeton=…` : jeton dans le fragment, envoyé en POST par la page (les antivirus
+  de messagerie qui ouvrent les liens ne le consomment pas). Empreintes SHA-256 des jetons,
+  cookie `__Host-lpdc_session`, Origin vérifiée, limites par HMAC de l'e-mail et de l'IP,
+  réponse identique que l'adresse ait un compte ou non.
+- Navigateur : `src/lib/sync` (fusion, forme canonique, état `lpdc:compte:v1`, client,
+  moteur avec file d'attente et pagination), `JournalStore.mergeRemote` (n'écrase rien),
+  carnet partagé déplacé dans `src/lib/journal/browser.ts`, synchro après chaque choix
+  (`useJournal().add`). `AccountSection` sur /jardin (non connecté, lien envoyé, connecté
+  avec dernière synchro, confirmation de suppression, erreurs), `/connexion`,
+  `/confidentialite` (lien dans le pied de page et le formulaire), mentions légales mises à
+  jour (« Aucun compte », « Aucun cookie » n'étaient plus vrais). Turnstile chargé au premier
+  usage du formulaire ; CSP : `challenges.cloudflare.com` en script et frame.
+- Vérifié pour /confidentialite : Resend est exploité par Plus Five Five, Inc. et garde ses
+  données aux États-Unis quelle que soit la région d'envoi ; une base D1 peut être limitée à
+  l'UE (juridiction choisie à la création, non modifiable) ; Turnstile utilise notamment
+  l'IP et des caractéristiques du navigateur, pour détecter les robots seulement.
+- Tests : 596 unitaires (fusion : vide, doublons, conflit, ordre ; jetons : expiration,
+  réutilisation, clics simultanés ; limites ; synchro, pagination, export ; entretien
+  24 mois ; routes complètes sur D1 locale avec faux Resend et faux Turnstile, `fetch`
+  remplacé). E2e : `wrangler pages dev` en HTTPS (WebKit refuse le cookie Secure en http
+  local) avec D1 neuve et faux services ; parcours complet sur deux appareils (lien
+  intercepté, connexion, synchro croisée, nouveau choix, export, suppression, session
+  disparue sur l'autre appareil), lien à usage unique, déconnexion, panne réseau puis
+  retour, limite de demandes, axe sur chaque état ; 134 tests passent (Chromium, WebKit).
+  `STRICT_DATA=1 pnpm build` passe (avertissement : clé Turnstile publique absente en local).
+  Lint, typecheck. Lighthouse mobile (3 passages, noindex) : Mon jardin 92-95 (92-94 avant
+  le lot), Carnet 95-97, Accueil 98-100 ; accessibilité et bonnes pratiques à 100, SEO 66-69.
+
+**Gardé / changé** :
+
+- Export du compte : format de l'export local, plus `account` (adresse, date de création)
+  et `conflicts` s'il y en a ; « Importer » le relit.
+- Après la suppression du compte sur un appareil, l'autre appareil voit « Ta session a pris
+  fin » à sa visite suivante ; son carnet reste.
+- Tests du compte dans deux projets Playwright (`compte-chromium`, `compte-webkit`,
+  2 workers, après les autres) : en parallèle avec le reste, la machine (8 cœurs, charge
+  jusqu'à 50) faisait dépasser les délais. Préchargements Next interrompus tolérés dans
+  WebKit pour ces tests seulement ; test de limite décalé s'il tombe à moins d'une minute
+  d'une fenêtre de 15 minutes.
+- Lien « Confidentialité » de la section sans préchargement.
+- `main` pas encore fusionnée dans la branche : la PR #17 (licence ADEME) est encore
+  ouverte.
