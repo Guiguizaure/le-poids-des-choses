@@ -235,10 +235,14 @@ test.describe("partage du jardin (mobile)", () => {
       timeout: 10_000,
     });
     await sheet.getByRole("button", { name: "Partager l’image" }).click();
-    const shared = (await page.evaluate(
-      () => (window as unknown as { __shared: unknown }).__shared,
-    )) as Shared;
-    expect(shared).toMatchObject({ width: 1080, height: 1350 });
+    // Le partage est asynchrone : on attend qu'il ait eu lieu (machine chargée).
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => (window as unknown as { __shared: unknown }).__shared,
+        ),
+      )
+      .toMatchObject({ width: 1080, height: 1350 });
   });
 
   test("jardin endormi : l'image se prépare aussi", async ({ page }) => {
