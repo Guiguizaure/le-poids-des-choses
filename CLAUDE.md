@@ -82,6 +82,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
   partage (partage de fichiers simulé)
 - `pnpm db:migrate:local` — applique `migrations/` à la base D1 locale (`wrangler.local.toml`)
+- `pnpm db:migrate:production` · `pnpm db:migrate:preview` — appliquent `migrations/` aux
+  bases distantes `lpdc-production` / `lpdc-preview` (retrouvées par leur nom) ; demandent
+  une connexion Cloudflare : à lancer par l'utilisateur uniquement
 - `pnpm pages:dev` — export + Pages Functions en local (port 8788, base locale, `.dev.vars`
   d'après `.dev.vars.example`) ; `pnpm build` avant
 - `pnpm lint` · `pnpm test` · `pnpm format`

@@ -13,3 +13,16 @@ binding = "DB"
 database_name = "lpdc-local"
 database_id = "lpdc-local"
 migrations_dir = "migrations"
+
+# Migrations des bases distantes, lancées à la main par l'utilisateur (connexion Cloudflare) :
+# `pnpm db:migrate:production` et `pnpm db:migrate:preview`. Seul le nom de la base figure ici :
+# wrangler retrouve son identifiant par l'API. Ces environnements ne servent qu'aux migrations.
+[env.production]
+d1_databases = [
+  { binding = "DB", database_name = "lpdc-production", migrations_dir = "migrations" },
+]
+
+[env.preview]
+d1_databases = [
+  { binding = "DB", database_name = "lpdc-preview", migrations_dir = "migrations" },
+]
