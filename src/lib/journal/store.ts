@@ -1,6 +1,7 @@
 // Carnet enregistré sur l'appareil (localStorage), avec repli en mémoire quand le stockage est
 // indisponible (navigation privée, stockage bloqué). Jamais d'erreur levée vers l'interface.
 import type { JournalEntry } from "@/lib/data/types";
+import { mergeRemote, type SyncConflict } from "@/lib/sync/merge";
 import { appendEntry, importJournal, type ImportResult } from "./merge";
 import {
   MIGRATIONS,
@@ -18,6 +19,14 @@ export type JournalStore = {
   subscribe(listener: () => void): () => void;
   add(entry: JournalEntry): void;
   importText(text: string): Omit<ImportResult, "entries">;
+  /**
+   * Synchro : ajoute les entrées du compte sans jamais écraser ni retirer une entrée locale ;
+   * une autre version d'une entrée connue est renvoyée comme conflit (non ajoutée).
+   */
+  mergeRemote(entries: readonly JournalEntry[]): {
+    added: number;
+    conflicts: SyncConflict[];
+  };
   reset(): void;
   /** Faux si le carnet ne vit qu'en mémoire (il disparaîtra à la fermeture). */
   readonly persistent: boolean;
@@ -128,6 +137,15 @@ export function createJournalStore(
         emit();
       }
       return { added: result.added, invalid: result.invalid };
+    },
+    mergeRemote(remote) {
+      const result = mergeRemote(state.entries, remote);
+      if (result.added.length > 0) {
+        state = { ...state, entries: result.entries };
+        save();
+        emit();
+      }
+      return { added: result.added.length, conflicts: result.conflicts };
     },
     reset() {
       state = { entries: [], invalid: [] };

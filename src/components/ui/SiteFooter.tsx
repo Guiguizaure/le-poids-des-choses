@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** Pied de page commun : Méthode, Mentions légales, auteur. */
+/** Pied de page commun : Méthode, Mentions légales, Confidentialité, auteur. */
 export function SiteFooter() {
   return (
     <footer className="border-encre/10 mx-auto mt-auto w-full max-w-[1280px] border-t px-5 py-6 lg:px-20">
@@ -20,6 +20,14 @@ export function SiteFooter() {
               className="text-encre font-semibold underline-offset-2 hover:underline"
             >
               Mentions légales
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/confidentialite"
+              className="text-encre font-semibold underline-offset-2 hover:underline"
+            >
+              Confidentialité
             </Link>
           </li>
           <li>

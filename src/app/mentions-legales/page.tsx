@@ -11,7 +11,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "Mentions légales",
   description:
-    "Éditeur, hébergeur et confidentialité : ton carnet reste sur ton appareil.",
+    "Éditeur, hébergeur et confidentialité : sans compte, ton carnet reste sur ton appareil.",
   path: "/mentions-legales",
 });
 
@@ -55,17 +55,33 @@ export default function MentionsLegalesPage() {
       <Section id="confidentialite" title="Confidentialité">
         <ul className="list-disc space-y-1 pl-5">
           <li>
-            Ton carnet est stocké uniquement sur ton appareil, dans ton
-            navigateur. Il n’est envoyé nulle part ; l’export et l’import se
-            font avec un fichier qui reste chez toi.
+            Sans compte, ton carnet est stocké uniquement sur ton appareil, dans
+            ton navigateur ; l’export et l’import se font avec un fichier qui
+            reste chez toi.
           </li>
-          <li>Aucun compte, aucune inscription.</li>
-          <li>Aucun cookie.</li>
+          <li>
+            Le compte est facultatif : il sert seulement à retrouver ton jardin
+            sur un autre appareil.
+          </li>
+          <li>
+            Un seul cookie, posé seulement si tu te connectes (la session).
+            Aucun traceur.
+          </li>
           <li>
             La mesure d’audience utilise Cloudflare Web Analytics, sans cookie :
             des statistiques de visite globales, sans suivi individuel.
           </li>
         </ul>
+        <p>
+          Le détail (données, durées, export, suppression) est sur la page{" "}
+          <Link
+            href="/confidentialite"
+            className="font-semibold underline underline-offset-2"
+          >
+            confidentialité
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section id="donnees" title="Données et illustrations">
