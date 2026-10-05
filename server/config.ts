@@ -46,3 +46,21 @@ export const SYNC_MAX_ROWS_PER_USER = 20000;
 export const SYNC_PAGE_SIZE = 1000;
 /** Corps de requête accepté (200 entrées de 2 Ko, avec de la marge). */
 export const MAX_BODY_BYTES = 512 * 1024;
+
+/** « Raconte ta journée » (lot V2-3) : modèle, réglages de l'appel, limites, coupe-circuit. */
+export const RACONTE_MODEL = "claude-haiku-4-5";
+export const RACONTE_MAX_TOKENS = 600;
+export const RACONTE_TEMPERATURE = 0;
+/** Délai maximal de l'appel à Anthropic, sans nouvel essai (coût et attente bornés). */
+export const RACONTE_TIMEOUT_MS = 15_000;
+/** Analyses par IP (comptées avant Turnstile, comme les liens). */
+export const RACONTE_IP_LIMITS: readonly Limit[] = [
+  { name: "15m", windowMs: 15 * MINUTE, max: 3 },
+  { name: "24h", windowMs: DAY, max: 5 },
+];
+/** Analyses par compte connecté (en plus de la limite par IP). */
+export const RACONTE_ACCOUNT_LIMITS: readonly Limit[] = [
+  { name: "24h", windowMs: DAY, max: 5 },
+];
+/** Plafond global par jour UTC (coupe-circuit) ; AI_DAILY_CAP le remplace s'il est défini. */
+export const RACONTE_DAILY_CAP = 300;

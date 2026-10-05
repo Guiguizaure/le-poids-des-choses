@@ -37,6 +37,14 @@ export type Env = {
   HASH_SECRET?: string;
   /** Local uniquement (.dev.vars, tests) : « 1 » accepte l'origine http(s)://localhost. */
   ALLOW_LOCALHOST?: string;
+  /** Variable : « 1 » ouvre « Raconte ta journée » ; toute autre valeur la coupe. */
+  AI_ENABLED?: string;
+  /** Variable facultative : plafond global d'analyses par jour (défaut RACONTE_DAILY_CAP). */
+  AI_DAILY_CAP?: string;
+  /** Secret : clé de l'API Anthropic (Claude), pour « Raconte ta journée » seulement. */
+  ANTHROPIC_API_KEY?: string;
+  /** Tests uniquement : adresse d'un faux Anthropic (https://api.anthropic.com par défaut). */
+  ANTHROPIC_BASE_URL?: string;
 };
 
 /** Contexte d'une Pages Function (sous-ensemble utilisé). */
