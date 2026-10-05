@@ -51,3 +51,10 @@ next-env.d.ts
 
 # fichiers temporaires (captures de vérification, scripts jetables)
 .tmp/
+
+# Cloudflare (wrangler) : état local (base D1 locale, fichiers générés) et secrets locaux.
+# Les secrets ne vivent que dans .dev.vars (local) et dans les secrets Cloudflare.
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

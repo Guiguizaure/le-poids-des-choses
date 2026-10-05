@@ -1,0 +1,15 @@
+# Configuration LOCALE uniquement : migrations `--local`, tests (getPlatformProxy).
+#
+# Ce fichier ne s'appelle pas wrangler.toml et n'a pas de `pages_build_output_dir` : Cloudflare
+# Pages ne le lit jamais. Les liaisons (base D1 « DB »), variables et secrets de production et
+# de preview restent dans le tableau de bord. `wrangler pages dev` ne lit pas de fichier de
+# configuration personnalisé : la base lui est passée par `--d1 DB=lpdc-local` (même identifiant
+# qu'ici, donc même base locale).
+name = "le-poids-des-choses"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lpdc-local"
+database_id = "lpdc-local"
+migrations_dir = "migrations"

@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     "test-results/**",
     "playwright-report/**",
     "blob-report/**",
+    // Fichiers générés par wrangler et fichiers temporaires.
+    ".wrangler/**",
+    ".tmp/**",
   ]),
 ]);
 
