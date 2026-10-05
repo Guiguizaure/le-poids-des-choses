@@ -1083,3 +1083,40 @@ sur les pages non touchées. Captures `accueil.png` et `accueil-mobile.png` rég
 - La formulation est découpée en titre (« De saison en octobre ») et texte (« Du plus
   léger au plus lourd au kilo : … ») : un titre de section reste lisible au lecteur d'écran.
 - Les valeurs sous 1 kg s'écrivent en grammes, comme sur /saison.
+
+## 2026-10-05 — Encart de saison : 14 produits dessinés de plus, étiquette du mois (branche feat/saison-produits)
+
+**Demandé** : ajouter les 14 dessins du zip `le-poids-des-choses-saison-2` (fraise, cerise,
+abricot, courgette, aubergine, melon, radis, asperge, petits-pois, chou, clémentine, kiwi,
+endive, betterave), compléter la table de correspondance avec les noms exacts des données
+(sans rien inventer), donner le tableau mois par mois des produits qui flottent (objectif :
+au moins 3), afficher le mois en étiquette de papier découpé près des produits, démo /labo.
+
+**Fait** :
+
+- 14 SVG 80×80 ajoutés aux specs (calques de chaque fichier), `pnpm illustrations`
+  (90 illustrations).
+- Les 14 produits existent dans `saison.generated.json` ; deux noms diffèrent du fichier :
+  `saison-petits-pois` → `petitpois` (« Petit pois »), `saison-clementine` → `clementine`
+  (« Clémentine »). « Chou » est le chou (pas le chou de Bruxelles ni le chou-fleur). Le
+  test de la table compare désormais nom du dessin et intitulé sans accents, tirets ni « s »
+  final, et vérifie que tout dessin `saison-*` est dans la table.
+- Mois par mois (tous les dessins de saison ; 5 flottent au plus, saison la plus courte
+  d'abord) : janvier 10, février 9, mars 9, avril 5, mai 6, juin 10, juillet 8, août 7,
+  septembre 10, octobre 10, novembre 9, décembre 9. Plus aucun mois sous 3 (mai, qui en
+  avait 0, en a 6) ; un test le garantit sur les données actuelles.
+- Étiquette du mois (« octobre ») au-dessus des produits : papier soleil, texte encre en
+  Bricolage, inclinée de -4°, ombre encre ; elle se pose comme les papiers de /methode
+  (`CUTOUT_ENTRY`) juste avant le fondu des produits ; aria-hidden (le titre dit déjà le
+  mois) ; hauteur réservée ; visible et immobile en mouvement réduit. Paire encre / soleil
+  déjà vérifiée par le test de contraste (usage ajouté à sa description).
+- /labo : le sélecteur de mois du panneau « Encart de saison » montre les nouveaux produits.
+- `e2e/partage.spec.ts` : le test « police de repli absente » lisait le partage juste après
+  le clic ; il échouait sous charge dans les passages complets (2 fois sur 3). Il attend
+  maintenant le partage (`expect.poll`).
+
+**Vérifications** : lint, typecheck, 647 tests unitaires, `STRICT_DATA=1 pnpm build`, CLS à
+0 sur / et /comparer (ordinateur et Pixel 7), bout en bout complet vert (144 passés,
+14 ignorés, Chromium et WebKit, axe compris). Lighthouse mobile sur `serve:out` (noindex) :
+Accueil 99 puis 100, Comparer 94-95, autres pages 93-100 ; accessibilité et bonnes
+pratiques 100. Captures `accueil.png` et `accueil-mobile.png` régénérées.
