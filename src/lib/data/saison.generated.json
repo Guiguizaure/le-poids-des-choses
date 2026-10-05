@@ -1,8 +1,8 @@
 {
-  "downloadedAt": "2026-10-04T21:23:48.830Z",
+  "downloadedAt": "2026-10-05T09:29:38.674Z",
   "source": "https://impactco2.fr/api/v1/fruitsetlegumes",
   "tool": "https://impactco2.fr/outils/fruitsetlegumes",
-  "authenticated": false,
+  "authenticated": true,
   "products": [
     {
       "slug": "abricot",

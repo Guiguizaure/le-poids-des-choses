@@ -150,7 +150,11 @@ test("crédit des données, avec lien et date, sur chaque résultat et sur /meth
   await expectCredit(page);
 
   await page.goto("/methode");
-  await expectCredit(
-    page.getByRole("region", { name: "D’où viennent les chiffres ?" }),
+  const sources = page.getByRole("region", {
+    name: "D’où viennent les chiffres ?",
+  });
+  await expectCredit(sources);
+  await expect(sources).toContainText(
+    "Réutilisation des données autorisée par l’équipe Impact CO2 de l’ADEME (e-mail du 5 octobre 2026)",
   );
 });

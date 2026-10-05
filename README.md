@@ -115,6 +115,7 @@ légales à remplir), `SITE_LAUNCHED=1` (lève le noindex, ouvre robots.txt et l
 - **Code** : licence MIT.
 - **Illustrations et identité visuelle** (dessins, icône, image de partage, nom, direction
   artistique) : **tous droits réservés**, hors licence MIT.
-- Données : ADEME / Impact CO2, selon leurs conditions. Polices : SIL Open Font License.
+- Données : Impact CO2 – ADEME, réutilisation autorisée par l'équipe Impact CO2 (e-mail du
+  5 octobre 2026), avec la mention « Données : Impact CO2 – ADEME ». Polices : SIL Open Font License.
 
 Le détail est dans [LICENSE](LICENSE).

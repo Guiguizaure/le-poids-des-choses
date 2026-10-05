@@ -22,11 +22,13 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * EMPLACEMENT — mention de licence des données ADEME / Impact CO2, en attente de la réponse
- * de l'ADEME. Quand elle arrive : renseigner { text, url } ; elle s'affiche alors dans la
- * section « D'où viennent les chiffres ? ». Tant qu'elle vaut null, rien n'est affiché.
+ * Conditions de réutilisation des données Impact CO2 : autorisation donnée par l'équipe
+ * Impact CO2 de l'ADEME par e-mail le 5 octobre 2026. Affichée dans la section « D'où
+ * viennent les chiffres ? » (null : rien n'est affiché).
  */
-const DATA_LICENSE: { text: string; url?: string } | null = null;
+const DATA_LICENSE: { text: string; url?: string } | null = {
+  text: "Réutilisation des données autorisée par l’équipe Impact CO2 de l’ADEME (e-mail du 5 octobre 2026), gratuitement, avec la mention « Données : Impact CO2 – ADEME ».",
+};
 
 const REPOSITORY = "https://github.com/Guiguizaure/le-poids-des-choses";
 const IMPACT_CO2 = "https://impactco2.fr";
