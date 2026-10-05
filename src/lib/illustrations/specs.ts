@@ -193,6 +193,20 @@ export const ILLUSTRATION_SPECS = {
   "saison-raisin": produce(["feuille", "tige", "grains", "reflets"]),
   "saison-poireau": produce(["feuilles", "fut", "racines"]),
   "saison-tomate": produce(["fruit", "collerette", "reflet"]),
+  "saison-fraise": produce(["fruit", "graines", "collerette"]),
+  "saison-cerise": produce(["queues", "feuille", "fruits", "reflets"]),
+  "saison-abricot": produce(["fruit", "joue", "sillon", "feuille"]),
+  "saison-courgette": produce(["legume", "stries", "pedoncule"]),
+  "saison-aubergine": produce(["legume", "calice", "queue", "reflet"]),
+  "saison-melon": produce(["ecorce", "chair", "graines", "bord"]),
+  "saison-radis": produce(["fanes", "racine", "pointe"]),
+  "saison-asperge": produce(["tiges", "pointes", "ecailles", "lien"]),
+  "saison-petits-pois": produce(["cosse", "pois", "queue"]),
+  "saison-chou": produce(["feuilles-ext", "coeur", "nervures"]),
+  "saison-clementine": produce(["fruit", "pores", "feuilles"]),
+  "saison-kiwi": produce(["peau", "chair", "coeur", "pepins"]),
+  "saison-endive": produce(["feuilles", "pointes", "lignes"]),
+  "saison-betterave": produce(["fanes", "racine"]),
 } as const satisfies Record<string, IllustrationSpec>;
 
 export type IllustrationName = keyof typeof ILLUSTRATION_SPECS;

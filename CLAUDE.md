@@ -297,13 +297,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   (4,8 kg CO2e/kg) » (`seasonRange` : produits de saison ce mois-ci hors toute l'année,
   égalité → ordre alphabétique ; `formatPerKilo` = `formatMass` + espaces insécables), lien
   /saison et `DataCredit`. Fruits et légumes dessinés flottants (`FloatingProduce`,
-  `saison-*.svg` 80×80, pas de cagette) : correspondance `SEASON_DRAWINGS`
-  (`src/lib/saison/drawn.ts`), `drawnForMonth` (de saison ce mois-ci, saison la plus courte
+  21 `saison-*.svg` 80×80, pas de cagette) : correspondance `SEASON_DRAWINGS`
+  (`src/lib/saison/drawn.ts`, dessin → slug des données, ex. `saison-petits-pois` →
+  `petitpois` ; un dessin sans produit dans les données reste hors de la table ; testée,
+  au moins 3 dessins de saison chaque mois), `drawnForMonth` (de saison ce mois-ci, saison la plus courte
   d'abord, 5 au plus ; moins de 3 → toute l'année ; aucun → mois le plus proche) ; places,
   flottement et parallaxe dans `src/lib/geometry/float.ts` (sans chevauchement, testé) ;
   4-5 à droite dès 28rem de large (requête de conteneur), rangée de 3 en dessous, masqués
-  sous 15rem ; fondu décalé à l'entrée, rebond au toucher, pause onglet caché ou hors écran,
-  immobiles en mouvement réduit ; démo dans /labo.
+  sous 15rem ; au-dessus, le mois en étiquette de papier découpé (soleil, encre, posée comme
+  `PaperCutout`, aria-hidden) ; fondu décalé à l'entrée, rebond au toucher, pause onglet
+  caché ou hors écran, immobiles en mouvement réduit ; démo dans /labo.
 - Installation (PWA) : manifeste, icônes, bandeau « Garde ton jardin » sur /jardin
   (Android : invite `beforeinstallprompt` ; iPhone : « Partager, puis Sur l’écran
   d’accueil » ; masqué si installé ou fermé). Accès permanent « Installer l’appli »

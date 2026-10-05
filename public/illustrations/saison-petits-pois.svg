@@ -1,0 +1,3 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="cosse"><path d="M8 44 C 18 26, 52 20, 72 30 C 62 52, 30 60, 8 44 Z" fill="#1B6B45" stroke="#1F1A17" stroke-width="1.5"/></g><g id="pois"><circle cx="22" cy="40" r="7" fill="#2FBF71" stroke="#1F1A17" stroke-width="1.5"/><circle cx="34" cy="36" r="7" fill="#2FBF71" stroke="#1F1A17" stroke-width="1.5"/><circle cx="46" cy="34" r="7" fill="#2FBF71" stroke="#1F1A17" stroke-width="1.5"/><circle cx="58" cy="34" r="7" fill="#2FBF71" stroke="#1F1A17" stroke-width="1.5"/></g><g id="queue"><path d="M72 30 C 76 26, 76 20, 72 16" stroke="#1B6B45" stroke-width="3" stroke-linecap="round" fill="none"/></g>
+</svg>

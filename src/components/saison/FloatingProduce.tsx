@@ -4,6 +4,7 @@ import { useRef, type CSSProperties } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { gsap } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
+import { CUTOUT_ENTRY } from "@/components/ui/PaperCutout";
 import {
   FLOAT,
   FLOAT_ROW_HEIGHT,
@@ -12,6 +13,7 @@ import {
   floatRow,
   parallaxOffset,
 } from "@/lib/geometry/float";
+import { MONTH_NAMES } from "@/lib/saison";
 import { drawnForMonth } from "@/lib/saison/drawn";
 
 const layer = (root: Element, name: string) =>
@@ -24,23 +26,27 @@ const layer = (root: Element, name: string) =>
  * sous le texte ; trop étroit : masquée. Ils apparaissent en fondu décalé à l'entrée dans
  * l'écran, flottent (dérive et petite rotation, jamais synchrones), suivent un peu le
  * défilement et rebondissent une fois au toucher. Flottement en pause quand l'onglet est caché
- * ou la zone hors de l'écran ; tout immobile en mouvement réduit.
+ * ou la zone hors de l'écran ; tout immobile en mouvement réduit. Au-dessus, le mois en
+ * étiquette de papier découpé (« octobre »), qui se pose avant les produits.
  */
 export function FloatingProduce({ month }: { month: number | null }) {
+  const wrapper = useRef<HTMLDivElement>(null);
   const zone = useRef<HTMLDivElement>(null);
   const names = month ? drawnForMonth(month) : [];
   const slots = floatLayout(names.length);
   const row = floatRow(names.length);
 
   const reduceRef = useMotion(
-    zone,
+    wrapper,
     (reduce) => {
       const root = zone.current;
-      if (!root || names.length === 0) return;
+      const tag =
+        wrapper.current?.querySelector<HTMLElement>("[data-month-tag]");
+      if (!root || !tag || names.length === 0) return;
       const items = gsap.utils.toArray<HTMLElement>("[data-produce]", root);
       const bouncers = items.map((item) => layer(item, "bounce"));
       if (reduce) {
-        gsap.set(bouncers, { autoAlpha: 1 });
+        gsap.set([tag, ...bouncers], { autoAlpha: 1 });
         return;
       }
 
@@ -100,17 +106,35 @@ export function FloatingProduce({ month }: { month: number | null }) {
       const enter = () => {
         if (entered) return;
         entered = true;
-        gsap.fromTo(
-          bouncers,
-          { autoAlpha: 0, scale: 0.85 },
-          {
-            autoAlpha: 1,
-            scale: 1,
-            duration: FLOAT.enter.duration,
-            stagger: FLOAT.enter.stagger,
-            ease: "back.out(1.6)",
-          },
-        );
+        gsap
+          .timeline()
+          .fromTo(
+            tag,
+            {
+              autoAlpha: 0,
+              y: CUTOUT_ENTRY.y,
+              rotation: CUTOUT_ENTRY.rotation,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              rotation: 0,
+              duration: CUTOUT_ENTRY.duration,
+              ease: CUTOUT_ENTRY.ease,
+            },
+          )
+          .fromTo(
+            bouncers,
+            { autoAlpha: 0, scale: 0.85 },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              duration: FLOAT.enter.duration,
+              stagger: FLOAT.enter.stagger,
+              ease: "back.out(1.6)",
+            },
+            "-=0.45",
+          );
       };
       const sync = () => {
         const run = inView && document.visibilityState === "visible";
@@ -140,7 +164,7 @@ export function FloatingProduce({ month }: { month: number | null }) {
         document.removeEventListener("visibilitychange", sync);
       };
     },
-    [names.join()],
+    [month, names.join()],
   );
 
   /** Un rebond, au toucher ou au clic ; rien en mouvement réduit ni pendant un autre. */
@@ -168,58 +192,78 @@ export function FloatingProduce({ month }: { month: number | null }) {
 
   return (
     <div
-      ref={zone}
+      ref={wrapper}
       aria-hidden
       data-floating-produce
-      className="relative mx-auto hidden h-(--row-h) w-full max-w-[240px] shrink-0 select-none @[15rem]:block @md:mx-0 @md:h-(--zone-h) @md:w-(--zone-w) @md:max-w-none"
-      style={
-        {
-          "--row-h": `${FLOAT_ROW_HEIGHT}px`,
-          "--zone-w": `${FLOAT.zone.width}px`,
-          "--zone-h": `${FLOAT.zone.height}px`,
-        } as CSSProperties
-      }
+      className="mx-auto hidden w-full max-w-[240px] shrink-0 flex-col items-center gap-1 select-none @[15rem]:flex @md:mx-0 @md:w-auto @md:max-w-none @md:items-start"
     >
-      {names.map((name, index) => {
-        const slot = slots[index];
-        const inRow = row[index];
-        const rowStyle: Record<string, string> = inRow
-          ? {
-              "--row-x": `calc(${((index + 0.5) / rowCount) * 100}% - ${inRow.size / 2}px)`,
-              "--row-y": `${(FLOAT_ROW_HEIGHT - inRow.size) / 2 + (index % 2 ? 3 : -3)}px`,
-              "--row-size": `${inRow.size}px`,
-              "--row-tilt": `${inRow.tilt}deg`,
-            }
-          : {};
-        return (
+      {/* Étiquette du mois : hauteur réservée, le mois n'est connu que côté client. */}
+      <div className="flex h-7 items-center @md:pl-3">
+        {month ? (
           <span
-            key={name}
-            data-produce={name}
-            className={`absolute top-(--row-y) left-(--row-x) size-(--row-size) rotate-(--row-tilt) @md:top-(--y) @md:left-(--x) @md:size-(--size) @md:rotate-(--tilt) ${inRow ? "block" : "hidden @md:block"}`}
-            style={
-              {
-                ...rowStyle,
-                "--x": `${slot.x}px`,
-                "--y": `${slot.y}px`,
-                "--size": `${slot.size}px`,
-                "--tilt": `${slot.tilt}deg`,
-              } as CSSProperties
-            }
+            data-month-tag
+            className="bg-soleil font-titre text-corps-s text-encre block px-2.5 py-0.5 leading-[1.2] opacity-0"
+            style={{
+              rotate: "-4deg",
+              filter: "drop-shadow(2px 2px 0 var(--color-encre))",
+            }}
           >
-            <span data-layer="parallax" className="block size-full">
-              <span data-layer="float" className="block size-full">
-                <span
-                  data-layer="bounce"
-                  className="block size-full origin-bottom opacity-0"
-                  onPointerDown={(event) => bounce(event.currentTarget)}
-                >
-                  <Illustration name={name} className="block size-full" />
+            {MONTH_NAMES[month - 1]}
+          </span>
+        ) : null}
+      </div>
+      <div
+        ref={zone}
+        className="relative h-(--row-h) w-full @md:h-(--zone-h) @md:w-(--zone-w)"
+        style={
+          {
+            "--row-h": `${FLOAT_ROW_HEIGHT}px`,
+            "--zone-w": `${FLOAT.zone.width}px`,
+            "--zone-h": `${FLOAT.zone.height}px`,
+          } as CSSProperties
+        }
+      >
+        {names.map((name, index) => {
+          const slot = slots[index];
+          const inRow = row[index];
+          const rowStyle: Record<string, string> = inRow
+            ? {
+                "--row-x": `calc(${((index + 0.5) / rowCount) * 100}% - ${inRow.size / 2}px)`,
+                "--row-y": `${(FLOAT_ROW_HEIGHT - inRow.size) / 2 + (index % 2 ? 3 : -3)}px`,
+                "--row-size": `${inRow.size}px`,
+                "--row-tilt": `${inRow.tilt}deg`,
+              }
+            : {};
+          return (
+            <span
+              key={name}
+              data-produce={name}
+              className={`absolute top-(--row-y) left-(--row-x) size-(--row-size) rotate-(--row-tilt) @md:top-(--y) @md:left-(--x) @md:size-(--size) @md:rotate-(--tilt) ${inRow ? "block" : "hidden @md:block"}`}
+              style={
+                {
+                  ...rowStyle,
+                  "--x": `${slot.x}px`,
+                  "--y": `${slot.y}px`,
+                  "--size": `${slot.size}px`,
+                  "--tilt": `${slot.tilt}deg`,
+                } as CSSProperties
+              }
+            >
+              <span data-layer="parallax" className="block size-full">
+                <span data-layer="float" className="block size-full">
+                  <span
+                    data-layer="bounce"
+                    className="block size-full origin-bottom opacity-0"
+                    onPointerDown={(event) => bounce(event.currentTarget)}
+                  >
+                    <Illustration name={name} className="block size-full" />
+                  </span>
                 </span>
               </span>
             </span>
-          </span>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
