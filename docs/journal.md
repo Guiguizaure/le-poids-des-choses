@@ -957,3 +957,19 @@ le-poids-des-choses.pages.dev gardée, getPlatformProxy pour les tests.
 - Lien « Confidentialité » de la section sans préchargement.
 - `main` fusionnée dans la branche après la PR #17 (licence ADEME) : seul conflit, ce
   journal (les deux entrées gardées).
+
+## 2026-10-05 — Finitions UX : retrouver son jardin, /methode illustrée, installer l'appli (branche fix/finitions-ux)
+
+**Demandé** : retours de test sur téléphone et ordinateur. (1) Retrouver son jardin sur un
+nouvel appareil sans devoir d'abord faire un choix : lien « J’ai déjà un jardin ? Le
+retrouver » sur l'accueil, « Se connecter » (ou l'adresse) dans l'en-tête, formulaire en haut
+d'un /jardin vide, formulaire sur /connexion sans jeton, arrivée sobre des plantes après
+connexion. (2) /methode moins austère : 4 à 6 illustrations existantes en papiers découpés,
+décoratives, animées à l'entrée (GSAP), coupées en mouvement réduit. (3) « Installer
+l’appli » toujours disponible (pied de page, sauvegarde de /jardin), même bandeau fermé.
+
+**État au point d'étape** (reprise après une mise en veille du Mac) : le code des trois points
+est écrit et commité en trois commits ; lint, typecheck, 598 tests unitaires et `pnpm build`
+passent. Restaient : vérification visuelle de /methode, tests de bout en bout (nouveaux
+parcours, et mise à jour des tests qui attendaient « Ce lien ne marche plus » sur /connexion
+sans jeton), Lighthouse, captures.
