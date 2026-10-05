@@ -1,7 +1,11 @@
 // Modèle du jardin : fonctions pures. Même carnet = même jardin, sur tous les appareils.
 import { DEFAULT_ASLEEP_DAYS, isAsleep } from "@/lib/calc";
 import type { JournalEntry } from "@/lib/data/types";
-import { getSpec, type IllustrationName } from "@/lib/illustrations/specs";
+import {
+  getSpec,
+  ILLUSTRATION_SPECS,
+  type IllustrationName,
+} from "@/lib/illustrations/specs";
 import { sortEntries } from "@/lib/journal/schema";
 import { hashString, pickIndex } from "./hash";
 import { SCENE, surfaceY } from "./scene";
@@ -198,6 +202,18 @@ const ANIMAL_ILLUSTRATION: Record<AnimalKind, IllustrationName> = {
   snail: "escargot",
   hedgehog: "herisson",
 };
+
+/** Illustration d'un animal du jardin, endormie quand elle existe et que le jardin dort. */
+export function animalIllustration(
+  kind: AnimalKind,
+  asleep: boolean,
+): IllustrationName {
+  const name = ANIMAL_ILLUSTRATION[kind];
+  const sleeping = `${name}-endormi`;
+  return asleep && sleeping in ILLUSTRATION_SPECS
+    ? (sleeping as IllustrationName)
+    : name;
+}
 
 export function unlockedAnimals(lightChoiceCount: number): AnimalKind[] {
   return ANIMAL_UNLOCKS.filter(

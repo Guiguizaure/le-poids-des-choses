@@ -762,3 +762,57 @@ là pour validation avant la suite du lot.
 - En attente : le libellé « Fabrication évitée (hypothèse) » des données générées (non
   affiché sur le site) ; le changer demande de relancer `pnpm build-gestures`.
 - Écart avec la maquette Figma 03, qui écrivait « X kg évités » dans la pastille.
+
+## 2026-10-05 — Lot V2-4 : carnet analysé, paliers, ciels, partage (branche feat/journal-partage, en cours)
+
+**Demandé** : points 1 à 5 du lot V2-4 après validation du point 0 ; décisions : libellé
+« Pas de nouvelle fabrication (hypothèse) » avec données regénérées, « en moins » gardé dans
+la phrase du duel, Figma déjà à jour, carte de révélation sans « + ».
+
+**Fait et commité** :
+
+- Libellé des données : seuls ce libellé (7 objets) et la date de téléchargement changent
+  (date acceptée : « téléchargées le 5 octobre 2026 »). Carte de révélation : « X kg
+  d’écart ».
+- Point 1 : `src/lib/journal/analysis.ts` (tri date, écart, catégorie ; filtres catégorie
+  et choix légers ou notés ; vue dans l'URL ; choix légers par jour sur 7 jours), page
+  /jardin/carnet (« Tout voir »), graphique de la semaine en barres SVG avec tableau masqué
+  et état vide, aussi dans la section Carnet de /jardin. Tests unitaires et e2e.
+- Point 2 : paliers 10, 50, 100, 250, 500, 1000 kg CO2e (`src/lib/milestones`), carte
+  « Palier franchi » sur /jardin quand le dernier choix léger en franchit un, équivalence
+  calculée (70 km en voiture thermique, 10 repas au bœuf, 16 T-shirts en coton neufs,
+  10 jeans neufs, 2 200 km en avion, 7 000 km en voiture), garde-fou du build. Tests.
+- Point 3 : ciels Jour, Aube rose (15), Midi soleil (30), Nuit encre (50) ; pas de ciel
+  outremer (la colline du fond est outremer) ; choix sur /jardin gardé sous `lpdc:ciel:v1` ;
+  démo /labo. Tests.
+- Point 4, partie pure : maquettes Figma lues (41:60, 41:183, 42:60, 42:233) ;
+  `src/lib/share/card.ts` (description de dessin 1080×1350 : en-tête, pastilles accordées,
+  jardin à y = 360, bandeau encre, variante endormie) et `src/lib/share/garden-svg.ts`
+  (même jardin que `<Garden>`, ciel appliqué, brume, contours des petites bêtes à
+  l'échelle) ; `animalIllustration` dans le modèle. Tests unitaires sans navigateur.
+
+**Écrit, pas encore commité (point 4, partie navigateur)** :
+
+- `public/icons/partager.svg` (icône de la maquette 09a), `src/components/garden/share/` :
+  `renderShareCard.ts` (canvas, polices attendues avec document.fonts, PNG),
+  `useShareSupport.ts` (canShare avec un PNG ET pointeur tactile ou appli installée),
+  `ShareSheet.tsx` (feuille 09b : aperçu, confidentialité, « Partager l’image »,
+  « Annuler », focus piégé, Échap, AbortError sans effet).
+
+**Reste à faire** :
+
+- Point 4 : barre du haut de /jardin (« Exporter » et « Partager » en encre, seulement si
+  le partage est possible ; ordinateur inchangé), `siteUrl` passé depuis la page, retour du
+  focus sur le bouton, tests e2e mobile (partage simulé : PNG 1080×1350) et bureau (bouton
+  absent), deux images dans .tmp/ (éveillé, endormi).
+- Point 5 : lint, typecheck, unitaires, e2e (Chromium, WebKit, axe), Lighthouse /jardin et
+  /jardin/carnet, `STRICT_DATA=1 pnpm build`, captures, CLAUDE.md, push, PR et preview.
+
+**Gardé / changé** :
+
+- Maquette 09a : « Exporter » revient dans la barre du haut, à côté de « Partager », sur
+  mobile seulement ; la section de sauvegarde du bas reste.
+- Carte endormie : la maquette garde la coccinelle ; l'image suit le vrai rendu du jardin
+  (seuls oiseau, escargot et hérisson restent, endormis).
+- Ciel « Midi soleil » : les feuillages jaunes et l'abeille ressortent moins sur le ciel
+  jaune.
