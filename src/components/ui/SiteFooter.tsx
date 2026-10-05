@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { InstallFooterItem } from "@/components/install/InstallButton";
 
-/** Pied de page commun : Méthode, Mentions légales, Confidentialité, auteur. */
+/**
+ * Pied de page commun : Méthode, Mentions légales, Confidentialité, auteur, et « Installer
+ * l’appli » quand le navigateur le permet.
+ */
 export function SiteFooter() {
   return (
     <footer className="border-encre/10 mx-auto mt-auto w-full max-w-[1280px] border-t px-5 py-6 lg:px-20">
@@ -39,6 +43,7 @@ export function SiteFooter() {
               webjuno.com
             </a>
           </li>
+          <InstallFooterItem />
         </ul>
       </nav>
     </footer>

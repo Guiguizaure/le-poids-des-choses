@@ -13,13 +13,21 @@ export type InstallContext = {
   ios: boolean;
 };
 
-export function installMode({
+/** Bandeau « Garde ton jardin » : comme l'accès permanent, sauf s'il a été fermé. */
+export function installMode(context: InstallContext): InstallMode {
+  return context.dismissed ? "hidden" : installAccess(context);
+}
+
+/**
+ * Accès permanent « Installer l'appli » (pied de page, sauvegarde de /jardin) : toujours là,
+ * même bandeau fermé, sauf si l'app est installée ou si le navigateur ne le permet pas.
+ */
+export function installAccess({
   standalone,
-  dismissed,
   canPrompt,
   ios,
-}: InstallContext): InstallMode {
-  if (standalone || dismissed) return "hidden";
+}: Omit<InstallContext, "dismissed">): InstallMode {
+  if (standalone) return "hidden";
   if (canPrompt) return "prompt";
   if (ios) return "ios";
   return "hidden";
