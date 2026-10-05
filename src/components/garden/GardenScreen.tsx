@@ -25,6 +25,8 @@ import { useSearchParam } from "@/lib/hooks/useSearchParam";
 import { useJournal } from "@/lib/journal/useJournal";
 import { FactCard } from "@/components/facts/FactCard";
 import { AccountSection } from "@/components/account/AccountSection";
+import { InstallButton } from "@/components/install/InstallButton";
+import type { JournalEntry } from "@/lib/data/types";
 
 const RECENT_COUNT = 5;
 
@@ -58,7 +60,31 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const [shareOpen, setShareOpen] = useState(0);
   const shareButton = useRef<HTMLButtonElement>(null);
   const [importMessage, setImportMessage] = useState("");
+  const [importing, setImporting] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+
+  // Choix arrivés pendant la visite (synchro du compte, autre onglet, import) : leurs plantes
+  // apparaissent ensemble, en fondu, avec un seul message ; rien pour le carnet déjà là.
+  const [seen, setSeen] = useState<readonly JournalEntry[] | null>(null);
+  const [arriving, setArriving] = useState<readonly string[]>([]);
+  const [foundMessage, setFoundMessage] = useState("");
+  if (journal.ready && seen !== journal.entries) {
+    if (seen) {
+      const known = new Set(seen.map((entry) => entry.id));
+      const fresh = journal.entries
+        .filter((entry) => !known.has(entry.id))
+        .map((entry) => entry.id);
+      if (fresh.length > 0) {
+        setArriving(fresh);
+        // L'import a déjà son propre message.
+        if (!importing)
+          setFoundMessage(
+            `Ton jardin est de retour : ${plural(fresh.length, "choix retrouvé", "choix retrouvés")}.`,
+          );
+      }
+    }
+    setSeen(journal.entries);
+  }
 
   const garden = useMemo(
     () => buildGarden(journal.entries, new Date(now)),
@@ -94,7 +120,9 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
   const onImport = async (file: File | undefined) => {
     if (!file) return;
+    setImporting(true);
     const result = await journal.importFile(file);
+    setImporting(false);
     if (!result.ok) {
       setImportMessage("Ce fichier n’est pas un carnet lisible.");
     } else {
@@ -170,8 +198,16 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         entries={journal.entries}
         now={now}
         highlightId={revealId}
+        arriving={arriving}
         sky={sky}
       />
+      <p
+        role="status"
+        aria-live="polite"
+        className="text-corps-s text-encre px-5 pt-2 font-semibold empty:hidden"
+      >
+        {foundMessage}
+      </p>
       {upcoming && journal.ready ? (
         // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
         <p className="text-legende text-texte-attenue px-5 pt-2">
@@ -185,6 +221,12 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
             Ton navigateur n’autorise pas l’enregistrement : ton jardin vivra le
             temps de cette visite. Exporte ton carnet pour le garder.
           </p>
+        ) : null}
+
+        {journal.ready && !hasEntries ? (
+          // Jardin vide : peut-être commencé sur un autre appareil. Le formulaire passe avant
+          // l'invitation à comparer.
+          <AccountSection variant="retrouver" />
         ) : null}
 
         {journal.ready && !hasEntries ? (
@@ -286,7 +328,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
         <InstallBanner />
 
-        {journal.ready ? <AccountSection /> : null}
+        {journal.ready && hasEntries ? <AccountSection /> : null}
 
         {journal.ready ? (
           <section
@@ -297,7 +339,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
               Ton carnet reste sur cet appareil. Exporte-le pour le garder ou le
               retrouver ailleurs.
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <PillButton onClick={journal.exportFile} disabled={!hasEntries}>
                 Exporter
               </PillButton>
@@ -313,6 +355,8 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
                 aria-hidden
                 onChange={(event) => onImport(event.target.files?.[0])}
               />
+              {/* Toujours là, même bandeau « Garde ton jardin » fermé. */}
+              <InstallButton look="pill" />
             </div>
             <p
               role="status"

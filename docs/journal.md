@@ -957,3 +957,67 @@ le-poids-des-choses.pages.dev gardée, getPlatformProxy pour les tests.
 - Lien « Confidentialité » de la section sans préchargement.
 - `main` fusionnée dans la branche après la PR #17 (licence ADEME) : seul conflit, ce
   journal (les deux entrées gardées).
+
+## 2026-10-05 — Finitions UX : retrouver son jardin, /methode illustrée, installer l'appli (branche fix/finitions-ux)
+
+**Demandé** : retours de test sur téléphone et ordinateur. (1) Retrouver son jardin sur un
+nouvel appareil sans devoir d'abord faire un choix : lien « J’ai déjà un jardin ? Le
+retrouver » sur l'accueil, « Se connecter » (ou l'adresse) dans l'en-tête, formulaire en haut
+d'un /jardin vide, formulaire sur /connexion sans jeton, arrivée sobre des plantes après
+connexion. (2) /methode moins austère : 4 à 6 illustrations existantes en papiers découpés,
+décoratives, animées à l'entrée (GSAP), coupées en mouvement réduit. (3) « Installer
+l’appli » toujours disponible (pied de page, sauvegarde de /jardin), même bandeau fermé.
+
+**État au point d'étape** (reprise après une mise en veille du Mac) : le code des trois points
+est écrit et commité en trois commits ; lint, typecheck, 598 tests unitaires et `pnpm build`
+passent. Restaient : vérification visuelle de /methode, tests de bout en bout (nouveaux
+parcours, et mise à jour des tests qui attendaient « Ce lien ne marche plus » sur /connexion
+sans jeton), Lighthouse, captures.
+
+**Correction du point d'étape** : le typecheck avait été lancé avant l'écriture du test de
+`installAccess` ; le commit 567a1cb contient une erreur de type dans `install.test.ts`
+(propriété `dismissed` en trop), corrigée ensuite. Les autres vérifications annoncées étaient
+exactes.
+
+**Fait ensuite** :
+
+- /methode vérifiée à l'écran (mobile, ordinateur, 340 px) : 5 papiers découpés (oiseau près
+  du titre, coccinelle « Nos hypothèses », balance « Et ton jardin ? » où se trouve #ecart,
+  picto végétalien « Fruits et légumes de saison », escargot en fin de page) ; sur mobile, la
+  ligne du titre ne grandit plus (marge négative).
+- `/connexion` : un lien ouvert dans un onglet déjà sur /connexion ne changeait que le
+  fragment (pas de rechargement), donc le jeton n'était pas lu : écoute de `hashchange`.
+  « N choix retrouvés » compté sur le carnet de l'appareil (avant / après), et non plus sur
+  le compteur de la synchro de l'onglet : un autre onglet ouvert sur /jardin peut fusionner
+  les mêmes choix en premier.
+- Lien « J’ai déjà un jardin ? Le retrouver » de l'accueil avec préchargement (chemin
+  principal) ; « Se connecter » des en-têtes sans préchargement.
+- Tests de bout en bout : « retrouver son jardin depuis l'accueil, sur un appareil vide »
+  (lien de l'accueil, Turnstile absent avant le formulaire, lien ouvert dans le même onglet,
+  jardin ouvert dans un autre onglet qui se remplit avec un seul message et sans fenêtre,
+  adresse dans l'en-tête vers /jardin#compte) ; « installer après avoir fermé le bandeau »
+  (iPhone : aide en deux gestes, axe ; Android et Chrome : invite simulée puis plus d'accès
+  une fois installée ; appli déjà installée : rien). Tests mis à jour : /connexion sans jeton
+  montre le formulaire (et « déjà connecté » si c'est le cas), lien usé : formulaire sur
+  place.
+- Captures : `accueil-mobile.png`, `methode-mobile.png`, `methode-ordinateur.png` ajoutées ;
+  les autres regénérées.
+
+**Vérifications** : lint, typecheck, 598 tests unitaires, `STRICT_DATA=1 pnpm build`,
+142 tests de bout en bout (Chromium et WebKit, axe compris ; 14 ignorés, clavier sous
+WebKit). Pendant le travail, des tests du compte ont dépassé leurs délais sous forte charge
+de la machine (charge ~30 sur 8 cœurs, une machine virtuelle Docker à 100 %) : délai de
+15 s pour l'ouverture de /connexion dans le nouveau test, préchargement du lien de
+l'accueil ; le passage complet final est vert. Lighthouse mobile (2 passages, noindex) :
+Accueil 99, Mon jardin 93, Méthode 95-97 ; accessibilité et bonnes pratiques à 100, SEO 66-69
+(noindex).
+
+**Gardé / changé** :
+
+- « Se connecter » n'est pas dans les barres du parcours de comparaison ni de /jardin
+  (déjà chargées : retour, progression, pastille, partage) ; il est sur l'accueil (mobile et
+  ordinateur), les pages de texte, /saison et le carnet.
+- Après connexion, les plantes arrivées pendant la visite apparaissent en un fondu groupé
+  (moins d'1,5 s en tout), sans éclat, rafale ni message d'animal ; un jardin ouvert après la
+  connexion s'affiche simplement rempli.
+- Le texte du bandeau « Garde ton jardin » (maquette 04) est inchangé.

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AccountLink } from "@/components/account/AccountLink";
 import { useMemo, type ReactNode } from "react";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { WeekChart } from "@/components/garden/WeekChart";
@@ -89,7 +90,7 @@ export function CarnetScreen() {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
-      <div className="flex items-center px-5 pt-[22px] pb-2">
+      <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
         <Link
           href="/jardin"
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
@@ -97,6 +98,7 @@ export function CarnetScreen() {
           <Icon name="retour" />
           Mon jardin
         </Link>
+        <AccountLink />
       </div>
       <div className="flex flex-col gap-4 px-5 pt-2 pb-8">
         <h1 className="font-titre text-titre-l text-encre leading-[1.1]">

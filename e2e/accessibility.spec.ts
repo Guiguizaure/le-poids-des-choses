@@ -44,9 +44,9 @@ const PAGES = [
     heading: "Confidentialité",
   },
   {
-    name: "connexion (lien absent)",
+    name: "connexion (sans jeton : formulaire)",
     path: "/connexion",
-    heading: "Ce lien ne marche plus",
+    heading: "Retrouve ton jardin",
   },
   {
     name: "page 404",

@@ -104,9 +104,8 @@ async function secondDevice(browser: Browser, testInfo: TestInfo) {
 async function requestLink(page: Page, email: string): Promise<string> {
   const before = await mailsTo(page, email);
   await page.goto("/jardin");
-  const section = page.getByRole("region", {
-    name: "Retrouve ton jardin sur un autre appareil",
-  });
+  // « Retrouve ton jardin » en haut d'un jardin vide, « … sur un autre appareil » sinon.
+  const section = page.getByRole("region", { name: /^Retrouve ton jardin/ });
   await section.getByLabel("Ton adresse e-mail").fill(email);
   await section.getByRole("button", { name: "Recevoir un lien" }).click();
   await expect(section.getByText("C’est envoyé !")).toBeVisible();
@@ -149,9 +148,7 @@ async function signIn(page: Page, email: string) {
 }
 
 const accountSection = (page: Page) =>
-  page.getByRole("region", {
-    name: "Retrouve ton jardin sur un autre appareil",
-  });
+  page.getByRole("region", { name: /^Retrouve ton jardin/ });
 
 async function apiSession(page: Page) {
   return page.evaluate(async () => (await fetch("/api/auth/session")).json());
@@ -275,10 +272,113 @@ test("lien à usage unique ; /connexion sans jeton", async ({
   ).toBeVisible();
   acceptStatus(consoleErrors, 400);
 
+  // Lien usé : on peut en demander un autre sur place.
+  await expect(
+    page
+      .getByRole("region", { name: "Recevoir un lien de connexion" })
+      .getByLabel("Ton adresse e-mail"),
+  ).toBeVisible();
+
+  // Sans jeton, déjà connecté sur cet appareil : on le dit, et on mène au jardin.
   await page.goto("/connexion");
   await expect(
-    page.getByRole("heading", { level: 1, name: "Ce lien ne marche plus" }),
+    page.getByRole("heading", { level: 1, name: "Retrouve ton jardin" }),
   ).toBeVisible();
+  await expect(page.getByText(/^Tu es déjà connecté avec/)).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Voir mon jardin" }),
+  ).toBeVisible();
+});
+
+test("retrouver son jardin depuis l'accueil, sur un appareil vide", async ({
+  page,
+  browser,
+}, testInfo) => {
+  test.setTimeout(120_000);
+  const email = emailFor(testInfo, "retrouver");
+  // Téléphone : un jardin déjà commencé, relié au compte.
+  await prepare(page.context(), testInfo);
+  await seedJournal(page, [entry("tel-a", 12, 60), entry("tel-b", 3, 50)]);
+  await signIn(page, email);
+
+  // Ordinateur, carnet vide : jardin ouvert dans un premier onglet.
+  const other = await secondDevice(browser, testInfo);
+  const turnstileCalls: string[] = [];
+  other.context.on("request", (request) => {
+    if (request.url().startsWith("https://challenges.cloudflare.com/"))
+      turnstileCalls.push(request.url());
+  });
+  const garden = other.page;
+  await garden.goto("/jardin");
+  const form = accountSection(garden);
+  await expect(
+    garden.getByRole("region", { name: "Retrouve ton jardin" }),
+  ).toBeVisible();
+  // Le formulaire passe avant l'invitation à comparer.
+  const formTop = (await form.boundingBox())!.y;
+  const inviteTop = (await garden
+    .getByRole("heading", { name: "Ton jardin t’attend" })
+    .boundingBox())!.y;
+  expect(formTop).toBeLessThan(inviteTop);
+
+  // Second onglet : depuis l'accueil, sans faire de choix.
+  const tab = await other.context.newPage();
+  tab.on("console", (message) => {
+    if (message.type() === "error") other.errors.push(message.text());
+  });
+  await tab.goto("/");
+  await tab
+    .getByRole("link", { name: "J’ai déjà un jardin ? Le retrouver" })
+    .click();
+  // Serveur local lent sous charge : la page peut mettre plus de 5 s à s'ouvrir.
+  await expect(tab).toHaveURL(/\/connexion$/, { timeout: 15_000 });
+  await expect(
+    tab.getByRole("heading", { level: 1, name: "Retrouve ton jardin" }),
+  ).toBeVisible({ timeout: 15_000 });
+  // Turnstile n'est chargé qu'à l'ouverture du formulaire.
+  expect(turnstileCalls).toEqual([]);
+  const box = tab.getByRole("region", {
+    name: "Recevoir un lien de connexion",
+  });
+  await box.getByLabel("Ton adresse e-mail").fill(email);
+  await expect.poll(() => turnstileCalls.length).toBeGreaterThan(0);
+  const before = (await mailsTo(tab, email)).length;
+  await box.getByRole("button", { name: "Recevoir un lien" }).click();
+  await expect(box.getByText("C’est envoyé !")).toBeVisible();
+  let mails: Mail[] = [];
+  await expect
+    .poll(async () => (mails = await mailsTo(tab, email)).length)
+    .toBe(before + 1);
+  const link = mails
+    .at(-1)!
+    .text.match(new RegExp(`${BASE}/connexion#jeton=[A-Za-z0-9_-]{43}`))![0];
+  await tab.goto(link);
+  await expect(
+    tab.getByText("Synchronisation terminée : 2 choix retrouvés."),
+  ).toBeVisible();
+
+  // Premier onglet : le jardin se remplit, sobrement (un seul message, aucune fenêtre).
+  await expect(
+    garden.getByText("Ton jardin est de retour : 2 choix retrouvés."),
+  ).toBeVisible();
+  await expect(garden.getByText("2 choix notés")).toBeVisible();
+  await expect(garden.locator("[data-plant]")).toHaveCount(2);
+  await expect(garden.getByRole("dialog")).toHaveCount(0);
+
+  // En-tête : l'adresse remplace « Se connecter » et mène à la section compte.
+  await tab.goto("/");
+  const header = tab.getByRole("link", { name: email });
+  await expect(header).toBeVisible();
+  await header.click();
+  await expect(tab).toHaveURL(/\/jardin#compte$/);
+  await expect(
+    accountSection(tab).getByText(`Connecté avec ${email}`),
+  ).toBeVisible();
+  await expect(accountSection(tab)).toBeInViewport();
+
+  acceptCancelledPrefetch(other.errors);
+  expect(other.errors).toEqual([]);
+  await other.context.close();
 });
 
 test("déconnexion : la session prend fin, le jardin reste", async ({

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { installMode, isIos } from "./install";
+import { installAccess, installMode, isIos } from "./install";
 
 const base = {
   standalone: false,
@@ -23,6 +23,23 @@ describe("bandeau d'installation", () => {
   });
   it("navigateur sans installation possible : rien", () => {
     expect(installMode(base)).toBe("hidden");
+  });
+  it("accès permanent : reste disponible une fois le bandeau fermé", () => {
+    const androidClosed = { ...base, canPrompt: true, dismissed: true };
+    const iphoneClosed = { ...base, ios: true, dismissed: true };
+    expect(installMode(androidClosed)).toBe("hidden");
+    expect(installAccess(androidClosed)).toBe("prompt");
+    expect(installMode(iphoneClosed)).toBe("hidden");
+    expect(installAccess(iphoneClosed)).toBe("ios");
+  });
+  it("accès permanent : masqué si l'app est installée ou impossible à installer", () => {
+    expect(installAccess({ ...base, canPrompt: true, standalone: true })).toBe(
+      "hidden",
+    );
+    expect(installAccess({ ...base, ios: true, standalone: true })).toBe(
+      "hidden",
+    );
+    expect(installAccess(base)).toBe("hidden");
   });
   it("détecte iPhone, iPad et iPadOS", () => {
     expect(
