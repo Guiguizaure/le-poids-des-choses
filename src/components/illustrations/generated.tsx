@@ -614,6 +614,42 @@ function PictoVoiture({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonAbricot({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M40 20 C 58 18, 70 32, 68 50 C 66 66, 52 72, 40 72 C 28 72, 14 66, 12 50 C 10 32, 22 18, 40 20 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="joue"><ellipse cx="52" cy="40" rx="10" ry="12" fill="#FF4F2E" opacity="0.55" /></g><g data-part="sillon"><path d="M40 22 C 34 36, 34 56, 40 70" stroke="#1F1A17" strokeWidth="1.5" strokeLinecap="round" fill="none" /></g><g data-part="feuille"><path d="M41 21 C 44 12, 54 8, 60 10 C 56 18, 48 22, 41 21 Z" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function SaisonAsperge({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="tiges"><path d="M30 76 V24" stroke="#2FBF71" strokeWidth="8" strokeLinecap="round" fill="none" /><path d="M42 76 V16" stroke="#2FBF71" strokeWidth="8" strokeLinecap="round" fill="none" /><path d="M54 76 V26" stroke="#2FBF71" strokeWidth="8" strokeLinecap="round" fill="none" /></g><g data-part="pointes"><path d="M26 26 C 26 16, 34 16, 34 26 Z M38 18 C 38 6, 46 6, 46 18 Z M50 28 C 50 18, 58 18, 58 28 Z" fill="#1B6B45" /></g><g data-part="ecailles"><path d="M28 40 L32 37 M40 34 L44 31 M52 42 L56 39 M28 56 L32 53 M40 50 L44 47 M52 58 L56 55" stroke="#1B6B45" strokeWidth="1.8" strokeLinecap="round" fill="none" /></g><g data-part="lien"><rect x="22" y="58" width="40" height="7" rx="2" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g>
+    </svg>
+  );
+}
+
+function SaisonAubergine({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="legume"><path d="M40 24 C 54 22, 62 34, 62 48 C 62 64, 52 74, 40 74 C 28 74, 18 64, 18 48 C 18 34, 26 22, 40 24 Z" fill="#2D4BFF" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="calice"><path d="M26 30 C 30 22, 36 20, 40 20 C 44 20, 50 22, 54 30 L46 28 L40 34 L34 28 Z" fill="#2FBF71" /></g><g data-part="queue"><path d="M40 20 V8" stroke="#1B6B45" strokeWidth="5" strokeLinecap="round" fill="none" /></g><g data-part="reflet"><ellipse cx="30" cy="50" rx="4" ry="9" fill="#FFF3DC" opacity="0.4" /></g>
+    </svg>
+  );
+}
+
+function SaisonBetterave({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fanes"><path d="M38 30 C 32 18, 24 10, 16 8 C 18 20, 28 28, 38 30 Z" fill="#2FBF71" /><path d="M42 30 C 48 16, 58 8, 66 8 C 62 20, 52 28, 42 30 Z" fill="#1B6B45" /><path d="M38 30 C 36 22, 38 12, 42 6" stroke="#FF8FB1" strokeWidth="2.5" strokeLinecap="round" fill="none" /></g><g data-part="racine"><path d="M40 28 C 56 28, 64 40, 62 52 C 60 62, 50 68, 42 70 L40 78 L38 70 C 30 68, 20 62, 18 52 C 16 40, 24 28, 40 28 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1.5" /></g>
+    </svg>
+  );
+}
+
 function SaisonCarotte({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
@@ -623,11 +659,92 @@ function SaisonCarotte({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonCerise({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="queues"><path d="M30 52 C 32 34, 40 18, 52 10 M52 10 C 54 26, 54 40, 52 52" stroke="#1B6B45" strokeWidth="3" strokeLinecap="round" fill="none" /></g><g data-part="feuille"><path d="M52 10 C 60 4, 70 6, 72 12 C 66 16, 58 16, 52 10 Z" fill="#2FBF71" /></g><g data-part="fruits"><circle cx="28" cy="60" r="13" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="54" cy="60" r="13" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="reflets"><circle cx="23" cy="55" r="2.5" fill="#FFF3DC" opacity="0.7" /><circle cx="49" cy="55" r="2.5" fill="#FFF3DC" opacity="0.7" /></g>
+    </svg>
+  );
+}
+
+function SaisonChou({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuilles-ext"><path d="M10 46 C 8 30, 22 18, 40 18 C 58 18, 72 30, 70 46 C 68 64, 54 74, 40 74 C 26 74, 12 64, 10 46 Z" fill="#1B6B45" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="coeur"><circle cx="40" cy="46" r="20" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="nervures"><path d="M40 30 V64 M40 46 L28 36 M40 46 L52 36 M40 56 L30 50 M40 56 L50 50" stroke="#1B6B45" strokeWidth="1.8" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
+function SaisonClementine({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><circle cx="40" cy="46" r="26" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="pores"><circle cx="30" cy="40" r="1.4" fill="#FF4F2E" /><circle cx="46" cy="36" r="1.4" fill="#FF4F2E" /><circle cx="52" cy="50" r="1.4" fill="#FF4F2E" /><circle cx="36" cy="56" r="1.4" fill="#FF4F2E" /><circle cx="44" cy="60" r="1.4" fill="#FF4F2E" /><circle cx="28" cy="52" r="1.4" fill="#FF4F2E" /></g><g data-part="feuilles"><path d="M40 21 C 34 12, 24 10, 18 12 C 22 20, 32 24, 40 21 Z" fill="#2FBF71" /><path d="M40 21 C 46 10, 56 8, 62 10 C 58 18, 48 22, 40 21 Z" fill="#1B6B45" /></g>
+    </svg>
+  );
+}
+
 function SaisonCourge({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
       {children}
       <g data-part="fruit"><path d="M40 28 C 52 24, 72 30, 72 50 C 72 68, 54 72, 40 70 C 26 72, 8 68, 8 50 C 8 30, 28 24, 40 28 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="cotes"><path d="M28 30 C 20 40, 20 60, 28 70 M52 30 C 60 40, 60 60, 52 70 M40 28 V70" stroke="#FF4F2E" strokeWidth="2.5" strokeLinecap="round" /></g><g data-part="queue"><path d="M38 28 C 37 20, 40 14, 46 12 L48 16 C 43 18, 42 22, 43 28 Z" fill="#1B6B45" /></g>
+    </svg>
+  );
+}
+
+function SaisonCourgette({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="legume"><path d="M14 58 C 10 52, 14 44, 22 40 L58 20 C 66 16, 74 22, 70 30 C 66 36, 60 38, 30 60 C 24 64, 18 64, 14 58 Z" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="stries"><path d="M22 48 L58 28 M24 56 L62 34" stroke="#1B6B45" strokeWidth="2.5" strokeLinecap="round" fill="none" /></g><g data-part="pedoncule"><path d="M66 22 L74 14" stroke="#1B6B45" strokeWidth="5" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
+function SaisonEndive({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuilles"><path d="M40 6 C 54 14, 58 40, 52 70 C 46 76, 34 76, 28 70 C 22 40, 26 14, 40 6 Z" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="pointes"><path d="M40 6 C 48 10, 52 18, 54 26 C 46 22, 42 18, 40 12 C 38 18, 34 22, 26 26 C 28 18, 32 10, 40 6 Z" fill="#FFC93C" /></g><g data-part="lignes"><path d="M40 20 V70 M34 30 C 32 44, 32 58, 34 70 M46 30 C 48 44, 48 58, 46 70" stroke="#FFC93C" strokeWidth="1.8" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
+function SaisonFraise({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fruit"><path d="M20 30 C 20 22, 30 20, 40 22 C 50 20, 60 22, 60 30 C 60 48, 48 66, 40 74 C 32 66, 20 48, 20 30 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="graines"><ellipse cx="30" cy="34" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="40" cy="32" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="50" cy="34" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="34" cy="44" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="46" cy="44" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="40" cy="54" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="30" cy="50" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="50" cy="50" rx="1.4" ry="2.2" fill="#FFF3DC" /><ellipse cx="40" cy="64" rx="1.4" ry="2.2" fill="#FFF3DC" /></g><g data-part="collerette"><path d="M40 24 L30 14 L38 20 L40 10 L42 20 L50 14 L44 24 L54 26 L40 28 L26 26 Z" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function SaisonKiwi({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="peau"><ellipse cx="40" cy="42" rx="30" ry="28" fill="#1B6B45" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="chair"><ellipse cx="40" cy="42" rx="25" ry="23" fill="#2FBF71" /></g><g data-part="coeur"><ellipse cx="40" cy="42" rx="9" ry="8" fill="#FFF3DC" /></g><g data-part="pepins"><ellipse cx="54.0" cy="42.0" rx="1.2" ry="2.2" transform="rotate(90 54.0 42.0)" fill="#1F1A17" /><ellipse cx="52.1" cy="48.5" rx="1.2" ry="2.2" transform="rotate(120 52.1 48.5)" fill="#1F1A17" /><ellipse cx="47.0" cy="53.3" rx="1.2" ry="2.2" transform="rotate(150 47.0 53.3)" fill="#1F1A17" /><ellipse cx="40.0" cy="55.0" rx="1.2" ry="2.2" transform="rotate(180 40.0 55.0)" fill="#1F1A17" /><ellipse cx="33.0" cy="53.3" rx="1.2" ry="2.2" transform="rotate(210 33.0 53.3)" fill="#1F1A17" /><ellipse cx="27.9" cy="48.5" rx="1.2" ry="2.2" transform="rotate(240 27.9 48.5)" fill="#1F1A17" /><ellipse cx="26.0" cy="42.0" rx="1.2" ry="2.2" transform="rotate(270 26.0 42.0)" fill="#1F1A17" /><ellipse cx="27.9" cy="35.5" rx="1.2" ry="2.2" transform="rotate(300 27.9 35.5)" fill="#1F1A17" /><ellipse cx="33.0" cy="30.7" rx="1.2" ry="2.2" transform="rotate(330 33.0 30.7)" fill="#1F1A17" /><ellipse cx="40.0" cy="29.0" rx="1.2" ry="2.2" transform="rotate(360 40.0 29.0)" fill="#1F1A17" /><ellipse cx="47.0" cy="30.7" rx="1.2" ry="2.2" transform="rotate(390 47.0 30.7)" fill="#1F1A17" /><ellipse cx="52.1" cy="35.5" rx="1.2" ry="2.2" transform="rotate(420 52.1 35.5)" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function SaisonMelon({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="ecorce"><path d="M8 40 C 8 62, 22 72, 40 72 C 58 72, 72 62, 72 40 Z" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="chair"><path d="M14 40 C 14 58, 26 66, 40 66 C 54 66, 66 58, 66 40 Z" fill="#FFC93C" /></g><g data-part="graines"><ellipse cx="28" cy="46" rx="1.6" ry="2.6" fill="#1F1A17" /><ellipse cx="34" cy="50" rx="1.6" ry="2.6" fill="#1F1A17" /><ellipse cx="40" cy="52" rx="1.6" ry="2.6" fill="#1F1A17" /><ellipse cx="46" cy="50" rx="1.6" ry="2.6" fill="#1F1A17" /><ellipse cx="52" cy="46" rx="1.6" ry="2.6" fill="#1F1A17" /></g><g data-part="bord"><path d="M8 40 H72" stroke="#1F1A17" strokeWidth="1.5" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
+function SaisonPetitsPois({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="cosse"><path d="M8 44 C 18 26, 52 20, 72 30 C 62 52, 30 60, 8 44 Z" fill="#1B6B45" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="pois"><circle cx="22" cy="40" r="7" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="34" cy="36" r="7" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="46" cy="34" r="7" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="58" cy="34" r="7" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="queue"><path d="M72 30 C 76 26, 76 20, 72 16" stroke="#1B6B45" strokeWidth="3" strokeLinecap="round" fill="none" /></g>
     </svg>
   );
 }
@@ -655,6 +772,15 @@ function SaisonPomme({ svgProps, children }: GeneratedSvgProps) {
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
       {children}
       <g data-part="fruit"><path d="M40 26 C 26 18, 12 28, 14 46 C 16 62, 28 72, 40 68 C 52 72, 64 62, 66 46 C 68 28, 54 18, 40 26 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="queue"><path d="M40 27 C 40 20, 42 14, 45 10" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g><g data-part="feuille"><path d="M44 16 C 50 8, 60 8, 64 12 C 58 18, 50 20, 44 16 Z" fill="#1B6B45" /></g><g data-part="reflet"><ellipse cx="28" cy="40" rx="4" ry="7" transform="rotate(20 28 40)" fill="#FFF3DC" opacity="0.6" /></g>
+    </svg>
+  );
+}
+
+function SaisonRadis({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fanes"><path d="M38 34 C 30 22, 20 16, 14 16 C 18 26, 28 32, 38 34 Z" fill="#2FBF71" /><path d="M42 34 C 48 20, 58 12, 66 12 C 62 24, 52 32, 42 34 Z" fill="#1B6B45" /></g><g data-part="racine"><path d="M40 32 C 54 32, 60 42, 58 52 C 56 60, 48 64, 40 64 C 32 64, 24 60, 22 52 C 20 42, 26 32, 40 32 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1.5" /></g><g data-part="pointe"><path d="M34 62 C 36 66, 38 70, 40 76 C 42 70, 44 66, 46 62 Z" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="1.5" /></g>
     </svg>
   );
 }
@@ -763,11 +889,25 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "picto-vin": PictoVin,
   "picto-visio": PictoVisio,
   "picto-voiture": PictoVoiture,
+  "saison-abricot": SaisonAbricot,
+  "saison-asperge": SaisonAsperge,
+  "saison-aubergine": SaisonAubergine,
+  "saison-betterave": SaisonBetterave,
   "saison-carotte": SaisonCarotte,
+  "saison-cerise": SaisonCerise,
+  "saison-chou": SaisonChou,
+  "saison-clementine": SaisonClementine,
   "saison-courge": SaisonCourge,
+  "saison-courgette": SaisonCourgette,
+  "saison-endive": SaisonEndive,
+  "saison-fraise": SaisonFraise,
+  "saison-kiwi": SaisonKiwi,
+  "saison-melon": SaisonMelon,
+  "saison-petits-pois": SaisonPetitsPois,
   "saison-poire": SaisonPoire,
   "saison-poireau": SaisonPoireau,
   "saison-pomme": SaisonPomme,
+  "saison-radis": SaisonRadis,
   "saison-raisin": SaisonRaisin,
   "saison-tomate": SaisonTomate,
   "scene-paysage": ScenePaysage,

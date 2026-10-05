@@ -13,6 +13,20 @@ export const SEASON_DRAWINGS = {
   "saison-raisin": "raisin",
   "saison-poireau": "poireau",
   "saison-tomate": "tomate",
+  "saison-fraise": "fraise",
+  "saison-cerise": "cerise",
+  "saison-abricot": "abricot",
+  "saison-courgette": "courgette",
+  "saison-aubergine": "aubergine",
+  "saison-melon": "melon",
+  "saison-radis": "radis",
+  "saison-asperge": "asperge",
+  "saison-petits-pois": "petitpois",
+  "saison-chou": "chou",
+  "saison-clementine": "clementine",
+  "saison-kiwi": "kiwi",
+  "saison-endive": "endive",
+  "saison-betterave": "betterave",
 } as const satisfies Partial<Record<IllustrationName, string>>;
 
 export type SeasonDrawing = keyof typeof SEASON_DRAWINGS;

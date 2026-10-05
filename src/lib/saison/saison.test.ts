@@ -140,13 +140,34 @@ describe("encart de saison : du plus léger au plus lourd au kilo", () => {
 });
 
 describe("fruits et légumes dessinés", () => {
+  // Nom du dessin et intitulé des données, sans accents, espaces, tirets ni « s » final :
+  // « petits-pois » ↔ « Petit pois », « clementine » ↔ « Clémentine ».
+  const comparable = (text: string) =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .split(/[^a-z]+/)
+      .filter(Boolean)
+      .map((word) => word.replace(/s$/, ""))
+      .join(" ");
+
   it("chaque dessin correspond, par son nom, à un produit des données", () => {
+    expect(Object.keys(SEASON_DRAWINGS)).toHaveLength(21);
     for (const [name, slug] of Object.entries(SEASON_DRAWINGS)) {
       expect(name in ILLUSTRATION_SPECS, name).toBe(true);
-      expect(name).toBe(`saison-${slug}`);
       const found = getSeasonalProducts().find((p) => p.slug === slug);
-      expect(found?.label.toLowerCase(), slug).toBe(slug);
+      expect(found, slug).toBeDefined();
+      expect(comparable(found!.label), name).toBe(
+        comparable(name.replace(/^saison-/, "")),
+      );
     }
+  });
+  it("tous les dessins de produits sont dans la table", () => {
+    const drawings = Object.keys(ILLUSTRATION_SPECS).filter((name) =>
+      name.startsWith("saison-"),
+    );
+    expect(Object.keys(SEASON_DRAWINGS).sort()).toEqual(drawings.sort());
   });
   it("pas de cagette", () => {
     expect(Object.keys(ILLUSTRATION_SPECS)).not.toContain("saison-cagette");
@@ -201,9 +222,18 @@ describe("fruits et légumes dessinés", () => {
     ]);
     expect(drawnForMonth(5, [])).toEqual([]);
   });
-  it("données actuelles : au moins un dessin chaque mois", () => {
-    for (let month = 1; month <= 12; month++)
-      expect(drawnForMonth(month).length).toBeGreaterThan(0);
+  it("données actuelles : au moins 3 dessins de saison chaque mois", () => {
+    for (let month = 1; month <= 12; month++) {
+      const drawn = drawnForMonth(month);
+      expect(drawn.length, `mois ${month}`).toBeGreaterThanOrEqual(3);
+      for (const name of drawn)
+        expect(
+          getSeasonalProducts()
+            .find((p) => p.slug === SEASON_DRAWINGS[name])!
+            .months.includes(month),
+          `${name}, mois ${month}`,
+        ).toBe(true);
+    }
   });
 });
 
