@@ -3,6 +3,7 @@ import {
   acceptDocument404,
   entry,
   expect,
+  expectNoAxeViolations,
   seedJournal,
   test,
 } from "./fixtures";
@@ -272,6 +273,86 @@ test.describe("bandeau d'installation en mode iPhone", () => {
       page.getByRole("region", { name: "Garde ton jardin" }),
     ).toHaveCount(0);
   });
+
+  test("installer après avoir fermé le bandeau : aide en deux gestes", async ({
+    page,
+  }) => {
+    await page.goto("/jardin");
+    const banner = page.getByRole("region", { name: "Garde ton jardin" });
+    await banner.getByRole("button", { name: "Fermer ce bandeau" }).click();
+    await expect(banner).toHaveCount(0);
+
+    // Toujours là : dans la sauvegarde de /jardin et dans le pied de page de chaque page.
+    const save = page.getByRole("region", { name: "Sauvegarde du carnet" });
+    await expect(
+      save.getByRole("button", { name: "Installer l’appli" }),
+    ).toBeVisible();
+    await page.goto("/methode");
+    const install = page
+      .getByRole("contentinfo")
+      .getByRole("button", { name: "Installer l’appli" });
+    await expect(install).toHaveAttribute("aria-expanded", "false");
+    await install.click();
+    await expect(install).toHaveAttribute("aria-expanded", "true");
+    const help = page.getByRole("contentinfo").getByRole("list").last();
+    await expect(help).toContainText("touche le bouton Partager");
+    await expect(help).toContainText("« Sur l’écran d’accueil »");
+    await expectNoAxeViolations(page);
+  });
+
+  test("déjà installée : aucun « Installer l’appli »", async ({ page }) => {
+    await page.addInitScript(() =>
+      Object.defineProperty(navigator, "standalone", { value: true }),
+    );
+    await page.goto("/jardin");
+    await expect(
+      page.getByRole("heading", { name: "Mon jardin" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Installer l’appli" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("region", { name: "Garde ton jardin" }),
+    ).toHaveCount(0);
+  });
+});
+
+test("installer après avoir fermé le bandeau : invite mémorisée (Android, Chrome)", async ({
+  page,
+}) => {
+  await page.goto("/jardin");
+  await expect(page.getByRole("heading", { name: "Mon jardin" })).toBeVisible();
+  // Invite d'installation simulée (beforeinstallprompt), comme Chrome la propose.
+  await page.evaluate(() => {
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    Object.assign(event, {
+      prompt: async () => {
+        (window as unknown as { prompted: number }).prompted = 1;
+      },
+      userChoice: Promise.resolve({ outcome: "accepted" }),
+    });
+    window.dispatchEvent(event);
+  });
+  const banner = page.getByRole("region", { name: "Garde ton jardin" });
+  await banner.getByRole("button", { name: "Fermer ce bandeau" }).click();
+  await expect(banner).toHaveCount(0);
+
+  const install = page
+    .getByRole("contentinfo")
+    .getByRole("button", { name: "Installer l’appli" });
+  await expect(install).toBeVisible();
+  await install.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as unknown as { prompted?: number }).prompted,
+      ),
+    )
+    .toBe(1);
+  // Installée : plus aucun accès.
+  await expect(
+    page.getByRole("button", { name: "Installer l’appli" }),
+  ).toHaveCount(0);
 });
 
 test("en-têtes de sécurité et cache des fichiers versionnés", async ({
