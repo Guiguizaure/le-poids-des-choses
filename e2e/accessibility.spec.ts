@@ -1,8 +1,8 @@
-import AxeBuilder from "@axe-core/playwright";
 import {
   acceptDocument404,
   entry,
   expect,
+  expectNoAxeViolations,
   seedJournal,
   tabTo,
   test,
@@ -39,35 +39,22 @@ const PAGES = [
     heading: "Mentions légales",
   },
   {
+    name: "confidentialité",
+    path: "/confidentialite",
+    heading: "Confidentialité",
+  },
+  {
+    name: "connexion (lien absent)",
+    path: "/connexion",
+    heading: "Ce lien ne marche plus",
+  },
+  {
     name: "page 404",
     path: "/page-introuvable",
     heading: "Cette page s’est perdue dans la brume",
   },
   { name: "labo", path: "/labo", heading: "Labo" },
 ];
-
-async function expectNoAxeViolations(page: import("@playwright/test").Page) {
-  // Les apparitions (fondu, pop) doivent être finies : un texte encore en fondu fausserait
-  // la mesure de contraste.
-  await page.evaluate(() =>
-    Promise.all(
-      document
-        .getAnimations()
-        .filter(
-          (animation) =>
-            animation.effect?.getComputedTiming().iterations !== Infinity,
-        )
-        .map((animation) => animation.finished),
-    ),
-  );
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-    .analyze();
-  const summary = results.violations.map(
-    (v) => `${v.id} : ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`,
-  );
-  expect(summary).toEqual([]);
-}
 
 test.describe("axe (WCAG 2.1 AA)", () => {
   for (const { name, path, heading } of PAGES) {
