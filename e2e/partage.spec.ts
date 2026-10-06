@@ -151,6 +151,8 @@ test.describe("partage du jardin (mobile)", () => {
     );
     expect(drawn.join(" ")).not.toMatch(/kg|CO2|jardin|choix/);
     await sheet.getByRole("button", { name: "Share the image" }).click();
+    // Le partage est asynchrone : la feuille se ferme une fois le fichier reçu.
+    await expect(sheet).toHaveCount(0);
     const shared = (await page.evaluate(
       () => (window as unknown as { __shared: unknown }).__shared,
     )) as Shared;

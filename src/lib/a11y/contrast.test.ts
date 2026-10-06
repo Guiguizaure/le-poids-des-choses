@@ -79,6 +79,13 @@ const PAIRS: {
     minimum: 4.5,
     where: "badges « 1 » et « 2 » du choix des gestes",
   },
+  {
+    text: "blanc",
+    background: "sapin",
+    minimum: 4.5,
+    where:
+      "encadrés « Le savais-tu ? » (DidYouKnow : duels, jardin, fiche d'une espèce), texte, liens et contour de focus",
+  },
 ];
 
 describe("contraste du thème (WCAG AA)", () => {

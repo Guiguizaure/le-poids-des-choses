@@ -9,6 +9,7 @@ import {
   expect,
   expectNoAxeViolations,
   test,
+  letGardenChoose,
 } from "./fixtures";
 
 const PAGES_PORT = 4331;
@@ -149,6 +150,7 @@ test("parcours complet : analyse, vérification, distance, ajout au carnet", asy
   );
   await expectNoAxeViolations(page);
   await add.click();
+  await letGardenChoose(page);
 
   await expect(
     page.getByRole("heading", { name: "C’est noté dans ton carnet" }),
@@ -233,6 +235,7 @@ test("en anglais : « Tell us about your day », mêmes règles, mêmes données
   await expect(ter).toContainText("Getting around · 65 km");
   await expectNoAxeViolations(page);
   await page.getByRole("button", { name: "Add to journal" }).click();
+  await letGardenChoose(page);
 
   await expect(
     page.getByRole("heading", { name: "Noted in your journal" }),
@@ -298,6 +301,7 @@ test("trajet sans distance : message visible, le bouton mène au champ, puis ajo
   await expect(marche).not.toHaveClass(/border-tomate/);
   await expect(message).toHaveCount(0);
   await add.tap();
+  await letGardenChoose(page);
   await expect(page.getByText("2 gestes ajoutés à ton carnet.")).toBeVisible();
   const entries = await journal(page);
   expect(entries).toEqual(
@@ -364,6 +368,7 @@ test("objet : l'option écrite est reprise, l'écart suit les règles du duel ob
   const jean = row(page, "Jean");
   await expect(jean).toContainText("S’habiller · d’occasion, livré en colis");
   await page.getByRole("button", { name: "Ajouter au carnet" }).click();
+  await letGardenChoose(page);
   await expect(page.getByText("1 geste ajouté à ton carnet.")).toBeVisible();
   const [entry] = await journal(page);
   expect(entry).toMatchObject({

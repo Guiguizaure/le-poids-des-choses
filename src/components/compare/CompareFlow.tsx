@@ -17,6 +17,9 @@ import { getGesture } from "@/lib/data";
 import type { Choice, JournalEntry } from "@/lib/data/types";
 import { HabitChooser } from "@/components/habits/HabitChooser";
 import { useJournal } from "@/lib/journal/useJournal";
+import { createEntry, type NewEntry } from "@/lib/journal/entry";
+import { buildGarden, growthSteps, MAX_PLANTS } from "@/lib/garden/model";
+import { SpeciesPicker } from "@/components/garden/SpeciesPicker";
 import { localizeHref } from "@/lib/i18n";
 import { COMPARE } from "@/lib/i18n/messages/compare";
 import { useLocale, useMessages } from "@/lib/i18n/LocaleProvider";
@@ -58,6 +61,16 @@ export function CompareFlow() {
     query: string;
   } | null>(null);
   const [navigated, setNavigated] = useState(false);
+  // Choix léger qui fait pousser une nouvelle plante : on demande l'espèce avant de le noter
+  // (l'entrée du carnet ne change plus ensuite).
+  const [planting, setPlanting] = useState<{
+    input: NewEntry;
+    noted: ComparisonState;
+  } | null>(null);
+  const garden = useMemo(
+    () => buildGarden(journal.entries, new Date()),
+    [journal.entries],
+  );
   const notice = params.get("lien") === "invalide";
 
   // History API native : Next.js la synchronise avec useSearchParams, sans recharger la page.
@@ -93,6 +106,34 @@ export function CompareFlow() {
     },
     [locale],
   );
+
+  /** Note le choix (avec l'espèce choisie, s'il y en a une) et affiche le résultat. */
+  const record = (input: NewEntry, noted: ComparisonState) => {
+    const entry = journal.add(input);
+    replace(noted); // l'URL partageable garde la quantité choisie
+    setNavigated(true);
+    setResult({ entry, query: comparisonQuery(noted) });
+    window.scrollTo({ top: 0 });
+  };
+  /** Choix noté : on propose l'espèce seulement si une nouvelle plante va pousser. */
+  const choose = (input: NewEntry, noted: ComparisonState) => {
+    const light = createEntry(input).avoidedKg > 0;
+    if (light && garden.plants.length < MAX_PLANTS)
+      setPlanting({ input, noted });
+    else record(input, noted);
+  };
+  const picker = planting ? (
+    <SpeciesPicker
+      steps={growthSteps(garden)}
+      onPick={(species) => {
+        setPlanting(null);
+        record(
+          species ? { ...planting.input, species } : planting.input,
+          planting.noted,
+        );
+      }}
+    />
+  ) : null;
 
   // Le résultat n'appartient qu'à la comparaison qui l'a produit (retour arrière = duel).
   if (result && result.query === query) {
@@ -167,46 +208,46 @@ export function CompareFlow() {
       );
     case "duel":
       return (
-        <Duel
-          key={`${state.a}-${state.b}`}
-          a={state.a}
-          b={state.b}
-          quantity={state.quantity}
-          focusTitle={navigated}
-          onQuantity={(quantity) => replace({ ...state, quantity })}
-          onChoose={(choice: Choice, quantity: number) => {
-            const entry = journal.add(
-              duelEntry(state.a, state.b, quantity, choice),
-            );
-            const chosen = { ...state, quantity };
-            replace(chosen); // l'URL partageable garde la quantité choisie
-            setNavigated(true);
-            setResult({ entry, query: comparisonQuery(chosen) });
-            window.scrollTo({ top: 0 });
-          }}
-        />
+        <>
+          <Duel
+            key={`${state.a}-${state.b}`}
+            a={state.a}
+            b={state.b}
+            quantity={state.quantity}
+            focusTitle={navigated}
+            onQuantity={(quantity) => replace({ ...state, quantity })}
+            onChoose={(choice: Choice, quantity: number) =>
+              choose(duelEntry(state.a, state.b, quantity, choice), {
+                ...state,
+                quantity,
+              })
+            }
+          />
+          {picker}
+        </>
       );
     case "object":
       return (
-        <ObjectDuel
-          key={state.object}
-          object={state.object}
-          option={state.option}
-          delivered={state.delivered}
-          backHref={COMPARE_PATH}
-          focusTitle={navigated}
-          onChange={(option, delivered) =>
-            replace({ ...state, option, delivered })
-          }
-          onChoose={() => {
-            const entry = journal.add(
-              objectEntry(state.object, state.option, state.delivered),
-            );
-            setNavigated(true);
-            setResult({ entry, query });
-            window.scrollTo({ top: 0 });
-          }}
-        />
+        <>
+          <ObjectDuel
+            key={state.object}
+            object={state.object}
+            option={state.option}
+            delivered={state.delivered}
+            backHref={COMPARE_PATH}
+            focusTitle={navigated}
+            onChange={(option, delivered) =>
+              replace({ ...state, option, delivered })
+            }
+            onChoose={() =>
+              choose(
+                objectEntry(state.object, state.option, state.delivered),
+                state,
+              )
+            }
+          />
+          {picker}
+        </>
       );
   }
 }

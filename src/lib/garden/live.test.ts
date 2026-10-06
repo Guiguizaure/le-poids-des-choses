@@ -28,7 +28,7 @@ import {
   skyContrastFailures,
 } from "./sky-contrast";
 import { getSky, PALETTE, SKIES } from "./skies";
-import { SPECIES } from "./species";
+import { SPECIES, speciesFor } from "./species";
 import { arrivalMessage, gardenDescription } from "./text";
 import {
   drawnBox,
@@ -40,6 +40,8 @@ import {
   VISITORS,
   type VisitorKind,
 } from "./visitors";
+import { transformMatrix } from "../../../scripts/bounds";
+import { pathToPoints } from "../../../scripts/scene-geometry";
 
 const read = (name: IllustrationName) =>
   readFileSync(
@@ -414,19 +416,123 @@ describe("perchoirs des arbres (relus dans les dessins)", () => {
     }
     return bottom;
   }
-  it.each(SPECIES.filter((s) => s.perches))("$id", (species) => {
-    const svg = read(`${species.id}-grand` as IllustrationName);
-    const trunk = svg.match(
-      /<g id="tronc"><rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/,
-    )!;
-    const [x, y, w, h] = trunk.slice(1).map(Number);
-    const center = x + w / 2;
-    const { owl, cicada } = species.perches!;
-    expect(owl.x).toBe(center);
-    expect(owl.y).toBeCloseTo(canopyBottom(svg, center), 0);
-    expect(cicada.x).toBe(center);
-    expect(cicada.y).toBeCloseTo((Math.max(y, owl.y) + y + h) / 2, 0);
+  it.each(SPECIES.filter((s) => s.perches && s.randomPool))(
+    "$id",
+    (species) => {
+      const svg = read(`${species.id}-grand` as IllustrationName);
+      const trunk = svg.match(
+        /<g id="tronc"><rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/,
+      )!;
+      const [x, y, w, h] = trunk.slice(1).map(Number);
+      const center = x + w / 2;
+      const { owl, cicada } = species.perches!;
+      expect(owl.x).toBe(center);
+      expect(owl.y).toBeCloseTo(canopyBottom(svg, center), 0);
+      expect(cicada.x).toBe(center);
+      expect(cicada.y).toBeCloseTo((Math.max(y, owl.y) + y + h) / 2, 0);
+    },
+  );
+});
+
+describe("perchoirs des arbres à débloquer (tronc et feuillage dessinés en chemins)", () => {
+  /** Points du calque (formes échantillonnées, transformations appliquées). */
+  function points(svg: string, layer: string): [number, number][] {
+    const content = svg.match(
+      new RegExp(`<g id="${layer}">([\\s\\S]*?)</g>`),
+    )![1];
+    const result: [number, number][] = [];
+    for (const [tag, kind] of content.matchAll(
+      /<(path|ellipse|circle|rect)\b[^>]*>/g,
+    )) {
+      // Reflets crème posés sur le feuillage : pas du feuillage.
+      if (/fill="#FFF3DC"/.test(tag)) continue;
+      const m = transformMatrix(tag);
+      const at = (x: number, y: number): [number, number] => [
+        m[0] * x + m[2] * y + m[4],
+        m[1] * x + m[3] * y + m[5],
+      ];
+      const n = (name: string) =>
+        Number(tag.match(new RegExp(`\\s${name}="(-?[\\d.]+)"`))?.[1] ?? 0);
+      if (kind === "path")
+        for (const [x, y] of pathToPoints(tag.match(/\sd="([^"]+)"/)![1]))
+          result.push(at(x, y));
+      else if (kind === "rect")
+        for (const [x, y] of [
+          [n("x"), n("y")],
+          [n("x") + n("width"), n("y") + n("height")],
+        ])
+          result.push(at(x, y));
+      else {
+        const [rx, ry] =
+          kind === "circle" ? [n("r"), n("r")] : [n("rx"), n("ry")];
+        for (let a = 0; a < 360; a += 2) {
+          const t = (a * Math.PI) / 180;
+          result.push(
+            at(n("cx") + rx * Math.cos(t), n("cy") + ry * Math.sin(t)),
+          );
+        }
+      }
+    }
+    return result;
+  }
+  it("le sapin n'a pas de perchoir (tronc caché sous les étages)", () => {
+    expect(speciesFor({ type: "tree", variant: 5 }).perches).toBeUndefined();
   });
+  it.each(SPECIES.filter((s) => s.perches && !s.randomPool))(
+    "$id",
+    (species) => {
+      const svg = read(`${species.id}-grand` as IllustrationName);
+      const { owl, cicada } = species.perches!;
+      const canopy = points(svg, "feuillage").filter(
+        ([x]) => Math.abs(x - owl.x) < 1.5,
+      );
+      // Hibou : sous le bas du feuillage, au-dessus du tronc.
+      expect(owl.y).toBeCloseTo(Math.max(...canopy.map(([, y]) => y)), 0);
+      // Cigale : sur le tronc (à moins de 2 unités du tracé), sous le hibou. Chaque
+      // sous-chemin (M…) du tronc est un tracé à part : on mesure la distance à ses segments.
+      const trunkLayer = svg.match(/<g id="tronc">([\s\S]*?)<\/g>/)![1];
+      const strokes = [...trunkLayer.matchAll(/<path\b[^>]*>/g)].flatMap(
+        ([tag]) => {
+          // Transformation de la forme (dessin réduit autour du pied) appliquée au tracé.
+          const m = transformMatrix(tag);
+          const d = tag.match(/\sd="([^"]+)"/)![1];
+          return d
+            .split(/(?=M)/)
+            .filter(Boolean)
+            .map((sub) =>
+              pathToPoints(sub).map(
+                ([x, y]) =>
+                  [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]] as [
+                    number,
+                    number,
+                  ],
+              ),
+            );
+        },
+      );
+      const toSegment = (
+        [ax, ay]: [number, number],
+        [bx, by]: [number, number],
+      ) => {
+        const [dx, dy] = [bx - ax, by - ay];
+        const along =
+          ((cicada.x - ax) * dx + (cicada.y - ay) * dy) / (dx * dx + dy * dy);
+        const t = Math.max(0, Math.min(1, along || 0));
+        return Math.hypot(ax + t * dx - cicada.x, ay + t * dy - cicada.y);
+      };
+      const nearest = Math.min(
+        ...strokes.flatMap((line) =>
+          line
+            .slice(1)
+            .map((point, i) =>
+              toSegment(line[i] as [number, number], point as [number, number]),
+            ),
+        ),
+      );
+      expect(nearest).toBeLessThan(2);
+      expect(cicada.y).toBeGreaterThan(owl.y);
+    },
+  );
 });
 
 describe("contraste de la bande de ciel", () => {

@@ -65,12 +65,22 @@ describe("table des espèces", () => {
       }
     },
   );
-  it("caducs : arbres 1 et 3 ; persistants : arbre 2 et les fleurs", () => {
+  it("caducs : arbres 1, 3 et 6 (figuier) ; persistants : arbres 2, 4 (olivier), 5 (sapin) et les fleurs", () => {
     expect(
       SPECIES.filter((s) => s.leaves === "caduc").map((s) => s.id),
-    ).toEqual(["arbre-1", "arbre-3"]);
-    for (const species of SPECIES)
-      expect(species.bloomRestsInWinter).toBe(species.leaves === "caduc");
+    ).toEqual(["arbre-1", "arbre-3", "arbre-6"]);
+    // L'épanouissement dort l'hiver : caducs et fleurs à débloquer (marguerite, lavande,
+    // pissenlit) ; les trois fleurs d'origine gardent le leur (jardins existants inchangés).
+    expect(
+      SPECIES.filter((s) => s.bloomRestsInWinter).map((s) => s.id),
+    ).toEqual([
+      "arbre-1",
+      "arbre-3",
+      "arbre-6",
+      "fleur-4",
+      "fleur-5",
+      "fleur-6",
+    ]);
   });
   it("feuillage : dessin au printemps et en été, tomate en automne, neige en hiver (caducs)", () => {
     const kind = { type: "tree", variant: 1 } as const;
@@ -98,7 +108,7 @@ describe("table des espèces", () => {
     expect(look.paint?.layers).toEqual(["feuillage"]);
   });
   it("espèce inconnue : erreur claire", () => {
-    expect(() => speciesFor({ type: "tree", variant: 4 as 1 })).toThrow(
+    expect(() => speciesFor({ type: "tree", variant: 9 as 1 })).toThrow(
       /Espèce/,
     );
   });

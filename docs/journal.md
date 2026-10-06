@@ -1462,3 +1462,138 @@ Playwright n'y publie plus ses navigateurs. Sur une branche `chore/…` : rempla
 jour si besoin (`pnpm up @playwright/test`), ouvrir la demande de fusion et vérifier que
 `playwright install --with-deps chromium webkit` et les tests WebKit passent avant de
 fusionner.
+
+## 2026-10-06 (nuit) — Lot « Espèces » (branche feat/especes)
+
+**Demandé** : dernière exception au gel avant l'étude de cas. Six nouvelles espèces dessinées
+(olivier, sapin, figuier ; marguerite, lavande, pissenlit, 21 SVG), des fiches FR/EN pour les
+12 espèces avec anecdotes vérifiées, un choix « Que veux-tu planter ? » à chaque nouvelle
+plante, un déblocage progressif, des jardins existants inchangés, le choix gardé avec la
+plante (synchronisé si simple).
+
+**Fait** :
+
+- Dessins : 21 fichiers dans `public/illustrations`, contrat dans `specs.ts`. Les nouveaux
+  SVG utilisent `transform` sur leurs formes : l'extraction des emprises
+  (`scripts/bounds.ts`) les applique maintenant (translate, rotate, scale) ; les emprises
+  des anciens dessins sont identiques à l'octet près. Le sapin adulte montait à y = −20
+  (pointe coupée par son cadre) : `arbre-5-grand` et son épanouissement ramenés dans le
+  cadre (échelle 0,85 autour du pied, rien d'autre ne change).
+- Noms : aucune espèce n'était nommée dans le code ; noms du brouillon, tous gardés
+  (pommier, poirier, cerisier, églantine, tulipe, herbes folles ; olivier, sapin, figuier,
+  marguerite, lavande, pissenlit).
+- `species.ts` : olivier et sapin persistants, figuier caduc ; marguerite, lavande, pissenlit
+  avec `bloomRestsInWinter`. Perchoirs relus sur les dessins pour l'olivier et le figuier ;
+  le sapin n'en a pas (tronc caché sous les étages).
+- Déblocage : compteur `growthSteps` = choix légers + jours arrosés (deux compteurs du
+  carnet qui ne font que monter, aucun kg). Une espèce tous les 3 pas : marguerite (3),
+  olivier (6), lavande (9), figuier (12), pissenlit (15), sapin (18). Annonce « Nouvelle
+  espèce : … » sur les cartes de résultat et après « Raconte ta journée ».
+- Choix : `SpeciesPicker` (`<dialog>`, feuille en bas sur mobile, fenêtre au centre sur grand
+  écran), ouvert AVANT que le choix léger soit noté (une entrée ne change plus ensuite) ;
+  « Laisse le jardin choisir », Échap ou la croix = tirage habituel. Un seul choix pour
+  toutes les plantes d'un ajout de « Raconte ta journée ».
+- Stockage : champ `species` de l'entrée (choix léger seulement). Le carnet tolérait déjà
+  les champs inconnus, côté navigateur comme côté serveur : synchro du compte et export sans
+  migration ni changement d'API. Une espèce inconnue retombe sur le tirage.
+- Jardins existants : empreinte d'un carnet de référence calculée sur main puis figée dans
+  un test (même valeur sur la branche).
+- Fiches : `messages/species.ts` ; sources dans `docs/especes-sources.md`. Douze anecdotes
+  confirmées, dont quatre réécrites pour coller à la source : poirier (« mûrissent mal sur
+  l'arbre »), églantine en anglais (la source parle de poil à gratter fabriqué, pas
+  d'enfants), marguerite (« nombreuses » fleurs, pas « des centaines »), lavande (« en
+  France », les surfaces de la source sont nationales).
+- Bonus (toucher une plante ouvre sa fiche) : pas fait. La scène est une image unique pour
+  les lecteurs d'écran ; ajouter un bouton par plante (jusqu'à 40) demandait plus qu'un
+  bonus simple.
+
+**À signaler** :
+
+- Poirier (arbre-2) : la fiche dit « Caduc » (vrai pour un poirier), mais l'arbre-2 est
+  persistant dans le jardin depuis le début (« élancé, comme un cyprès ») ; le changer
+  modifierait l'automne et l'hiver des jardins existants. Choix à faire.
+- Contrastes sur les collines (rapport de luminance) : vert sapin (olivier, sapin, feuilles
+  foncées du figuier) 1,10:1 sur la colline bleue, 2,72:1 sur le vert ; feuilles claires du
+  figuier (pomme) 1:1 sur l'herbe ; épis de la lavande (outremer) 1:1 sur la colline bleue,
+  où ils disparaissent. Teinte différente pour le vert sapin sur le bleu (lisible à l'œil),
+  mais pas pour la lavande. Dessins non retouchés : piste, un contour encre sur les épis,
+  ou une autre couleur de la palette.
+- Olivier (110 unités de large) et figuier (103) dépassent la plus large plante d'origine
+  (90) : deux voisins d'une même rangée peuvent se chevaucher un peu.
+
+**Vérifications** : lint, types, 1 141 tests unitaires (dont `especes.test.ts` : jardins
+existants à l'empreinte figée, choix, déblocage, jamais de régression, jamais de kg, fiches
+complètes dans les deux langues), `STRICT_DATA=1 pnpm build`. Bout en bout Chromium et
+WebKit avec axe : 207 passés (dont `e2e/especes.spec.ts` : choix de l'olivier gardé avec la
+plante, Échap et « Laisse le jardin choisir », choix plus lourd sans feuille, annonce
+« Nouvelle espèce : la marguerite », version anglaise) ; compte et « Raconte ta journée »
+relancés seuls : 35 passés. Dans la suite complète, sous la charge locale, l'axe de /labo
+(douze espèces à analyser) dépassait 30 s sur WebKit : `test.slow()` pour cette page ; un
+test du compte WebKit a perdu sa connexion au serveur local (connu), il passe relancé.
+
+### 2026-10-06 (nuit) — Relecture de la PR #28
+
+Décisions de Guillaume, appliquées sur feat/especes :
+
+- arbre-2 devient le **citronnier** (persistant, fleurs blanches, fruits jaunes : colle au
+  dessin et au comportement d'origine, aucun jardin ne change). Fiche FR/EN réécrite ;
+  source du poirier retirée. L'anecdote proposée (« fleurs et fruits en même temps,
+  refleurit plusieurs fois par an ») n'est confirmée qu'en partie mot pour mot : UF/IFAS
+  (HS1153) écrit « Trees may bloom again in June and November » et « fruit at different
+  stages of development at the same time », le CIRAD parle de floraisons échelonnées
+  (« everbearing »). Anecdote retenue : « Le citronnier peut refleurir plusieurs fois par
+  an : le même arbre porte alors des citrons à différents stades. »
+- **Lavande** : `fleur-5-pousse`, `fleur-5-fleurie`, `fleur-5-fleurie-epanoui` remplacés
+  (épis cernés d'encre). Sur la colline bleue : contour encre / outremer 2,92:1 (au lieu de
+  1:1 sans contour) ; sur le vert, 7,23:1.
+- **Largeur** : figuier adulte réduit à 0,85 autour du pied (87,7 unités), épanouissement
+  compris. L'olivier, à 0,85, aurait fait 93,5 unités, au-dessus des 90 visés : il est réduit
+  à 0,81 (89,1 unités). Traits gardés à leur épaisseur, perchoirs relus. L'extraction des
+  emprises calcule maintenant les rayons exacts d'une ellipse seulement agrandie ou
+  déplacée, et l'épaisseur du trait à l'échelle ; emprises des anciens dessins inchangées.
+
+**Note pour la V3** : rendre les fiches des espèces accessibles par une page ou une liste
+« Herbier » (alternative accessible au toucher sur une plante, que la scène, une seule image
+pour les lecteurs d'écran, ne permet pas simplement).
+
+### 2026-10-06 (nuit) — « Que veux-tu planter ? » plus visuel
+
+Retours UX de Guillaume, appliqués sur feat/especes :
+
+- Grille de cartes (2 colonnes sur mobile, 4 sur grand écran) : dessin, nom, ligne de type
+  courte (« Arbre · Caduc · Fleurit au printemps », champ `short` des fiches). Toucher une
+  carte plante l'espèce. Plus de description ni d'anecdote sur la carte.
+- Bouton « i » à côté du bouton de la carte (jamais dedans), « En savoir plus sur
+  l’olivier » : fiche dans la même feuille (grand dessin, type complet, description,
+  encadré « Le savais-tu ? », « Planter l’olivier », « Retour aux espèces »). Au retour, le
+  focus revient sur la carte (ou sur son bouton « i » pour une espèce verrouillée). Échap
+  depuis une fiche revient à la grille ; depuis la grille, le jardin choisit.
+- « Le savais-tu ? » : fond vert sapin, texte blanc, 6,49:1 (le vert pomme n'aurait donné que
+  2,38:1) ; paire ajoutée au test de contraste du thème.
+- Espèces verrouillées : carte grisée, cadenas, « Dans 2 pas » ; leur fiche reste lisible,
+  avec « Se débloque bientôt. Encore 2 pas de croissance : choix légers ou jours arrosés. »,
+  sans bouton pour planter.
+- « Laisse le jardin choisir » inchangé, en bas.
+- Bout en bout : `e2e/especes.spec.ts` réécrit (grille, fiche, retour du focus, Échap à deux
+  niveaux, espèce verrouillée, « i » jamais imbriqué, couleurs de l'encadré, axe), en
+  français et en anglais, sur Chromium et WebKit.
+
+### 2026-10-06 (fin) — Un seul encadré « Le savais-tu ? »
+
+Demande de Guillaume : l'encadré « Le savais-tu ? » de /jardin (et /en/garden) n'avait pas le
+style vert sapin de la fiche d'espèce ; un seul composant partagé pour tout le site.
+
+- Nouveau `DidYouKnow` (`src/components/facts/DidYouKnow.tsx`) : fond sapin #1B6B45, titre,
+  texte et liens blancs soulignés, contour de focus blanc (l'outremer habituel ne ferait que
+  1,10:1 sur sapin). Titre h2 sur une page, h4 dans la fiche d'une espèce.
+- Occurrences recensées et migrées : `FactCard` (duel, duel objet, /jardin, en français et en
+  anglais) et la fiche d'espèce de « Que veux-tu planter ? » (après un choix léger au duel,
+  au duel objet et dans « Raconte ta journée »).
+- Laissées telles quelles : le titre de section « Le savais-tu ? » de /methode#savais-tu
+  (/en/method), qui explique les faits et n'est pas un encadré ; la carte « Palier franchi »
+  (`MilestoneCard`), qui reprend les textes de `FACT_CARD` sans être un « Le savais-tu ? ».
+- Test de contraste : la paire blanc / sapin couvre désormais tous les encadrés (texte, liens,
+  contour de focus).
+- Bout en bout : helper `expectDidYouKnow` (fond, couleur du texte, du titre et des liens) dans
+  `e2e/facts.spec.ts` (duel, duel objet, jardin, en français et en anglais, avec axe),
+  `e2e/accessibility.spec.ts` (jardin) et `e2e/especes.spec.ts` (fiche, FR et EN).

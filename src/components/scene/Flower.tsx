@@ -1,11 +1,12 @@
 "use client";
 
+import type { PlantVariant } from "@/lib/garden/species";
 import type { IllustrationName } from "@/lib/illustrations/specs";
 import { StagedPlant, type PlantBloom, type PlantPaint } from "./StagedPlant";
 
 export const FLOWER_STAGES = ["pousse", "fleurie"] as const;
 export type FlowerStage = (typeof FLOWER_STAGES)[number];
-export type FlowerVariant = 1 | 2 | 3;
+export type FlowerVariant = PlantVariant;
 
 type FlowerProps = {
   variant: FlowerVariant;

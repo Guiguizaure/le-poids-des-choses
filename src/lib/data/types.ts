@@ -89,6 +89,12 @@ export type ComparisonEntry = {
   /** Objets uniquement : mode d'acquisition de chaque côté (même objet, deux modes). */
   modeA?: AcquisitionMode;
   modeB?: AcquisitionMode;
+  /**
+   * Espèce choisie à la plantation (« fleur-4 »…), choix léger seulement ; absente quand le
+   * jardin a choisi (tirage figé d'après l'id, comme avant). Gardée avec l'entrée : elle part
+   * avec la synchro du compte et l'export.
+   */
+  species?: string;
 };
 
 /**

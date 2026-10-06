@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { Illustration } from "@/components/illustrations/Illustration";
 import {
@@ -21,6 +28,10 @@ import type { JournalEntry } from "@/lib/data/types";
 import { pictoFor } from "@/lib/journal/display";
 import { isComparison, isHabit, isLightChoice } from "@/lib/journal/kind";
 import { useJournal } from "@/lib/journal/useJournal";
+import { createEntry } from "@/lib/journal/entry";
+import { buildGarden, growthSteps, MAX_PLANTS } from "@/lib/garden/model";
+import { SpeciesPicker } from "@/components/garden/SpeciesPicker";
+import { SpeciesUnlocked } from "@/components/garden/SpeciesUnlocked";
 import { raconte, type RaconteError } from "@/lib/raconte/api";
 import { RACONTE_MAX_CHARS, RACONTE_KM_RANGE } from "@/lib/raconte/detections";
 import {
@@ -99,6 +110,12 @@ export function RaconteScreen() {
   const availability = useAvailability();
   const [text, setText] = useState("");
   const [state, setState] = useState<State>({ step: "idle" });
+  // Nouvelles plantes de cet ajout : un seul choix d'espèce pour toutes (ou le jardin choisit).
+  const [planting, setPlanting] = useState<number | null>(null);
+  const garden = useMemo(
+    () => buildGarden(journal.entries, new Date()),
+    [journal.entries],
+  );
   const { widget, prepare, getToken, consume } = useTurnstile();
   const resultTitle = useRef<HTMLHeadingElement>(null);
   const addedTitle = useRef<HTMLHeadingElement>(null);
@@ -169,6 +186,21 @@ export function RaconteScreen() {
         : current,
     );
 
+  /** Ajoute les gestes cochés ; `species` : espèce de toutes les nouvelles plantes. */
+  const commit = (species: string | null) => {
+    if (state.step !== "results") return;
+    const entries: JournalEntry[] = [];
+    for (const row of state.rows) {
+      if (!row.checked) continue;
+      const habit = proposalHabit(row.proposal);
+      const input = habit ? null : proposalEntry(row.proposal);
+      if (habit) entries.push(journal.addHabit(habit));
+      else if (input)
+        entries.push(journal.add(species ? { ...input, species } : input));
+    }
+    setState({ step: "added", entries });
+  };
+
   const add = () => {
     if (state.step !== "results") return;
     const blocked = blockingFor(state.rows, locale);
@@ -176,21 +208,33 @@ export function RaconteScreen() {
       goTo(blocked.focusId);
       return;
     }
-    const entries: JournalEntry[] = [];
-    for (const row of state.rows) {
-      if (!row.checked) continue;
-      const habit = proposalHabit(row.proposal);
-      const input = habit ? null : proposalEntry(row.proposal);
-      if (habit) entries.push(journal.addHabit(habit));
-      else if (input) entries.push(journal.add(input));
-    }
-    setState({ step: "added", entries });
+    // Plantes qui vont pousser : choix légers, dans la limite des places libres.
+    const light = state.rows.filter((row) => {
+      if (!row.checked || proposalHabit(row.proposal)) return false;
+      const input = proposalEntry(row.proposal);
+      return input !== null && createEntry(input).avoidedKg > 0;
+    }).length;
+    const fresh = Math.min(light, MAX_PLANTS - garden.plants.length);
+    if (fresh > 0) setPlanting(fresh);
+    else commit(null);
   };
 
   const restart = () => {
     setText("");
     setState({ step: "idle" });
   };
+
+  const picker =
+    planting !== null ? (
+      <SpeciesPicker
+        steps={growthSteps(garden)}
+        count={planting}
+        onPick={(species) => {
+          setPlanting(null);
+          commit(species);
+        }}
+      />
+    ) : null;
 
   if (state.step === "added")
     return (
@@ -335,6 +379,8 @@ export function RaconteScreen() {
           </div>
         </section>
       ) : null}
+
+      {picker}
 
       <p className="border-encre text-legende text-encre flex items-center gap-2 rounded-[14px] border border-dashed px-3.5 py-3 leading-[1.35]">
         <Image
@@ -742,6 +788,7 @@ function AddedView({
 }) {
   const now = new Date();
   const t = RACONTE[useLocale()];
+  const journal = useJournal();
   const lastLight = [...entries].reverse().find(isLightChoice);
   const lastHabit = [...entries].reverse().find(isHabit);
   const hasHeavier = entries.some(
@@ -764,6 +811,10 @@ function AddedView({
           <EntryRow key={entry.id} entry={entry} now={now} />
         ))}
       </ul>
+      <SpeciesUnlocked
+        entries={journal.entries}
+        entryIds={entries.map((entry) => entry.id)}
+      />
       {hasHeavier ? (
         <p className="text-legende text-texte-attenue leading-[1.4]">
           {t.heavyNote}

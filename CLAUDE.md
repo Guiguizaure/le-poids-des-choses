@@ -180,7 +180,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   gestes que par cet adaptateur
 - `src/lib/facts` — « Le savais-tu ? » : gabarits (`templates.ts`), faits calculés et choix
   déterministe (`pickFact`, graine : jour ou id d'entrée), garde-fou du build (`check.ts`) ;
-  carte `FactCard` (`src/components/facts`) sous le duel, le duel objet et sur /jardin
+  carte `FactCard` (`src/components/facts`) sous le duel, le duel objet et sur /jardin ;
+  tout encadré « Le savais-tu ? » / “Did you know?” passe par `DidYouKnow` (même dossier :
+  fond sapin, texte et liens blancs, `DID_YOU_KNOW_LINK`), faits comme fiches d'espèce ;
+  e2e : `expectDidYouKnow`
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
   `isAsleep`, `formatMass`, modes d'acquisition)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
@@ -237,7 +240,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     authoritative one ».
 - Tokens de design : couleurs `creme`, `encre`, `texte-attenue`, `blanc`, `tomate`,
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
-  réservée aux feuilles) ; polices
+  réservée aux feuilles, et au fond des encadrés « Le savais-tu ? » (`DidYouKnow`), texte
+  blanc 6,49:1) ; polices
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
@@ -337,7 +341,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   qui fusionne par id. L'écart (kg) est figé dans l'entrée au moment du choix.
 - Jardin (`buildGarden`, déterministe : même carnet = même jardin) :
   - une plante par choix léger (`avoidedKg > 0`) ; un choix lourd ne change rien ;
-  - type (arbre ou fleur 1-3) tiré de l'id de l'entrée ; stade selon les kg du choix
+  - espèce : celle choisie à la plantation (champ `species` de l'entrée, voir Espèces), sinon
+    tirée de l'id de l'entrée parmi les six d'origine ; stade selon les kg du choix
     (`PLANT_STAGE_KG`, provisoire : < 1 kg pousse, 1-20 jeune/fleurie, > 20 grand) ;
   - 40 emplacements (`GARDEN_SLOTS`, 5 rangées) posés sur la ligne des collines de
     `scene-paysage`, extraite automatiquement du SVG (calques `colline-arriere`,
@@ -368,10 +373,32 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     jours arrosés depuis sa plantation : stade (pousse → jeune → grand / fleurie), puis
     épanouissement 1 à 3 (`bloom`). Emplacement fixé au stade de départ. Jamais de
     régression (test de propriété). Jardin sans plante : rien ne pousse, message ;
-  - espèces (`species.ts`, préparé pour la V3) : dessins, épanouissement (un seul groupe
-    `epanoui-N` affiché), calques de feuillage, caduc / persistant, couleur par saison,
-    `bloomRestsInWinter` (l'épanouissement des caducs dort de décembre à février, niveau
-    gardé) ; tirage au hasard figé sur les six espèces d'origine (`randomPool`) ;
+  - espèces (`species.ts`) : dessins, épanouissement (un seul groupe `epanoui-N` affiché),
+    calques de feuillage, caduc / persistant, couleur par saison, `bloomRestsInWinter`
+    (l'épanouissement dort de décembre à février, niveau gardé : caducs et les trois fleurs à
+    débloquer) ; tirage au hasard figé sur les six espèces d'origine (`randomPool`) ;
+  - Espèces (lot « Espèces ») : 12 espèces. Départ : pommier, citronnier, cerisier, églantine,
+    tulipe, herbes folles ; puis une tous les `SPECIES_UNLOCK_STEP` (3) pas de croissance, en
+    alternant : marguerite, olivier, lavande, figuier, pissenlit, sapin (`SPECIES_UNLOCKS`).
+    Pas de croissance (`growthSteps`) = choix légers + jours arrosés : jamais lié aux kg,
+    jamais de régression. Olivier et sapin persistants, figuier caduc ; le sapin n'a pas de
+    perchoir (hibou et cigale vont sur un autre arbre adulte). Quand un choix léger va faire
+    pousser une nouvelle plante, « Que veux-tu planter ? » (`SpeciesPicker`, `<dialog>` :
+    focus piégé, Échap, feuille en bas sur mobile) s'ouvre AVANT que l'entrée soit notée :
+    grille de cartes (2 colonnes sur mobile, 4 sur grand écran : dessin, nom, type court
+    `short`) ; toucher une carte plante l'espèce ; bouton « i » à côté (jamais dans) la carte,
+    « En savoir plus sur … » : fiche dans la même feuille (grand dessin, type, description,
+    encadré « Le savais-tu ? » vert sapin texte blanc, « Planter … », « Retour aux espèces » qui
+    rend le focus à la carte ; Échap depuis une fiche = retour à la grille). Espèces à
+    débloquer grisées, cadenas, « Dans N pas » ; leur fiche se lit mais ne se plante pas.
+    « Laisse le jardin choisir », Échap (depuis la grille) ou la croix = tirage habituel. Un
+    seul choix pour plusieurs plantes (« Raconte ta journée »). L'espèce va dans l'entrée
+    (`species`, choix léger seulement) : synchro du compte et export sans migration ; une
+    espèce inconnue retombe sur le tirage. Annonce « Nouvelle espèce : … »
+    (`SpeciesUnlocked`) sur les cartes de résultat et après « Raconte ta journée ». Fiches
+    fr/en : `messages/species.ts`, anecdotes sourcées dans `docs/especes-sources.md` (une
+    anecdote non confirmée n'entre pas). Les jardins existants ne changent pas (test
+    d'empreinte figée) ;
   - saisons (`seasons.ts`, hémisphère nord, mois à Paris ; aucune au rendu serveur) :
     feuillage des caducs (tomate en automne, blanc cerné d'encre en hiver), ciel « Jour » de
     saison (`SEASONAL_DAY_SKY` ; un ciel débloqué choisi ne change pas), neige sous les

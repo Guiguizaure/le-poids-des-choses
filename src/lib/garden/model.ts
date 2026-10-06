@@ -12,6 +12,8 @@ import { hashString, pickIndex } from "./hash";
 import { SCENE, surfaceY } from "./scene";
 import {
   SPECIES,
+  speciesById,
+  unlockedSpecies,
   type PlantKind,
   type PlantStage,
   type PlantType,
@@ -53,6 +55,31 @@ export const MAX_PLANTS = 40;
 
 export function plantKindFor(entryId: string): PlantKind {
   return PLANT_KINDS[pickIndex(`${entryId}:kind`, PLANT_KINDS.length)];
+}
+
+/**
+ * Espèce de la plante d'une entrée : celle choisie à la plantation (`species`), sinon le
+ * tirage figé d'après l'id (les jardins existants ne changent pas). Une espèce inconnue
+ * (carnet venu d'une version plus récente) retombe sur le tirage.
+ */
+export function plantKindForEntry(entry: {
+  id: string;
+  species?: string;
+}): PlantKind {
+  const chosen = entry.species ? speciesById(entry.species) : undefined;
+  return chosen ? chosen.kind : plantKindFor(entry.id);
+}
+
+/**
+ * Pas de croissance du jardin, gestes et habitudes confondus : chaque choix léger (une plante
+ * pousse ou grandit) et chaque jour arrosé (les plantes avancent). Deux compteurs du carnet qui
+ * ne font que monter ; aucun kg.
+ */
+export function growthSteps(state: {
+  lightChoiceCount: number;
+  wateredDayCount: number;
+}): number {
+  return state.lightChoiceCount + state.wateredDayCount;
 }
 
 export function levelForKg(kg: number): GrowthLevel {
@@ -294,6 +321,8 @@ export type GardenState = {
   habitCount: number;
   /** Jours où au moins une habitude a été notée. */
   wateredDayCount: number;
+  /** Espèces qu'on peut planter (d'origine, puis débloquées par les pas de croissance). */
+  species: string[];
 };
 
 const isLight = isLightChoice;
@@ -337,7 +366,7 @@ export function buildGarden(
     lightChoiceCount += 1;
     totalAvoidedKg += entry.avoidedKg;
     if (plants.length < MAX_PLANTS) {
-      const kind = plantKindFor(entry.id);
+      const kind = plantKindForEntry(entry);
       const level = Math.min(
         levelForKg(entry.avoidedKg),
         maxLevel(kind),
@@ -404,7 +433,32 @@ export function buildGarden(
     totalAvoidedKg,
     habitCount,
     wateredDayCount: wateredDayCount(watered),
+    species: unlockedSpecies(
+      growthSteps({
+        lightChoiceCount,
+        wateredDayCount: wateredDayCount(watered),
+      }),
+    ),
   };
+}
+
+/**
+ * Espèces débloquées grâce à des entrées qu'on vient d'ajouter (annonce « Nouvelle espèce »),
+ * dans l'ordre de déblocage.
+ */
+export function speciesUnlockedBy(
+  entries: readonly JournalEntry[],
+  entryIds: readonly string[],
+  now: Date = new Date(),
+): string[] {
+  const ids = new Set(entryIds);
+  const before = new Set(
+    buildGarden(
+      entries.filter((entry) => !ids.has(entry.id)),
+      now,
+    ).species,
+  );
+  return buildGarden(entries, now).species.filter((id) => !before.has(id));
 }
 
 /** Animaux installés grâce à une entrée donnée (pour le message d'arrivée). */

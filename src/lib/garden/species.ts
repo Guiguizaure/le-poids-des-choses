@@ -1,15 +1,16 @@
 // Espèces du jardin : une ligne par espèce décrit ses dessins, son épanouissement et son
-// comportement selon la saison. Préparé pour la V3 : une espèce choisie par la personne (sapin,
-// cerisier…) n'aura qu'à ajouter ses dessins (specs.ts) et sa ligne ici, avec
-// `randomPool: false` — le tirage au hasard des plantes existantes ne doit jamais changer,
-// sinon les jardins déjà là changeraient d'aspect.
+// comportement selon la saison. Les six espèces d'origine forment le tirage au hasard
+// (`randomPool`) : il ne doit jamais changer, sinon les jardins déjà là changeraient d'aspect.
+// Les six suivantes se débloquent au fil du jardin (SPECIES_UNLOCKS) et se choisissent à la
+// plantation ; le choix est gardé dans l'entrée du carnet (`species`). Noms et fiches :
+// src/lib/i18n/messages/species.ts.
 import type { IllustrationName } from "@/lib/illustrations/specs";
 import { PALETTE } from "./skies";
 import type { Season } from "./seasons";
 import type { BloomLevel } from "./watering";
 
 export type PlantType = "tree" | "flower";
-export type PlantVariant = 1 | 2 | 3;
+export type PlantVariant = 1 | 2 | 3 | 4 | 5 | 6;
 export type PlantKind = { type: PlantType; variant: PlantVariant };
 export type PlantStage = "pousse" | "jeune" | "grand" | "fleurie";
 
@@ -82,12 +83,12 @@ const evergreen = {
 function tree(
   variant: PlantVariant,
   habit: typeof deciduous | typeof evergreen,
-  perches: NonNullable<Species["perches"]>,
+  perches: Species["perches"],
 ): Species {
   return {
     id: `arbre-${variant}`,
     kind: { type: "tree", variant },
-    randomPool: true,
+    randomPool: variant <= 3,
     stages: ["pousse", "jeune", "grand"],
     bloom: {
       illustration: `arbre-${variant}-grand-epanoui` as IllustrationName,
@@ -99,21 +100,29 @@ function tree(
   };
 }
 
+/** Fleur des espèces à débloquer : son épanouissement dort l'hiver, comme celui des caducs. */
+const restingFlower = {
+  leaves: "persistant",
+  foliage: { printemps: null, ete: null, automne: null, hiver: null },
+  bloomRestsInWinter: true,
+} as const;
+
 function flower(
   variant: PlantVariant,
   foliageLayers: readonly string[],
+  habit: typeof evergreen | typeof restingFlower = evergreen,
 ): Species {
   return {
     id: `fleur-${variant}`,
     kind: { type: "flower", variant },
-    randomPool: true,
+    randomPool: variant <= 3,
     stages: ["pousse", "fleurie"],
     bloom: {
       illustration: `fleur-${variant}-fleurie-epanoui` as IllustrationName,
       groups: BLOOM_GROUPS,
     },
     foliageLayers,
-    ...evergreen,
+    ...habit,
   };
 }
 
@@ -125,7 +134,66 @@ export const SPECIES: readonly Species[] = [
   flower(1, ["feuilles"]),
   flower(2, ["feuilles"]),
   flower(3, ["brins"]),
+  // Espèces à débloquer. Olivier et sapin persistants, figuier caduc. Le sapin n'a pas de
+  // perchoir : son tronc est caché sous les étages d'aiguilles.
+  // Olivier et figuier adultes réduits autour du pied (0,81 et 0,85) : perchoirs relus.
+  tree(4, evergreen, {
+    owl: { x: 58.4, y: 108.5 },
+    cicada: { x: 60.3, y: 132.5 },
+  }),
+  tree(5, evergreen, undefined),
+  tree(6, deciduous, {
+    owl: { x: 60, y: 103.7 },
+    cicada: { x: 60, y: 136.5 },
+  }),
+  flower(4, ["feuilles"], restingFlower),
+  flower(5, ["feuilles"], restingFlower),
+  flower(6, ["feuilles"], restingFlower),
 ];
+
+export type SpeciesId = (typeof SPECIES)[number]["id"];
+
+/** Espèces disponibles dès le départ : les six d'origine. */
+export const STARTING_SPECIES: readonly string[] = SPECIES.filter(
+  (species) => species.randomPool,
+).map((species) => species.id);
+
+/**
+ * Déblocage : une nouvelle espèce tous les SPECIES_UNLOCK_STEP pas de croissance du jardin
+ * (choix légers et jours arrosés, voir `growthSteps`), en alternant fleur et arbre. Jamais lié
+ * aux kg ; jamais de régression (le carnet ne fait que s'allonger).
+ */
+export const SPECIES_UNLOCK_STEP = 3;
+export const SPECIES_UNLOCKS: readonly { id: string; steps: number }[] = [
+  "fleur-4", // marguerite
+  "arbre-4", // olivier
+  "fleur-5", // lavande
+  "arbre-6", // figuier
+  "fleur-6", // pissenlit
+  "arbre-5", // sapin
+].map((id, index) => ({ id, steps: (index + 1) * SPECIES_UNLOCK_STEP }));
+
+/** Espèces disponibles après `steps` pas de croissance (d'origine, puis débloquées). */
+export function unlockedSpecies(steps: number): string[] {
+  return [
+    ...STARTING_SPECIES,
+    ...SPECIES_UNLOCKS.filter((unlock) => steps >= unlock.steps).map(
+      (unlock) => unlock.id,
+    ),
+  ];
+}
+
+/** Prochaine espèce à débloquer et pas qui manquent (null : toutes disponibles). */
+export function nextSpecies(
+  steps: number,
+): { id: string; remaining: number } | null {
+  const next = SPECIES_UNLOCKS.find((unlock) => steps < unlock.steps);
+  return next ? { id: next.id, remaining: next.steps - steps } : null;
+}
+
+export function speciesById(id: string): Species | undefined {
+  return SPECIES.find((species) => species.id === id);
+}
 
 export function speciesFor(kind: PlantKind): Species {
   const species = SPECIES.find(
@@ -179,4 +247,42 @@ export function plantLook(
       level: visibleBloom(plant.kind, plant.bloom, season),
     },
   };
+}
+
+export type SpeciesCard = {
+  id: string;
+  kind: PlantKind;
+  /** Vrai si on peut la planter maintenant. */
+  available: boolean;
+  /** Pas de croissance qui manquent (0 si disponible). */
+  remaining: number;
+};
+
+/**
+ * Cartes du choix « Que veux-tu planter ? » : les espèces disponibles (d'origine, puis
+ * débloquées dans l'ordre), puis celles à débloquer, grisées, avec ce qui leur manque.
+ */
+export function speciesCards(steps: number): SpeciesCard[] {
+  const available = unlockedSpecies(steps);
+  const card = (id: string): SpeciesCard => {
+    const unlock = SPECIES_UNLOCKS.find((u) => u.id === id);
+    return {
+      id,
+      kind: speciesById(id)!.kind,
+      available: available.includes(id),
+      remaining: unlock ? Math.max(0, unlock.steps - steps) : 0,
+    };
+  };
+  return [
+    ...available.map(card),
+    ...SPECIES_UNLOCKS.filter((u) => !available.includes(u.id)).map((u) =>
+      card(u.id),
+    ),
+  ];
+}
+
+/** Dessin adulte d'une espèce (carte du choix, fiche). */
+export function adultIllustration(id: string): IllustrationName {
+  const species = speciesById(id)!;
+  return `${id}-${species.stages.at(-1)}` as IllustrationName;
 }

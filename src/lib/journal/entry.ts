@@ -16,6 +16,8 @@ export type NewEntry = {
   chosen: Choice;
   modeA?: AcquisitionMode;
   modeB?: AcquisitionMode;
+  /** Espèce choisie pour la plante (choix léger seulement), sinon le jardin choisit. */
+  species?: string;
 };
 
 function resolve(id: string, mode: AcquisitionMode | undefined): Gesture {
@@ -56,6 +58,8 @@ export function createEntry(
   };
   if (input.modeA) entry.modeA = input.modeA;
   if (input.modeB) entry.modeB = input.modeB;
+  // Un choix plus lourd ne fait rien pousser : pas d'espèce à garder.
+  if (input.species && entry.avoidedKg > 0) entry.species = input.species;
   return entry;
 }
 

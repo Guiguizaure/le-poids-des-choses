@@ -413,6 +413,7 @@ export function Garden({
             className="absolute"
             style={place(plant.box)}
             data-plant={plant.id}
+            data-species={`${plant.kind.type === "tree" ? "arbre" : "fleur"}-${plant.kind.variant}`}
             data-stage-level={plant.level}
             data-bloom-level={plant.bloom}
           >

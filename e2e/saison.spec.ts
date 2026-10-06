@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { expect, test } from "./fixtures";
+import { expect, letGardenChoose, test } from "./fixtures";
 
 const MONTHS = [
   "janvier",
@@ -197,6 +197,7 @@ test("crédit des données, avec lien et date, sur chaque résultat et sur /meth
   await page.goto("/comparer?a=tgv&b=avion&q=300");
   await expectCredit(page);
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
   ).toBeVisible();

@@ -2,10 +2,12 @@ import {
   acceptDocument404,
   entry,
   expect,
+  expectDidYouKnow,
   expectNoAxeViolations,
   seedJournal,
   tabTo,
   test,
+  letGardenChoose,
 } from "./fixtures";
 
 const PAGES = [
@@ -59,6 +61,8 @@ const PAGES = [
 test.describe("axe (WCAG 2.1 AA)", () => {
   for (const { name, path, heading } of PAGES) {
     test(name, async ({ page, consoleErrors }) => {
+      // Le labo montre toutes les illustrations (douze espèces) : analyse axe plus longue.
+      if (name === "labo") test.slow();
       await page.goto(path);
       await expect(
         page.getByRole("heading", { level: 1, name: heading }),
@@ -92,15 +96,16 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     await expect(
       page.getByRole("button", { name: "Faire s’envoler l’oiseau" }),
     ).toBeVisible();
-    await expect(
+    await expectDidYouKnow(
       page.getByRole("complementary", { name: "Le savais-tu ?" }),
-    ).toBeVisible();
+    );
     await expectNoAxeViolations(page);
   });
 
   test("écran de résultat (choix léger)", async ({ page }) => {
     await page.goto("/comparer?a=tgv&b=avion&q=300");
     await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+    await letGardenChoose(page);
     await expect(
       page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
     ).toBeVisible();
@@ -189,6 +194,13 @@ test.describe("parcours complet au clavier", () => {
     await page.keyboard.press("ArrowRight");
     await tabTo(page, "Je choisis le TGV");
     await page.keyboard.press("Enter");
+    // « Que veux-tu planter ? » : le focus est dans la feuille, Échap laisse le jardin choisir.
+    const picker = page.locator("[data-species-picker]");
+    await expect(
+      picker.getByRole("heading", { name: "Que veux-tu planter ?" }),
+    ).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(picker).toBeHidden();
     await expect(
       page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
     ).toBeFocused();

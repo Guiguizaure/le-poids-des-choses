@@ -34,6 +34,7 @@ const COMPARISON_FIELDS = [
   "avoidedKg",
   "modeA",
   "modeB",
+  "species",
 ] as const;
 
 /**
@@ -64,6 +65,12 @@ export function isJournalEntry(value: unknown): value is JournalEntry {
     if (mode !== undefined && !MODES.includes(mode as AcquisitionMode))
       return false;
   }
+  // Espèce choisie : un identifiant de dessin ; une espèce inconnue est ignorée au rendu.
+  if (
+    entry.species !== undefined &&
+    !/^(arbre|fleur)-\d+$/.test(String(entry.species))
+  )
+    return false;
   return true;
 }
 
