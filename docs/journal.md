@@ -1420,3 +1420,15 @@ suite complète 213 passés, 2 échecs WebKit du compte dus à la charge, puis c
 fois de suite. Lighthouse mobile (`SITE_LAUNCHED=1`, `serve:out`) : Home 98 / 100 / 100 /
 100, Compare 94, Duel 92, My garden 91, Journal 94, In season 96, Method 96 (accessibilité,
 bonnes pratiques et SEO à 100 partout) ; français inchangé (accueil 100, jardin 91).
+
+### 2026-10-06 (soir) — Relecture de la PR #26
+
+Tout validé par Guillaume : « Start comparing » (écart documenté dans le glossaire : SEO et
+clarté), « Petrol or diesel car », « Plant-based meal », « Clothes », « I’ll walk », 404
+globale sans pied de page. Filtre WebKit de `e2e/fixtures.ts` resserré au message exact
+(« Unable to get image data from canvas. Requested size was N x N »).
+
+**À revérifier à chaque montée de version de Next** : la 404 française repose sur l'option
+expérimentale `experimental.globalNotFound` (`next.config.ts`, `src/app/global-not-found.tsx`).
+Après une mise à jour, vérifier que `out/404.html` a toujours `lang="fr"`, les polices et la
+feuille de style, et que `out/en/404.html` existe.

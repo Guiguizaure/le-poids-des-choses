@@ -29,7 +29,11 @@ export const test = base.extend<{ consoleErrors: string[] }>({
         // axe-core (détection des ligatures d'icônes) lit un petit canvas avec getImageData ;
         // sous forte charge, WebKit refuse parfois et l'écrit en console. Le site, lui, n'appelle
         // jamais getImageData : ce seul message est ignoré.
-        if (/^Unable to get image data from canvas\./.test(message.text()))
+        if (
+          /^Unable to get image data from canvas\. Requested size was \d+ x \d+$/.test(
+            message.text(),
+          )
+        )
           return;
         const { url, lineNumber, columnNumber } = message.location();
         record(message.text(), [

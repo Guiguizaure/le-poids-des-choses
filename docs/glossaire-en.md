@@ -91,3 +91,9 @@ explications de /en/method.
 3. TGV et TER gardés, avec « (high-speed train) » / « (regional train) » au premier passage
    (choix des gestes : en précision sous le nom).
 4. Paramètres et ancres identiques dans les deux langues.
+
+## Écart au glossaire validé
+
+- « Commencer » → **« Start comparing »** (au lieu de « Start », validé le 6 octobre 2026) :
+  Lighthouse classe « Start » parmi les textes de lien trop vagues (SEO 92 sur l'accueil
+  anglais, 100 avec « Start comparing »), et le bouton dit plus clairement ce qu'il ouvre.
