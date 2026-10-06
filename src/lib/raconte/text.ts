@@ -2,6 +2,7 @@
 // manque avant l'ajout, messages doux quand l'analyse n'aboutit pas.
 import { objectNoun, possessive, type ObjectOption } from "@/lib/compare";
 import { getGesture } from "@/lib/data";
+import { plural } from "@/lib/garden/text";
 import { CATEGORY_LABELS } from "@/lib/journal/display";
 import type { RaconteError } from "./api";
 import { missingFor, type Proposal } from "./proposal";
@@ -59,24 +60,52 @@ export function comparedToLabel(proposal: Proposal): string | null {
   return other ? `Comparé à : ${other.label}` : null;
 }
 
-/** Ce qui bloque l'ajout, en une phrase (null : tout est prêt). */
-export function blockingMessage(
+/** Champ à remplir dans la carte d'un geste (distance, option d'objet), ou null. */
+export function inlineNeed(
+  proposal: Proposal,
+): "quantity" | "object-option" | null {
+  const missing = missingFor(proposal);
+  return missing === "quantity" || missing === "object-option" ? missing : null;
+}
+
+/** Ids stables : le bouton désactivé y mène le focus. */
+export const rowCheckboxId = (key: string) => `raconte-${key}-case`;
+export const rowFieldId = (key: string) => `raconte-${key}-champ`;
+
+export type Blocking = {
+  message: string;
+  /** Élément où placer le focus quand on touche le bouton ou le message. */
+  focusId: string;
+};
+
+/**
+ * Ce qui empêche l'ajout (null : tout est prêt) : aucun geste coché, ou des gestes cochés
+ * à compléter (« 2 gestes à compléter »), avec le premier à rejoindre.
+ */
+export function blockingFor(
   rows: readonly { proposal: Proposal; checked: boolean }[],
-): string | null {
+): Blocking | null {
   const checked = rows.filter((row) => row.checked);
   if (checked.length === 0)
-    return "Coche au moins un geste pour l’ajouter au carnet.";
-  const blocked = checked.find((row) => missingFor(row.proposal));
-  if (!blocked) return null;
-  const label = getGesture(blocked.proposal.gestureId)?.label ?? "";
-  const missing = missingFor(blocked.proposal);
-  const what =
-    missing === "quantity"
-      ? "la distance"
-      : missing === "object-option"
-        ? "l’option"
-        : "l’option comparée";
-  return `Précise ${what} de « ${label} » avec « Modifier », ou décoche-le.`;
+    return rows.length
+      ? {
+          message: "Coche au moins un geste pour l’ajouter au carnet.",
+          focusId: rowCheckboxId(rows[0].proposal.key),
+        }
+      : null;
+  const incomplete = checked.filter((row) => missingFor(row.proposal));
+  if (incomplete.length === 0) return null;
+  const first = incomplete[0].proposal;
+  return {
+    message: plural(
+      incomplete.length,
+      "geste à compléter",
+      "gestes à compléter",
+    ),
+    focusId: inlineNeed(first)
+      ? rowFieldId(first.key)
+      : rowCheckboxId(first.key),
+  };
 }
 
 /** Messages quand l'analyse ne donne rien : jamais d'alarme, toujours une autre voie. */

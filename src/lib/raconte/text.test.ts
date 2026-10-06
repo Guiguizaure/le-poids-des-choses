@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 import type { Detection } from "./detections";
 import { toProposal } from "./proposal";
 import {
-  blockingMessage,
+  blockingFor,
   comparedToLabel,
   ERROR_MESSAGES,
+  inlineNeed,
   proposalSubtitle,
+  rowCheckboxId,
+  rowFieldId,
 } from "./text";
 
 const detection = (over: Partial<Detection> = {}): Detection => ({
@@ -50,26 +53,61 @@ describe("textes de l'écran 08", () => {
     ).toBeNull();
   });
 
-  it("ce qui bloque l'ajout : seulement les gestes cochés", () => {
+  it("ce qui bloque l'ajout : nombre de gestes cochés à compléter, et le premier", () => {
     const ter = toProposal(detection(), 0);
-    const cafe = toProposal(detection({ gestureId: "cafe" }), 1);
-    expect(blockingMessage([{ proposal: ter, checked: false }])).toBe(
-      "Coche au moins un geste pour l’ajouter au carnet.",
-    );
+    const marche = toProposal(detection({ gestureId: "marche" }), 1);
+    const cafe = toProposal(detection({ gestureId: "cafe" }), 2);
+    const jean = toProposal(detection({ gestureId: "jean", mode: null }), 3);
+
+    expect(blockingFor([{ proposal: ter, checked: false }])).toEqual({
+      message: "Coche au moins un geste pour l’ajouter au carnet.",
+      focusId: rowCheckboxId(ter.key),
+    });
     expect(
-      blockingMessage([
-        { proposal: ter, checked: true },
+      blockingFor([
         { proposal: cafe, checked: true },
+        { proposal: ter, checked: true },
       ]),
-    ).toBe("Précise la distance de « TER » avec « Modifier », ou décoche-le.");
+    ).toEqual({ message: "1 geste à compléter", focusId: rowFieldId(ter.key) });
     expect(
-      blockingMessage([
+      blockingFor([
+        { proposal: jean, checked: true },
+        { proposal: ter, checked: true },
+        { proposal: marche, checked: true },
+      ]),
+    ).toEqual({
+      message: "3 gestes à compléter",
+      focusId: rowFieldId(jean.key),
+    });
+    // Un geste décoché n'est jamais à compléter.
+    expect(
+      blockingFor([
+        { proposal: ter, checked: false },
+        { proposal: marche, checked: true },
+      ])?.message,
+    ).toBe("1 geste à compléter");
+    expect(
+      blockingFor([
         { proposal: ter, checked: false },
         { proposal: cafe, checked: true },
       ]),
     ).toBeNull();
     expect(
-      blockingMessage([{ proposal: { ...ter, quantity: 65 }, checked: true }]),
+      blockingFor([{ proposal: { ...ter, quantity: 65 }, checked: true }]),
+    ).toBeNull();
+  });
+
+  it("champ dans la carte : distance d'un trajet ou option d'un objet manquante", () => {
+    expect(inlineNeed(toProposal(detection(), 0))).toBe("quantity");
+    expect(inlineNeed(toProposal(detection({ quantity: 12 }), 0))).toBeNull();
+    expect(inlineNeed(toProposal(detection({ gestureId: "jean" }), 0))).toBe(
+      "object-option",
+    );
+    expect(
+      inlineNeed(toProposal(detection({ gestureId: "jean", mode: "neuf" }), 0)),
+    ).toBeNull();
+    expect(
+      inlineNeed(toProposal(detection({ gestureId: "cafe" }), 0)),
     ).toBeNull();
   });
 

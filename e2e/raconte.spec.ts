@@ -121,24 +121,32 @@ test("parcours complet : analyse, vérification, distance, ajout au carnet", asy
   await expect(cafe.getByRole("checkbox")).toBeChecked();
   await expect(cafe).toContainText("Boire · 1 litre");
 
-  // La distance manque : rien ne peut être ajouté.
+  // La distance manque : la carte est bordée d'accent, le champ est dedans ; rien ne peut
+  // être ajouté.
   const add = page.getByRole("button", { name: "Ajouter au carnet" });
-  await expect(add).toBeDisabled();
+  await expect(add).toHaveAttribute("aria-disabled", "true");
   await expect(
-    page.getByText(
-      "Précise la distance de « TER » avec « Modifier », ou décoche-le.",
-    ),
+    page.getByRole("button", { name: "1 geste à compléter" }),
   ).toBeVisible();
+  await expect(ter).toHaveClass(/border-tomate/);
+  await expect(cafe).not.toHaveClass(/border-tomate/);
   expect(await journal(page)).toEqual([]);
   await expectNoAxeViolations(page);
 
+  // « Modifier » ne garde que l'option comparée (la distance est déjà dans la carte).
   await ter.getByRole("button", { name: "Modifier TER" }).click();
   await expect(
     ter.getByRole("button", { name: "Modifier TER" }),
   ).toHaveAttribute("aria-expanded", "true");
-  await ter.getByLabel("Distance en km").fill("65");
+  await expect(ter.getByLabel("Distance du trajet (km)")).toHaveCount(1);
+  await expect(ter.getByLabel("Comparé à", { exact: true })).toBeVisible();
+  await ter.getByLabel("Distance du trajet (km)").fill("65");
   await expect(ter).toContainText("Se déplacer · 65 km");
-  await expect(add).toBeEnabled();
+  await expect(ter).not.toHaveClass(/border-tomate/);
+  await expect(add).not.toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByRole("button", { name: /à compléter$/ })).toHaveCount(
+    0,
+  );
   await expectNoAxeViolations(page);
   await add.click();
 
@@ -180,6 +188,61 @@ test("parcours complet : analyse, vérification, distance, ajout au carnet", asy
   await page.getByRole("link", { name: "Voir mon jardin" }).click();
   await expect(page).toHaveURL(/\/jardin\?nouveau=/);
   await expect(page.getByText("2 choix notés")).toBeVisible();
+});
+
+test("trajet sans distance : message visible, le bouton mène au champ, puis ajout", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.goto("/raconte");
+  await analyse(
+    page,
+    "Un café au réveil, puis à pied jusqu'au marché, et un burger à midi.",
+  );
+  const marche = row(page, "Marche");
+  await expect(marche.getByRole("checkbox")).toBeChecked();
+  await expect(marche).toHaveClass(/border-tomate/);
+  const field = marche.getByLabel("Distance du trajet (km)");
+  await expect(field).toBeVisible();
+
+  // Message bien visible sous le bouton, qui reste un vrai bouton (aria-disabled).
+  const add = page.getByRole("button", { name: "Ajouter au carnet" });
+  await expect(add).toHaveAttribute("aria-disabled", "true");
+  // Pas d'attribut disabled : il reste touchable (Playwright tient aria-disabled pour « désactivé »).
+  await expect(add).not.toHaveAttribute("disabled");
+  const message = page.getByRole("button", { name: "1 geste à compléter" });
+  await expect(message).toBeVisible();
+  await expect(add).toHaveAccessibleDescription("1 geste à compléter");
+
+  // Toucher le bouton désactivé : défilement et focus sur le champ ; rien n'est ajouté.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  // force : Playwright refuse d'agir sur un élément aria-disabled ; un doigt, lui, le peut.
+  await add.tap({ force: true });
+  await expect(field).toBeFocused();
+  await expect(field).toBeInViewport();
+  expect(await journal(page)).toEqual([]);
+
+  // Le message mène au même endroit.
+  await add.focus();
+  await message.tap();
+  await expect(field).toBeFocused();
+
+  await page.keyboard.type("2");
+  await expect(marche).not.toHaveClass(/border-tomate/);
+  await expect(message).toHaveCount(0);
+  await add.tap();
+  await expect(page.getByText("2 gestes ajoutés à ton carnet.")).toBeVisible();
+  const entries = await journal(page);
+  expect(entries).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        gestureA: "marche",
+        gestureB: "voiture",
+        quantity: 2,
+      }),
+      expect.objectContaining({ gestureA: "cafe" }),
+    ]),
+  );
 });
 
 test("objet : l'option écrite est reprise, l'écart suit les règles du duel objet", async ({

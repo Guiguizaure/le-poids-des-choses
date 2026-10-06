@@ -430,8 +430,11 @@ variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet,
     objet suit les règles du duel objet ; un geste plus lourd que son alternative est
     « simplement noté », comme au duel ;
   - liste à cases (maquette) : gestes `explicit` cochés, `inferred` (« À vérifier ») décochés ;
-    « Ajouter au carnet » désactivé tant qu'un geste coché n'a pas sa distance ou son option ;
-    rien n'entre dans le carnet sans ce bouton ;
+    un geste coché sans distance ou sans option a une bordure tomate et son champ
+    (« Distance du trajet (km) », ou l'option d'objet) dans la carte ; « Ajouter au carnet »
+    est alors `aria-disabled` (jamais `disabled`), suivi de « N gestes à compléter » ; le
+    toucher, ou toucher ce message, mène au premier manque (défilement, focus) ; rien n'entre
+    dans le carnet sans ce bouton ;
   - `POST /api/raconte` ({ text, turnstileToken } → { gestures }) ; `GET /api/raconte` →
     { enabled }. Ordre : origine, `AI_ENABLED` (doit valoir `1`, sinon 503 `ai-disabled`
     sans compteur), Content-Type, texte (400 `text-length`), limite IP (3/15 min, 5/24 h),
