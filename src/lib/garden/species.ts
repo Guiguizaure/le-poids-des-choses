@@ -136,9 +136,16 @@ export const SPECIES: readonly Species[] = [
   flower(3, ["brins"]),
   // Espèces à débloquer. Olivier et sapin persistants, figuier caduc. Le sapin n'a pas de
   // perchoir : son tronc est caché sous les étages d'aiguilles.
-  tree(4, evergreen, { owl: { x: 58, y: 97.3 }, cicada: { x: 60.4, y: 127 } }),
+  // Olivier et figuier adultes réduits autour du pied (0,81 et 0,85) : perchoirs relus.
+  tree(4, evergreen, {
+    owl: { x: 58.4, y: 108.5 },
+    cicada: { x: 60.3, y: 132.5 },
+  }),
   tree(5, evergreen, undefined),
-  tree(6, deciduous, { owl: { x: 60, y: 94 }, cicada: { x: 60, y: 133 } }),
+  tree(6, deciduous, {
+    owl: { x: 60, y: 103.7 },
+    cicada: { x: 60, y: 136.5 },
+  }),
   flower(4, ["feuilles"], restingFlower),
   flower(5, ["feuilles"], restingFlower),
   flower(6, ["feuilles"], restingFlower),

@@ -373,7 +373,7 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     calques de feuillage, caduc / persistant, couleur par saison, `bloomRestsInWinter`
     (l'épanouissement dort de décembre à février, niveau gardé : caducs et les trois fleurs à
     débloquer) ; tirage au hasard figé sur les six espèces d'origine (`randomPool`) ;
-  - Espèces (lot « Espèces ») : 12 espèces. Départ : pommier, poirier, cerisier, églantine,
+  - Espèces (lot « Espèces ») : 12 espèces. Départ : pommier, citronnier, cerisier, églantine,
     tulipe, herbes folles ; puis une tous les `SPECIES_UNLOCK_STEP` (3) pas de croissance, en
     alternant : marguerite, olivier, lavande, figuier, pissenlit, sapin (`SPECIES_UNLOCKS`).
     Pas de croissance (`growthSteps`) = choix légers + jours arrosés : jamais lié aux kg,

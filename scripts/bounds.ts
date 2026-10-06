@@ -96,7 +96,8 @@ export function contentBounds(svg: string): Bounds {
   )) {
     matrix = transformMatrix(tag);
     const transformed = matrix !== IDENTITY;
-    stroke = Math.max(stroke, number(tag, "stroke-width") / 2);
+    // Demi-épaisseur du trait telle qu'elle est dessinée (la transformation l'agrandit aussi).
+    stroke = Math.max(stroke, (number(tag, "stroke-width") / 2) * scale());
     if (kind === "rect") {
       const [x, y] = [number(tag, "x"), number(tag, "y")];
       const [w, h] = [number(tag, "width"), number(tag, "height")];
@@ -113,9 +114,15 @@ export function contentBounds(svg: string): Bounds {
         kind === "circle"
           ? [number(tag, "r"), number(tag, "r")]
           : [number(tag, "rx"), number(tag, "ry")];
-      // Ellipse tournée (ou forme transformée) : le plus grand rayon, à l'échelle.
+      // Ellipse tournée : le plus grand rayon, à l'échelle ; sans rotation (translation et
+      // échelle seulement), les rayons exacts.
+      const rotated = matrix[1] !== 0 || matrix[2] !== 0;
       const r = Math.max(rx, ry) * scale();
-      const [ex, ey] = transformed ? [r, r] : [rx, ry];
+      const [ex, ey] = !transformed
+        ? [rx, ry]
+        : rotated
+          ? [r, r]
+          : [rx * Math.abs(matrix[0]), ry * Math.abs(matrix[3])];
       include(cx - ex, cy - ey, cx + ex, cy + ey);
     } else {
       const d = tag.match(/\sd="([^"]+)"/)?.[1];
@@ -131,7 +138,7 @@ export function contentBounds(svg: string): Bounds {
     y: round(minY),
     width: round(maxX - minX),
     height: round(maxY - minY),
-    stroke,
+    stroke: Math.round(stroke * 100) / 100,
   };
 }
 

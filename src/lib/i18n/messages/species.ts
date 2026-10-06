@@ -26,13 +26,13 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
         "Plante un pépin de pomme et tu obtiendras une variété différente de la pomme d’origine. C’est pour ça que les variétés se multiplient par greffe.",
     },
     "arbre-2": {
-      name: "Poirier",
-      inSentence: "le poirier",
-      type: "Caduc · fleurit au printemps",
+      name: "Citronnier",
+      inSentence: "le citronnier",
+      type: "Persistant · fleurit plusieurs fois par an",
       description:
-        "Un arbre élancé, plus haut que large, aux fleurs blanches et aux poires dorées.",
+        "Un arbre élancé qui garde ses feuilles toute l’année, aux fleurs blanches parfumées et aux citrons jaunes.",
       anecdote:
-        "La plupart des poires mûrissent mal sur l’arbre : on les cueille avant, et elles finissent de mûrir après la cueillette. Laissées sur l’arbre, elles deviennent farineuses.",
+        "Le citronnier peut refleurir plusieurs fois par an : le même arbre porte alors des citrons à différents stades.",
     },
     "arbre-3": {
       name: "Cerisier",
@@ -136,13 +136,13 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
         "Plant an apple pip and you’ll get a different variety from the apple it came from. That’s why varieties are grown by grafting.",
     },
     "arbre-2": {
-      name: "Pear tree",
-      inSentence: "pear tree",
-      type: "Deciduous · blossoms in spring",
+      name: "Lemon tree",
+      inSentence: "lemon tree",
+      type: "Evergreen · flowers several times a year",
       description:
-        "A slender tree, taller than it is wide, with white blossom and golden pears.",
+        "A slender tree that keeps its leaves all year round, with fragrant white blossom and yellow lemons.",
       anecdote:
-        "Most pears don’t ripen well on the tree: they’re picked before they’re ripe and finish ripening afterwards. Left on the tree, they turn mealy.",
+        "A lemon tree can flower several times a year, so the same tree carries lemons at different stages.",
     },
     "arbre-3": {
       name: "Cherry tree",

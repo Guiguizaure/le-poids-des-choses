@@ -1530,3 +1530,28 @@ plante, Échap et « Laisse le jardin choisir », choix plus lourd sans feuille,
 relancés seuls : 35 passés. Dans la suite complète, sous la charge locale, l'axe de /labo
 (douze espèces à analyser) dépassait 30 s sur WebKit : `test.slow()` pour cette page ; un
 test du compte WebKit a perdu sa connexion au serveur local (connu), il passe relancé.
+
+### 2026-10-06 (nuit) — Relecture de la PR #28
+
+Décisions de Guillaume, appliquées sur feat/especes :
+
+- arbre-2 devient le **citronnier** (persistant, fleurs blanches, fruits jaunes : colle au
+  dessin et au comportement d'origine, aucun jardin ne change). Fiche FR/EN réécrite ;
+  source du poirier retirée. L'anecdote proposée (« fleurs et fruits en même temps,
+  refleurit plusieurs fois par an ») n'est confirmée qu'en partie mot pour mot : UF/IFAS
+  (HS1153) écrit « Trees may bloom again in June and November » et « fruit at different
+  stages of development at the same time », le CIRAD parle de floraisons échelonnées
+  (« everbearing »). Anecdote retenue : « Le citronnier peut refleurir plusieurs fois par
+  an : le même arbre porte alors des citrons à différents stades. »
+- **Lavande** : `fleur-5-pousse`, `fleur-5-fleurie`, `fleur-5-fleurie-epanoui` remplacés
+  (épis cernés d'encre). Sur la colline bleue : contour encre / outremer 2,92:1 (au lieu de
+  1:1 sans contour) ; sur le vert, 7,23:1.
+- **Largeur** : figuier adulte réduit à 0,85 autour du pied (87,7 unités), épanouissement
+  compris. L'olivier, à 0,85, aurait fait 93,5 unités, au-dessus des 90 visés : il est réduit
+  à 0,81 (89,1 unités). Traits gardés à leur épaisseur, perchoirs relus. L'extraction des
+  emprises calcule maintenant les rayons exacts d'une ellipse seulement agrandie ou
+  déplacée, et l'épaisseur du trait à l'échelle ; emprises des anciens dessins inchangées.
+
+**Note pour la V3** : rendre les fiches des espèces accessibles par une page ou une liste
+« Herbier » (alternative accessible au toucher sur une plante, que la scène, une seule image
+pour les lecteurs d'écran, ne permet pas simplement).

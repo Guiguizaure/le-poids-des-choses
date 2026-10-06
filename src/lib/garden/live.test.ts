@@ -491,12 +491,24 @@ describe("perchoirs des arbres à débloquer (tronc et feuillage dessinés en ch
       // Cigale : sur le tronc (à moins de 2 unités du tracé), sous le hibou. Chaque
       // sous-chemin (M…) du tronc est un tracé à part : on mesure la distance à ses segments.
       const trunkLayer = svg.match(/<g id="tronc">([\s\S]*?)<\/g>/)![1];
-      const strokes = [...trunkLayer.matchAll(/\sd="([^"]+)"/g)].flatMap(
-        ([, d]) =>
-          d
+      const strokes = [...trunkLayer.matchAll(/<path\b[^>]*>/g)].flatMap(
+        ([tag]) => {
+          // Transformation de la forme (dessin réduit autour du pied) appliquée au tracé.
+          const m = transformMatrix(tag);
+          const d = tag.match(/\sd="([^"]+)"/)![1];
+          return d
             .split(/(?=M)/)
             .filter(Boolean)
-            .map((sub) => pathToPoints(sub)),
+            .map((sub) =>
+              pathToPoints(sub).map(
+                ([x, y]) =>
+                  [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]] as [
+                    number,
+                    number,
+                  ],
+              ),
+            );
+        },
       );
       const toSegment = (
         [ax, ay]: [number, number],

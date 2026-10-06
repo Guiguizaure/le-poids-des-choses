@@ -52,7 +52,9 @@ L'emprise de chaque plante (`bounds.generated.ts`, vitrine de révélation) tien
 l'attribut `transform` d'une forme (`translate`, `rotate`, `scale`) ; ne pas poser de
 `transform` sur un calque (`<g id="…">`) : les animations GSAP l'écraseraient. Le sapin
 (`arbre-5-grand` et son épanouissement) a été ramené dans son cadre à l'intégration (échelle
-0,85 autour du pied) : sa pointe montait à y = −20.
+0,85 autour du pied) : sa pointe montait à y = −20. Olivier et figuier adultes réduits
+autour du pied (0,81 et 0,85, épanouissement compris) pour rester sous 90 unités de large
+(transform ajouté à chaque forme, traits gardés à leur épaisseur).
 
 Le jardin pose ses plantes sur la ligne des collines de `scene-paysage` : `pnpm
 illustrations` lit les chemins des calques `colline-arriere` et `colline-avant` et le
