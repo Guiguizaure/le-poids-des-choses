@@ -116,7 +116,8 @@ export function getSky(id: SkyId): Sky {
  */
 export const SEASONAL_DAY_SKY: Record<Season, SkyColors> = {
   printemps: SKIES[0].colors,
-  ete: { ...SKIES[0].colors, nuage: PALETTE.blanc },
+  // Nuages soleil : des nuages blancs sur crème ne se distinguaient pas du ciel (1,099:1).
+  ete: { ...SKIES[0].colors, nuage: PALETTE.soleil },
   automne: {
     ...SKIES[0].colors,
     ciel: PALETTE.tomateDouce,

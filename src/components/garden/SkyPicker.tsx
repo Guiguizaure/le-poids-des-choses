@@ -1,11 +1,13 @@
 "use client";
 
 import { plural } from "@/lib/garden/text";
+import { NIGHT_HOURS } from "@/lib/garden/daytime";
 import { SKIES, type SkyId } from "@/lib/garden/skies";
 
 /**
  * Choix du ciel du jardin : le ciel du jour, puis trois ciels débloqués à 15, 30 et 50 choix
- * légers. Un ciel encore verrouillé dit combien de choix légers il manque.
+ * légers. Un ciel encore verrouillé dit combien de choix légers il manque. La nuit, le jardin
+ * passe de lui-même en Nuit encre : le choix reste, il revient au matin.
  */
 export function SkyPicker({
   value,
@@ -73,6 +75,10 @@ export function SkyPicker({
           );
         })}
       </div>
+      <p className="text-legende text-texte-attenue leading-[1.4]">
+        De {NIGHT_HOURS.start} h à {NIGHT_HOURS.end} h, ton jardin passe en Nuit
+        encre ; ton ciel revient au matin.
+      </p>
     </fieldset>
   );
 }

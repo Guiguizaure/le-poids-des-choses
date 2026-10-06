@@ -280,3 +280,33 @@ describe("carte de partage : saisons et épanouissement", () => {
     expect(svg).toContain(`fill="${PALETTE.tomateDouce}"`);
   });
 });
+
+describe("carte de partage : jour, nuit et visiteurs", () => {
+  const garden = buildGarden(journal(12), NOW);
+  const compose = (night: boolean, sky: "jour" | "aube" = "jour") => {
+    const moment = { night, date: NOW };
+    const names = gardenIllustrations(garden, "automne", { ...moment, sky });
+    return {
+      names,
+      svg: composeGardenSvg(garden, sky, sourcesFor(names), SCENE, "automne", moment),
+    };
+  };
+  it("la nuit : Nuit encre, cratères visibles, étoiles discrètes, hibou et renard éveillés", () => {
+    const { names, svg } = compose(true, "aube");
+    expect(svg).toContain(`fill="${getSky("nuit").colors.ciel}"`);
+    expect(names).toContain("etoiles");
+    expect(svg).toContain('<g opacity="0.6">');
+    // Les cratères gardent leur couleur et ne sont plus transparents.
+    expect(svg).toMatch(/<g>\s*<circle cx="302" cy="54" r="7" fill="#FFC93C"/);
+    expect(names).toContain("renard");
+    expect(names).not.toContain("papillon");
+  });
+  it("le jour : ciel choisi, pas d'étoiles, cratères invisibles, renard endormi", () => {
+    const { names, svg } = compose(false, "aube");
+    expect(svg).toContain(`fill="${getSky("aube").colors.ciel}"`);
+    expect(names).not.toContain("etoiles");
+    expect(svg).toMatch(/<g opacity="0">\s*<circle cx="302"/);
+    expect(names).toContain("renard-endormi");
+    expect(names).toContain("champignons");
+  });
+});

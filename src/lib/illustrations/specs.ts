@@ -47,6 +47,13 @@ const bird = {
 // Petites bêtes du jardin : point d'appui au centre du bas (là où elles se posent).
 const critter = (parts: readonly string[]) =>
   ({ width: 64, height: 48, anchor: { x: 32, y: 48 }, parts }) as const;
+// Hibou : point d'appui au centre du bas (là où il se perche).
+const owl = {
+  width: 48,
+  height: 56,
+  anchor: { x: 24, y: 56 },
+  parts: ["corps", "aigrettes", "ventre", "ailes", "yeux", "bec", "pattes"],
+} as const;
 const picto = { width: 64, height: 64, parts: ["fond", "objet"] } as const;
 const produce = (parts: readonly string[]) =>
   ({ width: 80, height: 80, parts }) as const;
@@ -60,6 +67,8 @@ export const ILLUSTRATION_SPECS = {
       // Anneau couleur soleil derrière le disque, invisible par défaut (animé par Landscape).
       "halo-soleil",
       "soleil",
+      // Dans le groupe soleil : cratères de la lune, invisibles le jour (opacité 0).
+      "crateres",
       "nuage-1",
       "nuage-2",
       "colline-arriere",
@@ -98,6 +107,73 @@ export const ILLUSTRATION_SPECS = {
   "fleur-1-fleurie-epanoui": flowerBloom,
   "fleur-2-fleurie-epanoui": flowerBloom,
   "fleur-3-fleurie-epanoui": flowerBloom,
+
+  // Visiteurs de saison et de la nuit (jardin vivant) : ils ne se débloquent pas.
+  "rouge-gorge": critter([
+    "queue",
+    "corps",
+    "poitrail",
+    "tete",
+    "bec",
+    "oeil",
+    "pattes",
+  ]),
+  "rouge-gorge-endormi": critter([
+    "queue",
+    "corps",
+    "poitrail",
+    "tete",
+    "bec",
+    "oeil",
+    "pattes",
+  ]),
+  // Comme oiseau-vol : les deux ailes battent en décalé.
+  hirondelle: {
+    width: 64,
+    height: 48,
+    anchor: { x: 32, y: 24 },
+    parts: [
+      "aile-arriere",
+      "queue",
+      "corps",
+      "ventre",
+      "gorge",
+      "oeil",
+      "aile-avant",
+    ],
+  },
+  cigale: critter(["ailes", "corps", "tete", "pattes"]),
+  libellule: {
+    width: 64,
+    height: 48,
+    anchor: { x: 32, y: 24 },
+    parts: ["ailes-arriere", "ailes-avant", "corps", "tete"],
+  },
+  ecureuil: critter([
+    "queue",
+    "corps",
+    "ventre",
+    "tete",
+    "oeil",
+    "noisette",
+    "pattes",
+  ]),
+  renard: critter(["queue", "corps", "pattes", "tete", "oeil"]),
+  // Roulé en boule : pas de pattes visibles.
+  "renard-endormi": critter(["corps", "queue", "tete", "oeil"]),
+  hibou: owl,
+  "hibou-endormi": owl,
+  "perce-neige": flower(["feuilles", "tige", "clochette"]),
+  houx: flower(["feuilles", "baies"]),
+  primevere: flower(["feuilles", "tiges", "fleurs"]),
+  jonquille: flower(["feuilles", "tige", "petales", "coeur"]),
+  coquelicot: flower(["tige", "feuille", "petales", "coeur"]),
+  tournesol: flower(["tige", "feuilles", "petales", "coeur"]),
+  champignons: flower(["pieds", "chapeaux", "points"]),
+  // Nuit : étoiles (calque de ciel, même cadre que la scène). La lune est fournie mais pas
+  // utilisée : la nuit, c'est le soleil de la scène qui devient lune (cratères).
+  etoiles: { width: 390, height: 300, parts: ["etoiles"] },
+  lune: { width: 64, height: 64, parts: ["lune", "cratere"] },
 
   // Saisons du jardin : neige posée sur les collines et le haut du sol, flocons par-dessus
   // la scène (même cadre que scene-paysage) ; feuilles et pétales qui tombent.

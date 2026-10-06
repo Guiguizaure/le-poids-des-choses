@@ -52,10 +52,20 @@ export function revealTitle(reveal: {
     : "Une fleur va pousser dans ton jardin";
 }
 
-/** « Une coccinelle s'est installée dans ton jardin » */
-export function arrivalMessage(kind: AnimalKind): string {
+/**
+ * « Une coccinelle s'est installée dans ton jardin » ; si elle n'est pas visible en ce moment
+ * (hiver, nuit), on dit quand la voir : elle n'est jamais perdue.
+ */
+export function arrivalMessage(
+  kind: AnimalKind,
+  away: "saison" | "nuit" | "assoupi" | null = null,
+): string {
   const { name, feminine } = ANIMAL_NAMES[kind];
-  return `${feminine ? "Une" : "Un"} ${name} s’est installé${feminine ? "e" : ""} dans ton jardin`;
+  const text = `${feminine ? "Une" : "Un"} ${name} s’est installé${feminine ? "e" : ""} dans ton jardin`;
+  const pronoun = feminine ? "la" : "le";
+  if (away === "saison") return `${text} : tu ${pronoun} verras au printemps`;
+  if (away === "nuit") return `${text} : tu ${pronoun} verras demain matin`;
+  return text;
 }
 
 export function plural(
@@ -80,9 +90,15 @@ export function inSeason(season: Season): string {
 export function gardenDescription(
   state: GardenState,
   season: Season | null = null,
+  live: { visitors: number; night: boolean } = { visitors: 0, night: false },
 ): string {
-  const when = season ? `, ${inSeason(season)}` : "";
-  if (state.plants.length === 0) return `Jardin vide${when}`;
+  const visitors =
+    live.visitors > 0
+      ? `, ${plural(live.visitors, "visiteur", "visiteurs")}`
+      : "";
+  const when =
+    (season ? `, ${inSeason(season)}` : "") + (live.night ? ", la nuit" : "");
+  if (state.plants.length === 0) return `Jardin vide${visitors}${when}`;
   const bloomed = state.plants.filter((plant) => plant.bloom > 0).length;
   const parts = [
     plural(state.plants.length, "plante", "plantes") +
@@ -90,7 +106,7 @@ export function gardenDescription(
   ];
   if (state.unlocked.length > 0)
     parts.push(plural(state.unlocked.length, "animal", "animaux"));
-  const text = `Jardin : ${parts.join(", ")}${when}`;
+  const text = `Jardin : ${parts.join(", ")}${visitors}${when}`;
   return state.asleep ? `${text}, assoupi sous la brume` : text;
 }
 

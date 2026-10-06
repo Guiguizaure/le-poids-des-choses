@@ -44,6 +44,12 @@ export type Species = {
    * affiché de décembre à février ; il réapparaît au printemps.
    */
   bloomRestsInWinter: boolean;
+  /**
+   * Arbres adultes (stade « grand ») : où se perche le hibou (bas du feuillage, au-dessus du
+   * tronc) et où s'accroche la cigale (milieu du tronc visible), en unités du dessin. Lus sur
+   * le dessin (un test les recalcule depuis le SVG).
+   */
+  perches?: { owl: { x: number; y: number }; cicada: { x: number; y: number } };
 };
 
 const BLOOM_GROUPS = ["epanoui-1", "epanoui-2", "epanoui-3"] as const;
@@ -76,6 +82,7 @@ const evergreen = {
 function tree(
   variant: PlantVariant,
   habit: typeof deciduous | typeof evergreen,
+  perches: NonNullable<Species["perches"]>,
 ): Species {
   return {
     id: `arbre-${variant}`,
@@ -88,6 +95,7 @@ function tree(
     },
     foliageLayers: ["feuillage"],
     ...habit,
+    perches,
   };
 }
 
@@ -110,10 +118,10 @@ function flower(
 }
 
 export const SPECIES: readonly Species[] = [
-  tree(1, deciduous),
+  tree(1, deciduous, { owl: { x: 60, y: 98 }, cicada: { x: 60, y: 127 } }),
   // Élancé, comme un cyprès : persistant.
-  tree(2, evergreen),
-  tree(3, deciduous),
+  tree(2, evergreen, { owl: { x: 60, y: 118 }, cicada: { x: 60, y: 137 } }),
+  tree(3, deciduous, { owl: { x: 60, y: 97.5 }, cicada: { x: 60, y: 127 } }),
   flower(1, ["feuilles"]),
   flower(2, ["feuilles"]),
   flower(3, ["brins"]),

@@ -46,7 +46,10 @@ export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
       </p>
 
       {mine.length > 0 ? (
-        <ul className="flex flex-wrap gap-2" aria-label="Noter une habitude d’un toucher">
+        <ul
+          className="flex flex-wrap gap-2"
+          aria-label="Noter une habitude d’un toucher"
+        >
           {mine.map((habit) => (
             <li key={habit.gesture}>
               <button

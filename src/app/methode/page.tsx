@@ -8,6 +8,7 @@ import {
 import { DataCredit } from "@/components/ui/DataCredit";
 import { PaperCutout } from "@/components/ui/PaperCutout";
 import { WATER_DAYS_PER_STEP } from "@/lib/garden/watering";
+import { NIGHT_HOURS } from "@/lib/garden/daytime";
 import generated from "@/lib/data/gestures.generated.json";
 import {
   SAISON_BASE,
@@ -211,6 +212,15 @@ export default function MethodePage() {
         <p>
           Le jardin suit aussi les saisons de l’hémisphère nord (feuillage,
           ciel, neige) : un simple décor, qui ne change aucun chiffre.
+        </p>
+        <p id="visiteurs" className="scroll-mt-6">
+          Des visiteurs de saison (rouge-gorge, hirondelle, cigale, écureuil,
+          fleurs sauvages) et de la nuit (hibou, renard) passent d’eux-mêmes :
+          ils ne se débloquent pas et ne comptent nulle part. Le ciel suit
+          l’heure de ton appareil : de {NIGHT_HOURS.start} h à {NIGHT_HOURS.end}{" "}
+          h, ton jardin passe en Nuit encre. Tes plantes, elles, ne meurent
+          jamais, et un animal installé n’est jamais perdu : il dort ou revient
+          à sa saison.
         </p>
       </Section>
 

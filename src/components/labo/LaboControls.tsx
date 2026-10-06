@@ -18,6 +18,7 @@ import { BirdFlightLab } from "./BirdFlightLab";
 import { SkyLab } from "./SkyLab";
 import { SeasonLab } from "./SeasonLab";
 import { GardenSeasonsLab } from "./GardenSeasonsLab";
+import { LiveGardenLab } from "./LiveGardenLab";
 import { GustLab } from "./GustLab";
 import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
@@ -185,6 +186,7 @@ export function LaboControls() {
         <GustLab />
         <SeasonLab />
         <GardenSeasonsLab />
+        <LiveGardenLab />
       </div>
     </MotionProvider>
   );
