@@ -1,5 +1,8 @@
-# Intégration continue : lint, tests, build et tests de bout en bout sur chaque demande de
-# fusion (et sur main après fusion). Gratuit pour un dépôt public.
+# Intégration continue : lint, tests, build strict et tests de bout en bout sur chaque demande
+# de fusion (et sur main après fusion). Gratuit pour un dépôt public.
+# Actions sur Node 24 (Node 20 retiré des runners). Ubuntu épinglé (pas ubuntu-latest) : une
+# nouvelle version d'Ubuntu peut casser les dépendances système de Playwright/WebKit ; la
+# remonter à la main (voir docs/journal.md, 2026-10-06, maintenance CI).
 name: CI
 
 on:
@@ -17,15 +20,17 @@ permissions:
 jobs:
   qualite:
     name: Lint, tests, build, bout en bout
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Version de pnpm lue dans le champ packageManager de package.json.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      # Version de Node lue dans .nvmrc (24), comme Cloudflare Pages ; package.json la
+      # demande aussi (engines).
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -38,9 +43,12 @@ jobs:
       - name: Tests unitaires
         run: pnpm test
 
-      # Sans STRICT_DATA : les mentions légales restent à remplir avant le lancement.
-      - name: Build (export statique)
+      # Mode strict, comme au lancement : aucune donnée fictive, mentions légales remplies,
+      # noms anglais, contraste des ciels, gabarits « Le savais-tu ? » (scripts/check-data.ts).
+      - name: Build strict (export statique)
         run: pnpm build
+        env:
+          STRICT_DATA: "1"
 
       - name: Navigateurs Playwright
         run: pnpm exec playwright install --with-deps chromium webkit
@@ -50,7 +58,7 @@ jobs:
 
       - name: Rapport en cas d'échec
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-traces
           path: test-results/
@@ -60,7 +68,7 @@ jobs:
       # (erreurs-console.txt) du premier.
       - name: Rapport Playwright
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
