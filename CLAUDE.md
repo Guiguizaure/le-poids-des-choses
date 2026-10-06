@@ -180,7 +180,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   gestes que par cet adaptateur
 - `src/lib/facts` — « Le savais-tu ? » : gabarits (`templates.ts`), faits calculés et choix
   déterministe (`pickFact`, graine : jour ou id d'entrée), garde-fou du build (`check.ts`) ;
-  carte `FactCard` (`src/components/facts`) sous le duel, le duel objet et sur /jardin
+  carte `FactCard` (`src/components/facts`) sous le duel, le duel objet et sur /jardin ;
+  tout encadré « Le savais-tu ? » / “Did you know?” passe par `DidYouKnow` (même dossier :
+  fond sapin, texte et liens blancs, `DID_YOU_KNOW_LINK`), faits comme fiches d'espèce ;
+  e2e : `expectDidYouKnow`
 - `src/lib/calc` — calculs purs (`emissions`, `compare`, `avoidedKg`, `gardenTotals`,
   `isAsleep`, `formatMass`, modes d'acquisition)
 - `public/illustrations` — SVG (voir `docs/svg-conventions.md`)
@@ -237,7 +240,7 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     authoritative one ».
 - Tokens de design : couleurs `creme`, `encre`, `texte-attenue`, `blanc`, `tomate`,
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
-  réservée aux feuilles, et au fond de l’encadré « Le savais-tu ? » d’une fiche d’espèce, texte
+  réservée aux feuilles, et au fond des encadrés « Le savais-tu ? » (`DidYouKnow`), texte
   blanc 6,49:1) ; polices
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,

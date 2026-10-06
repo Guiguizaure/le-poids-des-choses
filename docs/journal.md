@@ -1577,3 +1577,23 @@ Retours UX de Guillaume, appliqués sur feat/especes :
 - Bout en bout : `e2e/especes.spec.ts` réécrit (grille, fiche, retour du focus, Échap à deux
   niveaux, espèce verrouillée, « i » jamais imbriqué, couleurs de l'encadré, axe), en
   français et en anglais, sur Chromium et WebKit.
+
+### 2026-10-06 (fin) — Un seul encadré « Le savais-tu ? »
+
+Demande de Guillaume : l'encadré « Le savais-tu ? » de /jardin (et /en/garden) n'avait pas le
+style vert sapin de la fiche d'espèce ; un seul composant partagé pour tout le site.
+
+- Nouveau `DidYouKnow` (`src/components/facts/DidYouKnow.tsx`) : fond sapin #1B6B45, titre,
+  texte et liens blancs soulignés, contour de focus blanc (l'outremer habituel ne ferait que
+  1,10:1 sur sapin). Titre h2 sur une page, h4 dans la fiche d'une espèce.
+- Occurrences recensées et migrées : `FactCard` (duel, duel objet, /jardin, en français et en
+  anglais) et la fiche d'espèce de « Que veux-tu planter ? » (après un choix léger au duel,
+  au duel objet et dans « Raconte ta journée »).
+- Laissées telles quelles : le titre de section « Le savais-tu ? » de /methode#savais-tu
+  (/en/method), qui explique les faits et n'est pas un encadré ; la carte « Palier franchi »
+  (`MilestoneCard`), qui reprend les textes de `FACT_CARD` sans être un « Le savais-tu ? ».
+- Test de contraste : la paire blanc / sapin couvre désormais tous les encadrés (texte, liens,
+  contour de focus).
+- Bout en bout : helper `expectDidYouKnow` (fond, couleur du texte, du titre et des liens) dans
+  `e2e/facts.spec.ts` (duel, duel objet, jardin, en français et en anglais, avec axe),
+  `e2e/accessibility.spec.ts` (jardin) et `e2e/especes.spec.ts` (fiche, FR et EN).

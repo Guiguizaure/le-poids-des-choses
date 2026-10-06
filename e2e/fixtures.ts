@@ -1,5 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test as base, expect, type Page } from "@playwright/test";
+import {
+  test as base,
+  expect,
+  type Locator,
+  type Page,
+} from "@playwright/test";
 
 /**
  * Chaque test échoue si la console affiche une erreur : exception, ressource refusée par la
@@ -168,4 +173,22 @@ export async function letGardenChoose(page: Page) {
     })
     .click();
   await expect(picker).toBeHidden();
+}
+
+/**
+ * Encadré « Le savais-tu ? » / “Did you know?” : le composant partagé (`DidYouKnow`), fond
+ * vert sapin, titre, texte et liens blancs.
+ */
+export async function expectDidYouKnow(box: Locator) {
+  await expect(box).toBeVisible();
+  await expect(box).toHaveAttribute("data-did-you-know");
+  await expect(box).toHaveCSS("background-color", "rgb(27, 107, 69)");
+  await expect(box).toHaveCSS("color", "rgb(255, 255, 255)");
+  await expect(box.getByRole("heading")).toHaveCSS(
+    "color",
+    "rgb(255, 255, 255)",
+  );
+  for (const link of await box.getByRole("link").all()) {
+    await expect(link).toHaveCSS("color", "rgb(255, 255, 255)");
+  }
 }

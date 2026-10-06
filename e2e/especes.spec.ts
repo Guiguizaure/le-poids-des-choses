@@ -3,6 +3,7 @@
 import {
   entry,
   expect,
+  expectDidYouKnow,
   expectNoAxeViolations,
   letGardenChoose,
   seedJournal,
@@ -86,9 +87,8 @@ test("fiche : « En savoir plus », « Le savais-tu ? », retour avec le focus s
   );
   const fact = picker.getByRole("complementary", { name: "Le savais-tu ?" });
   await expect(fact).toContainText("les noires sont simplement cueillies");
-  // Encadré vert sapin, texte blanc.
-  await expect(fact).toHaveCSS("background-color", "rgb(27, 107, 69)");
-  await expect(fact).toHaveCSS("color", "rgb(255, 255, 255)");
+  // Le même encadré que partout : vert sapin, texte blanc.
+  await expectDidYouKnow(fact);
   await expect(
     picker.getByRole("button", { name: "Laisse le jardin choisir" }),
   ).toBeVisible();
@@ -229,9 +229,9 @@ test.describe("en anglais", () => {
     await expect(
       picker.getByRole("heading", { name: "Olive tree" }),
     ).toBeFocused();
-    await expect(
-      picker.getByRole("complementary", { name: "Did you know?" }),
-    ).toContainText("black ones are simply picked riper");
+    const fact = picker.getByRole("complementary", { name: "Did you know?" });
+    await expectDidYouKnow(fact);
+    await expect(fact).toContainText("black ones are simply picked riper");
     await expectNoAxeViolations(page);
     await picker.getByRole("button", { name: "Back to all species" }).click();
     await expect(

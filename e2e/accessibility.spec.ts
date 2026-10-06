@@ -2,6 +2,7 @@ import {
   acceptDocument404,
   entry,
   expect,
+  expectDidYouKnow,
   expectNoAxeViolations,
   seedJournal,
   tabTo,
@@ -95,9 +96,9 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     await expect(
       page.getByRole("button", { name: "Faire s’envoler l’oiseau" }),
     ).toBeVisible();
-    await expect(
+    await expectDidYouKnow(
       page.getByRole("complementary", { name: "Le savais-tu ?" }),
-    ).toBeVisible();
+    );
     await expectNoAxeViolations(page);
   });
 

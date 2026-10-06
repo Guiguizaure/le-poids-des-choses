@@ -83,7 +83,8 @@ const PAIRS: {
     text: "blanc",
     background: "sapin",
     minimum: 4.5,
-    where: "encadré « Le savais-tu ? » de la fiche d'une espèce",
+    where:
+      "encadrés « Le savais-tu ? » (DidYouKnow : duels, jardin, fiche d'une espèce), texte, liens et contour de focus",
   },
 ];
 

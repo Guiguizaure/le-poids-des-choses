@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { DidYouKnow } from "@/components/facts/DidYouKnow";
 import { Illustration } from "@/components/illustrations/Illustration";
 import {
   adultIllustration,
@@ -191,20 +192,9 @@ export function SpeciesPicker({
               <p className="text-corps-m text-encre leading-[1.4]">
                 {sheets[shown.id].description}
               </p>
-              <aside
-                aria-labelledby={`${uid}-savais`}
-                className="bg-sapin text-blanc flex flex-col gap-1 rounded-[18px] p-4"
-              >
-                <p
-                  id={`${uid}-savais`}
-                  className="text-corps-s leading-[1.3] font-semibold"
-                >
-                  {t.didYouKnow}
-                </p>
-                <p className="text-corps-s leading-[1.4]">
-                  {sheets[shown.id].anecdote}
-                </p>
-              </aside>
+              <DidYouKnow title={t.didYouKnow} level={4}>
+                {sheets[shown.id].anecdote}
+              </DidYouKnow>
               {shown.available ? (
                 <button
                   type="button"
