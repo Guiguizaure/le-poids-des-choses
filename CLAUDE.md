@@ -423,8 +423,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   titres sur mobile (masquées sous 360 px), dans les marges dès `lg` ; se posent à l'entrée
   dans l'écran (`useMotion`, IntersectionObserver), rien en mouvement réduit.
 - Qualité :
-  - CI GitHub Actions (`.github/workflows/ci.yml`) : lint, tests, build, bout en bout à
-    chaque demande de fusion ;
+  - CI GitHub Actions (`.github/workflows/ci.yml`) : lint, tests, build strict
+    (`STRICT_DATA=1`), bout en bout à chaque demande de fusion ; actions sur Node 24, Node du
+    projet 24 (`.nvmrc`, `engines`), runner épinglé `ubuntu-24.04` (jamais `ubuntu-latest` ;
+    comment le remonter : docs/journal.md) ;
   - `public/_headers` : CSP (scripts et styles en ligne autorisés, nécessaires à l'export
     Next ; Cloudflare Web Analytics autorisé), Referrer-Policy, Permissions-Policy,
     nosniff, cache immuable de `/_next/static/*` ;

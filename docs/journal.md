@@ -1432,3 +1432,33 @@ globale sans pied de page. Filtre WebKit de `e2e/fixtures.ts` resserré au messa
 expérimentale `experimental.globalNotFound` (`next.config.ts`, `src/app/global-not-found.tsx`).
 Après une mise à jour, vérifier que `out/404.html` a toujours `lang="fr"`, les polices et la
 feuille de style, et que `out/en/404.html` existe.
+
+## 2026-10-06 (nuit) — Maintenance de la CI (branche chore/ci-maintenance)
+
+**Demandé** : Node 20 retiré des runners GitHub ; passer les actions sur Node 22 ou plus,
+rendre la version de Node du projet cohérente, épingler Ubuntu avant le passage
+d'`ubuntu-latest` à Ubuntu 26, vérifier que la CI passe en entier. Pas de fonctionnalité
+(gel).
+
+**Fait** :
+
+- Actions à leur dernière version majeure, toutes sur Node 24 (vérifié dans leur
+  `action.yml`) : `actions/checkout@v7`, `actions/setup-node@v7`, `pnpm/action-setup@v6`,
+  `actions/upload-artifact@v7` (la CI n'utilise pas `actions/cache` à part : le cache pnpm
+  passe par `setup-node`, `cache: pnpm`, gardé explicite car setup-node v6+ ne met plus en
+  cache automatiquement que npm). Aucun changement cassant pour nous dans leurs notes de
+  version.
+- Node : `.nvmrc` = 24 (lu par setup-node et par Cloudflare Pages), `engines.node` = `>=24`
+  ajouté à `package.json`, `@types/node` passé de `^20` à `^24`.
+- `runs-on: ubuntu-24.04` au lieu d'`ubuntu-latest`.
+- Build de la CI en mode strict (`STRICT_DATA=1`) : les mentions légales sont remplies
+  depuis le lot du compte, le commentaire qui disait le contraire était périmé.
+- `pnpm raconte:eval` ne tourne pas en CI (vrai modèle, clé, coût) : il reste manuel.
+
+**Remonter Ubuntu (quand et comment)** : quand GitHub annonce la fin d'`ubuntu-24.04` (en
+général un an et demi à deux ans après la sortie de la version suivante), ou quand
+Playwright n'y publie plus ses navigateurs. Sur une branche `chore/…` : remplacer
+`ubuntu-24.04` par la nouvelle version dans `.github/workflows/ci.yml`, mettre Playwright à
+jour si besoin (`pnpm up @playwright/test`), ouvrir la demande de fusion et vérifier que
+`playwright install --with-deps chromium webkit` et les tests WebKit passent avant de
+fusionner.
