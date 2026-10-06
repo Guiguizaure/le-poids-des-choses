@@ -1283,3 +1283,54 @@ et un test « habitude » dans `e2e/raconte.spec.ts`). Lighthouse mobile (`serve
 noindex) : Mon jardin 95 / 100 / 100. Contrôle visuel de /labo (automne, hiver, printemps)
 dans Chrome ; la chute des pétales n'a pas pu être vue dans l'onglet piloté (onglet tenu
 pour caché, animations en pause) : elle est vérifiée par le bout en bout.
+
+## 2026-10-06 (après-midi) — Jardin vivant toute l'année (branche feat/jardin-vivant)
+
+**Demandé** : dernier lot de fonctionnalités avant la version anglaise. Les plantes ne meurent
+jamais ; ce sont des visiteurs de saison (non débloqués) qui font vivre le jardin, et le ciel
+suit l'heure. Deux zips d'illustrations (visiteurs et nuit, nocturnes).
+
+**Questions posées avant de coder** : (1) la PR #24 n'était pas encore fusionnée au premier
+essai (main encore sur la PR #23) : Guillaume l'a fusionnée, la branche part de main à jour ;
+(2) le test de contraste demandé (3:1) échouait sur des ciels déjà validés (soleil 1,39:1
+sur Aube, nuages de 1,10 à 2,89:1, sans contour). Choix de Guillaume : animaux volants 3:1
+(contour encre compris), soleil et nuages décoratifs ≥ 1,1:1, hirondelle masquée sur Nuit
+encre même le jour.
+
+**Fait** :
+
+- Illustrations : 19 fichiers, contrat dans `specs.ts`. Groupe `crateres` ajouté dans le
+  soleil de `scene-paysage.svg` (3 cercles soleil à 45 %, opacité 0 ; visibles la nuit).
+  `lune.svg` gardé (contrat) mais pas utilisé.
+- Faune (`fauna.ts`) et visiteurs (`visitors.ts`) en tables de données ; scène du moment
+  (`live.ts`) partagée par le jardin et l'image de partage ; placement déterministe (saison +
+  année de saison), jamais sur les plantes ni les animaux de la personne.
+- Nuit (`daytime.ts`) : 21 h à 6 h, heure de l'appareil ; Nuit encre sans déblocage, lune à
+  cratères, étoiles (0,6 d'opacité : plus discrètes qu'à pleine opacité, vu dans /labo),
+  transitions de 2 s coupées en mouvement réduit ; mention sous le sélecteur de ciel.
+- Garde-fou du build `sky-contrast.ts`. Il a trouvé deux cas, corrigés : les nuages blancs du
+  ciel Jour d'été (1,099:1 sur crème) passent en soleil ; l'oiseau en vol sur Nuit encre
+  (corps bleu, 2,92:1) : il ne s'envole pas sur ce ciel (il reste posé), comme l'hirondelle
+  n'y apparaît pas.
+- Messages d'arrivée : un animal débloqué pendant son absence « … : tu le verras au
+  printemps / demain matin ».
+- /methode#visiteurs ; /labo « Jardin vivant » (curseurs saison et heure, liste des présents
+  et des absents).
+- e2e : `e2e/jardin-vivant.spec.ts` (nuit, hiver de jour, papillon débloqué en hiver,
+  mouvement réduit) ; le navigateur vit dans un fuseau où il est vers 13 h (les tests ne
+  dépendent plus de l'heure du lancement), les tests de saison fixent Europe/Paris.
+
+**Choix faits sans demander** : la cigale est absente s'il n'y a pas d'arbre adulte ; elle
+se pose sur un autre arbre que le hibou quand il y en a plusieurs ; hibou et renard
+s'ajoutent aux 2 à 4 visiteurs de saison (donc 6 au plus le jour, en été) ; le jardin vide
+reçoit aussi ses visiteurs.
+
+**À signaler** : `renard-endormi.svg` montre un renard debout aux yeux fermés, pas « en
+boule ».
+
+**Vérifications** : lint, typecheck, 861 tests unitaires, `STRICT_DATA=1 pnpm build` (garde-fou
+du ciel compris). Bout en bout Chromium et WebKit avec axe : 163 passés au premier lancement
+complet, mais la machine était très chargée (charge 70 à 110) : deux tests du compte ont
+échoué (délai), avec des échecs différents à chaque relance. Relancés seuls, compte (16) et
+« Raconte ta journée » (15) passent. Lighthouse mobile (`serve:out`, noindex, machine
+chargée) : Mon jardin 90 puis 93, accessibilité et bonnes pratiques 100.

@@ -69,3 +69,12 @@ l'occasion et ne dit rien de la durée de vie réelle. À mentionner honnêtemen
   fleurie (fleurs), puis épanouissement 1, 2 et 3. C'est une règle de jeu, pas une mesure.
 - Saisons (hémisphère nord, d'après le mois) : un décor seulement. L'hiver, l'épanouissement
   des arbres caducs dort (niveau gardé, rien d'affiché) jusqu'au printemps.
+
+## Jardin vivant : visiteurs et nuit
+
+- Les plantes ne meurent jamais et un animal installé n'est jamais perdu : selon la saison
+  et l'heure, il est seulement absent pour un temps ou endormi.
+- Des visiteurs de saison et de la nuit (hibou, renard) apparaissent d'eux-mêmes : ils ne se
+  débloquent pas et ne comptent nulle part.
+- De 21 h à 6 h (heure de l'appareil), le jardin passe en Nuit encre. Un décor : aucun
+  chiffre ne change.

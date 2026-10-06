@@ -3,8 +3,8 @@
 # Le poids des choses
 
 Comparateur carbone illustré : deux gestes du quotidien sur une balance, un choix noté, un
-jardin dessiné qui grandit à chaque choix plus léger, arrosé par les habitudes tenues et qui
-suit les saisons. Projet vitrine pour webjuno.com.
+jardin dessiné qui grandit à chaque choix plus léger, arrosé par les habitudes tenues, qui
+suit les saisons et l'heure, et reçoit des visiteurs. Projet vitrine pour webjuno.com.
 Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
@@ -115,7 +115,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
 - `src/components/scene` — `Tree`, `Flower` (via `StagedPlant` : couleur de saison `paint`,
   épanouissement `bloom`), `Scale`, `Butterfly`, `Bird`, `Bee`, `Ladybug`, `Snail`,
-  `Hedgehog`, `Sparkle`, `Wind`, `SeasonGround` / `SeasonFall` (`SeasonLayers.tsx`) (animés)
+  `Hedgehog`, `Sparkle`, `Wind`, `SeasonGround` / `SeasonFall` (`SeasonLayers.tsx`),
+  `Visitor` (visiteurs du jardin vivant) (animés)
 - `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement),
   `gust.ts` (`playGust`, `useGust`, `useAutoGusts`)
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
@@ -131,8 +132,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
   endormissement, arrosage ; `waterRevealForEntry`), géométrie de la scène (`scene.ts`,
   d'après `scene.generated.ts`), textes (`text.ts`), ciels à débloquer et ciel « Jour » de
-  saison (`skies.ts`), espèces (`species.ts`), saisons (`seasons.ts`), arrosage
-  (`watering.ts`)
+  saison (`skies.ts`), espèces (`species.ts`, avec les perchoirs du hibou et de la cigale),
+  saisons (`seasons.ts`), arrosage (`watering.ts`), jardin vivant : jour et nuit
+  (`daytime.ts`), faune par saison et heure (`fauna.ts`), visiteurs (`visitors.ts`), scène
+  du moment (`live.ts` : `liveScene`), garde-fou de contraste du ciel (`sky-contrast.ts`)
 - `src/lib/habits` — table `HABITS`, « Mes habitudes » (`declared.ts`, `useDeclaredHabits`) ;
   `src/components/habits` — `HabitChooser` (/comparer?habitude), `MyHabits` (/jardin)
 - `src/components/garden` — `<Garden entries now highlightId sky />`, écran `/jardin`,
@@ -406,6 +409,34 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   sur /jardin quand le dernier choix léger en franchit un (le plus haut), équivalence
   calculée comme « Le savais-tu ? » (`MILESTONE_EQUIVALENCES`) ; un geste disparu fait
   échouer le build.
+- Jardin vivant (`live.ts`, `liveScene`) : les plantes ne meurent jamais ; un animal débloqué
+  n'est jamais perdu (vitrine et compteur inchangés), il est seulement absent ou endormi selon
+  `FAUNA` (`fauna.ts`) : papillon et abeille absents l'hiver et la nuit, coccinelle absente
+  l'hiver, oiseau endormi la nuit (pas d'envol la nuit ni sur Nuit encre : contraste),
+  escargot endormi l'hiver, hérisson endormi le jour, actif la nuit, hiberne l'hiver. Message
+  d'arrivée d'un animal absent : « … : tu le verras au printemps / demain matin ».
+  - Visiteurs (`VISITORS`, `visitors.ts`) : non débloqués, hors compteur ; hiver rouge-gorge,
+    perce-neige, houx ; printemps hirondelle, primevère, jonquille ; été cigale (tronc d'un
+    arbre adulte, sinon absente), libellule, coquelicot, tournesol ; automne écureuil,
+    champignons ; toute l'année hibou (perché sous le feuillage de l'arbre adulte le plus
+    haut, absent sans arbre adulte ; éveillé la nuit, endormi le jour) et renard (au sol,
+    marche la nuit, dort le jour ; absent sans place). Placement déterministe
+    (`placeVisitors` : saison + année de saison, décembre compte avec l'hiver suivant), jamais
+    sur l'emprise dessinée des plantes ni des animaux, jamais sur un autre visiteur ; volants
+    dans la bande de ciel, jamais sur le soleil ; places indépendantes de l'heure. La nuit :
+    hirondelle et libellule absentes, rouge-gorge endormi. L'hirondelle n'apparaît jamais sur
+    Nuit encre (contraste). Jardin assoupi : visiteurs gardés, immobiles.
+  - Jour et nuit (`daytime.ts`, heure locale de l'appareil) : de 21 h à 6 h, le ciel affiché
+    passe en Nuit encre (le ciel choisi reste choisi, mention sous le sélecteur) ; soleil →
+    lune : groupe `crateres` du calque `soleil` de scene-paysage (opacité 0, 1 la nuit) ;
+    étoiles (`etoiles.svg`, `STARS_ENABLED`, `STARS_OPACITY` 0,6) ; transitions de 2 s, aucune
+    en mouvement réduit. `lune.svg` est fourni mais pas utilisé. Image de partage : jour ou
+    nuit selon l'heure de création.
+  - Garde-fou du build (toujours bloquant, `scripts/check-data.ts`) : sur chaque ciel et
+    chaque ciel Jour de saison, animaux volants ≥ 3:1 (couleur principale ou contour encre),
+    soleil et nuages (décoratifs) ≥ 1,1:1.
+  - e2e : le navigateur vit dans un fuseau où il est vers 13 h (`playwright.config.ts`) ; les
+    tests de saison et de nuit fixent leur heure et le fuseau Europe/Paris.
 - Ciels : Jour, Aube rose (15 choix légers), Midi soleil (30), Nuit encre (50) ; couleurs
   de la palette seulement, variables `--sky-*` sur la scène (calques ciel, soleil, halo,
   nuages, vent) ; collines et sol inchangés ; pas de ciel outremer (la colline du fond y
