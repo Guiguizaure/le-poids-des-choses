@@ -14,9 +14,13 @@ import {
   toggleGesture,
   type PairSelection,
 } from "@/lib/compare";
-import { getGesture } from "@/lib/data";
+import { gestureDetail, gestureLabel, getGesture } from "@/lib/data";
 import type { Category } from "@/lib/data/types";
-import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
+import { pictoFor } from "@/lib/journal/display";
+import { format, type Locale } from "@/lib/i18n";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFocusTitle } from "./useFocusTitle";
 import { RaconteLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
@@ -35,14 +39,17 @@ type GestureChooserProps = {
   focusTitle: boolean;
 };
 
-function announce(selection: PairSelection): string {
-  const label = (id: string | null) =>
-    id ? (getGesture(id)?.label ?? id) : "";
+function announce(selection: PairSelection, locale: Locale): string {
+  const t = COMPARE[locale].chooser;
+  const label = (id: string | null) => (id ? gestureLabel(id, locale) : "");
   if (selection.first && selection.second) {
-    return `${label(selection.first)} et ${label(selection.second)} choisis : tu peux comparer.`;
+    return format(t.bothChosen, {
+      a: label(selection.first),
+      b: label(selection.second),
+    });
   }
   if (selection.first) {
-    return `${label(selection.first)} choisi en premier. Choisis un second geste du même type ; les autres sont grisés.`;
+    return format(t.firstChosen, { a: label(selection.first) });
   }
   return "";
 }
@@ -62,6 +69,10 @@ export function GestureChooser({
   focusTitle,
 }: GestureChooserProps) {
   const [declared] = useDeclaredHabits();
+  const locale = useLocale();
+  const common = COMPARE[locale];
+  const t = common.chooser;
+  const categoryNames = CATEGORY_NAMES[locale];
   const initial = initialFirst ? getGesture(initialFirst) : undefined;
   const [category, setCategory] = useState<Category>(
     initial?.category ?? "transport",
@@ -75,8 +86,11 @@ export function GestureChooser({
   const count = selectionCount(selection);
   const first = selection.first ? getGesture(selection.first) : undefined;
   const subtitle = first
-    ? `${CATEGORY_LABELS[category]} · même type que ${gestureNoun(first.id).text}`
-    : `${CATEGORY_LABELS[category]} · exemples de gestes`;
+    ? format(t.sameTypeAs, {
+        category: categoryNames[category],
+        noun: gestureNoun(first.id, locale).text,
+      })
+    : format(t.examples, { category: categoryNames[category] });
 
   const toggle = (id: string) => {
     const result = toggleGesture(selection, id);
@@ -89,23 +103,19 @@ export function GestureChooser({
       badgeFor(selection, id) !== null && badgeFor(next, id) !== 1;
     setMessage(
       removed
-        ? `${getGesture(id)?.label ?? id} retiré. ${announce(next)}`
-        : announce(next),
+        ? `${format(t.removed, { label: gestureLabel(id, locale) })} ${announce(next, locale)}`
+        : announce(next, locale),
     );
   };
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between px-5 pt-[22px] pb-2">
-        <IconLink href={backHref} label="Retour" icon="retour" />
+        <IconLink href={backHref} label={common.back} icon="retour" />
         <p className="text-corps-s text-encre leading-[1.3] font-semibold">
-          Option {Math.min(count + 1, 2)} sur 2
+          {format(t.step, { n: Math.min(count + 1, 2) })}
         </p>
-        <IconLink
-          href="/"
-          label="Fermer et revenir à l’accueil"
-          icon="fermer"
-        />
+        <IconLink href="/" label={common.close} icon="fermer" />
       </div>
 
       <div className="flex flex-col gap-[18px] px-5 pt-3 pb-8">
@@ -121,13 +131,13 @@ export function GestureChooser({
           tabIndex={-1}
           className="font-titre text-titre-l text-encre leading-[1.1] outline-none"
         >
-          Que veux-tu comparer ?
+          {t.title}
         </h1>
 
         <div
           className="flex flex-wrap gap-2"
           role="group"
-          aria-label="Catégories"
+          aria-label={t.categories}
         >
           {CATEGORY_ORDER.map((id) => (
             <button
@@ -139,7 +149,7 @@ export function GestureChooser({
                 category === id ? "bg-encre text-creme" : "bg-blanc text-encre"
               }`}
             >
-              {CATEGORY_LABELS[id]}
+              {categoryNames[id]}
             </button>
           ))}
         </div>
@@ -187,15 +197,17 @@ export function GestureChooser({
                 </span>
                 <span className="flex flex-col gap-0.5">
                   <span className="text-corps-m text-encre leading-[1.3] font-semibold">
-                    {gesture.label}
+                    {gestureLabel(gesture.id, locale)}
                   </span>
-                  {gesture.detail ? (
+                  {gestureDetail(gesture.id, locale) ? (
                     <span className="text-legende text-texte-attenue">
-                      {gesture.detail}
+                      {gestureDetail(gesture.id, locale)}
                     </span>
                   ) : null}
                   {badge ? (
-                    <span className="sr-only">, geste {badge}</span>
+                    <span className="sr-only">
+                      {format(t.badge, { n: badge })}
+                    </span>
                   ) : null}
                 </span>
               </button>
@@ -215,14 +227,10 @@ export function GestureChooser({
             onCompare(selection.first, selection.second)
           }
         >
-          Comparer
+          {t.compare}
         </PrimaryButton>
         <p className="text-legende text-texte-attenue text-center">
-          {count === 0
-            ? "Touche un premier geste, puis un second du même type."
-            : count === 1
-              ? "Ensuite, choisis la seconde option."
-              : "Retouche un geste pour le retirer."}
+          {count === 0 ? t.hintNone : count === 1 ? t.hintOne : t.hintTwo}
         </p>
         {selection.first &&
         !selection.second &&
@@ -233,7 +241,7 @@ export function GestureChooser({
             onClick={() => onHabit(selection.first)}
             className="press bg-pomme-douce text-corps-s text-encre focus-visible:outline-outremer rounded-2xl px-4 py-3 text-left leading-[1.35] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            C’est une de tes habitudes : la noter sans comparer
+            {t.declaredHabit}
           </button>
         ) : null}
         <button
@@ -242,11 +250,10 @@ export function GestureChooser({
           className="press border-encre bg-blanc focus-visible:outline-outremer mt-2 flex flex-col gap-0.5 rounded-[18px] border px-4 py-3.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <span className="text-corps-s text-encre leading-[1.3] font-semibold underline">
-            Noter une habitude
+            {t.logHabit}
           </span>
           <span className="text-legende text-texte-attenue leading-[1.35]">
-            Un repas végé, le vélo pour aller au travail : sans comparaison ni
-            kg, ça arrose ton jardin.
+            {t.logHabitHelp}
           </span>
         </button>
         <RaconteLink className="mt-2" />

@@ -16,9 +16,13 @@ import {
   SLIDERS,
   tiltFor,
 } from "@/lib/compare";
-import { getGesture } from "@/lib/data";
+import { gestureDetail, gestureLabel, getGesture } from "@/lib/data";
 import type { Choice } from "@/lib/data/types";
-import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
+import { pictoFor } from "@/lib/journal/display";
+import { format } from "@/lib/i18n";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { DuelScene } from "./DuelScene";
 import { useFocusTitle } from "./useFocusTitle";
 import { FactCard } from "@/components/facts/FactCard";
@@ -43,6 +47,8 @@ export function Duel({
   onChoose,
   focusTitle,
 }: DuelProps) {
+  const locale = useLocale();
+  const t = COMPARE[locale].duel;
   const gestureA = getGesture(a)!;
   const gestureB = getGesture(b)!;
   const slider = SLIDERS[gestureA.unit];
@@ -61,9 +67,13 @@ export function Duel({
     () => duelComparison(a, b, quantity)!,
     [a, b, quantity],
   );
-  const nouns = { a: gestureNoun(a), b: gestureNoun(b) };
-  const sentence = resultSentence(comparison, nouns, gestureA.unit);
-  const equivalence = equivalenceSentence(comparison.differenceKg, car);
+  const nouns = { a: gestureNoun(a, locale), b: gestureNoun(b, locale) };
+  const sentence = resultSentence(comparison, nouns, gestureA.unit, locale);
+  const equivalence = equivalenceSentence(comparison.differenceKg, car, locale);
+  const chooseLabel = (side: Choice) => {
+    const noun = side === "a" ? nouns.a : nouns.b;
+    return noun.choose ?? format(t.choose, { noun: noun.text });
+  };
   const lighter: Choice = comparison.lighter;
   const heavier: Choice = lighter === "a" ? "b" : "a";
   const showLighterBadge =
@@ -86,23 +96,23 @@ export function Duel({
           <Illustration name={pictoFor(gesture.id)} className="size-9" />
           {isLighter ? (
             <span className="bg-tomate-douce text-encre rounded-full px-2 py-[3px] text-[11px] font-semibold">
-              {feminine ? "plus légère" : "plus léger"}
+              {feminine ? t.lighterFeminine : t.lighter}
             </span>
           ) : null}
         </div>
         <p className="text-legende text-texte-attenue">
-          {CATEGORY_LABELS[gesture.category]}
+          {CATEGORY_NAMES[locale][gesture.category]}
         </p>
         <h2 className="font-titre text-titre-m text-encre break-words">
-          {gesture.label}
-          {gesture.detail ? (
+          {gestureLabel(gesture.id, locale)}
+          {gestureDetail(gesture.id, locale) ? (
             <span className="text-legende text-texte-attenue font-texte block font-normal">
-              {gesture.detail}
+              {gestureDetail(gesture.id, locale)}
             </span>
           ) : null}
         </h2>
         <p className="text-corps-s text-encre font-semibold">
-          {formatMass(kg)} CO2e
+          {formatMass(kg, locale)} CO2e
         </p>
       </div>
     );
@@ -119,7 +129,10 @@ export function Duel({
         tilt={tiltFor(comparison)}
         left={pictoFor(a)}
         right={pictoFor(b)}
-        title={`Balance : ${gestureA.label} à gauche, ${gestureB.label} à droite`}
+        title={format(t.scale, {
+          a: gestureLabel(a, locale),
+          b: gestureLabel(b, locale),
+        })}
       />
 
       <div className="flex flex-col gap-3.5 px-5 pt-[18px] pb-[26px]">
@@ -128,7 +141,7 @@ export function Duel({
           tabIndex={-1}
           className="font-titre text-titre-l text-encre leading-[1.1] outline-none"
         >
-          Lequel pèse le moins ?
+          {t.title}
         </h1>
         <div className="flex gap-3">
           {card("a")}
@@ -141,7 +154,7 @@ export function Duel({
               htmlFor="quantite"
               className="text-corps-s flex justify-between"
             >
-              <span className="text-texte-attenue">{slider.label}</span>
+              <span className="text-texte-attenue">{t.distance}</span>
               <span className="text-encre font-semibold">
                 {quantity} {slider.unit}
               </span>
@@ -153,7 +166,7 @@ export function Duel({
               max={SLIDER_STEPS}
               step={SLIDER_STEPS / 100}
               value={positionFromQuantity(slider, quantity)}
-              aria-valuetext={`${quantity} ${quantity > 1 ? "kilomètres" : "kilomètre"}`}
+              aria-valuetext={t.kilometres(quantity)}
               onChange={(event) =>
                 setQuantity(
                   quantityFromPosition(slider, Number(event.target.value)),
@@ -175,13 +188,13 @@ export function Duel({
         </div>
 
         <PrimaryButton onClick={() => onChoose(lighter, quantity)}>
-          Je choisis {(lighter === "a" ? nouns.a : nouns.b).text}
+          {chooseLabel(lighter)}
         </PrimaryButton>
         <TextButton
           className="text-texte-attenue no-underline"
           onClick={() => onChoose(heavier, quantity)}
         >
-          Je choisis {(heavier === "a" ? nouns.a : nouns.b).text}
+          {chooseLabel(heavier)}
         </TextButton>
         <FactCard related={[a, b]} className="mt-2" />
         <DataCredit independent className="text-center" />

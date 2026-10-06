@@ -1,66 +1,87 @@
 // Textes de l'écran « Raconte ta journée » (maquette 08) : lignes des gestes repérés, ce qui
-// manque avant l'ajout, messages doux quand l'analyse n'aboutit pas.
+// manque avant l'ajout, messages doux quand l'analyse n'aboutit pas. Les phrases sont dans
+// src/lib/i18n/messages/raconte.ts.
 import { objectNoun, possessive, type ObjectOption } from "@/lib/compare";
-import { getGesture } from "@/lib/data";
-import { plural } from "@/lib/garden/text";
-import { CATEGORY_LABELS } from "@/lib/journal/display";
+import { gestureDetail, gestureLabel, getGesture } from "@/lib/data";
+import { format, type Locale } from "@/lib/i18n";
+import { RACONTE } from "@/lib/i18n/messages/raconte";
+import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
 import type { RaconteError } from "./api";
 import { missingFor, type Proposal } from "./proposal";
 
 /** Mention demandée sous le champ. */
-export const PRIVACY_NOTICE =
-  "Ton texte est envoyé à Claude (Anthropic) pour repérer les gestes, puis oublié. N’écris pas d’informations personnelles.";
+export const PRIVACY_NOTICE = RACONTE.fr.privacy;
 
 export function objectOptionLabel(
   gestureId: string,
   option: ObjectOption,
+  locale: Locale = "fr",
 ): string {
-  if (option === "neuf") return "Neuf";
-  if (option === "occasion") return "D’occasion";
-  return `Je garde ${possessive(objectNoun(gestureId), "moi")}`;
+  const t = RACONTE[locale];
+  if (option === "neuf") return t.optionNew;
+  if (option === "occasion") return t.optionUsed;
+  return format(t.optionKeep, {
+    mine: possessive(objectNoun(gestureId, locale), "moi", locale),
+  });
 }
 
 /** Quantité ou option, telle qu'elle sera notée (« 65 km », « 1 repas », « à préciser »). */
-function detailFor(proposal: Proposal): string {
+function detailFor(proposal: Proposal, locale: Locale): string {
+  const t = RACONTE[locale];
   const gesture = getGesture(proposal.gestureId);
   if (!gesture) return "";
   switch (gesture.unit) {
     case "km":
       return proposal.quantity === null
-        ? "distance à préciser"
-        : `${proposal.quantity} km`;
+        ? t.distanceToFill
+        : format(t.km, { n: proposal.quantity });
     case "repas":
-      return "1 repas";
+      return t.meal;
     case "litre":
-      return "1 litre";
+      return t.litre;
     case "achat":
-      return gesture.detail ?? "1 achat";
+      return gestureDetail(gesture.id, locale) ?? t.purchase;
     case "objet":
-      if (!proposal.objectOption) return "option à préciser";
+      if (!proposal.objectOption) return t.optionToFill;
       return proposal.objectOption === "occasion" && proposal.delivered
-        ? "d’occasion, livré en colis"
-        : objectOptionLabel(gesture.id, proposal.objectOption).toLowerCase();
+        ? t.usedDelivered
+        : objectOptionLabel(
+            gesture.id,
+            proposal.objectOption,
+            locale,
+          ).toLowerCase();
   }
 }
 
 /** Ligne sous le nom du geste : « Manger · 1 repas · d’après « burger » ». */
-export function proposalSubtitle(proposal: Proposal): string {
+export function proposalSubtitle(
+  proposal: Proposal,
+  locale: Locale = "fr",
+): string {
+  const t = RACONTE[locale];
   const gesture = getGesture(proposal.gestureId);
   if (!gesture) return "";
   const parts = [
-    CATEGORY_LABELS[gesture.category],
-    proposal.asHabit ? "habitude, aucun kg" : detailFor(proposal),
+    CATEGORY_NAMES[locale][gesture.category],
+    proposal.asHabit ? t.habitNoKg : detailFor(proposal, locale),
   ];
   if (proposal.certainty === "inferred")
-    parts.push(`d’après « ${proposal.excerpt} »`);
+    parts.push(format(t.fromExcerpt, { excerpt: proposal.excerpt }));
   return parts.join(" · ");
 }
 
 /** Option comparée, écrite en clair (rien pour un objet : l'option le dit). */
-export function comparedToLabel(proposal: Proposal): string | null {
+export function comparedToLabel(
+  proposal: Proposal,
+  locale: Locale = "fr",
+): string | null {
   if (proposal.asHabit || !proposal.alternativeId) return null;
   const other = getGesture(proposal.alternativeId);
-  return other ? `Comparé à : ${other.label}` : null;
+  return other
+    ? format(RACONTE[locale].comparedTo, {
+        label: gestureLabel(other.id, locale),
+      })
+    : null;
 }
 
 /** Champ à remplir dans la carte d'un geste (distance, option d'objet), ou null. */
@@ -87,24 +108,19 @@ export type Blocking = {
  */
 export function blockingFor(
   rows: readonly { proposal: Proposal; checked: boolean }[],
+  locale: Locale = "fr",
 ): Blocking | null {
+  const t = RACONTE[locale];
   const checked = rows.filter((row) => row.checked);
   if (checked.length === 0)
     return rows.length
-      ? {
-          message: "Coche au moins un geste pour l’ajouter au carnet.",
-          focusId: rowCheckboxId(rows[0].proposal.key),
-        }
+      ? { message: t.tickOne, focusId: rowCheckboxId(rows[0].proposal.key) }
       : null;
   const incomplete = checked.filter((row) => missingFor(row.proposal));
   if (incomplete.length === 0) return null;
   const first = incomplete[0].proposal;
   return {
-    message: plural(
-      incomplete.length,
-      "geste à compléter",
-      "gestes à compléter",
-    ),
+    message: t.toComplete(incomplete.length),
     focusId: inlineNeed(first)
       ? rowFieldId(first.key)
       : rowCheckboxId(first.key),
@@ -112,21 +128,13 @@ export function blockingFor(
 }
 
 /** Messages quand l'analyse ne donne rien : jamais d'alarme, toujours une autre voie. */
-export const ERROR_MESSAGES: Record<RaconteError, string> = {
-  offline:
-    "Pas de connexion pour l’instant. Réessaie dans un moment, ou choisis tes gestes toi-même.",
-  turnstile:
-    "La vérification anti-robot n’a pas abouti. Réessaie, ou choisis tes gestes toi-même.",
-  "text-length": "Écris entre 1 et 280 caractères, puis relance l’analyse.",
-  "rate-limited":
-    "Tu as déjà raconté plusieurs journées aujourd’hui. Reviens demain, ou choisis tes gestes toi-même.",
-  quota:
-    "Claude a beaucoup lu aujourd’hui et se repose jusqu’à demain. En attendant, tu peux choisir tes gestes toi-même.",
-  disabled:
-    "« Raconte ta journée » fait une pause pour l’instant. Tu peux choisir tes gestes toi-même.",
-  error:
-    "Claude n’a pas pu lire ta journée cette fois. Réessaie dans un moment, ou choisis tes gestes toi-même.",
-};
+export const ERROR_MESSAGES: Record<RaconteError, string> = RACONTE.fr.errors;
 
-export const NOTHING_FOUND =
-  "Je n’ai reconnu aucun geste du catalogue dans ton texte. Tu peux le reformuler, ou choisir tes gestes toi-même.";
+export function errorMessage(
+  error: RaconteError,
+  locale: Locale = "fr",
+): string {
+  return RACONTE[locale].errors[error];
+}
+
+export const NOTHING_FOUND = RACONTE.fr.nothing;

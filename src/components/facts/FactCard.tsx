@@ -1,7 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { getGesture } from "@/lib/data";
 import { daySeed, pickFact } from "@/lib/facts";
+import { format } from "@/lib/i18n";
+import { FACT_CARD } from "@/lib/i18n/messages/garden";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import { useNow } from "@/lib/hooks/useNow";
 
 /**
@@ -20,9 +23,11 @@ export function FactCard({
   className?: string;
 }) {
   const now = useNow();
+  const locale = useLocale();
+  const t = FACT_CARD[locale];
   // Au rendu serveur, le jour n'est pas connu : la carte apparaît côté client.
   if (!seed && now === 0) return null;
-  const fact = pickFact(seed ?? daySeed(now), related);
+  const fact = pickFact(seed ?? daySeed(now), related, getGesture, locale);
   if (!fact) return null;
 
   return (
@@ -34,7 +39,7 @@ export function FactCard({
         id={`fait-${fact.id}`}
         className="text-legende text-texte-attenue leading-[1.3] font-semibold"
       >
-        Le savais-tu ?
+        {t.didYouKnow}
       </h2>
       <p className="text-corps-s text-encre leading-[1.4]">{fact.text}</p>
       <p className="text-legende text-texte-attenue flex flex-wrap gap-x-3 leading-[1.3]">
@@ -45,15 +50,15 @@ export function FactCard({
             rel="noopener noreferrer"
             className="focus-visible:outline-outremer underline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            Source : {fact.source.label} sur Impact CO2
-            <span className="sr-only"> (nouvel onglet)</span>
+            {format(t.source, { label: fact.source.label })}
+            <span className="sr-only">{t.newTab}</span>
           </a>
         ) : null}
         <Link
           href={fact.methodHref}
           className="focus-visible:outline-outremer underline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-          Méthode
+          {t.method}
         </Link>
       </p>
     </aside>

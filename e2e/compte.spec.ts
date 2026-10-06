@@ -154,6 +154,46 @@ async function apiSession(page: Page) {
   return page.evaluate(async () => (await fetch("/api/auth/session")).json());
 }
 
+test("en anglais : e-mail anglais, lien vers /en/sign-in, même compte et même carnet", async ({
+  page,
+}, testInfo) => {
+  const email = emailFor(testInfo, "anglais");
+  await prepare(page.context(), testInfo);
+  await seedJournal(page, [entry("en-1", 12, 60)]);
+  await page.goto("/en/garden");
+  const section = page.getByRole("region", { name: /^Find your garden/ });
+  await section.getByLabel("Your email address").fill(email);
+  await section.getByRole("button", { name: "Send me a link" }).click();
+  await expect(
+    section.getByText(/^Sent! Open the link we sent to/),
+  ).toBeVisible();
+  let mails: Mail[] = [];
+  await expect
+    .poll(async () => (mails = await mailsTo(page, email)).length)
+    .toBe(1);
+  expect(mails[0].subject).toBe("Your link to find your garden");
+  expect(mails[0].text).toContain("valid for 15 minutes");
+  const link = mails[0].text.match(
+    new RegExp(`${BASE}/en/sign-in#jeton=[A-Za-z0-9_-]{43}`),
+  )?.[0];
+  expect(link, "lien anglais dans le mail").toBeTruthy();
+
+  await page.goto(link!);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Your garden is connected" }),
+  ).toBeVisible();
+  await expect(page.getByText(/^Sync complete/)).toBeVisible();
+  expect(page.url()).toBe(`${BASE}/en/sign-in`);
+  await page.getByRole("link", { name: "See my garden" }).click();
+  await expect(page).toHaveURL(/\/en\/garden$/);
+  await expect(
+    page
+      .getByRole("region", { name: /^Find your garden/ })
+      .getByText(`Signed in as ${email}`),
+  ).toBeVisible();
+  await expectNoAxeViolations(page);
+});
+
 test("parcours complet : lien, connexion, synchro entre deux appareils, export, suppression", async ({
   page,
   browser,

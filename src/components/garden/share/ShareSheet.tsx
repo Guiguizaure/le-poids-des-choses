@@ -4,11 +4,10 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { PrimaryButton } from "@/components/ui/buttons";
 import type { GardenState } from "@/lib/garden/model";
 import type { SkyId } from "@/lib/garden/skies";
-import { plural } from "@/lib/garden/text";
+import { format } from "@/lib/i18n";
+import { SHARE } from "@/lib/i18n/messages/garden";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { renderShareCard } from "./renderShareCard";
-
-const FILE_NAME = "mon-jardin.png";
-const SHARE_TEXT = "Mon jardin, dans Le poids des choses.";
 
 type Card = { file: File; previewUrl: string };
 
@@ -33,6 +32,8 @@ export function ShareSheet({
   siteUrl: string;
   onClose: () => void;
 }) {
+  const locale = useLocale();
+  const t = SHARE[locale];
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [card, setCard] = useState<Card | null>(null);
   const [message, setMessage] = useState("");
@@ -45,12 +46,14 @@ export function ShareSheet({
     let cancelled = false;
     let url: string | null = null;
     // Jour ou nuit, saison : ceux de l'heure de création de l'image.
-    renderShareCard({ garden, sky, siteHost, unlockedCount })
+    renderShareCard({ garden, sky, siteHost, unlockedCount, locale })
       .then((blob) => {
         if (cancelled) return;
         url = URL.createObjectURL(blob);
         setCard({
-          file: new File([blob], FILE_NAME, { type: "image/png" }),
+          file: new File([blob], SHARE[locale].fileName, {
+            type: "image/png",
+          }),
           previewUrl: url,
         });
       })
@@ -61,15 +64,13 @@ export function ShareSheet({
           error,
           error instanceof Error ? { cause: error.cause } : undefined,
         );
-        setMessage(
-          "L’image n’a pas pu être préparée. Réessaie dans un instant.",
-        );
+        setMessage(SHARE[locale].prepareFailed);
       });
     return () => {
       cancelled = true;
       if (url) URL.revokeObjectURL(url);
     };
-  }, [garden, sky, siteHost, unlockedCount]);
+  }, [garden, sky, siteHost, unlockedCount, locale]);
 
   const close = () => {
     dialogRef.current?.close();
@@ -82,7 +83,7 @@ export function ShareSheet({
     try {
       await navigator.share({
         files: [card.file],
-        text: SHARE_TEXT,
+        text: t.text,
         url: siteUrl,
       });
       close();
@@ -90,7 +91,7 @@ export function ShareSheet({
       // Partage annulé par l'utilisateur : rien ne se passe.
       if (error instanceof DOMException && error.name === "AbortError") return;
       console.error("Partage du jardin en échec.", error);
-      setMessage("Le partage n’a pas abouti. Tu peux réessayer.");
+      setMessage(t.shareFailed);
     }
   };
 
@@ -112,7 +113,7 @@ export function ShareSheet({
     }
   };
 
-  const description = `ton jardin, ${plural(garden.lightChoiceCount, "choix léger", "choix légers")}, ${plural(unlockedCount, "animal", "animaux")}`;
+  const description = t.description(garden.lightChoiceCount, unlockedCount);
 
   return (
     <dialog
@@ -134,40 +135,39 @@ export function ShareSheet({
           id="partage-titre"
           className="font-titre text-encre text-[24px] leading-[1.2]"
         >
-          Partager mon jardin
+          {t.title}
         </h2>
         <div className="border-encre bg-creme aspect-[1080/1350] w-[270px] max-w-full border-2 shadow-[4px_4px_0_0_var(--color-encre)]">
           {card ? (
             // eslint-disable-next-line @next/next/no-img-element -- image locale (blob)
             <img
               src={card.previewUrl}
-              alt={`Aperçu de l’image à partager : ${description}.`}
+              alt={format(t.alt, { description })}
               className="block h-full w-full"
               data-share-preview
             />
           ) : (
             <p className="text-legende text-texte-attenue flex h-full items-center justify-center p-4 text-center">
-              Préparation de l’image…
+              {t.preparing}
             </p>
           )}
         </div>
         <p className="text-texte-attenue w-[320px] max-w-full text-center text-[13px] leading-[1.35]">
-          L’image montre ton jardin et le nombre de tes choix légers. Ni ton
-          carnet, ni de kilos de CO2e.
+          {t.privacy}
         </p>
         <PrimaryButton
           onClick={share}
           aria-disabled={!card}
           className="aria-disabled:cursor-wait aria-disabled:opacity-60"
         >
-          Partager l’image
+          {t.shareImage}
         </PrimaryButton>
         <button
           type="button"
           onClick={close}
           className="text-encre focus-visible:outline-outremer text-[15px] leading-[1.3] font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-          Annuler
+          {t.cancel}
         </button>
         <p
           role="status"

@@ -1,48 +1,23 @@
 // Noms des gestes dans les phrases (article, genre), pour accorder « plus léger / plus légère ».
-import { getGesture } from "@/lib/data";
+// Les tables sont dans src/lib/i18n/messages/nouns.ts (français et anglais).
+import { gestureLabel } from "@/lib/data";
+import type { Locale } from "@/lib/i18n/routes";
+import {
+  GESTURE_NOUNS,
+  OBJECT_NOUNS,
+  type Noun,
+  type ObjectNoun,
+} from "@/lib/i18n/messages/nouns";
 
-export type Noun = { text: string; feminine: boolean };
+export type { Noun, ObjectNoun };
 
-/** Gestes comparables (km, repas, litre, achat) : « le train », « la voiture »… */
-const GESTURE_NOUNS: Record<string, Noun> = {
-  tgv: { text: "le TGV", feminine: false },
-  ter: { text: "le TER", feminine: false },
-  avion: { text: "l’avion", feminine: false },
-  voiture: { text: "la voiture", feminine: true },
-  bus: { text: "le bus", feminine: false },
-  metro: { text: "le métro", feminine: false },
-  velo: { text: "le vélo", feminine: false },
-  marche: { text: "la marche", feminine: true },
-  "repas-vegetarien": { text: "le repas végétarien", feminine: false },
-  "repas-vegetalien": { text: "le repas végétal", feminine: false },
-  "repas-poulet": { text: "le repas au poulet", feminine: false },
-  "repas-boeuf": { text: "le repas au bœuf", feminine: false },
-  "repas-poisson": { text: "le repas au poisson", feminine: false },
-  "eau-robinet": { text: "l’eau du robinet", feminine: true },
-  "eau-bouteille": { text: "l’eau en bouteille", feminine: true },
-  cafe: { text: "le café", feminine: false },
-  the: { text: "le thé", feminine: false },
-  soda: { text: "le soda", feminine: false },
-  biere: { text: "la bière", feminine: true },
-  vin: { text: "le vin", feminine: false },
-  "lait-vache": { text: "le lait de vache", feminine: false },
-  "boisson-soja": { text: "la boisson au soja", feminine: true },
-  "livraison-domicile": { text: "la livraison à domicile", feminine: true },
-  "point-relais-pied": { text: "le point relais à pied", feminine: false },
-  "point-relais-voiture": {
-    text: "le point relais en voiture",
-    feminine: false,
-  },
-  "magasin-pied": { text: "l’achat en magasin à pied", feminine: false },
-  "magasin-voiture": { text: "l’achat en magasin en voiture", feminine: false },
-};
-
-export function gestureNoun(id: string): Noun {
-  const known = GESTURE_NOUNS[id];
+export function gestureNoun(id: string, locale: Locale = "fr"): Noun {
+  const known = GESTURE_NOUNS[locale][id];
   if (known) return known;
-  const label = getGesture(id)?.label ?? id;
+  const label = gestureLabel(id, locale);
+  const lower = `${label.charAt(0).toLowerCase()}${label.slice(1)}`;
   return {
-    text: `le ${label.charAt(0).toLowerCase()}${label.slice(1)}`,
+    text: locale === "en" ? `the ${lower}` : `le ${lower}`,
     feminine: false,
   };
 }
@@ -53,80 +28,43 @@ export function capitalize(text: string): string {
 }
 
 /** « que » + nom ; les noms portent leur article (« que l’avion »), pas d'élision. */
-export function thanNoun(noun: Noun): string {
-  return `que ${noun.text}`;
+export function thanNoun(noun: Noun, locale: Locale = "fr"): string {
+  return locale === "en" ? `than ${noun.text}` : `que ${noun.text}`;
 }
 
 // ---- Objets ---------------------------------------------------------------------------------
 
-export type ObjectNoun = {
-  /** « Un jean » */
-  indefinite: string;
-  /** « d’un jean neuf » (Fabrication …) */
-  newOne: string;
-  feminine: boolean;
-  plural: boolean;
-};
-
-const OBJECT_NOUNS: Record<string, ObjectNoun> = {
-  jean: {
-    indefinite: "Un jean",
-    newOne: "d’un jean neuf",
-    feminine: false,
-    plural: false,
-  },
-  tshirt: {
-    indefinite: "Un t-shirt en coton",
-    newOne: "d’un t-shirt neuf",
-    feminine: false,
-    plural: false,
-  },
-  pull: {
-    indefinite: "Un pull en laine",
-    newOne: "d’un pull neuf",
-    feminine: false,
-    plural: false,
-  },
-  chaussures: {
-    indefinite: "Des chaussures de sport",
-    newOne: "de chaussures neuves",
-    feminine: true,
-    plural: true,
-  },
-  smartphone: {
-    indefinite: "Un smartphone",
-    newOne: "d’un smartphone neuf",
-    feminine: false,
-    plural: false,
-  },
-  "ordinateur-portable": {
-    indefinite: "Un ordinateur portable",
-    newOne: "d’un ordinateur portable neuf",
-    feminine: false,
-    plural: false,
-  },
-  television: {
-    indefinite: "Une télévision",
-    newOne: "d’une télévision neuve",
-    feminine: true,
-    plural: false,
-  },
-};
-
-export function objectNoun(id: string): ObjectNoun {
-  const known = OBJECT_NOUNS[id];
+export function objectNoun(id: string, locale: Locale = "fr"): ObjectNoun {
+  const known = OBJECT_NOUNS[locale][id];
   if (known) return known;
-  const label = getGesture(id)?.label ?? id;
-  return {
-    indefinite: label,
-    newOne: `de ${label.toLowerCase()}`,
-    feminine: false,
-    plural: false,
-  };
+  const label = gestureLabel(id, locale);
+  return locale === "en"
+    ? {
+        indefinite: label,
+        newOne: `a new ${label.toLowerCase()}`,
+        bare: label.toLowerCase(),
+        feminine: false,
+        plural: false,
+      }
+    : {
+        indefinite: label,
+        newOne: `de ${label.toLowerCase()}`,
+        bare: label.toLowerCase(),
+        feminine: false,
+        plural: false,
+      };
 }
 
-/** « le tien », « la tienne », « les tiennes » (toi) ; « le mien »… (moi). */
-export function possessive(noun: ObjectNoun, person: "toi" | "moi"): string {
+/**
+ * « le tien », « la tienne », « les tiennes » (toi) ; « le mien »… (moi). En anglais :
+ * « yours », « mine ».
+ */
+export function possessive(
+  noun: ObjectNoun,
+  person: "toi" | "moi",
+  locale: Locale = "fr",
+): string {
+  if (locale === "en") return person === "toi" ? "yours" : "mine";
   const stem = person === "toi" ? "tien" : "mien";
   if (noun.plural) return `les ${stem}${noun.feminine ? "nes" : "s"}`;
   return noun.feminine ? `la ${stem}ne` : `le ${stem}`;

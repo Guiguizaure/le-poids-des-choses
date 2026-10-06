@@ -2,12 +2,13 @@
 // (gestes et fruits et légumes de saison),
 // et mentions légales remplies (plus d'emplacements [NOM], [SIRET], [ADRESSE], [EMAIL]).
 // Toujours bloquant : un gabarit « Le savais-tu ? » ou une équivalence de palier qui
-// référence un geste disparu ; un animal volant, le soleil ou un nuage qui ne se voit pas sur un
+// référence un geste disparu ; un geste ou un produit sans nom anglais ; un animal volant, le soleil ou un nuage qui ne se voit pas sur un
 // ciel. Simple avertissement : clé publique Turnstile absente.
 import { readFileSync } from "node:fs";
 import { checkData } from "../src/lib/data/check";
 import { getGestures } from "../src/lib/data";
 import { checkFacts } from "../src/lib/facts/check";
+import { checkEnglishNames } from "../src/lib/i18n/check";
 import { checkLegal, missingLegalFields } from "../src/lib/legal";
 import { checkMilestones } from "../src/lib/milestones/check";
 import {
@@ -33,6 +34,7 @@ const results = [
   checkLegal(missingLegalFields(), strict),
   checkFacts(),
   checkMilestones(),
+  checkEnglishNames(),
   checkSkyContrast(skyContrastFailures(flyerSources)),
   checkTurnstileKey(),
 ];

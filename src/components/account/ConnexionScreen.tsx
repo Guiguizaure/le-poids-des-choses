@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { SignInForm } from "@/components/account/AccountSection";
 import { PrimaryLink } from "@/components/ui/buttons";
-import { plural } from "@/lib/garden/text";
 import { accountApi, type ApiError } from "@/lib/sync/api";
 import { getBrowserStore } from "@/lib/journal/browser";
 import { getSyncEngine } from "@/lib/sync/browser";
 import { errorMessage } from "@/lib/sync/messages";
 import { useAccount } from "@/lib/sync/useAccount";
+import { ACCOUNT } from "@/lib/i18n/messages/account";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 type State =
   | { step: "starting" }
@@ -56,6 +57,8 @@ const TITLE_CLASS = "font-titre text-titre-l text-encre leading-[1.1]";
  * demander un lien et retrouver son jardin sur cet appareil.
  */
 export function ConnexionScreen() {
+  const locale = useLocale();
+  const t = ACCOUNT[locale];
   const [state, setState] = useState<State>({ step: "starting" });
 
   useEffect(() => {
@@ -108,16 +111,16 @@ export function ConnexionScreen() {
   return (
     <main className="animate-enter mx-auto flex w-full max-w-[430px] flex-col gap-4 px-6 pt-10 pb-10 motion-reduce:animate-none">
       {state.step === "starting" ? (
-        <h1 className={TITLE_CLASS}>Connexion</h1>
+        <h1 className={TITLE_CLASS}>{t.connexion}</h1>
       ) : null}
 
       {state.step === "form" ? <RequestLink /> : null}
 
       {state.step === "verifying" ? (
         <>
-          <h1 className={TITLE_CLASS}>Connexion</h1>
+          <h1 className={TITLE_CLASS}>{t.connexion}</h1>
           <p role="status" className="text-corps-m text-encre">
-            On ouvre ton jardin…
+            {t.opening}
           </p>
         </>
       ) : null}
@@ -125,25 +128,25 @@ export function ConnexionScreen() {
       {state.step === "syncing" || state.step === "done" ? (
         <>
           <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
-            Ton jardin est relié
+            {t.linked}
           </h1>
           <p className="text-corps-m text-encre leading-[1.4]">
-            Connecté avec <strong className="break-all">{state.email}</strong>.
+            {t.signedInAs} <strong className="break-all">{state.email}</strong>.
           </p>
           <p
             role="status"
             className="text-corps-s text-texte-attenue leading-[1.4]"
           >
             {state.step === "syncing"
-              ? "Synchronisation en cours…"
+              ? t.syncing
               : !state.synced
-                ? "La synchronisation reprendra à ta prochaine visite du jardin."
+                ? t.syncLater
                 : state.received > 0
-                  ? `Synchronisation terminée : ${plural(state.received, "choix retrouvé", "choix retrouvés")}.`
-                  : "Synchronisation terminée : ton carnet est à jour."}
+                  ? t.syncFound(state.received)
+                  : t.syncUpToDate}
           </p>
           {state.step === "done" ? (
-            <PrimaryLink href="/jardin">Voir mon jardin</PrimaryLink>
+            <PrimaryLink href="/jardin">{t.seeGarden}</PrimaryLink>
           ) : null}
         </>
       ) : null}
@@ -151,12 +154,12 @@ export function ConnexionScreen() {
       {state.step === "error" ? (
         <>
           <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
-            Ce lien ne marche plus
+            {t.linkBroken}
           </h1>
           <p role="status" className="text-corps-m text-encre leading-[1.4]">
             {state.error === "invalid-link"
-              ? "Un lien de connexion est valable 15 minutes et ne sert qu’une fois. Demande un nouveau lien ci-dessous : ça ne prend qu’un instant."
-              : errorMessage(state.error)}
+              ? t.linkExpired
+              : errorMessage(state.error, locale)}
           </p>
           <FormCard />
         </>
@@ -168,17 +171,18 @@ export function ConnexionScreen() {
 /** Sans jeton : demander un lien (déjà connecté sur cet appareil : aller au jardin). */
 function RequestLink() {
   const account = useAccount();
+  const t = ACCOUNT[useLocale()];
   return (
     <>
-      <h1 className={TITLE_CLASS}>Retrouve ton jardin</h1>
+      <h1 className={TITLE_CLASS}>{t.findGarden}</h1>
       {account.ready && account.email ? (
         <>
           <p className="text-corps-m text-encre leading-[1.4]">
-            Tu es déjà connecté avec{" "}
-            <strong className="break-all">{account.email}</strong> sur cet
-            appareil : ton jardin s’y synchronise.
+            {t.alreadyBefore}{" "}
+            <strong className="break-all">{account.email}</strong>
+            {t.alreadyAfter}
           </p>
-          <PrimaryLink href="/jardin">Voir mon jardin</PrimaryLink>
+          <PrimaryLink href="/jardin">{t.seeGarden}</PrimaryLink>
         </>
       ) : (
         <FormCard />
@@ -188,16 +192,14 @@ function RequestLink() {
 }
 
 function FormCard() {
+  const t = ACCOUNT[useLocale()];
   const [message, setMessage] = useState("");
   return (
     <section
-      aria-label="Recevoir un lien de connexion"
+      aria-label={t.requestLink}
       className="bg-blanc flex flex-col items-start gap-3 rounded-[20px] p-5"
     >
-      <SignInForm
-        intro="Ton jardin pousse déjà sur un autre appareil ? Reçois un lien par e-mail, sans mot de passe : ouvre-le ici et tes choix reviendront."
-        onMessage={setMessage}
-      />
+      <SignInForm intro={t.intros.connexion} onMessage={setMessage} />
       <p
         role="status"
         aria-live="polite"

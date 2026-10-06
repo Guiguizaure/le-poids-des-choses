@@ -1,4 +1,6 @@
-// E-mail de connexion (français, tutoiement), envoyé par l'API Resend.
+// E-mail de connexion (français ou anglais, selon la page), envoyé par l'API Resend.
+import type { Locale } from "../src/lib/i18n/routes";
+import { MAGIC_LINK_MAIL } from "../src/lib/i18n/messages/mail";
 import { MAIL_FROM, RESEND_API_URL } from "./config";
 import type { Env } from "./env";
 import { HttpError } from "./http";
@@ -13,30 +15,37 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/** Langue de l'e-mail : celle de la page où le lien a été demandé (français par défaut). */
+export type MailLocale = Locale;
+
 /** Même message que le compte existe ou non : rien ne révèle qui a un compte. */
-export function magicLinkMessage(link: string): MailMessage {
-  const subject = "Ton lien pour retrouver ton jardin";
+export function magicLinkMessage(
+  link: string,
+  locale: MailLocale = "fr",
+): MailMessage {
+  const t = MAGIC_LINK_MAIL[locale];
+  const subject = t.subject;
   const text = [
-    "Bonjour,",
+    t.hello,
     "",
-    "Voici ton lien pour te connecter au Poids des choses et retrouver ton jardin :",
+    `${t.intro}${t.colon}`,
     link,
     "",
-    "Il est valable 15 minutes et ne sert qu’une fois.",
-    "Si tu n’as rien demandé, ignore ce message : sans clic, rien ne se passe.",
+    t.validity,
+    t.ignore,
     "",
-    "Le poids des choses",
+    t.signature,
   ].join("\n");
   const href = escapeHtml(link);
   const html = `<!doctype html>
-<html lang="fr">
+<html lang="${locale}">
 <body style="margin:0;padding:24px;background:#FFF3DC;font-family:Arial,Helvetica,sans-serif;color:#1F1A17">
-<p style="font-size:16px;line-height:1.5;margin:0 0 16px">Bonjour,</p>
-<p style="font-size:16px;line-height:1.5;margin:0 0 24px">Voici ton lien pour te connecter au Poids des choses et retrouver ton jardin.</p>
-<p style="margin:0 0 24px"><a href="${href}" style="display:inline-block;background:#1F1A17;color:#FFF3DC;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 24px;border-radius:999px">Retrouver mon jardin</a></p>
-<p style="font-size:14px;line-height:1.5;margin:0 0 8px">Il est valable 15 minutes et ne sert qu’une fois.</p>
-<p style="font-size:14px;line-height:1.5;margin:0 0 24px">Si tu n’as rien demandé, ignore ce message : sans clic, rien ne se passe.</p>
-<p style="font-size:13px;line-height:1.5;margin:0;color:#6B625A">Le bouton ne marche pas ? Copie cette adresse dans ton navigateur :<br>${href}</p>
+<p style="font-size:16px;line-height:1.5;margin:0 0 16px">${t.hello}</p>
+<p style="font-size:16px;line-height:1.5;margin:0 0 24px">${t.intro}.</p>
+<p style="margin:0 0 24px"><a href="${href}" style="display:inline-block;background:#1F1A17;color:#FFF3DC;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 24px;border-radius:999px">${t.button}</a></p>
+<p style="font-size:14px;line-height:1.5;margin:0 0 8px">${t.validity}</p>
+<p style="font-size:14px;line-height:1.5;margin:0 0 24px">${t.ignore}</p>
+<p style="font-size:13px;line-height:1.5;margin:0;color:#6B625A">${t.fallback}<br>${href}</p>
 </body>
 </html>`;
   return { subject, text, html };

@@ -4,11 +4,13 @@
 
 Comparateur carbone illustré : deux gestes du quotidien sur une balance, un choix noté, un
 jardin dessiné qui grandit à chaque choix plus léger, arrosé par les habitudes tenues, qui
-suit les saisons et l'heure, et reçoit des visiteurs. Projet vitrine pour webjuno.com.
-Projet indépendant, non affilié à l'ADEME.
+suit les saisons et l'heure, et reçoit des visiteurs. En français (racine) et en anglais
+(`/en`). Projet vitrine pour webjuno.com. Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
 
+- Gel des fonctionnalités : plus aucune nouvelle fonctionnalité jusqu'à la sortie de la
+  version anglaise et de l'étude de cas ; seulement corrections, traduction et finitions.
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
   (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
@@ -29,12 +31,15 @@ Projet indépendant, non affilié à l'ADEME.
   `src/lib/legal.ts`), mais seulement si `STRICT_DATA=1` est défini (à activer chez
   Cloudflare au lancement). Les mentions légales sont remplies : `STRICT_DATA=1 pnpm build`
   passe (un test le vérifie). Toujours bloquant, même sans `STRICT_DATA` : un gabarit « Le
-  savais-tu ? » qui référence un geste ou un produit de saison disparu.
+  savais-tu ? » qui référence un geste ou un produit de saison disparu ; un geste ou un
+  produit de saison sans nom anglais (`checkEnglishNames`).
 - Données Impact CO2 : réutilisation autorisée par l'équipe Impact CO2 de l'ADEME (e-mail
   du 5 octobre 2026), gratuite, avec la mention « Données : Impact CO2 – ADEME »
   (`DataCredit`) ; affichée sur /methode (`DATA_LICENSE`). La clé `IMPACTCO2_API_KEY` vit
   dans `.env.local` seulement : jamais affichée ni commitée.
-- Projet en français (textes du site au tutoiement) ; code et noms de fichiers en anglais.
+- Site en deux langues : français (référence, tutoiement) et anglais britannique (« you »,
+  ton chaleureux et direct ; glossaire validé : `docs/glossaire-en.md`). Code et noms de
+  fichiers en anglais. Tout texte d'interface passe par les dictionnaires (voir Langues).
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
 
@@ -52,9 +57,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
 - `pnpm build` — convertit les illustrations, génère les images (`images`), lance les
   garde-fous (`check-data`) puis l'export statique dans `out/`
-- `pnpm images` — icônes PNG (192, 512, maskable, apple-touch-icon), favicon et image de
-  partage 1200×630 (`public/og.png`) depuis `assets/icon/icon.svg` et les illustrations,
-  rendues par resvg avec les polices d'`assets/fonts` ; fichiers commités
+- `pnpm images` — icônes PNG (192, 512, maskable, apple-touch-icon), favicon et images de
+  partage 1200×630 (`public/og.png`, `public/og-en.png`, textes `OG_IMAGE_TEXT`) depuis
+  `assets/icon/icon.svg` et les illustrations, rendues par resvg avec les polices
+  d'`assets/fonts` ; fichiers commités
 - `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
   (`src/components/illustrations/generated.tsx`) et extrait de `scene-paysage.svg` le
   contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`), et
@@ -69,7 +75,7 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `.env.local` seulement si elle existe (jamais dans le dépôt ni côté navigateur). Échoue
   sans rien écrire si l'API refuse l'accès, si une catégorie inconnue apparaît ou si les
   mois sont incohérents. Commite le fichier généré.
-- `pnpm raconte:eval` — à la main, jamais en CI : envoie les 23 phrases de
+- `pnpm raconte:eval` — à la main, jamais en CI : envoie les 27 phrases (dont 7 en anglais) de
   `docs/raconte-phrases.md` au vrai modèle (`ANTHROPIC_API_KEY` lue dans `.dev.vars`) et
   donne le taux de bonnes détections, la précision, le rappel et les jetons consommés
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
@@ -82,11 +88,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
   Resend, faux siteverify et faux Anthropic, port 4330) ; Turnstile est simulé par une route
   Playwright. « Raconte ta journée » (`e2e/raconte.spec.ts`, projets `raconte-chromium` et
-  `raconte-webkit`, après le compte) passe par le même serveur.
+  `raconte-webkit`, après le compte) passe par le même serveur. Version anglaise :
+  `e2e/anglais.spec.ts` (navigateur `en-GB` : pages /en avec axe et aucun mot français,
+  parcours, sélecteur de langue, bandeau, hreflang, mêmes ancres) et un parcours anglais
+  dans le compte et dans « Raconte ta journée ». Le serveur de test sert le `404.html` le plus
+  proche (`/en/…` → `en/404.html`), comme Cloudflare Pages.
   Aucun vrai e-mail, aucun appel à Claude, aucune connexion à Cloudflare.
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
-  carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; construire avec
-  `SITE_LAUNCHED=1` pour mesurer le SEO sans le noindex.
+  carnet, saison, méthode, en français puis en anglais ; `LH_LANG=fr|en` pour une seule
+  langue) sur `pnpm serve:out` (port 4322) ; construire avec `SITE_LAUNCHED=1` pour mesurer
+  le SEO sans le noindex.
 - `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
   partage (partage de fichiers simulé)
 - `pnpm db:migrate:local` — applique `migrations/` à la base D1 locale (`wrangler.local.toml`)
@@ -99,18 +110,31 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 
 ## Arborescence
 
-- `src/app` — pages et layout : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
+- `src/app` — deux mises en page racines : `(fr)/layout.tsx` (`lang="fr"`, pages à la
+  racine) et `(en)/en/layout.tsx` (`lang="en"`, pages sous `/en`), toutes deux par
+  `RootDocument` (`src/components/layout`) ; `global-not-found.tsx` (404 française, option
+  `experimental.globalNotFound`) et `(en)/en/404` (exportée en `out/en/404.html`) ; manifeste
+  anglais `(en)/en/manifest.webmanifest/route.ts`. Pages françaises : `/` (accueil, maquettes 01 et 07), `/comparer` (parcours
   de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
   voir »), `/saison` (fruits et légumes de saison),
   `/methode` (maquette 06, papiers découpés `PaperCutout`), `/mentions-legales`,
   `/confidentialite`, `/raconte` (« Raconte ta journée », maquette 08), `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
   jeton ; toujours noindex et hors sitemap),
-  404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
-  noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
-  commun (`SiteFooter`) dans le layout
+  404 (`NotFoundScreen`, jardin dans la brume), `/labo` (banc d'essai, en français seulement ;
+  non liée, toujours noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ;
+  pied de page commun (`SiteFooter`) dans `RootDocument`. Pages anglaises : même écrans
+  (`/en/compare`, `/en/garden`…) ; Method, Privacy et Legal notice sont écrites en anglais
+  dans leur page (`(en)/en/method/page.tsx`…), mêmes ancres que les françaises (testé)
+- `src/lib/i18n` — langues : table des adresses (`routes.ts` : `ROUTES`, `localeOfPath`,
+  `switchLocaleHref`), `localizeHref`, `format`, `defineMessages` / `Shape` (même forme
+  imposée à l'anglais), `LocaleProvider` (`useLocale`, `useMessages`, `LocalLink`),
+  bandeau de langue (`language-banner.ts`), garde-fou des noms (`check.ts`) ; dictionnaires
+  dans `messages/` (`common`, `compare`, `garden`, `raconte`, `account`, `facts`, `names`,
+  `nouns`, `mail`)
 - `src/lib/site.ts` — nom, adresse (`SITE_URL`, défaut `le-poids-des-choses.pages.dev`),
-  lancement (`SITE_LAUNCHED`), métadonnées par page (`pageMetadata` : titre, description,
-  Open Graph, carte Twitter), robots et sitemap ; `src/lib/legal.ts` — éditeur et hébergeur ;
+  lancement (`SITE_LAUNCHED`), métadonnées par page et par langue (`pageMetadata` : titre,
+  description, canonical, hreflang, Open Graph, carte Twitter, image de partage de la
+  langue), robots et sitemap (les deux langues, avec hreflang) ; `src/lib/legal.ts` — éditeur et hébergeur ;
   `src/lib/install.ts` — règles du bandeau d'installation
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
 - `src/components/scene` — `Tree`, `Flower` (via `StagedPlant` : couleur de saison `paint`,
@@ -177,6 +201,40 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 
 ## Conventions
 
+- Langues (version anglaise) :
+  - français à la racine, anglais sous `/en` ; adresses anglaises dans `ROUTES`
+    (`/en/compare`, `/en/your-day`, `/en/garden`, `/en/garden/journal`, `/en/in-season`,
+    `/en/method`, `/en/legal-notice`, `/en/privacy`, `/en/sign-in`) ; paramètres et ancres
+    identiques dans les deux langues (`?a=`, `?mois=`, `#ecart`, `#jeton=`…) ; `/labo` en
+    français seulement ;
+  - textes : dictionnaires `src/lib/i18n/messages/*.ts` déclarés par
+    `defineMessages(fr, en)` ; l'anglais a la forme du français (`Shape`), une clé oubliée
+    fait échouer la vérification des types, donc le build ; un test vérifie aussi les clés,
+    les emplacements (`{month}`), les chaînes vides et les mots interdits (« saved »,
+    « avoided », « won », « reduced ») ; composants clients : `useLocale` / `useMessages`,
+    serveur : `pick(dict, locale)` ; liens internes : `LocalLink` (ou `localizeHref`) ;
+  - formulations : « difference » dans les phrases (« 12 kg CO2e difference from the other
+    options », « My garden · 12 kg difference »), « gap » seulement dans les explications de
+    /en/method ; carnet = « journal » ; nom « Le poids des choses » partout, sous-titre
+    « The weight of things » sur l'accueil anglais et dans la description de partage ; TGV
+    et TER gardés, précisés « high-speed train » / « regional train » ;
+  - noms : gestes (`GESTURE_NAMES_EN`, via `gestureLabel` / `gestureDetail`), produits de
+    saison (`PRODUCT_NAMES_EN`, via `productLabel`) et leurs catégories, animaux,
+    visiteurs, ciels, mois, habitudes : tables de `messages/names.ts` et `messages/garden.ts` ;
+    les valeurs ne changent jamais ; « Data: Impact CO2 – ADEME » ;
+  - formats : `formatMass(kg, locale)` (point décimal en anglais), `intlLocale` (`en-GB`),
+    espaces insécables gardées ;
+  - carnet, compte, synchro, habitudes et jardin partagés entre les langues (mêmes clés de
+    stockage) ;
+  - sélecteur de langue (`LanguageSwitch`) dans les en-têtes (accueil, pages de texte,
+    /saison) et le pied de page : même page, paramètres et ancre gardés ; pas de redirection
+    automatique ; bandeau en anglais (`LanguageBanner`) sur les pages françaises si la
+    première langue du navigateur est l'anglais, fermable, mémorisé (`lpdc:langue:v1`,
+    `{ version: 1, dismissed }`) ;
+  - e-mail de connexion dans la langue de la page (`locale: "en"` envoyé à
+    `/api/auth/link`, lien vers `/en/sign-in#jeton=…`) ; image de partage du jardin en
+    anglais depuis /en ; mentions légales anglaises : « the French version is the
+    authoritative one ».
 - Tokens de design : couleurs `creme`, `encre`, `texte-attenue`, `blanc`, `tomate`,
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
   réservée aux feuilles) ; polices
@@ -454,8 +512,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   l'image. Feuille modale (`<dialog>`) : focus piégé, Échap, retour du focus ; AbortError
   sans effet, autre erreur : message discret.
 - Compte (lot V2-2, facultatif ; le carnet local reste la source principale) :
-  - routes : `POST /api/auth/link` (e-mail + Turnstile, réponse identique que l'adresse ait un
-    compte ou non), `POST /api/auth/verify`, `GET /api/auth/session`,
+  - routes : `POST /api/auth/link` (e-mail + Turnstile, `locale` facultative : « en » pour un
+    e-mail anglais ; réponse identique que l'adresse ait un compte ou non), `POST /api/auth/verify`, `GET /api/auth/session`,
     `POST /api/auth/logout`, `POST /api/journal/sync` (`since`, `entries`, 200 au plus),
     `GET /api/account/export`, `DELETE /api/account` (`{ confirm: "supprimer" }`) ;
   - lien magique vers `/connexion#jeton=…` (fragment : jamais envoyé au serveur ni ouvert par

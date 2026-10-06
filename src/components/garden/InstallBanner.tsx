@@ -6,10 +6,13 @@ import {
   promptInstall,
   useInstall,
 } from "@/components/install/useInstall";
+import { INSTALL } from "@/lib/i18n/messages/garden";
+import { useMessages } from "@/lib/i18n/LocaleProvider";
 
 /** Bandeau « Garde ton jardin » (maquette 04) : installation sur Android, explication sur iPhone. */
 export function InstallBanner() {
   const mode = useInstall().banner;
+  const t = useMessages(INSTALL);
   if (mode === "hidden") return null;
 
   return (
@@ -20,7 +23,7 @@ export function InstallBanner() {
       <button
         type="button"
         onClick={dismissInstallBanner}
-        aria-label="Fermer ce bandeau"
+        aria-label={t.close}
         className="text-encre focus-visible:outline-outremer absolute top-3 right-3 flex size-8 items-center justify-center rounded-full text-[20px] leading-none focus-visible:outline-2"
       >
         <span aria-hidden>×</span>
@@ -29,16 +32,14 @@ export function InstallBanner() {
         id="installer-titre"
         className="text-corps-m text-encre pr-8 leading-[1.3] font-semibold"
       >
-        Garde ton jardin
+        {t.title}
       </h2>
       <p className="text-corps-s text-encre leading-[1.4]">
-        {mode === "prompt"
-          ? "Installe l’app sur ton écran d’accueil pour ne pas perdre ton carnet."
-          : "Installe l’app sur ton écran d’accueil pour ne pas perdre ton carnet : touche Partager, puis « Sur l’écran d’accueil »."}
+        {mode === "prompt" ? t.prompt : t.ios}
       </p>
       {mode === "prompt" ? (
         <PrimaryButton className="w-auto!" onClick={promptInstall}>
-          Installer
+          {t.install}
         </PrimaryButton>
       ) : null}
     </section>

@@ -22,21 +22,14 @@ export const DEFAULT_VIEW: JournalView = {
   choix: "tous",
 };
 
-export const SORT_LABELS: Record<JournalSort, string> = {
-  date: "Date",
-  ecart: "Écart",
-  categorie: "Catégorie",
-};
-
-export const CHOICE_LABELS: Record<ChoiceFilter, string> = {
-  tous: "Tous les choix",
-  legers: "Choix légers",
-  notes: "Choix notés (plus lourds)",
-  habitudes: "Habitudes tenues",
-};
-
-const SORTS = Object.keys(SORT_LABELS) as JournalSort[];
-const CHOICES = Object.keys(CHOICE_LABELS) as ChoiceFilter[];
+// Intitulés dans les deux langues : JOURNAL (src/lib/i18n/messages/garden.ts).
+const SORTS: readonly JournalSort[] = ["date", "ecart", "categorie"];
+const CHOICES: readonly ChoiceFilter[] = [
+  "tous",
+  "legers",
+  "notes",
+  "habitudes",
+];
 
 function oneOf<T extends string>(
   value: string | null | undefined,

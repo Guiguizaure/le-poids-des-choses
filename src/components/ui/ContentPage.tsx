@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { AccountLink } from "@/components/account/AccountLink";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import type { ReactNode } from "react";
+import { localizedPath, pick, type Locale } from "@/lib/i18n";
+import { NAV } from "@/lib/i18n/messages/common";
 import { Icon } from "./buttons";
 
 /**
@@ -10,23 +13,28 @@ import { Icon } from "./buttons";
 export function ContentPage({
   title,
   decoration,
+  locale = "fr",
   children,
 }: {
   title: string;
   decoration?: ReactNode;
+  locale?: Locale;
   children: ReactNode;
 }) {
   return (
     <main className="animate-enter mx-auto flex w-full max-w-[640px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
         <Link
-          href="/"
+          href={localizedPath("/", locale)}
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
         >
           <Icon name="retour" />
-          Retour
+          {pick(NAV, locale).back}
         </Link>
-        <AccountLink />
+        <div className="text-corps-s flex items-center gap-4">
+          <LanguageSwitch className="font-normal" />
+          <AccountLink />
+        </div>
       </div>
       <div className="flex flex-col gap-5 px-6 pt-3 pb-9">
         <div className="relative flex items-start justify-between gap-3">

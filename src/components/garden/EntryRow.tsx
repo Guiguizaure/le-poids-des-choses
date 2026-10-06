@@ -8,12 +8,16 @@ import {
   relativeDay,
 } from "@/lib/journal/display";
 import { isHabit, isLightChoice } from "@/lib/journal/kind";
+import { JOURNAL } from "@/lib/i18n/messages/garden";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /**
  * Une ligne du carnet : choix léger → pastille pomme « +X kg » ; plus lourd → « noté » ;
  * habitude → « arrosé » (jamais de kg).
  */
 export function EntryRow({ entry, now }: { entry: JournalEntry; now: Date }) {
+  const locale = useLocale();
+  const t = JOURNAL[locale];
   const habit = isHabit(entry);
   const light = isLightChoice(entry);
   return (
@@ -21,13 +25,13 @@ export function EntryRow({ entry, now }: { entry: JournalEntry; now: Date }) {
       <Illustration name={entryPicto(entry)} className="size-8 shrink-0" />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="text-corps-s text-encre leading-[1.3] font-semibold">
-          {entryTitle(entry)}
+          {entryTitle(entry, locale)}
         </p>
         <p className="text-legende text-texte-attenue">
           {[
-            relativeDay(entry.date, now),
-            entryCategory(entry),
-            habit ? "habitude" : "",
+            relativeDay(entry.date, now, locale),
+            entryCategory(entry, locale),
+            habit ? t.habit : "",
           ]
             .filter(Boolean)
             .join(" · ")}
@@ -38,7 +42,11 @@ export function EntryRow({ entry, now }: { entry: JournalEntry; now: Date }) {
           light || habit ? "bg-pomme-douce" : "bg-creme"
         }`}
       >
-        {light ? `+${formatMass(entry.avoidedKg)}` : habit ? "arrosé" : "noté"}
+        {light
+          ? `+${formatMass(entry.avoidedKg, locale)}`
+          : habit
+            ? t.watered
+            : t.noted}
       </span>
     </li>
   );

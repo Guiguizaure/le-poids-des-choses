@@ -31,6 +31,9 @@ affilié à l'ADEME.
   cookie, posé seulement à la connexion.
 - **URL partageable** pour chaque comparaison, accessible au clavier et aux lecteurs
   d'écran, animations coupées si le système le demande.
+- **En français et en anglais** (`/en`) : mêmes données, même carnet et même jardin dans
+  les deux langues ; sélecteur de langue qui garde la page, hreflang, e-mail de connexion
+  et image de partage dans la langue de la page.
 
 ## Stack
 

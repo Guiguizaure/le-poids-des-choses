@@ -13,7 +13,8 @@ import {
   floatRow,
   parallaxOffset,
 } from "@/lib/geometry/float";
-import { MONTH_NAMES } from "@/lib/saison";
+import { MONTHS } from "@/lib/i18n/messages/names";
+import { useMessages } from "@/lib/i18n/LocaleProvider";
 import { drawnForMonth } from "@/lib/saison/drawn";
 
 const layer = (root: Element, name: string) =>
@@ -30,6 +31,7 @@ const layer = (root: Element, name: string) =>
  * étiquette de papier découpé (« octobre »), qui se pose avant les produits.
  */
 export function FloatingProduce({ month }: { month: number | null }) {
+  const monthNames = useMessages(MONTHS);
   const wrapper = useRef<HTMLDivElement>(null);
   const zone = useRef<HTMLDivElement>(null);
   const names = month ? drawnForMonth(month) : [];
@@ -208,7 +210,7 @@ export function FloatingProduce({ month }: { month: number | null }) {
               filter: "drop-shadow(2px 2px 0 var(--color-encre))",
             }}
           >
-            {MONTH_NAMES[month - 1]}
+            {monthNames[month - 1]}
           </span>
         ) : null}
       </div>

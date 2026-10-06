@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
-import { MONTH_NAMES } from "@/lib/saison";
+import { MONTHS } from "@/lib/i18n/messages/names";
 import { drawnForMonth } from "@/lib/saison/drawn";
 import { Panel, ToggleButton } from "./ui";
+
+const MONTH_NAMES = MONTHS.fr;
 
 /** Encart de saison de l'accueil, mois au choix, en large (5 produits) et en étroit (3). */
 export function SeasonLab() {

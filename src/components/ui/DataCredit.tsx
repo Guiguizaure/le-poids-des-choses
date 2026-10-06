@@ -1,10 +1,15 @@
+"use client";
+
 import gestures from "@/lib/data/gestures.generated.json";
+import { format, intlLocale, type Locale } from "@/lib/i18n";
+import { CREDIT } from "@/lib/i18n/messages/common";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export const IMPACT_CO2_URL = "https://impactco2.fr";
 
 /** Date des données, en toutes lettres (« 4 octobre 2026 »), à l'heure de Paris. */
-export function dataDate(iso: string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
+export function dataDate(iso: string, locale: Locale = "fr"): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -36,12 +41,15 @@ export function DataCredit({
   base?: { name: string; updatedOn: string };
   className?: string;
 }) {
+  const locale = useLocale();
+  const t = CREDIT[locale];
+  const date = dataDate(downloadedAt, locale);
   return (
     <p
       className={`text-texte-attenue text-[11px] leading-[1.4] ${className}`}
       data-credit
     >
-      Données :{" "}
+      {t.data}{" "}
       <a
         href={href}
         className="focus-visible:outline-outremer underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -49,9 +57,13 @@ export function DataCredit({
         Impact CO2 – ADEME
       </a>
       {base
-        ? ` · Données ${base.name} (mise à jour du ${base.updatedOn}), récupérées le ${dataDate(downloadedAt)}`
-        : `, téléchargées le ${dataDate(downloadedAt)}`}
-      {independent ? " · projet indépendant" : ""}
+        ? format(t.base, {
+            name: base.name,
+            updatedOn: base.updatedOn,
+            date,
+          })
+        : format(t.downloadedOn, { date })}
+      {independent ? t.independent : ""}
     </p>
   );
 }

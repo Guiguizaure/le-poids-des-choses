@@ -1,5 +1,6 @@
 "use client";
 
+import type { Locale } from "@/lib/i18n/routes";
 // Rendu de la carte de partage dans le navigateur : la description de dessin (shareCardLayout)
 // et le jardin (composeGardenSvg) sur un canvas 1080×1350, puis un PNG.
 import type { GardenState } from "@/lib/garden/model";
@@ -193,6 +194,7 @@ export async function renderShareCard({
   created = new Date(),
   siteHost,
   unlockedCount,
+  locale = "fr",
 }: {
   garden: GardenState;
   sky: SkyId;
@@ -200,6 +202,8 @@ export async function renderShareCard({
   created?: Date;
   siteHost: string;
   unlockedCount: number;
+  /** Langue des textes de l'image (celle de la page). */
+  locale?: Locale;
 }): Promise<Blob> {
   const moment: ShareMoment = {
     ...momentAt(created.getTime()),
@@ -236,6 +240,7 @@ export async function renderShareCard({
           animalCount: unlockedCount,
           asleep: garden.asleep,
           siteHost,
+          locale,
         },
         measureWith(ctx),
         fonts,

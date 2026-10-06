@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { Illustration } from "@/components/illustrations/Illustration";
@@ -14,12 +13,14 @@ import {
 } from "@/components/ui/buttons";
 import { Switch } from "@/components/ui/Switch";
 import { objectNoun, possessive, type ObjectOption } from "@/lib/compare";
-import { getGesture } from "@/lib/data";
+import { gestureLabel, getGesture } from "@/lib/data";
+import { format, intlLocale } from "@/lib/i18n";
+import { RACONTE } from "@/lib/i18n/messages/raconte";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import type { JournalEntry } from "@/lib/data/types";
 import { pictoFor } from "@/lib/journal/display";
 import { isComparison, isHabit, isLightChoice } from "@/lib/journal/kind";
 import { useJournal } from "@/lib/journal/useJournal";
-import { plural } from "@/lib/garden/text";
 import { raconte, type RaconteError } from "@/lib/raconte/api";
 import { RACONTE_MAX_CHARS, RACONTE_KM_RANGE } from "@/lib/raconte/detections";
 import {
@@ -35,11 +36,9 @@ import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 import {
   blockingFor,
   comparedToLabel,
-  ERROR_MESSAGES,
+  errorMessage,
   inlineNeed,
-  NOTHING_FOUND,
   objectOptionLabel,
-  PRIVACY_NOTICE,
   proposalSubtitle,
   rowCheckboxId,
   rowFieldId,
@@ -94,6 +93,8 @@ function useAvailability(): "checking" | "enabled" | "disabled" {
  */
 export function RaconteScreen() {
   const journal = useJournal();
+  const locale = useLocale();
+  const t = RACONTE[locale];
   const [declaredHabits] = useDeclaredHabits();
   const availability = useAvailability();
   const [text, setText] = useState("");
@@ -170,7 +171,7 @@ export function RaconteScreen() {
 
   const add = () => {
     if (state.step !== "results") return;
-    const blocked = blockingFor(state.rows);
+    const blocked = blockingFor(state.rows, locale);
     if (blocked) {
       goTo(blocked.focusId);
       return;
@@ -202,22 +203,20 @@ export function RaconteScreen() {
       </Shell>
     );
 
-  const blocking = state.step === "results" ? blockingFor(state.rows) : null;
+  const blocking =
+    state.step === "results" ? blockingFor(state.rows, locale) : null;
 
   return (
     <Shell>
       <h1 className="font-titre text-titre-l text-encre leading-[1.1]">
-        Raconte ta journée
+        {t.title}
       </h1>
-      <p className="text-corps-s text-texte-attenue leading-[1.4]">
-        Écris tes gestes comme ils te viennent. Tu vérifies tout avant l’ajout
-        au carnet.
-      </p>
+      <p className="text-corps-s text-texte-attenue leading-[1.4]">{t.intro}</p>
 
       <form onSubmit={analyse} noValidate className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <label htmlFor={ids.field} className="sr-only">
-            Ta journée, en quelques phrases
+            {t.fieldLabel}
           </label>
           <div className="relative">
             <textarea
@@ -228,7 +227,7 @@ export function RaconteScreen() {
               disabled={disabled}
               onChange={(event) => setText(event.target.value)}
               onFocus={() => void prepare()}
-              placeholder="Train Toulon–Marseille ce matin, un burger à midi, et un café en terrasse."
+              placeholder={t.placeholder}
               aria-describedby={`${ids.counter} ${ids.notice}`}
               className={`${FIELD} placeholder:text-texte-attenue resize-none pb-8 disabled:opacity-60`}
             />
@@ -237,41 +236,40 @@ export function RaconteScreen() {
               className="text-legende text-texte-attenue pointer-events-none absolute right-4 bottom-2.5 text-right"
             >
               {text.length} / {RACONTE_MAX_CHARS}
-              <span className="sr-only"> caractères</span>
+              <span className="sr-only">{t.characters}</span>
             </p>
           </div>
           <p
             id={ids.notice}
             className="text-legende text-texte-attenue leading-[1.35]"
           >
-            {PRIVACY_NOTICE}{" "}
+            {t.privacy}{" "}
             <Link
               href="/confidentialite#raconte"
               className="text-encre focus-visible:outline-outremer font-semibold underline focus-visible:outline-2"
             >
-              En savoir plus
+              {t.more}
             </Link>
           </p>
         </div>
         <div ref={widget} className="empty:hidden" />
         <PrimaryButton type="submit" disabled={reading || disabled}>
-          {reading ? "Claude lit ta journée…" : "Analyser mon texte"}
+          {reading ? t.reading : t.analyse}
         </PrimaryButton>
       </form>
 
       <p className="bg-tomate-douce text-legende text-encre rounded-[14px] px-3 py-2.5 leading-[1.35]">
-        Fonction IA à la demande. Elle repère tes gestes, mais ne calcule rien :
-        les chiffres viennent de l’ADEME.
+        {t.aiNote}
       </p>
 
       <p role="status" aria-live="polite" className="sr-only">
-        {reading ? "Claude lit ta journée…" : ""}
+        {reading ? t.reading : ""}
       </p>
 
-      {disabled ? <Gentle message={ERROR_MESSAGES.disabled} /> : null}
+      {disabled ? <Gentle message={errorMessage("disabled", locale)} /> : null}
 
       {state.step === "error" ? (
-        <Gentle message={ERROR_MESSAGES[state.error]} />
+        <Gentle message={errorMessage(state.error, locale)} />
       ) : null}
 
       {state.step === "nothing" ? (
@@ -281,9 +279,9 @@ export function RaconteScreen() {
             tabIndex={-1}
             className="font-titre text-titre-m text-encre leading-[1.1] outline-none"
           >
-            Rien de reconnu
+            {t.nothingTitle}
           </h2>
-          <Gentle message={NOTHING_FOUND} />
+          <Gentle message={t.nothing} />
         </section>
       ) : null}
 
@@ -298,7 +296,7 @@ export function RaconteScreen() {
             tabIndex={-1}
             className="font-titre text-titre-m text-encre leading-[1.1] outline-none"
           >
-            Voici ce que j’ai compris
+            {t.understood}
           </h2>
           <ul className="flex flex-col gap-2" aria-labelledby="raconte-compris">
             {state.rows.map((row) => (
@@ -317,7 +315,7 @@ export function RaconteScreen() {
             aria-describedby={blocking ? ids.blocking : undefined}
             className="aria-disabled:cursor-not-allowed aria-disabled:opacity-40"
           >
-            Ajouter au carnet
+            {t.add}
           </PrimaryButton>
           <div
             id={ids.blocking}
@@ -348,13 +346,12 @@ export function RaconteScreen() {
           unoptimized
         />
         <span>
-          Chaque analyse consomme un peu d’énergie : elle ne se lance qu’à ta
-          demande.{" "}
+          {t.energy}{" "}
           <Link
             href="/methode#raconte"
             className="focus-visible:outline-outremer font-semibold underline focus-visible:outline-2"
           >
-            Voir la méthode
+            {t.seeMethod}
           </Link>
           .
         </span>
@@ -364,6 +361,7 @@ export function RaconteScreen() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const t = RACONTE[useLocale()];
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center gap-1 px-5 pt-[22px] pb-2">
@@ -372,7 +370,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           className="text-corps-s text-encre focus-visible:outline-outremer -m-1 flex items-center gap-1 rounded-full p-1 leading-[1.3] font-semibold focus-visible:outline-2"
         >
           <Icon name="retour" />
-          Comparer
+          {t.back}
         </Link>
       </div>
       <div className="flex flex-col gap-4 px-5 pt-3 pb-8">{children}</div>
@@ -394,12 +392,13 @@ function goTo(id: string) {
 
 /** Message doux, toujours avec une autre voie : choisir ses gestes soi-même. */
 function Gentle({ message }: { message: string }) {
+  const t = RACONTE[useLocale()];
   return (
     <div className="bg-blanc flex flex-col items-start gap-2 rounded-2xl p-4">
       <p role="status" className="text-corps-s text-encre leading-[1.4]">
         {message}
       </p>
-      <TextLink href="/comparer">Choisir mes gestes</TextLink>
+      <TextLink href="/comparer">{t.chooseMine}</TextLink>
     </div>
   );
 }
@@ -412,6 +411,8 @@ function ProposalRow({
   onChange: (change: (row: Row) => Row) => void;
 }) {
   const { proposal } = row;
+  const locale = useLocale();
+  const t = RACONTE[locale];
   const gesture = getGesture(proposal.gestureId);
   const panelId = useId();
   const checkId = rowCheckboxId(proposal.key);
@@ -430,7 +431,8 @@ function ProposalRow({
       ...current,
       proposal: { ...current.proposal, ...patch },
     }));
-  const compared = comparedToLabel(proposal);
+  const compared = comparedToLabel(proposal, locale);
+  const label = gestureLabel(gesture.id, locale);
 
   return (
     <li
@@ -474,11 +476,11 @@ function ProposalRow({
             htmlFor={checkId}
             className="text-corps-s text-encre cursor-pointer leading-[1.3] font-semibold"
           >
-            {gesture.label}
+            {label}
           </label>
           <span id={detailsId} className="flex flex-col items-start gap-0.5">
             <span className="text-legende text-texte-attenue leading-[1.35]">
-              {proposalSubtitle(proposal)}
+              {proposalSubtitle(proposal, locale)}
             </span>
             {compared ? (
               <span className="text-legende text-texte-attenue leading-[1.35]">
@@ -487,7 +489,7 @@ function ProposalRow({
             ) : null}
             {proposal.certainty === "inferred" ? (
               <span className="bg-soleil text-legende text-encre mt-1 rounded-full px-2 py-[3px] leading-[1.3] font-semibold">
-                À vérifier
+                {t.check}
               </span>
             ) : null}
           </span>
@@ -501,14 +503,15 @@ function ProposalRow({
             }
             className="text-legende shrink-0"
           >
-            Modifier<span className="sr-only"> {gesture.label}</span>
+            {t.edit}
+            <span className="sr-only"> {label}</span>
           </TextButton>
         ) : null}
       </div>
       {canBeHabit(proposal) ? (
         <fieldset className="flex flex-col gap-1.5">
           <legend className="sr-only">
-            Comparer {gesture.label} ou le noter en habitude
+            {format(t.compareOrHabit, { label })}
           </legend>
           <label className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.3]">
             <input
@@ -518,7 +521,7 @@ function ProposalRow({
               onChange={() => set({ asHabit: false })}
               className="accent-encre size-4"
             />
-            Comparer
+            {t.compare}
           </label>
           <label className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.3]">
             <input
@@ -528,14 +531,14 @@ function ProposalRow({
               onChange={() => set({ asHabit: true })}
               className="accent-encre size-4"
             />
-            Habitude tenue (aucun kg : elle arrose ton jardin)
+            {t.habit}
           </label>
         </fieldset>
       ) : null}
       {inline === "quantity" ? (
         <DistanceField
           id={rowFieldId(proposal.key)}
-          label="Distance du trajet (km)"
+          label={t.distance}
           proposal={proposal}
           onSet={set}
         />
@@ -575,6 +578,7 @@ function DistanceField({
   onSet: (patch: Partial<Proposal>) => void;
 }) {
   const hintId = useId();
+  const locale = useLocale();
   const [distance, setDistance] = useState(
     proposal.quantity === null ? "" : String(proposal.quantity),
   );
@@ -611,8 +615,10 @@ function DistanceField({
         className={`${SMALL_FIELD} w-32`}
       />
       <span id={hintId} className="text-legende text-texte-attenue">
-        Un nombre entier, de {RACONTE_KM_RANGE.min} à{" "}
-        {RACONTE_KM_RANGE.max.toLocaleString("fr-FR")} km.
+        {RACONTE[locale].distanceHint(
+          RACONTE_KM_RANGE.min,
+          RACONTE_KM_RANGE.max.toLocaleString(intlLocale(locale)),
+        )}
       </span>
     </div>
   );
@@ -628,13 +634,20 @@ function ObjectOptions({
   onSet: (patch: Partial<Proposal>) => void;
 }) {
   const name = useId();
+  const locale = useLocale();
+  const t = RACONTE[locale];
   const options: ObjectOption[] = ["neuf", "occasion", "garder"];
   return (
     <>
       <fieldset className="flex flex-col gap-2">
         <legend className="text-corps-s text-encre mb-1 leading-[1.3] font-semibold">
-          Neuf, d’occasion, ou tu gardes{" "}
-          {possessive(objectNoun(proposal.gestureId), "toi")} ?
+          {format(t.objectQuestion, {
+            yours: possessive(
+              objectNoun(proposal.gestureId, locale),
+              "toi",
+              locale,
+            ),
+          })}
         </legend>
         {options.map((option, index) => (
           <label
@@ -649,7 +662,7 @@ function ObjectOptions({
               onChange={() => onSet({ objectOption: option })}
               className="accent-encre size-4"
             />
-            {objectOptionLabel(proposal.gestureId, option)}
+            {objectOptionLabel(proposal.gestureId, option, locale)}
           </label>
         ))}
       </fieldset>
@@ -658,7 +671,7 @@ function ObjectOptions({
           checked={proposal.delivered}
           onChange={(delivered) => onSet({ delivered })}
         >
-          Livré en colis
+          {t.delivered}
         </Switch>
       ) : null}
     </>
@@ -676,6 +689,8 @@ function ProposalEditor({
   withPrimary: boolean;
 }) {
   const gesture = getGesture(proposal.gestureId)!;
+  const locale = useLocale();
+  const t = RACONTE[locale];
   const distanceId = useId();
   const comparedId = useId();
 
@@ -687,7 +702,7 @@ function ProposalEditor({
       {gesture.unit === "km" && withPrimary ? (
         <DistanceField
           id={distanceId}
-          label="Distance du trajet (km)"
+          label={t.distance}
           proposal={proposal}
           onSet={onSet}
         />
@@ -697,7 +712,7 @@ function ProposalEditor({
           htmlFor={comparedId}
           className="text-corps-s text-encre leading-[1.3] font-semibold"
         >
-          Comparé à
+          {t.comparedWith}
         </label>
         <select
           id={comparedId}
@@ -707,7 +722,7 @@ function ProposalEditor({
         >
           {alternativeChoices(proposal).map((id) => (
             <option key={id} value={id}>
-              {getGesture(id)?.label}
+              {gestureLabel(id, locale)}
             </option>
           ))}
         </select>
@@ -726,6 +741,7 @@ function AddedView({
   onRestart: () => void;
 }) {
   const now = new Date();
+  const t = RACONTE[useLocale()];
   const lastLight = [...entries].reverse().find(isLightChoice);
   const lastHabit = [...entries].reverse().find(isHabit);
   const hasHeavier = entries.some(
@@ -738,10 +754,10 @@ function AddedView({
         tabIndex={-1}
         className="font-titre text-titre-l text-encre leading-[1.1] outline-none"
       >
-        C’est noté dans ton carnet
+        {t.addedTitle}
       </h1>
       <p role="status" className="text-corps-s text-encre leading-[1.4]">
-        {plural(entries.length, "geste ajouté", "gestes ajoutés")} à ton carnet.
+        {t.added(entries.length)}
       </p>
       <ul className="flex flex-col gap-2">
         {entries.map((entry) => (
@@ -750,7 +766,7 @@ function AddedView({
       </ul>
       {hasHeavier ? (
         <p className="text-legende text-texte-attenue leading-[1.4]">
-          Un choix plus lourd est simplement noté : rien n’est retiré au jardin.
+          {t.heavyNote}
         </p>
       ) : null}
       <PrimaryLink
@@ -762,9 +778,9 @@ function AddedView({
               : "/jardin"
         }
       >
-        Voir mon jardin
+        {t.seeGarden}
       </PrimaryLink>
-      <TextButton onClick={onRestart}>Raconter autre chose</TextButton>
+      <TextButton onClick={onRestart}>{t.again}</TextButton>
     </>
   );
 }

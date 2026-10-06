@@ -1,12 +1,8 @@
 import type { JournalEntry } from "@/lib/data/types";
 import { lightChoicesByDay, wateredDaysInLast } from "@/lib/journal/analysis";
-
-const WEEKDAY = new Intl.DateTimeFormat("fr-FR", { weekday: "short" });
-const FULL_DAY = new Intl.DateTimeFormat("fr-FR", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
+import { intlLocale } from "@/lib/i18n";
+import { JOURNAL } from "@/lib/i18n/messages/garden";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /** Géométrie du graphique (unités du viewBox). */
 const CHART = { width: 350, height: 132, top: 22, base: 104, bar: 30 } as const;
@@ -24,6 +20,16 @@ export function WeekChart({
   now: Date;
   headingLevel?: 2 | 3;
 }) {
+  const locale = useLocale();
+  const t = JOURNAL[locale].week;
+  const WEEKDAY = new Intl.DateTimeFormat(intlLocale(locale), {
+    weekday: "short",
+  });
+  const FULL_DAY = new Intl.DateTimeFormat(intlLocale(locale), {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
   const days = lightChoicesByDay(entries, now);
   const watered = wateredDaysInLast(entries, now);
   const total = days.reduce((sum, day) => sum + day.count, 0);
@@ -41,12 +47,11 @@ export function WeekChart({
         id="semaine-titre"
         className="text-corps-s text-encre leading-[1.3] font-semibold"
       >
-        Choix légers, 7 derniers jours
+        {t.title}
       </Heading>
       {total === 0 ? (
         <p className="text-corps-s text-texte-attenue leading-[1.4]">
-          Aucun choix léger ces 7 derniers jours. Le prochain fera pousser une
-          plante.
+          {t.none}
         </p>
       ) : (
         <>
@@ -104,15 +109,13 @@ export function WeekChart({
                         : "var(--color-texte-attenue)"
                     }
                   >
-                    {today ? "auj." : WEEKDAY.format(day.date)}
+                    {today ? t.todayShort : WEEKDAY.format(day.date)}
                   </text>
                 </g>
               );
             })}
           </svg>
-          <p className="text-legende text-texte-attenue">
-            {total} choix léger{total > 1 ? "s" : ""} cette semaine
-          </p>
+          <p className="text-legende text-texte-attenue">{t.total(total)}</p>
         </>
       )}
       {watered > 0 ? (
@@ -121,16 +124,15 @@ export function WeekChart({
           className="text-legende text-texte-attenue"
           data-watered-days={watered}
         >
-          {watered} jour{watered > 1 ? "s" : ""} arrosé{watered > 1 ? "s" : ""}{" "}
-          cette semaine
+          {t.watered(watered)}
         </p>
       ) : null}
       <table className="sr-only">
-        <caption>Choix légers par jour, sur les 7 derniers jours</caption>
+        <caption>{t.caption}</caption>
         <thead>
           <tr>
-            <th scope="col">Jour</th>
-            <th scope="col">Choix légers</th>
+            <th scope="col">{t.day}</th>
+            <th scope="col">{t.lightChoices}</th>
           </tr>
         </thead>
         <tbody>
@@ -138,7 +140,7 @@ export function WeekChart({
             <tr key={day.key}>
               <th scope="row">
                 {index === days.length - 1
-                  ? `Aujourd’hui, ${FULL_DAY.format(day.date)}`
+                  ? t.todayFull(FULL_DAY.format(day.date))
                   : FULL_DAY.format(day.date)}
               </th>
               <td>{day.count}</td>

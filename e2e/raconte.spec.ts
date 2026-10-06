@@ -190,6 +190,73 @@ test("parcours complet : analyse, vérification, distance, ajout au carnet", asy
   await expect(page.getByText("2 choix notés")).toBeVisible();
 });
 
+test("en anglais : « Tell us about your day », mêmes règles, mêmes données", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.goto("/en/your-day");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Tell us about your day" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Your text is sent to Claude (Anthropic) to spot your actions, then forgotten. Don’t write any personal information.",
+    ),
+  ).toBeVisible();
+  await page
+    .getByLabel("Your day, in a few sentences")
+    .fill(
+      "This morning I took the TER to Toulon, a burger at lunch and a coffee.",
+    );
+  await page.getByRole("button", { name: "Read my day" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Here’s what I understood" }),
+  ).toBeFocused();
+
+  const list = page.getByRole("list", { name: "Here’s what I understood" });
+  const item = (name: string) =>
+    list
+      .getByRole("listitem")
+      .filter({ has: page.getByText(name, { exact: true }) });
+  const ter = item("TER");
+  await expect(ter).toContainText("Getting around · distance to fill in");
+  await expect(ter).toContainText("Compared with: Petrol or diesel car");
+  const burger = item("Beef meal");
+  await expect(burger).toContainText("Check this");
+  await expect(burger).toContainText("from “a burger”");
+  await expect(item("Coffee")).toContainText("Drinking · 1 litre");
+  await expect(
+    page.getByRole("button", { name: "1 action to complete" }),
+  ).toBeVisible();
+  await ter.getByLabel("Trip distance (km)").fill("65");
+  await expect(ter).toContainText("Getting around · 65 km");
+  await expectNoAxeViolations(page);
+  await page.getByRole("button", { name: "Add to journal" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Noted in your journal" }),
+  ).toBeFocused();
+  await expect(
+    page.getByText("2 actions added to your journal."),
+  ).toBeVisible();
+  const entries = await journal(page);
+  expect(entries).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        gestureA: "ter",
+        gestureB: "voiture",
+        quantity: 65,
+        avoidedKg:
+          Math.round((kgPer("voiture") - kgPer("ter")) * 65 * 1000) / 1000,
+      }),
+    ]),
+  );
+  await page.getByRole("link", { name: "See my garden" }).click();
+  await expect(page).toHaveURL(/\/en\/garden\?nouveau=/);
+  await expect(page.getByText("2 choices noted")).toBeVisible();
+});
+
 test("trajet sans distance : message visible, le bouton mène au champ, puis ajout", async ({
   page,
 }, testInfo) => {

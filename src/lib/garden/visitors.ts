@@ -56,17 +56,12 @@ export type VisitorRule = {
   width: number;
   /** Ciels sur lesquels il n'apparaît pas (contraste insuffisant, voir sky-contrast.ts). */
   hiddenOnSkies?: readonly SkyId[];
-  /** Nom accessible : « un rouge-gorge ». */
-  name: string;
+  // Nom (« un rouge-gorge », « a robin ») : VISITOR_NAMES, src/lib/i18n/messages/names.ts.
 };
 
 const ALL_SEASONS: readonly Season[] = ["printemps", "ete", "automne", "hiver"];
 
-const plant = (
-  kind: VisitorKind,
-  season: Season,
-  name: string,
-): VisitorRule => ({
+const plant = (kind: VisitorKind, season: Season): VisitorRule => ({
   kind,
   place: "plant",
   seasons: [season],
@@ -74,7 +69,6 @@ const plant = (
   night: "awake",
   illustration: kind as IllustrationName,
   width: PLANT_FRAME_WIDTH.flower,
-  name,
 });
 
 export const VISITORS: readonly VisitorRule[] = [
@@ -88,10 +82,9 @@ export const VISITORS: readonly VisitorRule[] = [
     illustration: "rouge-gorge",
     sleeping: "rouge-gorge-endormi",
     width: 26,
-    name: "un rouge-gorge",
   },
-  plant("perce-neige", "hiver", "des perce-neige"),
-  plant("houx", "hiver", "du houx"),
+  plant("perce-neige", "hiver"),
+  plant("houx", "hiver"),
   // Printemps
   {
     kind: "hirondelle",
@@ -102,10 +95,9 @@ export const VISITORS: readonly VisitorRule[] = [
     illustration: "hirondelle",
     width: 24,
     hiddenOnSkies: ["nuit"],
-    name: "une hirondelle",
   },
-  plant("primevere", "printemps", "des primevères"),
-  plant("jonquille", "printemps", "une jonquille"),
+  plant("primevere", "printemps"),
+  plant("jonquille", "printemps"),
   // Été
   {
     kind: "cigale",
@@ -115,7 +107,6 @@ export const VISITORS: readonly VisitorRule[] = [
     night: "awake",
     illustration: "cigale",
     width: 12,
-    name: "une cigale",
   },
   {
     kind: "libellule",
@@ -125,10 +116,9 @@ export const VISITORS: readonly VisitorRule[] = [
     night: "absent",
     illustration: "libellule",
     width: 24,
-    name: "une libellule",
   },
-  plant("coquelicot", "ete", "un coquelicot"),
-  plant("tournesol", "ete", "un tournesol"),
+  plant("coquelicot", "ete"),
+  plant("tournesol", "ete"),
   // Automne
   {
     kind: "ecureuil",
@@ -138,9 +128,8 @@ export const VISITORS: readonly VisitorRule[] = [
     night: "awake",
     illustration: "ecureuil",
     width: 28,
-    name: "un écureuil",
   },
-  plant("champignons", "automne", "des champignons"),
+  plant("champignons", "automne"),
   // La nuit, toute l'année
   {
     kind: "hibou",
@@ -151,7 +140,6 @@ export const VISITORS: readonly VisitorRule[] = [
     illustration: "hibou",
     sleeping: "hibou-endormi",
     width: 15,
-    name: "un hibou",
   },
   {
     kind: "renard",
@@ -162,7 +150,6 @@ export const VISITORS: readonly VisitorRule[] = [
     illustration: "renard",
     sleeping: "renard-endormi",
     width: 32,
-    name: "un renard",
   },
 ];
 

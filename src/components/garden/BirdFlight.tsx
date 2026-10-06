@@ -10,6 +10,8 @@ import {
   flightPose,
 } from "@/lib/geometry/flight";
 import { SCENE } from "@/lib/garden/scene";
+import { GARDEN_SCREEN } from "@/lib/i18n/messages/garden";
+import { useMessages } from "@/lib/i18n/LocaleProvider";
 
 /**
  * Trajet de l'oiseau en vol : son cadre suit le trajet (décollage sous le soleil, boucle dans
@@ -129,6 +131,7 @@ export function FlyButton({
   flying: boolean;
   onFly: () => void;
 }) {
+  const t = useMessages(GARDEN_SCREEN);
   const left = Math.min(SCENE.width - TOUCH, BIRD_HOME[0] - TOUCH / 2);
   const top = BIRD_HOME[1] - TOUCH / 2;
   const style: CSSProperties = {
@@ -140,7 +143,7 @@ export function FlyButton({
   return (
     <button
       type="button"
-      aria-label="Faire s’envoler l’oiseau"
+      aria-label={t.flyBird}
       aria-disabled={flying}
       onClick={() => {
         if (!flying) onFly();

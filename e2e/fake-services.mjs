@@ -23,6 +23,9 @@ function send(response, status, data) {
 /** Mots-clés du faux Anthropic : l'extrait renvoyé est le passage trouvé dans le texte. */
 const FAKE_GESTURES = [
   { pattern: /pris le TER/i, gestureId: "ter", certainty: "explicit" },
+  { pattern: /took the TER/i, gestureId: "ter", certainty: "explicit" },
+  { pattern: /a burger/i, gestureId: "repas-boeuf", certainty: "inferred" },
+  { pattern: /a coffee/i, gestureId: "cafe", certainty: "explicit" },
   { pattern: /un burger/i, gestureId: "repas-boeuf", certainty: "inferred" },
   { pattern: /un café/i, gestureId: "cafe", certainty: "explicit" },
   { pattern: /à pied/i, gestureId: "marche", certainty: "explicit" },

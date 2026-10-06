@@ -1,6 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
+import { INSTALL } from "@/lib/i18n/messages/garden";
+import { useMessages } from "@/lib/i18n/LocaleProvider";
 import { promptInstall, useInstall } from "./useInstall";
 
 const LOOKS = {
@@ -17,6 +19,7 @@ const LOOKS = {
  */
 export function InstallButton({ look }: { look: keyof typeof LOOKS }) {
   const mode = useInstall().access;
+  const t = useMessages(INSTALL);
   const [open, setOpen] = useState(false);
   const helpId = useId();
   if (mode === "hidden") return null;
@@ -24,7 +27,7 @@ export function InstallButton({ look }: { look: keyof typeof LOOKS }) {
   if (mode === "prompt")
     return (
       <button type="button" className={LOOKS[look]} onClick={promptInstall}>
-        Installer l’appli
+        {t.installApp}
       </button>
     );
 
@@ -37,20 +40,17 @@ export function InstallButton({ look }: { look: keyof typeof LOOKS }) {
         aria-controls={helpId}
         onClick={() => setOpen((value) => !value)}
       >
-        Installer l’appli
+        {t.installApp}
       </button>
       <div
         id={helpId}
         hidden={!open}
         className="bg-blanc text-corps-s text-encre w-full max-w-[420px] rounded-2xl p-4 leading-[1.4]"
       >
-        <p className="font-semibold">Pour l’installer, deux gestes :</p>
+        <p className="font-semibold">{t.howTitle}</p>
         <ol className="list-decimal pt-1 pl-5">
-          <li>
-            touche le bouton Partager du navigateur (un carré d’où sort une
-            flèche vers le haut) ;
-          </li>
-          <li>choisis « Sur l’écran d’accueil », puis « Ajouter ».</li>
+          <li>{t.howShare}</li>
+          <li>{t.howAdd}</li>
         </ol>
       </div>
     </>
