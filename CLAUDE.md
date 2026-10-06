@@ -9,6 +9,8 @@ Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
 
+- Gel des fonctionnalités : plus aucune nouvelle fonctionnalité jusqu'à la sortie de la
+  version anglaise et de l'étude de cas ; seulement corrections, traduction et finitions.
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
   (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
