@@ -7,6 +7,7 @@ import { Garden } from "@/components/garden/Garden";
 import { EntryRow } from "@/components/garden/EntryRow";
 import { InstallBanner } from "@/components/garden/InstallBanner";
 import { CARNET_PATH } from "@/components/garden/CarnetScreen";
+import { RaconteLink } from "@/components/raconte/RaconteLink";
 import { MilestoneCard } from "@/components/garden/MilestoneCard";
 import { SkyPicker } from "@/components/garden/SkyPicker";
 import { ShareSheet } from "@/components/garden/share/ShareSheet";
@@ -248,6 +249,8 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           </section>
         ) : null}
 
+        {journal.ready && !hasEntries ? <RaconteLink /> : null}
+
         {hasEntries ? (
           <>
             <section
@@ -302,6 +305,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
                 Un choix plus lourd est simplement noté : rien n’est retiré au
                 jardin.
               </p>
+              <RaconteLink />
             </section>
           </>
         ) : null}

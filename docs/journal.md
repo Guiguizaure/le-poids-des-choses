@@ -1120,3 +1120,72 @@ au moins 3), afficher le mois en étiquette de papier découpé près des produi
 14 ignorés, Chromium et WebKit, axe compris). Lighthouse mobile sur `serve:out` (noindex) :
 Accueil 99 puis 100, Comparer 94-95, autres pages 93-100 ; accessibilité et bonnes
 pratiques 100. Captures `accueil.png` et `accueil-mobile.png` régénérées.
+
+## 2026-10-05 — « Raconte ta journée » (lot V2-3, branche feat/raconte)
+
+**Demandé** : la personne écrit sa journée, Claude repère les gestes du catalogue et propose
+de les ajouter au carnet, chaque proposition validée par la personne ; l'IA ne calcule rien.
+Pages Function `POST /api/raconte` (Turnstile, origine, Content-Type, texte limité),
+`claude-haiku-4-5` en sortie structurée (enum exact des ids), validation stricte, résistance
+aux injections, table d'alternatives dans le code, limites par IP et par compte, plafond
+global en D1, coupe-circuit `AI_ENABLED`, journal de compteurs seulement ; confidentialité
+(conservation chez Anthropic citée telle quelle), empreinte sans chiffre faute de source ;
+écran 08 de Figma ; tests (faux Anthropic, 20 phrases + 3 en anglais, `raconte:eval`).
+Arrêt après le point 1 pour validation du schéma, du prompt, de la table et des limites.
+
+**Proposé puis validé** (point 1) : schéma `{ excerpt, gestureId, certainty, quantity, mode }`,
+prompt système (catalogue généré, 9 règles), table `ALTERNATIVES` (l'option qu'on aurait le
+plus probablement prise, pas la plus lourde), limites (IP 3/15 min et 5/24 h, compte 5/24 h,
+300 par jour UTC ou `AI_DAILY_CAP`), ordre des contrôles. Texte limité à 280 caractères
+(compteur de la maquette) au lieu des 500 évoqués.
+
+**Ajustements demandés** : liste à cases de la maquette avec « Ajouter au carnet », gestes
+`explicit` cochés et `inferred` (« À vérifier ») décochés, bouton désactivé tant qu'un geste
+coché n'a pas sa distance ou son option ; extrait comparé après normalisation des deux côtés
+(NFC, apostrophes et guillemets, espaces, casse) ; récits en anglais analysés (règle 9) et
+3 phrases anglaises ; geste plus lourd « simplement noté » ; note de la maquette et mention
+sous le champ. Maquette 08 mise à jour (café, « distance à préciser », phrase sans chiffre).
+
+**Fait** :
+
+- Serveur : `server/raconte.ts` (SDK officiel `@anthropic-ai/sdk`, température 0,
+  600 jetons, 15 s, sans nouvel essai ; refus du modèle → liste vide ; sortie illisible ou
+  API en erreur → 502 `ai-failed`), `server/raconte-prompt.ts`, route dans
+  `server/handlers.ts` et `GET /api/raconte` (`{ enabled }`, pour prévenir dès l'arrivée sur
+  l'écran). Compteurs dans `rate_limits` : aucune migration. Les refus comptent aussi.
+- Validation partagée (`src/lib/raconte/detections.ts`), appliquée par le serveur puis de
+  nouveau par le navigateur. Extrait vérifié sur le texte nettoyé (chevrons remplacés),
+  normalisation étendue aux tirets (« Toulon–Marseille ») et aux espaces des guillemets
+  français.
+- Écran `/raconte` (`RaconteScreen`) : champ avec label, compteur, mention, Turnstile partagé
+  avec le formulaire de connexion (`useTurnstile`, factorisé depuis `SignInForm`), état
+  « Claude lit ta journée… » annoncé, titre des résultats focalisé, cases natives (nom = le
+  geste, détails en description), « Modifier » (`aria-expanded`) : distance, option comparée,
+  ou option d'objet et colis ; « Ajouter au carnet » → `useJournal().add` (synchro du compte
+  comprise), puis la liste des entrées (« +X kg » ou « noté »), « Voir mon jardin »
+  (`?nouveau=` du dernier choix léger). Pictos du projet à la place des ronds « à dessiner » ;
+  icône « poids » de la maquette (`public/icons/poids.svg`).
+- Écarts à la maquette : « Boire · 1 litre » (au lieu de « 1 boisson ») puisque les
+  boissons sont comparées au litre ; une ligne « Comparé à : … » sous chaque geste, pour que
+  l'option notée soit visible sans ouvrir « Modifier ».
+- Points d'entrée (`RaconteLink`) : /comparer (sous le choix des gestes) et /jardin (jardin
+  vide, et sous le carnet). `/raconte` ajoutée au sitemap.
+- /confidentialite#raconte (envoi à Anthropic, rien de stocké chez nous, conservation citée
+  depuis la page officielle d'Anthropic mise à jour le 1er juillet 2026, Turnstile),
+  /methode#raconte (fonctionnement, table, empreinte sans chiffre).
+- Tests : unitaires (schéma, ids inconnus, extraits inventés, normalisation, quantités,
+  modes, table des alternatives, propositions et écarts calculés par `src/lib/calc`, textes,
+  limites, plafond global, `AI_ENABLED`, `GET`, journal sans texte, texte jamais en base,
+  injection) ; faux Anthropic dans `e2e/fake-services.mjs` ; `e2e/raconte.spec.ts` (parcours
+  complet, objet, clavier, rien de reconnu, panne, fonction coupée, points d'entrée, axe) ;
+  `docs/raconte-phrases.md` (23 phrases dont 3 en anglais) lu par `scripts/raconte-eval.ts`
+  (`pnpm raconte:eval`) et vérifié par un test (ids du catalogue).
+- Bout en bout : lancés en même temps que le compte, les tests /raconte faisaient échouer
+  deux tests du compte sous charge (synchro trop lente sur le serveur local) ; ils ont leurs
+  propres projets (`raconte-chromium`, `raconte-webkit`), lancés après le compte.
+
+**Vérifications** : lint, typecheck, 704 tests unitaires, `STRICT_DATA=1 pnpm build`, bout
+en bout complet vert (155 passés, 15 ignorés, Chromium et WebKit, axe compris), sous une
+charge machine de 25 à 40. Lighthouse mobile sur `serve:out` (noindex) : Comparer 95,
+accessibilité et bonnes pratiques 100 partout. `pnpm raconte:eval` pas encore lancé (clé
+réelle nécessaire, à faire par Guillaume).

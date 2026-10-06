@@ -14,8 +14,12 @@ import {
 import {
   LINK_EMAIL_LIMITS,
   LINK_IP_LIMITS,
+  RACONTE_ACCOUNT_LIMITS,
+  RACONTE_DAILY_CAP,
+  RACONTE_IP_LIMITS,
   SESSION_COOKIE,
   VERIFY_IP_LIMITS,
+  DAY,
 } from "./config";
 import { hmacHex } from "./crypto";
 import type { D1Database, Env, PagesContext } from "./env";
@@ -30,10 +34,12 @@ import {
   readJson,
   sessionCookie,
 } from "./http";
+import { RACONTE_MAX_CHARS, sanitizeText } from "../src/lib/raconte/detections";
 import { exportAccount, parseSyncRequest, syncJournal } from "./journal";
 import { magicLinkMessage, sendMail } from "./mail";
 import { runMaintenance } from "./maintenance";
 import { trustedOrigin } from "./origin";
+import { detectGestures } from "./raconte";
 import { hitLimits } from "./rate-limit";
 import { verifyTurnstile } from "./turnstile";
 
@@ -192,6 +198,91 @@ export const handleDeleteAccount = route(async (context, now) => {
   if (body.confirm !== "supprimer") throw new HttpError(400, "confirm");
   await deleteAccount(database(context.env), session);
   return json({ ok: true }, 200, { "Set-Cookie": clearSessionCookie() });
+});
+
+/** Plafond global du jour : AI_DAILY_CAP (entier positif) ou la valeur par défaut. */
+export function dailyCap(env: Env): number {
+  const value = Number(env.AI_DAILY_CAP);
+  return Number.isInteger(value) && value > 0 ? value : RACONTE_DAILY_CAP;
+}
+
+/** Journal de « Raconte ta journée » : des compteurs, jamais le texte. */
+function logRaconte(outcome: string, counters: Record<string, unknown> = {}) {
+  console.log(JSON.stringify({ raconte: outcome, ...counters }));
+}
+
+/** GET /api/raconte → { enabled } : l'écran prévient tout de suite si la fonction est coupée. */
+export const handleRaconteStatus = route(async ({ env }) =>
+  json({
+    enabled:
+      env.AI_ENABLED === "1" &&
+      Boolean(env.DB && env.ANTHROPIC_API_KEY && env.TURNSTILE_SECRET_KEY),
+  }),
+);
+
+/**
+ * POST /api/raconte : { text, turnstileToken } → { gestures }. Ordre : coupe-circuit
+ * AI_ENABLED, texte, limite par IP, Turnstile, limite par compte, plafond global, Claude.
+ */
+export const handleRaconte = route(async (context, now) => {
+  requireOrigin(context);
+  const { env } = context;
+  if (env.AI_ENABLED !== "1") {
+    logRaconte("disabled");
+    throw new HttpError(503, "ai-disabled");
+  }
+  const body = requestBody(await readJson(context.request));
+  const db = database(env);
+  const hashKey = secret(env.HASH_SECRET);
+  secret(env.TURNSTILE_SECRET_KEY);
+  secret(env.ANTHROPIC_API_KEY);
+  if (typeof body.text !== "string") throw new HttpError(400, "bad-request");
+  const text = sanitizeText(body.text);
+  if (text.length === 0 || text.length > RACONTE_MAX_CHARS)
+    throw new HttpError(400, "text-length");
+
+  const ip = clientIp(context.request);
+  const ipKey = `raconte:ip:${await hmacHex(hashKey, ip)}`;
+  if (!(await hitLimits(db, ipKey, RACONTE_IP_LIMITS, now))) {
+    logRaconte("rate-limited", { by: "ip" });
+    throw new HttpError(429, "rate-limited");
+  }
+  if (!(await verifyTurnstile(env, body.turnstileToken, ip)))
+    throw new HttpError(400, "turnstile");
+  const session = await currentSession(context, now);
+  if (
+    session &&
+    !(await hitLimits(
+      db,
+      `raconte:user:${session.userId}`,
+      RACONTE_ACCOUNT_LIMITS,
+      now,
+    ))
+  ) {
+    logRaconte("rate-limited", { by: "account" });
+    throw new HttpError(429, "rate-limited");
+  }
+  // Coupe-circuit : compté juste avant l'appel, par jour UTC.
+  if (
+    !(await hitLimits(
+      db,
+      "raconte:global",
+      [{ name: "24h", windowMs: DAY, max: dailyCap(env) }],
+      now,
+    ))
+  ) {
+    logRaconte("quota");
+    throw new HttpError(503, "ai-quota");
+  }
+
+  try {
+    const { detections, stats } = await detectGestures(env, text);
+    logRaconte(detections.length ? "ok" : "empty", stats);
+    return json({ gestures: detections });
+  } catch (error) {
+    if (error instanceof HttpError) logRaconte("failed");
+    throw error;
+  }
 });
 
 /** Middleware de /api : en-têtes communs, erreurs inattendues, entretien quotidien. */

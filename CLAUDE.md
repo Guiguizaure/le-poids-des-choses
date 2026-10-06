@@ -42,7 +42,8 @@ Projet indépendant, non affilié à l'ADEME.
 Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème dans
 `src/app/globals.css`, bloc `@theme`), GSAP + `@gsap/react` (animations), Vitest, ESLint,
 Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et D1 (base
-`DB`), e-mails Resend, anti-robot Turnstile. Site statique
+`DB`), e-mails Resend, anti-robot Turnstile. « Raconte ta journée » : API Anthropic
+(`@anthropic-ai/sdk`, modèle `claude-haiku-4-5`) appelée par une Pages Function. Site statique
 (`output: 'export'`, images non optimisées) hébergé sur Cloudflare Pages.
 
 ## Commandes
@@ -67,6 +68,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `.env.local` seulement si elle existe (jamais dans le dépôt ni côté navigateur). Échoue
   sans rien écrire si l'API refuse l'accès, si une catégorie inconnue apparaît ou si les
   mois sont incohérents. Commite le fichier généré.
+- `pnpm raconte:eval` — à la main, jamais en CI : envoie les 23 phrases de
+  `docs/raconte-phrases.md` au vrai modèle (`ANTHROPIC_API_KEY` lue dans `.dev.vars`) et
+  donne le taux de bonnes détections, la précision, le rappel et les jetons consommés
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
 - `pnpm e2e` — tests de bout en bout et accessibilité (Playwright + axe, Chromium « Pixel 7 »
   et WebKit « iPhone 14 ») sur `out/`, servi par `e2e/static-server.mjs` avec les en-têtes
@@ -75,8 +79,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   les liens avec Tab). Le compte (`e2e/compte.spec.ts`, projets `compte-chromium` et
   `compte-webkit`, 2 workers chacun) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
   en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
-  Resend et faux siteverify, port 4330) ; Turnstile est simulé par une route Playwright.
-  Aucun vrai e-mail, aucune connexion à Cloudflare.
+  Resend, faux siteverify et faux Anthropic, port 4330) ; Turnstile est simulé par une route
+  Playwright. « Raconte ta journée » (`e2e/raconte.spec.ts`, projets `raconte-chromium` et
+  `raconte-webkit`, après le compte) passe par le même serveur.
+  Aucun vrai e-mail, aucun appel à Claude, aucune connexion à Cloudflare.
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
   carnet, saison, méthode) sur `pnpm serve:out` (port 4322) ; construire avec
   `SITE_LAUNCHED=1` pour mesurer le SEO sans le noindex.
@@ -96,7 +102,7 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
   voir »), `/saison` (fruits et légumes de saison),
   `/methode` (maquette 06, papiers découpés `PaperCutout`), `/mentions-legales`,
-  `/confidentialite`, `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
+  `/confidentialite`, `/raconte` (« Raconte ta journée », maquette 08), `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
   jeton ; toujours noindex et hors sitemap),
   404 (`not-found.tsx`, jardin dans la brume), `/labo` (banc d'essai ; non liée, toujours
   noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ; pied de page
@@ -151,6 +157,11 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `src/lib/sync` — compte côté navigateur : fusion (`merge.ts`), forme canonique, état de
   synchro (`lpdc:compte:v1`), client de l'API, moteur de synchro (`engine.ts`), textes,
   Turnstile ; `src/components/account` — `AccountSection` (/jardin), `ConnexionScreen`
+- `src/lib/raconte` — « Raconte ta journée » : validation des détections (`detections.ts`),
+  table des alternatives (`alternatives.ts`), propositions et entrées (`proposal.ts`),
+  textes (`text.ts`), client de l'API (`api.ts`) ; `src/components/raconte` — écran
+  (`RaconteScreen`) et point d'entrée (`RaconteLink`) ; `server/raconte.ts` (appel à Claude) et
+  `server/raconte-prompt.ts` (prompt système, schéma de sortie)
 - `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
 
 ## Conventions
@@ -404,5 +415,37 @@ variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet,
   - /confidentialite (pied de page, formulaire) et mentions légales : un seul cookie, posé
     seulement à la connexion ; Turnstile chargé seulement quand le formulaire sert (CSP :
     `challenges.cloudflare.com` en script et frame).
+- « Raconte ta journée » (lot V2-3, `/raconte`, maquette 08 nœud 17:55) :
+  - la personne écrit (280 caractères au plus) ; Claude (`claude-haiku-4-5`, température 0,
+    600 jetons au plus, 15 s, sans nouvel essai) ne fait que reconnaître des gestes du
+    catalogue : sortie structurée (`output_config.format`, enum exact des ids), jamais de
+    chiffre. Tous les CO2e viennent des données et de `src/lib/calc` (`createEntry`) ;
+  - validation stricte (`parseDetections`, serveur ET navigateur) : id inconnu ou fictif, champ
+    en trop ou manquant, extrait absent du texte (comparaison normalisée des deux côtés :
+    NFC, casse, apostrophes, guillemets, tirets, espaces) → ignoré ; distance gardée pour
+    les trajets seulement (1 à 1 000 km), mode pour les objets seulement ; 8 gestes au plus ;
+  - texte entre `<journee>` et ses chevrons remplacés ; traité comme une donnée (injection) ;
+    français ou autre langue (anglais au prochain lot) ;
+  - alternative : table `ALTERNATIVES` du code (jamais l'IA), modifiable par « Modifier » ; un
+    objet suit les règles du duel objet ; un geste plus lourd que son alternative est
+    « simplement noté », comme au duel ;
+  - liste à cases (maquette) : gestes `explicit` cochés, `inferred` (« À vérifier ») décochés ;
+    « Ajouter au carnet » désactivé tant qu'un geste coché n'a pas sa distance ou son option ;
+    rien n'entre dans le carnet sans ce bouton ;
+  - `POST /api/raconte` ({ text, turnstileToken } → { gestures }) ; `GET /api/raconte` →
+    { enabled }. Ordre : origine, `AI_ENABLED` (doit valoir `1`, sinon 503 `ai-disabled`
+    sans compteur), Content-Type, texte (400 `text-length`), limite IP (3/15 min, 5/24 h),
+    Turnstile, limite par compte connecté (5/24 h), plafond global par jour UTC (300, ou
+    `AI_DAILY_CAP` ; 503 `ai-quota`), puis Claude (502 `ai-failed` si échec) ; compteurs dans
+    `rate_limits` (aucune migration) ;
+  - jamais de texte stocké ni journalisé : une ligne JSON de compteurs par requête
+    (`{ raconte, stopReason, inputTokens, outputTokens, returned, kept }`) ;
+  - panne, quota, fonction coupée, rien de reconnu : message doux et lien vers /comparer ;
+  - mention sous le champ (`PRIVACY_NOTICE`), note IA de la maquette, phrase sans chiffre sur
+    l'énergie (aucune source publique pour l'empreinte d'une requête) ; /confidentialite#raconte
+    cite la page officielle de conservation d'Anthropic ; /methode#raconte ;
+  - points d'entrée : `RaconteLink` sur /comparer (choix des gestes) et /jardin ;
+  - secrets et variables Cloudflare : `ANTHROPIC_API_KEY` (secret), `AI_ENABLED`,
+    `AI_DAILY_CAP` (facultative) ; en local `.dev.vars` (`AI_ENABLED=0` par défaut).
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous
   droits réservés (`LICENSE`).

@@ -230,6 +230,31 @@ export default function MethodePage() {
         </p>
       </Section>
 
+      <Section id="raconte" title="« Raconte ta journée »">
+        <p>
+          Tu écris ta journée ; Claude Haiku 4.5, un modèle d’Anthropic, y
+          repère les gestes qui figurent dans le catalogue du site, et rien
+          d’autre. Il ne calcule rien et ne donne aucun chiffre : il renvoie
+          seulement le nom des gestes, l’extrait qui les justifie et, pour un
+          trajet, la distance si tu l’as écrite. Un geste déduit (« un burger »
+          pour un repas au bœuf) est marqué « À vérifier » et n’est pas coché.
+        </p>
+        <p>
+          L’option comparée vient d’une table écrite à la main (le TER est
+          comparé à la voiture thermique, un repas végétarien à un repas au
+          poulet…), que tu peux changer avant l’ajout. Les écarts sont ensuite
+          calculés comme partout ailleurs, à partir des données Impact CO2. Rien
+          n’entre dans le carnet sans que tu l’aies coché.
+        </p>
+        <p>
+          Chaque analyse fait tourner un modèle d’IA dans un centre de données :
+          elle consomme de l’énergie et a donc une empreinte. Nous ne
+          l’affichons pas en grammes, faute de source publique qui permette de
+          la chiffrer pour une requête. C’est pourquoi l’analyse ne se lance
+          qu’à ta demande, sur un texte court, avec une réponse brève.
+        </p>
+      </Section>
+
       <Section id="fabrication" title="Comment ce site est fait">
         <p>
           Conçu, illustré et développé par Guillaume (

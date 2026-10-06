@@ -14,6 +14,10 @@ export type ErrorCode =
   | "confirm"
   | "journal-full"
   | "mail"
+  | "text-length"
+  | "ai-disabled"
+  | "ai-quota"
+  | "ai-failed"
   | "unavailable"
   | "server";
 

@@ -1,7 +1,8 @@
-// Export statique + Pages Functions pour les tests de bout en bout du compte : base D1 locale
+// Export statique + Pages Functions pour les tests de bout en bout du compte et de « Raconte
+// ta journée » : base D1 locale
 // neuve (migrations du dépôt), `wrangler pages dev` en HTTPS (cookie __Host-, Secure) et
 // valeurs de test passées en options : elles l'emportent sur un éventuel .dev.vars, donc
-// jamais de vraie clé Resend ni de vrai envoi. Aucune connexion au compte Cloudflare.
+// jamais de vraie clé Resend ou Anthropic, ni de vrai envoi. Aucune connexion au compte Cloudflare.
 import { spawn, spawnSync } from "node:child_process";
 import { rmSync } from "node:fs";
 
@@ -36,6 +37,11 @@ const bindings = {
   TURNSTILE_VERIFY_URL: `${FAKE}/siteverify`,
   HASH_SECRET: "hash-e2e",
   ALLOW_LOCALHOST: "1",
+  // « Raconte ta journée » : faux Anthropic, jamais la vraie clé.
+  AI_ENABLED: "1",
+  AI_DAILY_CAP: "100000",
+  ANTHROPIC_API_KEY: "sk-ant-faux-e2e",
+  ANTHROPIC_BASE_URL: FAKE,
 };
 
 const server = spawn(

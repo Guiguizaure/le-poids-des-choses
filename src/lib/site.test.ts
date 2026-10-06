@@ -39,6 +39,7 @@ describe("lancement (SITE_LAUNCHED)", () => {
     expect(urls).toEqual([
       "https://x.fr",
       "https://x.fr/comparer",
+      "https://x.fr/raconte",
       "https://x.fr/jardin",
       "https://x.fr/jardin/carnet",
       "https://x.fr/saison",

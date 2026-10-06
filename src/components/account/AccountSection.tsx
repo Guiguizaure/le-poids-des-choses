@@ -12,8 +12,8 @@ import {
   errorMessage,
   syncStatus,
 } from "@/lib/sync/messages";
-import { loadTurnstile, TURNSTILE_SITE_KEY } from "@/lib/sync/turnstile";
 import { useAccount } from "@/lib/sync/useAccount";
+import { useTurnstile } from "@/lib/sync/useTurnstile";
 
 /** Ancre de la section (lien « Se connecter » / adresse de l'en-tête). */
 export const ACCOUNT_ANCHOR = "compte";
@@ -139,48 +139,8 @@ export function SignInForm({
   const [email, setEmail] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [busy, setBusy] = useState<"" | "verification" | "envoi">("");
-  const widget = useRef<HTMLDivElement>(null);
-  const widgetId = useRef<string | null>(null);
-  const token = useRef<string | null>(null);
-  const waiters = useRef<((value: string | null) => void)[]>([]);
+  const { widget, prepare, getToken, consume } = useTurnstile();
   const sentNotice = useRef<HTMLParagraphElement>(null);
-
-  const settle = (value: string | null) => {
-    token.current = value;
-    waiters.current.splice(0).forEach((resolve) => resolve(value));
-  };
-
-  /** Charge Turnstile et affiche le widget (une seule fois), au premier usage du formulaire. */
-  const prepare = async (): Promise<boolean> => {
-    if (widgetId.current) return true;
-    try {
-      const turnstile = await loadTurnstile();
-      if (!widget.current || widgetId.current) return Boolean(widgetId.current);
-      widgetId.current = turnstile.render(widget.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        language: "fr",
-        appearance: "interaction-only",
-        callback: (value) => settle(value),
-        "expired-callback": () => (token.current = null),
-        "error-callback": () => settle(null),
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const waitForToken = () =>
-    token.current
-      ? Promise.resolve(token.current)
-      : new Promise<string | null>((resolve) => waiters.current.push(resolve));
-
-  useEffect(
-    () => () => {
-      if (widgetId.current) window.turnstile?.remove(widgetId.current);
-    },
-    [],
-  );
 
   useEffect(() => {
     if (sentTo) sentNotice.current?.focus();
@@ -195,24 +155,20 @@ export function SignInForm({
       return;
     }
     setBusy("verification");
-    if (!(await prepare())) {
+    const verification = await getToken();
+    if (!verification.ok) {
       setBusy("");
       onMessage(
-        "La vérification anti-robot n’a pas pu se charger. Vérifie ta connexion et réessaie.",
+        verification.reason === "load"
+          ? "La vérification anti-robot n’a pas pu se charger. Vérifie ta connexion et réessaie."
+          : errorMessage("turnstile"),
       );
       return;
     }
-    const value = await waitForToken();
-    if (!value) {
-      setBusy("");
-      onMessage(errorMessage("turnstile"));
-      return;
-    }
     setBusy("envoi");
-    const result = await accountApi.requestLink(normalized, value);
+    const result = await accountApi.requestLink(normalized, verification.token);
     // Un jeton Turnstile ne sert qu'une fois.
-    token.current = null;
-    if (widgetId.current) window.turnstile?.reset(widgetId.current);
+    consume();
     setBusy("");
     if (result.ok) setSentTo(normalized);
     else onMessage(errorMessage(result.error));

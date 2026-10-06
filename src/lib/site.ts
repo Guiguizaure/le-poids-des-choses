@@ -31,6 +31,7 @@ export function isLaunched(
 export const PUBLIC_PATHS = [
   "/",
   "/comparer",
+  "/raconte",
   "/jardin",
   "/jardin/carnet",
   "/saison",

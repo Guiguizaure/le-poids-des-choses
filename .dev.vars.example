@@ -9,3 +9,8 @@ ALLOW_LOCALHOST=1
 # Resend : laisser vide en local (l'envoi échoue proprement) ou pointer vers un faux Resend.
 RESEND_API_KEY=
 # RESEND_API_URL=http://127.0.0.1:4330
+# « Raconte ta journée » : coupée par défaut en local. AI_ENABLED=1 + une vraie clé = appels
+# payants à Claude. La clé sert aussi à `pnpm raconte:eval` (jamais en CI).
+AI_ENABLED=0
+# ANTHROPIC_API_KEY=
+# AI_DAILY_CAP=20
