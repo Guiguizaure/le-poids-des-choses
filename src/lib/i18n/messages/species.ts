@@ -10,6 +10,8 @@ export type SpeciesSheet = {
   inSentence: string;
   /** Feuillage et floraison (« Persistant · fleurit à la fin du printemps »). */
   type: string;
+  /** Version courte, sur la carte (« Caduc · Fleurit au printemps »). */
+  short: string;
   description: string;
   anecdote: string;
 };
@@ -20,6 +22,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Pommier",
       inSentence: "le pommier",
       type: "Caduc · fleurit au printemps",
+      short: "Caduc · Fleurit au printemps",
       description:
         "Un arbre rond et généreux, qui fleurit blanc et rose au printemps avant de donner ses pommes à l’automne.",
       anecdote:
@@ -29,6 +32,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Citronnier",
       inSentence: "le citronnier",
       type: "Persistant · fleurit plusieurs fois par an",
+      short: "Persistant · Fleurit plusieurs fois",
       description:
         "Un arbre élancé qui garde ses feuilles toute l’année, aux fleurs blanches parfumées et aux citrons jaunes.",
       anecdote:
@@ -38,6 +42,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Cerisier",
       inSentence: "le cerisier",
       type: "Caduc · fleurit au printemps",
+      short: "Caduc · Fleurit au printemps",
       description:
         "Un nuage de fleurs au printemps, puis des cerises par paires au début de l’été.",
       anecdote:
@@ -47,6 +52,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Églantine",
       inSentence: "l’églantine",
       type: "Rosier sauvage · fleurit de la fin du printemps à l’été",
+      short: "Rosier sauvage · Fleurit en été",
       description:
         "La fleur du rosier sauvage : cinq pétales roses autour d’un cœur doré.",
       anecdote:
@@ -56,6 +62,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Tulipe",
       inSentence: "la tulipe",
       type: "Bulbe · fleurit au printemps",
+      short: "Bulbe · Fleurit au printemps",
       description:
         "Une fleur en coupe qui sort de terre au printemps, à partir d’un bulbe.",
       anecdote:
@@ -65,6 +72,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Herbes folles",
       inSentence: "les herbes folles",
       type: "Vivaces · fleurissent au printemps et en été",
+      short: "Vivaces · Printemps et été",
       description:
         "Les herbes qu’on laisse pousser librement, un abri pour les petites bêtes du jardin.",
       anecdote:
@@ -74,6 +82,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Olivier",
       inSentence: "l’olivier",
       type: "Persistant · fleurit à la fin du printemps",
+      short: "Persistant · Fleurit au printemps",
       description:
         "Un arbre méditerranéen au tronc tortueux et aux feuilles argentées, qui garde ses feuilles toute l’année.",
       anecdote:
@@ -83,6 +92,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Sapin",
       inSentence: "le sapin",
       type: "Persistant · conifère",
+      short: "Persistant · Conifère",
       description:
         "Un conifère en étages qui garde ses aiguilles l’hiver et porte ses cônes dressés vers le ciel.",
       anecdote:
@@ -92,6 +102,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Figuier",
       inSentence: "le figuier",
       type: "Caduc",
+      short: "Caduc",
       description:
         "Un arbre du Sud aux grandes feuilles découpées, qui perd ses feuilles l’hiver et montre alors ses branches.",
       anecdote:
@@ -101,6 +112,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Marguerite",
       inSentence: "la marguerite",
       type: "Vivace · fleurit de la fin du printemps à l’été",
+      short: "Vivace · Fleurit en été",
       description:
         "Des pétales blancs autour d’un cœur jaune, la fleur des prairies par excellence.",
       anecdote:
@@ -110,6 +122,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Lavande",
       inSentence: "la lavande",
       type: "Arbrisseau persistant · fleurit en été",
+      short: "Arbrisseau · Fleurit en été",
       description:
         "Des épis parfumés qui colorent la Provence en été et attirent les abeilles.",
       anecdote:
@@ -119,6 +132,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Pissenlit",
       inSentence: "le pissenlit",
       type: "Vivace · fleurit surtout au printemps",
+      short: "Vivace · Fleurit au printemps",
       description:
         "Une fleur jaune vif qui devient une boule de graines à souffler.",
       anecdote:
@@ -130,6 +144,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Apple tree",
       inSentence: "apple tree",
       type: "Deciduous · blossoms in spring",
+      short: "Deciduous · Blooms in spring",
       description:
         "A round, generous tree that blossoms white and pink in spring before bearing apples in autumn.",
       anecdote:
@@ -139,6 +154,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Lemon tree",
       inSentence: "lemon tree",
       type: "Evergreen · flowers several times a year",
+      short: "Evergreen · Blooms several times",
       description:
         "A slender tree that keeps its leaves all year round, with fragrant white blossom and yellow lemons.",
       anecdote:
@@ -148,6 +164,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Cherry tree",
       inSentence: "cherry tree",
       type: "Deciduous · blossoms in spring",
+      short: "Deciduous · Blooms in spring",
       description:
         "A cloud of blossom in spring, then cherries in pairs in early summer.",
       anecdote:
@@ -157,6 +174,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Dog rose",
       inSentence: "dog rose",
       type: "Wild rose · flowers from late spring into summer",
+      short: "Wild rose · Blooms in summer",
       description:
         "The flower of the wild rose: five pink petals around a golden heart.",
       anecdote:
@@ -166,6 +184,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Tulip",
       inSentence: "tulip",
       type: "Bulb · flowers in spring",
+      short: "Bulb · Blooms in spring",
       description: "A cup-shaped flower that rises from a bulb in spring.",
       anecdote:
         "Tulips come from Central Asia and reached Europe in the 16th century by way of the Ottoman Empire.",
@@ -174,6 +193,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Wild grasses",
       inSentence: "wild grasses",
       type: "Perennials · flower in spring and summer",
+      short: "Perennials · Spring and summer",
       description:
         "Grasses left to grow freely, a shelter for the garden’s small creatures.",
       anecdote: "Grasses don’t need insects: the wind carries their pollen.",
@@ -182,6 +202,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Olive tree",
       inSentence: "olive tree",
       type: "Evergreen · flowers in late spring",
+      short: "Evergreen · Blooms in spring",
       description:
         "A Mediterranean tree with a twisted trunk and silvery leaves, evergreen all year round.",
       anecdote:
@@ -191,6 +212,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Fir tree",
       inSentence: "fir tree",
       type: "Evergreen · conifer",
+      short: "Evergreen · Conifer",
       description:
         "A tiered conifer that keeps its needles through winter and holds its cones upright.",
       anecdote:
@@ -200,6 +222,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Fig tree",
       inSentence: "fig tree",
       type: "Deciduous",
+      short: "Deciduous",
       description:
         "A southern tree with large lobed leaves. It drops them in winter, showing off its branches.",
       anecdote:
@@ -209,6 +232,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Oxeye daisy",
       inSentence: "oxeye daisy",
       type: "Perennial · flowers from late spring into summer",
+      short: "Perennial · Blooms in summer",
       description:
         "White petals around a yellow heart, the meadow flower par excellence.",
       anecdote:
@@ -218,6 +242,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Lavender",
       inSentence: "lavender",
       type: "Evergreen shrub · flowers in summer",
+      short: "Shrub · Blooms in summer",
       description:
         "Fragrant spikes that colour Provence in summer and draw in the bees.",
       anecdote:
@@ -227,6 +252,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
       name: "Dandelion",
       inSentence: "dandelion",
       type: "Perennial · flowers mostly in spring",
+      short: "Perennial · Blooms in spring",
       description:
         "A bright yellow flower that turns into a ball of seeds to blow away.",
       anecdote:
@@ -235,23 +261,26 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
   },
 );
 
-/** Choix de l'espèce et annonce d'une nouvelle espèce. */
+/** Choix de l'espèce (grille, détail) et annonce d'une nouvelle espèce. */
 export const SPECIES_PICKER = defineMessages(
   {
     title: "Que veux-tu planter ?",
     several: (n: number) =>
       `${n} plantes vont pousser : elles seront toutes de l’espèce que tu choisis.`,
-    plant: "Planter : {name}",
-    anecdote: "Anecdote :",
-    locked: "Se débloque bientôt",
-    condition: (n: number) =>
-      n > 1
-        ? `Encore ${n} choix légers ou jours arrosés`
-        : "Encore 1 choix léger ou jour arrosé",
-    auto: "Laisse le jardin choisir",
-    close: "Fermer : le jardin choisit",
     tree: "Arbre",
     flower: "Fleur",
+    plant: (inSentence: string) => `Planter ${inSentence}`,
+    more: (inSentence: string) => `En savoir plus sur ${inSentence}`,
+    back: "Retour aux espèces",
+    didYouKnow: "Le savais-tu ?",
+    locked: "Se débloque bientôt",
+    inSteps: (n: number) => (n > 1 ? `Dans ${n} pas` : "Dans 1 pas"),
+    condition: (n: number) =>
+      n > 1
+        ? `Encore ${n} pas de croissance : choix légers ou jours arrosés.`
+        : "Encore 1 pas de croissance : un choix léger ou un jour arrosé.",
+    auto: "Laisse le jardin choisir",
+    close: "Fermer : le jardin choisit",
     unlocked: (name: string) => `Nouvelle espèce : ${name}`,
     unlockedHint: "Tu pourras la planter au prochain choix léger.",
   },
@@ -259,17 +288,20 @@ export const SPECIES_PICKER = defineMessages(
     title: "What would you like to plant?",
     several: (n: number) =>
       `${n} plants are about to grow: they’ll all be the species you choose.`,
-    plant: "Plant: {name}",
-    anecdote: "Fun fact:",
-    locked: "Coming soon",
-    condition: (n: number) =>
-      n === 1
-        ? "1 more lighter choice or watered day"
-        : `${n} more lighter choices or watered days`,
-    auto: "Let the garden choose",
-    close: "Close: the garden chooses",
     tree: "Tree",
     flower: "Flower",
+    plant: (inSentence: string) => `Plant the ${inSentence}`,
+    more: (inSentence: string) => `More about the ${inSentence}`,
+    back: "Back to all species",
+    didYouKnow: "Did you know?",
+    locked: "Coming soon",
+    inSteps: (n: number) => (n === 1 ? "In 1 step" : `In ${n} steps`),
+    condition: (n: number) =>
+      n === 1
+        ? "1 more growth step: a lighter choice or a watered day."
+        : `${n} more growth steps: lighter choices or watered days.`,
+    auto: "Let the garden choose",
+    close: "Close: the garden chooses",
     unlocked: (name: string) => `New species: ${name}`,
     unlockedHint: "You can plant it with your next lighter choice.",
   },

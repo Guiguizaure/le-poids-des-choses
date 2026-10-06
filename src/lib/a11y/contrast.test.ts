@@ -79,6 +79,12 @@ const PAIRS: {
     minimum: 4.5,
     where: "badges « 1 » et « 2 » du choix des gestes",
   },
+  {
+    text: "blanc",
+    background: "sapin",
+    minimum: 4.5,
+    where: "encadré « Le savais-tu ? » de la fiche d'une espèce",
+  },
 ];
 
 describe("contraste du thème (WCAG AA)", () => {

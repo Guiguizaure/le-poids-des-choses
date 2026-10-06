@@ -237,7 +237,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     authoritative one ».
 - Tokens de design : couleurs `creme`, `encre`, `texte-attenue`, `blanc`, `tomate`,
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
-  réservée aux feuilles) ; polices
+  réservée aux feuilles, et au fond de l’encadré « Le savais-tu ? » d’une fiche d’espèce, texte
+  blanc 6,49:1) ; polices
   `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
@@ -381,8 +382,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     perchoir (hibou et cigale vont sur un autre arbre adulte). Quand un choix léger va faire
     pousser une nouvelle plante, « Que veux-tu planter ? » (`SpeciesPicker`, `<dialog>` :
     focus piégé, Échap, feuille en bas sur mobile) s'ouvre AVANT que l'entrée soit notée :
-    cartes avec dessin, nom, type, description, anecdote ; espèces à débloquer grisées avec
-    leur condition ; « Laisse le jardin choisir », Échap ou la croix = tirage habituel. Un
+    grille de cartes (2 colonnes sur mobile, 4 sur grand écran : dessin, nom, type court
+    `short`) ; toucher une carte plante l'espèce ; bouton « i » à côté (jamais dans) la carte,
+    « En savoir plus sur … » : fiche dans la même feuille (grand dessin, type, description,
+    encadré « Le savais-tu ? » vert sapin texte blanc, « Planter … », « Retour aux espèces » qui
+    rend le focus à la carte ; Échap depuis une fiche = retour à la grille). Espèces à
+    débloquer grisées, cadenas, « Dans N pas » ; leur fiche se lit mais ne se plante pas.
+    « Laisse le jardin choisir », Échap (depuis la grille) ou la croix = tirage habituel. Un
     seul choix pour plusieurs plantes (« Raconte ta journée »). L'espèce va dans l'entrée
     (`species`, choix léger seulement) : synchro du compte et export sans migration ; une
     espèce inconnue retombe sur le tirage. Annonce « Nouvelle espèce : … »

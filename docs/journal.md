@@ -1555,3 +1555,25 @@ Décisions de Guillaume, appliquées sur feat/especes :
 **Note pour la V3** : rendre les fiches des espèces accessibles par une page ou une liste
 « Herbier » (alternative accessible au toucher sur une plante, que la scène, une seule image
 pour les lecteurs d'écran, ne permet pas simplement).
+
+### 2026-10-06 (nuit) — « Que veux-tu planter ? » plus visuel
+
+Retours UX de Guillaume, appliqués sur feat/especes :
+
+- Grille de cartes (2 colonnes sur mobile, 4 sur grand écran) : dessin, nom, ligne de type
+  courte (« Arbre · Caduc · Fleurit au printemps », champ `short` des fiches). Toucher une
+  carte plante l'espèce. Plus de description ni d'anecdote sur la carte.
+- Bouton « i » à côté du bouton de la carte (jamais dedans), « En savoir plus sur
+  l’olivier » : fiche dans la même feuille (grand dessin, type complet, description,
+  encadré « Le savais-tu ? », « Planter l’olivier », « Retour aux espèces »). Au retour, le
+  focus revient sur la carte (ou sur son bouton « i » pour une espèce verrouillée). Échap
+  depuis une fiche revient à la grille ; depuis la grille, le jardin choisit.
+- « Le savais-tu ? » : fond vert sapin, texte blanc, 6,49:1 (le vert pomme n'aurait donné que
+  2,38:1) ; paire ajoutée au test de contraste du thème.
+- Espèces verrouillées : carte grisée, cadenas, « Dans 2 pas » ; leur fiche reste lisible,
+  avec « Se débloque bientôt. Encore 2 pas de croissance : choix légers ou jours arrosés. »,
+  sans bouton pour planter.
+- « Laisse le jardin choisir » inchangé, en bas.
+- Bout en bout : `e2e/especes.spec.ts` réécrit (grille, fiche, retour du focus, Échap à deux
+  niveaux, espèce verrouillée, « i » jamais imbriqué, couleurs de l'encadré, axe), en
+  français et en anglais, sur Chromium et WebKit.

@@ -21,7 +21,7 @@ const journal = (page: import("@playwright/test").Page) =>
         .entries as { id: string; species?: string }[],
   );
 
-test("choisir l'olivier : il est gardé avec la plante et pousse dans le jardin", async ({
+test("grille : toucher une carte plante l'espèce, gardée avec la plante", async ({
   page,
 }) => {
   await seedJournal(page, SEVEN);
@@ -33,18 +33,25 @@ test("choisir l'olivier : il est gardé avec la plante et pousse dans le jardin"
   await expect(
     picker.getByRole("heading", { name: "Que veux-tu planter ?" }),
   ).toBeFocused();
-  // Les six espèces de départ, la marguerite et l'olivier ; les autres grisées.
-  await expect(picker.getByRole("button", { name: /^Planter : / })).toHaveCount(
-    8,
-  );
-  const lavande = picker.locator('[data-species="fleur-5"] [data-locked]');
-  await expect(lavande).toContainText("Se débloque bientôt");
-  await expect(lavande).toContainText("Encore 2 choix légers ou jours arrosés");
+  // Six espèces de départ, la marguerite et l'olivier : une carte à toucher chacune.
+  await expect(picker.locator("[data-plant-card]")).toHaveCount(8);
+  // Les autres : grisées, cadenas et condition courte.
   await expect(picker.locator("[data-locked]")).toHaveCount(4);
-  const olive = picker.getByRole("button", { name: "Planter : Olivier" });
-  await expect(olive).toHaveAccessibleDescription(
-    /Persistant[\s\S]*olives noires/,
+  await expect(picker.locator('[data-species="fleur-5"]')).toContainText(
+    "Dans 2 pas",
   );
+  // Carte courte : nom et type, sans description ni anecdote.
+  const olive = picker.getByRole("button", {
+    name: "Planter l’olivier",
+    exact: true,
+  });
+  await expect(olive).toHaveAccessibleDescription(
+    "Arbre · Persistant · Fleurit au printemps",
+  );
+  await expect(picker).not.toContainText("olives noires");
+  // « En savoir plus » est à côté du bouton de la carte, jamais dedans.
+  await expect(picker.locator("[data-plant-card] [data-more]")).toHaveCount(0);
+  await expect(picker.locator("[data-more]")).toHaveCount(12);
   await expectNoAxeViolations(page);
 
   await olive.click();
@@ -52,8 +59,7 @@ test("choisir l'olivier : il est gardé avec la plante et pousse dans le jardin"
   await expect(
     page.getByRole("heading", { name: /Un arbre va pousser dans ton jardin/ }),
   ).toBeFocused();
-  const entries = await journal(page);
-  const chosen = entries.at(-1)!;
+  const chosen = (await journal(page)).at(-1)!;
   expect(chosen.species).toBe("arbre-4");
 
   await page.getByRole("link", { name: "Aller la planter" }).click();
@@ -61,6 +67,83 @@ test("choisir l'olivier : il est gardé avec la plante et pousse dans le jardin"
     "data-species",
     "arbre-4",
   );
+});
+
+test("fiche : « En savoir plus », « Le savais-tu ? », retour avec le focus sur la carte, planter depuis la fiche", async ({
+  page,
+}) => {
+  await seedJournal(page, SEVEN);
+  await page.goto("/comparer?a=tgv&b=avion&q=300");
+  await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  const picker = page.getByRole("dialog", { name: "Que veux-tu planter ?" });
+
+  await picker
+    .getByRole("button", { name: "En savoir plus sur l’olivier" })
+    .click();
+  await expect(picker.getByRole("heading", { name: "Olivier" })).toBeFocused();
+  await expect(picker).toContainText(
+    "Arbre · Persistant · Fleurit à la fin du printemps",
+  );
+  const fact = picker.getByRole("complementary", { name: "Le savais-tu ?" });
+  await expect(fact).toContainText("les noires sont simplement cueillies");
+  // Encadré vert sapin, texte blanc.
+  await expect(fact).toHaveCSS("background-color", "rgb(27, 107, 69)");
+  await expect(fact).toHaveCSS("color", "rgb(255, 255, 255)");
+  await expect(
+    picker.getByRole("button", { name: "Laisse le jardin choisir" }),
+  ).toBeVisible();
+  await expectNoAxeViolations(page);
+
+  // Retour : la grille, focus sur la carte d'origine.
+  await picker.getByRole("button", { name: "Retour aux espèces" }).click();
+  await expect(
+    picker.getByRole("button", { name: "Planter l’olivier", exact: true }),
+  ).toBeFocused();
+
+  // Planter depuis la fiche.
+  await picker
+    .getByRole("button", { name: "En savoir plus sur le pommier" })
+    .click();
+  await picker.getByRole("button", { name: "Planter le pommier" }).click();
+  await expect(picker).toBeHidden();
+  expect((await journal(page)).at(-1)!.species).toBe("arbre-1");
+});
+
+test("espèce verrouillée : sa fiche donne envie, elle ne se plante pas ; Échap revient à la grille, puis le jardin choisit", async ({
+  page,
+}) => {
+  await seedJournal(page, SEVEN);
+  await page.goto("/comparer?a=tgv&b=avion&q=300");
+  await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  const picker = page.getByRole("dialog", { name: "Que veux-tu planter ?" });
+  await expect(
+    picker.getByRole("button", { name: "Planter la lavande" }),
+  ).toHaveCount(0);
+
+  await picker
+    .getByRole("button", { name: "En savoir plus sur la lavande" })
+    .click();
+  await expect(picker.getByRole("heading", { name: "Lavande" })).toBeFocused();
+  await expect(picker).toContainText("Se débloque bientôt.");
+  await expect(picker).toContainText(
+    "Encore 2 pas de croissance : choix légers ou jours arrosés.",
+  );
+  await expect(
+    picker.getByRole("complementary", { name: "Le savais-tu ?" }),
+  ).toContainText("lavandin");
+  await expect(
+    picker.getByRole("button", { name: "Planter la lavande" }),
+  ).toHaveCount(0);
+  await expectNoAxeViolations(page);
+
+  await page.keyboard.press("Escape");
+  await expect(picker).toBeVisible();
+  await expect(
+    picker.getByRole("button", { name: "En savoir plus sur la lavande" }),
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(picker).toBeHidden();
+  expect((await journal(page)).at(-1)!.species).toBeUndefined();
 });
 
 test("« Laisse le jardin choisir », Échap ou la croix : rien n'est bloqué, aucune espèce gardée", async ({
@@ -108,7 +191,7 @@ test("déblocage : le troisième pas annonce « Nouvelle espèce : la marguerite
     page.locator(
       '[data-species-picker] [data-species="fleur-4"] [data-locked]',
     ),
-  ).toContainText("Encore 1 choix léger ou jour arrosé");
+  ).toContainText("Dans 1 pas");
   await letGardenChoose(page);
   await expect(page.locator("[data-species-unlocked]")).toContainText(
     "Nouvelle espèce : la marguerite",
@@ -122,7 +205,7 @@ test("déblocage : le troisième pas annonce « Nouvelle espèce : la marguerite
 
 test.describe("en anglais", () => {
   test.use({ locale: "en-GB" });
-  test("« What would you like to plant? », fiches en anglais", async ({
+  test("« What would you like to plant? » : grid and species sheet in English", async ({
     page,
   }) => {
     await seedJournal(page, SEVEN);
@@ -133,15 +216,29 @@ test.describe("en anglais", () => {
     });
     await expect(picker).toBeVisible();
     await expect(
-      picker.getByRole("button", { name: "Plant: Oxeye daisy" }),
-    ).toHaveAccessibleDescription(
-      /Perennial[\s\S]*Fun fact:[\s\S]*tiny flowers/,
-    );
+      picker.getByRole("button", { name: "Plant the oxeye daisy" }),
+    ).toHaveAccessibleDescription("Flower · Perennial · Blooms in summer");
     await expect(picker.locator('[data-species="arbre-5"]')).toContainText(
-      "Coming soon",
+      "In 11 steps",
     );
     await expectNoAxeViolations(page);
-    await picker.getByRole("button", { name: "Plant: Oxeye daisy" }).click();
+
+    await picker
+      .getByRole("button", { name: "More about the olive tree" })
+      .click();
+    await expect(
+      picker.getByRole("heading", { name: "Olive tree" }),
+    ).toBeFocused();
+    await expect(
+      picker.getByRole("complementary", { name: "Did you know?" }),
+    ).toContainText("black ones are simply picked riper");
+    await expectNoAxeViolations(page);
+    await picker.getByRole("button", { name: "Back to all species" }).click();
+    await expect(
+      picker.getByRole("button", { name: "Plant the olive tree" }),
+    ).toBeFocused();
+
+    await picker.getByRole("button", { name: "Plant the oxeye daisy" }).click();
     await expect(picker).toBeHidden();
     expect((await journal(page)).at(-1)!.species).toBe("fleur-4");
   });
