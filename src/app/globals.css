@@ -41,6 +41,7 @@
   --animate-enter: enter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-pop: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
   --animate-select: select 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  --animate-bar-in: bar-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 
   /* Part d'une opacité non nulle : le texte reste visible dès la première image (LCP). */
   @keyframes enter {
@@ -52,6 +53,12 @@
   @keyframes pop {
     from {
       transform: scale(0);
+    }
+  }
+  /* Barre « Comparer » : monte depuis le bas de l'écran. */
+  @keyframes bar-in {
+    from {
+      transform: translateY(100%);
     }
   }
   @keyframes select {

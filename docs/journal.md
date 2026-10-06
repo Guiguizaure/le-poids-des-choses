@@ -1597,3 +1597,31 @@ style vert sapin de la fiche d'espèce ; un seul composant partagé pour tout le
 - Bout en bout : helper `expectDidYouKnow` (fond, couleur du texte, du titre et des liens) dans
   `e2e/facts.spec.ts` (duel, duel objet, jardin, en français et en anglais, avec axe),
   `e2e/accessibility.spec.ts` (jardin) et `e2e/especes.spec.ts` (fiche, FR et EN).
+
+### 2026-10-06 — Barre « Comparer » fixe (feat/barre-comparer)
+
+Demande de Guillaume : dans le choix de deux gestes (pas au duel objet), une barre fixe en bas
+de l'écran dès le second choix, qui rappelle les deux gestes et porte « Comparer ».
+
+- `CompareBar` (`src/components/compare`) : « Voiture thermique vs Vélo » et « Comparer »
+  (anglais : « Petrol or diesel car vs Bike », « Compare »), sous le nom de région « Ta
+  comparaison » / « Your comparison ». Elle part dès qu'un geste est retiré et se met à jour
+  si on change de choix.
+- Le bouton de la page reste en place et passe le premier au clavier : la barre est rendue
+  après `<main>`.
+- Lecteurs d'écran : la barre est dans une région `aria-live="polite"` toujours présente ;
+  elle annonce « Voiture thermique et Vélo choisis : tu peux comparer. » (la phrase
+  qu'annonçait déjà le choix des gestes, qui ne la répète plus) ; aucun focus pris.
+- Rien de masqué : tant qu'elle est affichée, sa hauteur mesurée (ResizeObserver) est
+  réservée en bas de `body` et en `scroll-padding-bottom` (le défilement au focus s'arrête
+  au-dessus d'elle) ; zone sûre d'iOS par `env(safe-area-inset-bottom)`. Le site n'a pas
+  `viewport-fit=cover` : Safari garde déjà la page hors de la zone de l'indicateur
+  d'accueil, et la barre suit sans changement si on l'active un jour.
+- Animation `animate-bar-in` (montée de 0,3 s), coupée en mouvement réduit.
+- Bout en bout : `e2e/barre-comparer.spec.ts` (apparition, région polite, focus jamais pris,
+  barre collée en bas, retrait et mise à jour, pied de page au-dessus de la barre, mouvement
+  réduit, pas de barre pour un objet, ordre du clavier, anglais, axe) ; les deux parcours qui
+  touchaient « Comparer » visent maintenant le bouton de la page.
+- Reste à voir : sur une page française ouverte par un navigateur en anglais, le bandeau de
+  langue (fixe en bas, au-dessus) recouvre la barre tant qu'il n'est pas fermé ; le bouton de
+  la page reste accessible.
