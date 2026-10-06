@@ -290,9 +290,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     Deux gestes choisis : barre fixe en bas (`CompareBar` : « Voiture thermique vs Vélo » et
     « Comparer », région `aria-live="polite"` toujours présente, jamais de focus pris), en
     plus du bouton de la page (qui reste le premier au clavier) ; elle part dès qu'un geste
-    est retiré ; tant qu'elle est là, `body` et `scroll-padding-bottom` gardent sa hauteur
+    est retiré ; tant qu'elle est là, la marge du bas de `body` et `scroll-padding-bottom` gardent sa hauteur
     (zone sûre iOS comprise, `env(safe-area-inset-bottom)`) ; `animate-bar-in`, coupée en
-    mouvement réduit. Pas de barre au duel objet (03b).
+    mouvement réduit. Pas de barre au duel objet (03b). Avec le bandeau de langue, la barre
+    s'empile juste au-dessus (`--language-banner-space`, publiée par `LanguageBanner`) et la
+    marge du bas couvre les deux (`--compare-bar-space` + `--language-banner-space`,
+    `globals.css`).
   - `?a=tgv` : premier geste choisi ; `?a=tgv&b=avion&q=50` : duel ;
     `?objet=jean&option=occasion&colis=1` : duel objet. URL invalide → premier choix avec
     `?lien=invalide`. Navigation par `history.pushState` / `replaceState` (Next les

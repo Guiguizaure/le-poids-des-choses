@@ -12,7 +12,9 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
  * (ordre du clavier inchangé : la barre vient après la page). Région `polite` toujours
  * présente : son contenu s'annonce sans prendre le focus. Tant qu'elle est là, le bas de la
  * page (pied de page compris) et le défilement au focus gardent sa hauteur de marge, zone
- * sûre d'iOS comprise.
+ * sûre d'iOS comprise. Avec le bandeau de langue (pages françaises, navigateur en anglais),
+ * la barre se pose juste au-dessus de lui (`--language-banner-space`) : le bandeau, déjà là,
+ * ne bouge pas, et la barre reprend le bas de l'écran quand il est fermé.
  */
 export function CompareBar({
   pair,
@@ -27,22 +29,23 @@ export function CompareBar({
   const barRef = useRef<HTMLElement>(null);
   const open = pair !== null;
 
+  // Hauteur de la barre (`--compare-bar-space`) : la marge du bas de page (globals.css)
+  // l'additionne à celle du bandeau de langue, posé dessous.
   useEffect(() => {
     const bar = barRef.current;
     if (!open || !bar) return;
     const root = document.documentElement;
-    const reserve = () => {
-      const height = `${Math.ceil(bar.getBoundingClientRect().height)}px`;
-      document.body.style.paddingBottom = height;
-      root.style.scrollPaddingBottom = height;
-    };
+    const reserve = () =>
+      root.style.setProperty(
+        "--compare-bar-space",
+        `${Math.ceil(bar.getBoundingClientRect().height)}px`,
+      );
     reserve();
     const observer = new ResizeObserver(reserve);
     observer.observe(bar);
     return () => {
       observer.disconnect();
-      document.body.style.paddingBottom = "";
-      root.style.scrollPaddingBottom = "";
+      root.style.removeProperty("--compare-bar-space");
     };
   }, [open]);
 
@@ -53,7 +56,7 @@ export function CompareBar({
           ref={barRef}
           aria-label={t.barLabel}
           data-compare-bar
-          className="bg-creme border-encre animate-bar-in fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[430px] items-center gap-3 rounded-t-[24px] border-x-2 border-t-2 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-6px_20px_rgba(31,26,23,0.12)] motion-reduce:animate-none"
+          className="bg-creme border-encre animate-bar-in fixed inset-x-0 bottom-[var(--language-banner-space,0px)] z-40 mx-auto flex w-full max-w-[430px] items-center gap-3 rounded-t-[24px] border-x-2 border-t-2 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-6px_20px_rgba(31,26,23,0.12)] transition-[bottom] duration-200 motion-reduce:animate-none motion-reduce:transition-none"
         >
           <p className="text-corps-m text-encre min-w-0 flex-1 leading-[1.25] font-semibold">
             {/* Lu : « TGV et Avion choisis : tu peux comparer. » ; vu : « TGV vs Avion ». */}

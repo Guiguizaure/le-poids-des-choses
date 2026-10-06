@@ -68,6 +68,19 @@
   }
 }
 
+/* Barre « Comparer » (CompareBar), et bandeau de langue dessous s'il est ouvert : leur hauteur
+   totale est réservée en bas de page et au défilement vers un élément qui prend le focus. */
+html:has([data-compare-bar]) {
+  scroll-padding-bottom: calc(
+    var(--compare-bar-space, 0px) + var(--language-banner-space, 0px)
+  );
+}
+body:has([data-compare-bar]) {
+  padding-bottom: calc(
+    var(--compare-bar-space, 0px) + var(--language-banner-space, 0px)
+  );
+}
+
 body {
   background: var(--color-creme);
   color: var(--color-encre);

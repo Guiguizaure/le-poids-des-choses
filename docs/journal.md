@@ -1622,6 +1622,29 @@ de l'écran dès le second choix, qui rappelle les deux gestes et porte « Compa
   barre collée en bas, retrait et mise à jour, pied de page au-dessus de la barre, mouvement
   réduit, pas de barre pour un objet, ordre du clavier, anglais, axe) ; les deux parcours qui
   touchaient « Comparer » visent maintenant le bouton de la page.
-- Reste à voir : sur une page française ouverte par un navigateur en anglais, le bandeau de
-  langue (fixe en bas, au-dessus) recouvre la barre tant qu'il n'est pas fermé ; le bouton de
-  la page reste accessible.
+- Test du compte instable en local, à surveiller s'il revient en CI : « retrouver son jardin
+  depuis l'accueil, sur un appareil vide » (`e2e/compte.spec.ts`) a échoué une fois en local
+  sur les deux navigateurs : après le clic sur le lien d'en-tête (l'adresse connectée), la
+  page restait sur l'accueil au lieu d'aller à `/jardin#compte`. Il est passé à la relance ;
+  un autre test du compte a alors échoué sur une coupure du `wrangler pages dev` local
+  (« Network connection lost »). La CI de la PR #29 est passée. Cause non cherchée.
+
+Relecture de la PR #29 : bandeau de langue et barre empilés au lieu d'être superposés.
+
+- Choix : la barre se pose juste au-dessus du bandeau. Le bandeau est déjà là quand on
+  choisit le second geste ; il ne bouge pas, et la barre monte dans la place libre au lieu de
+  pousser vers le haut un élément qu'on était en train de lire. Le bandeau reste où il est sur
+  toutes les autres pages. La barre et son « Comparer » restent à portée du pouce, juste
+  au-dessus. Bandeau fermé, la barre redescend tout en bas (transition de 0,2 s, aucune en
+  mouvement réduit).
+- Mécanique : le bandeau publie la place qu'il occupe (hauteur + décalage du bas, 1 rem sur
+  grand écran) dans `--language-banner-space`, la barre la sienne dans
+  `--compare-bar-space` (ResizeObserver tous les deux). La barre se place à
+  `bottom: var(--language-banner-space)`. La marge du bas de page et le
+  `scroll-padding-bottom` additionnent les deux tant que la barre est là (`globals.css`,
+  `:has([data-compare-bar])`).
+- Bout en bout : navigateur en anglais sur /comparer, bandeau visible, deux gestes : les deux
+  sont visibles, la barre finit au-dessus du bandeau (aucun chevauchement), la marge couvre
+  les deux, le pied de page reste au-dessus de la barre, axe. Bandeau fermé : la barre reprend
+  le bas de l'écran et la marge ne garde que sa hauteur. En anglais (par le lien du bandeau) :
+  pas de bandeau, barre en bas, axe. Chromium et WebKit.
