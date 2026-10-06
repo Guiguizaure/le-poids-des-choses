@@ -2,7 +2,9 @@
 // la main, comme ALTERNATIVES : chaque habitude est plus légère que l'option qu'on aurait prise
 // autrement (vérifié par un test, avec les données). Une habitude ne compte aucun kg : elle
 // arrose le jardin.
-import { getGesture } from "@/lib/data";
+import { gestureLabel, getGesture } from "@/lib/data";
+import type { Locale } from "@/lib/i18n/routes";
+import { HABIT_NAMES } from "@/lib/i18n/messages/garden";
 
 export type Habit = {
   /** Id du geste dans le catalogue. */
@@ -13,44 +15,31 @@ export type Habit = {
   declaration: string;
 };
 
-export const HABITS: readonly Habit[] = [
-  { gesture: "velo", label: "À vélo", declaration: "Je me déplace à vélo" },
-  { gesture: "marche", label: "À pied", declaration: "Je me déplace à pied" },
-  { gesture: "bus", label: "En bus", declaration: "Je prends le bus" },
-  { gesture: "metro", label: "En métro", declaration: "Je prends le métro" },
-  { gesture: "ter", label: "En TER", declaration: "Je prends le TER" },
-  { gesture: "tgv", label: "En TGV", declaration: "Je prends le TGV" },
-  {
-    gesture: "repas-vegetarien",
-    label: "Repas végétarien",
-    declaration: "Je mange végétarien",
-  },
-  {
-    gesture: "repas-vegetalien",
-    label: "Repas végétal",
-    declaration: "Je mange végétal",
-  },
-  {
-    gesture: "eau-robinet",
-    label: "Eau du robinet",
-    declaration: "Je bois l’eau du robinet",
-  },
-  {
-    gesture: "boisson-soja",
-    label: "Boisson au soja",
-    declaration: "Je bois des boissons au soja",
-  },
-  {
-    gesture: "magasin-pied",
-    label: "Courses à pied",
-    declaration: "Je fais mes courses à pied",
-  },
-  {
-    gesture: "point-relais-pied",
-    label: "Colis à pied",
-    declaration: "Je vais chercher mes colis à pied",
-  },
-];
+/** Gestes qu'on peut tenir comme habitude, dans l'ordre d'affichage. */
+const HABIT_GESTURES = [
+  "velo",
+  "marche",
+  "bus",
+  "metro",
+  "ter",
+  "tgv",
+  "repas-vegetarien",
+  "repas-vegetalien",
+  "eau-robinet",
+  "boisson-soja",
+  "magasin-pied",
+  "point-relais-pied",
+] as const;
+
+/** Habitudes avec leurs noms dans une langue (src/lib/i18n/messages/garden.ts). */
+export function habitsIn(locale: Locale): readonly Habit[] {
+  return HABIT_GESTURES.map((gesture) => ({
+    gesture,
+    ...HABIT_NAMES[locale][gesture],
+  }));
+}
+
+export const HABITS: readonly Habit[] = habitsIn("fr");
 
 export function getHabit(gestureId: string): Habit | undefined {
   return HABITS.find((habit) => habit.gesture === gestureId);
@@ -64,9 +53,14 @@ export function isHabitGesture(gestureId: string): boolean {
 }
 
 /** Habitudes proposées, celles que la personne a déclarées d'abord (ordre de la table). */
-export function orderedHabits(declared: readonly string[]): Habit[] {
+export function orderedHabits(
+  declared: readonly string[],
+  locale: Locale = "fr",
+): Habit[] {
   const mine = new Set(declared);
-  const available = HABITS.filter((habit) => getGesture(habit.gesture));
+  const available = habitsIn(locale).filter((habit) =>
+    getGesture(habit.gesture),
+  );
   return [
     ...available.filter((habit) => mine.has(habit.gesture)),
     ...available.filter((habit) => !mine.has(habit.gesture)),
@@ -74,8 +68,8 @@ export function orderedHabits(declared: readonly string[]): Habit[] {
 }
 
 /** Nom d'une habitude notée (repli sur le libellé du geste, puis sur l'id). */
-export function habitLabel(gestureId: string): string {
+export function habitLabel(gestureId: string, locale: Locale = "fr"): string {
   return (
-    getHabit(gestureId)?.label ?? getGesture(gestureId)?.label ?? gestureId
+    HABIT_NAMES[locale][gestureId]?.label ?? gestureLabel(gestureId, locale)
   );
 }

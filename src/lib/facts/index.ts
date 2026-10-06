@@ -1,9 +1,11 @@
 // « Le savais-tu ? » : faits calculés depuis nos données, choisis de façon déterministe.
 import { formatMass } from "@/lib/calc";
-import { getGesture } from "@/lib/data";
+import { gestureLabel, getGesture } from "@/lib/data";
+import { intlLocale, type Locale } from "@/lib/i18n";
+import { FACT_TEXTS } from "@/lib/i18n/messages/facts";
 import type { Gesture } from "@/lib/data/types";
 import { pickIndex } from "@/lib/garden/hash";
-import { getSeasonalProduct } from "@/lib/saison";
+import { getSeasonalProduct, productLabel } from "@/lib/saison";
 import {
   FACT_TEMPLATES,
   resolveProduct,
@@ -15,10 +17,14 @@ import type { SeasonalProduct } from "@/lib/data/types";
 
 export { FACT_TEMPLATES, type FactTemplate } from "./templates";
 
-const NUMBER = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+const NUMBERS: Record<Locale, Intl.NumberFormat> = {
+  fr: new Intl.NumberFormat(intlLocale("fr"), { maximumFractionDigits: 1 }),
+  en: new Intl.NumberFormat(intlLocale("en"), { maximumFractionDigits: 1 }),
+};
 
 /** Arrondi lisible : 2 chiffres significatifs au-delà de 100, entier dès 10, sinon un décimal. */
-export function readableNumber(value: number): string {
+export function readableNumber(value: number, locale: Locale = "fr"): string {
+  const NUMBER = NUMBERS[locale];
   if (!Number.isFinite(value) || value <= 0) return "0";
   if (value >= 100) {
     const magnitude = 10 ** (Math.floor(Math.log10(value)) - 1);
@@ -31,15 +37,15 @@ export function readableNumber(value: number): string {
 /** Espace insécable entre la valeur et son unité (« 27 000 km » ne se coupe pas). */
 const NBSP = "\u00a0";
 
-function formatValue(kind: FactKind, value: number): string {
+function formatValue(kind: FactKind, value: number, locale: Locale): string {
   switch (kind) {
     case "km":
-      return `${readableNumber(value)}${NBSP}km`;
+      return `${readableNumber(value, locale)}${NBSP}km`;
     case "mass":
-      return formatMass(value).replace(" ", NBSP);
+      return formatMass(value, locale).replace(" ", NBSP);
     case "count":
     case "ratio":
-      return readableNumber(value);
+      return readableNumber(value, locale);
   }
 }
 
@@ -87,10 +93,13 @@ export function buildFact(
   template: FactTemplate,
   lookup: Lookup = getGesture,
   productLookup: ProductLookup = getSeasonalProduct,
+  locale: Locale = "fr",
 ): Fact | null {
   const fact = (value: number, source: Fact["source"], ids: string[]) => ({
     id: template.id,
-    text: template.text(formatValue(template.kind, value)),
+    text: FACT_TEXTS[locale][template.id](
+      formatValue(template.kind, value, locale),
+    ),
     value,
     source,
     gestureIds: ids,
@@ -103,9 +112,13 @@ export function buildFact(
     if (products.some((product) => !product)) return null;
     const resolved = products as NonNullable<(typeof products)[number]>[];
     const [base] = resolved;
+    const slug = template.products[0];
     return fact(
       template.compute(resolved),
-      { label: base.label, url: base.sourceUrl },
+      {
+        label: productLabel({ slug, label: base.label }, locale),
+        url: base.sourceUrl,
+      },
       [],
     );
   }
@@ -114,7 +127,10 @@ export function buildFact(
   const base = lookup(template.gestures[0].id)!;
   return fact(
     template.compute(gestures as Gesture[]),
-    { label: base.label, url: base.sourceUrl },
+    {
+      label: locale === "fr" ? base.label : gestureLabel(base.id, locale),
+      url: base.sourceUrl,
+    },
     template.gestures.map((ref) => ref.id),
   );
 }
@@ -127,9 +143,10 @@ export function pickFact(
   seed: string,
   related: readonly string[] = [],
   lookup: Lookup = getGesture,
+  locale: Locale = "fr",
 ): Fact | null {
   const facts = FACT_TEMPLATES.map((template) =>
-    buildFact(template, lookup),
+    buildFact(template, lookup, getSeasonalProduct, locale),
   ).filter((fact): fact is Fact => fact !== null);
   const matching = facts.filter((fact) =>
     fact.gestureIds.some((id) => related.includes(id)),

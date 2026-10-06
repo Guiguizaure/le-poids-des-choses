@@ -1,9 +1,16 @@
 // Configuration du site : lancement, adresse, métadonnées de partage (fonctions pures).
 import type { Metadata, MetadataRoute } from "next";
+import {
+  localizedPath,
+  OG_LOCALE,
+  ROUTES,
+  type FrenchPath,
+  type Locale,
+} from "@/lib/i18n";
+import { SITE } from "@/lib/i18n/messages/common";
 
 export const SITE_NAME = "Le poids des choses";
-export const SITE_DESCRIPTION =
-  "Compare deux gestes du quotidien sur une balance et regarde ton jardin grandir à chaque choix plus léger.";
+export const SITE_DESCRIPTION = SITE.fr.description;
 
 /**
  * Adresse publique du site (images de partage, sitemap). À confirmer au lancement : par
@@ -57,53 +64,89 @@ export function robotsFile(
   };
 }
 
+/** Adresse absolue d'un chemin (« / » → l'adresse du site, sans barre finale). */
+function absolute(base: string, path: string): string {
+  return path === "/" ? base : `${base}${path}`;
+}
+
+/** Les deux langues d'une page (hreflang) : français, anglais, et le français par défaut. */
+export function languageAlternates(path: FrenchPath): Record<string, string> {
+  return { fr: path, en: ROUTES[path], "x-default": path };
+}
+
+/** Sitemap au lancement : chaque page dans les deux langues, avec ses hreflang. */
 export function sitemapEntries(
   launched: boolean,
   base: string,
 ): MetadataRoute.Sitemap {
   if (!launched) return [];
-  return PUBLIC_PATHS.map((path) => ({
-    url: `${base}${path === "/" ? "" : path}` || base,
-  }));
+  return PUBLIC_PATHS.flatMap((path) => {
+    const languages = {
+      fr: absolute(base, path),
+      en: absolute(base, ROUTES[path]),
+    };
+    return [
+      { url: languages.fr, alternates: { languages } },
+      { url: languages.en, alternates: { languages } },
+    ];
+  });
 }
 
-export const OG_IMAGE = {
-  url: "/og.png",
-  width: 1200,
-  height: 630,
-  alt: `${SITE_NAME} : une balance et un jardin`,
+/** Image de partage de chaque langue (pnpm images : public/og.png et public/og-en.png). */
+export const OG_IMAGES: Record<
+  Locale,
+  { url: string; width: number; height: number; alt: string }
+> = {
+  fr: { url: "/og.png", width: 1200, height: 630, alt: SITE.fr.ogAlt },
+  en: { url: "/og-en.png", width: 1200, height: 630, alt: SITE.en.ogAlt },
 };
 
-/** Métadonnées d'une page : titre, description, partage (Open Graph, carte Twitter). */
+export const OG_IMAGE = OG_IMAGES.fr;
+
+/**
+ * Métadonnées d'une page : titre, description, adresse canonique et hreflang, partage (Open
+ * Graph, carte Twitter) dans la langue de la page. `path` est l'adresse française de la page
+ * (celle de la table des adresses) ; une page hors de la table n'a pas de version anglaise.
+ */
 export function pageMetadata({
   title,
-  description = SITE_DESCRIPTION,
+  description,
   path,
+  locale = "fr",
 }: {
   /** Titre de la page (sans le nom du site) ; absent pour l'accueil. */
   title?: string;
   description?: string;
   path: string;
+  locale?: Locale;
 }): Metadata {
   const fullTitle = title ? `${title} · ${SITE_NAME}` : SITE_NAME;
+  const text = description ?? SITE[locale].description;
+  const inTable = path in ROUTES;
+  const url = inTable ? localizedPath(path as FrenchPath, locale) : path;
+  const image = OG_IMAGES[locale];
   return {
     title: fullTitle,
-    description,
-    alternates: { canonical: path },
+    description: text,
+    alternates: {
+      canonical: url,
+      ...(inTable ? { languages: languageAlternates(path as FrenchPath) } : {}),
+    },
     openGraph: {
       type: "website",
-      locale: "fr_FR",
+      locale: OG_LOCALE[locale],
+      alternateLocale: OG_LOCALE[locale === "fr" ? "en" : "fr"],
       siteName: SITE_NAME,
       title: fullTitle,
-      description,
-      url: path,
-      images: [OG_IMAGE],
+      description: text,
+      url,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
-      images: [OG_IMAGE.url],
+      description: text,
+      images: [image.url],
     },
   };
 }

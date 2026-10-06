@@ -5,6 +5,8 @@
 // Rendu par resvg (déterministe), avec les polices d'assets/fonts pour le texte.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { Resvg } from "@resvg/resvg-js";
+import type { Locale } from "../src/lib/i18n/routes";
+import { OG_IMAGE_TEXT } from "../src/lib/i18n/messages/common";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -64,7 +66,13 @@ function nested(name: string, x: number, y: number, width: number): string {
 }
 
 /** Image de partage : texte à gauche, paysage avec balance et plantes à droite. */
-export function ogSvg(): string {
+export function ogSvg(locale: Locale = "fr"): string {
+  const t = OG_IMAGE_TEXT[locale];
+  // Anglais : sous-titre discret « The weight of things » sous le nom, le reste descend.
+  const shift = t.subtitle ? 30 : 0;
+  const subtitle = t.subtitle
+    ? `<text x="80" y="400" font-family="DM Sans" font-weight="400" font-size="28" fill="#6B625A">${t.subtitle}</text>`
+    : "";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#FFF3DC"/>
   ${nested("scene-paysage", 600, 120, 560)}
@@ -74,14 +82,15 @@ export function ogSvg(): string {
   ${nested("picto-velo", 742, 318, 38)}
   ${nested("picto-voiture", 978, 318, 38)}
   ${nested("papillon", 900, 175, 54)}
-  <text x="80" y="150" font-family="DM Sans" font-weight="600" font-size="22" fill="#6B625A" letter-spacing="1">COMPARATEUR CARBONE ILLUSTRÉ</text>
+  <text x="80" y="150" font-family="DM Sans" font-weight="600" font-size="22" fill="#6B625A" letter-spacing="1">${t.eyebrow}</text>
   <text font-family="Bricolage Grotesque" font-weight="800" font-size="92" fill="#1F1A17">
     <tspan x="76" y="260">Le poids</tspan><tspan x="76" y="350">des choses</tspan>
   </text>
+  ${subtitle}
   <text font-family="DM Sans" font-weight="400" font-size="30" fill="#1F1A17">
-    <tspan x="80" y="430">Compare deux gestes du quotidien</tspan><tspan x="80" y="472">et regarde ton jardin grandir.</tspan>
+    <tspan x="80" y="${430 + shift}">${t.line1}</tspan><tspan x="80" y="${472 + shift}">${t.line2}</tspan>
   </text>
-  <text x="80" y="560" font-family="DM Sans" font-weight="400" font-size="20" fill="#6B625A">Données publiques de l’ADEME · Projet indépendant</text>
+  <text x="80" y="560" font-family="DM Sans" font-weight="400" font-size="20" fill="#6B625A">${t.footer}</text>
 </svg>`;
 }
 
@@ -99,9 +108,10 @@ function main() {
   );
   write("public/icons/apple-touch-icon.png", renderPng(icon, 180));
   write("src/app/favicon.ico", icoFromPng(renderPng(icon, 48), 48));
-  write("public/og.png", renderPng(ogSvg(), 1200));
+  write("public/og.png", renderPng(ogSvg("fr"), 1200));
+  write("public/og-en.png", renderPng(ogSvg("en"), 1200));
   console.log(
-    "Icônes et image de partage générées (public/icons, public/og.png, favicon).",
+    "Icônes et images de partage générées (public/icons, public/og.png, public/og-en.png, favicon).",
   );
 }
 

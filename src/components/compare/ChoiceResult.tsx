@@ -34,6 +34,9 @@ import { entryTitle } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { useFocusTitle } from "./useFocusTitle";
 import { DataCredit } from "@/components/ui/DataCredit";
+import { format } from "@/lib/i18n";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const FLYERS: readonly AnimalKind[] = ["butterfly", "bee"];
 
@@ -180,6 +183,8 @@ export function ChoiceResult({
   onCompareAgain: () => void;
 }) {
   const journal = useJournal();
+  const locale = useLocale();
+  const t = COMPARE[locale].result;
   const cardRef = useRef<HTMLElement>(null);
   const titleRef = useFocusTitle<HTMLHeadingElement>(true);
   const [landed, setLanded] = useState(false);
@@ -221,22 +226,18 @@ export function ChoiceResult({
     { scope: cardRef },
   );
 
-  const title = entryTitle(entry);
+  const title = entryTitle(entry, locale);
   const heading = light
     ? reveal
-      ? revealTitle(reveal)
-      : "Ton jardin est au complet"
-    : "C’est noté";
+      ? revealTitle(reveal, locale)
+      : t.full
+    : t.noted;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col px-5 pt-[22px] pb-10">
       <div className="flex items-center justify-between pb-2">
         <Logo />
-        <IconLink
-          href="/"
-          label="Fermer et revenir à l’accueil"
-          icon="fermer"
-        />
+        <IconLink href="/" label={COMPARE[locale].close} icon="fermer" />
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center py-6">
@@ -250,7 +251,11 @@ export function ChoiceResult({
               light ? "bg-pomme-douce" : "bg-creme"
             }`}
           >
-            {light ? `${formatMass(entry.avoidedKg)} d’écart` : "Noté"}
+            {light
+              ? format(t.difference, {
+                  mass: formatMass(entry.avoidedKg, locale),
+                })
+              : t.notedPill}
           </p>
 
           {reveal ? (
@@ -272,7 +277,7 @@ export function ChoiceResult({
             aria-live="polite"
             className="text-corps-s text-encre min-h-[1.3em] leading-[1.3] font-semibold"
           >
-            {arriving && animalIn ? arrivalExclamation(arriving) : ""}
+            {arriving && animalIn ? arrivalExclamation(arriving, locale) : ""}
           </p>
           <h1
             id="resultat-titre"
@@ -283,20 +288,18 @@ export function ChoiceResult({
             {heading}
           </h1>
           <p className="text-corps-m text-encre leading-[1.4]">
-            {light
-              ? `${title} : c’est noté dans ton carnet.`
-              : `${title} : rien n’est retiré à ton jardin. On n’a pas toujours le choix.`}
+            {format(light ? t.lightText : t.heavyText, { title })}
           </p>
           {light ? (
             <PrimaryLink
               href={`/jardin?nouveau=${encodeURIComponent(entry.id)}`}
             >
-              Aller la planter
+              {t.plant}
             </PrimaryLink>
           ) : (
-            <PrimaryLink href="/jardin">Voir mon jardin</PrimaryLink>
+            <PrimaryLink href="/jardin">{t.seeGarden}</PrimaryLink>
           )}
-          <TextButton onClick={onCompareAgain}>Comparer autre chose</TextButton>
+          <TextButton onClick={onCompareAgain}>{t.again}</TextButton>
         </section>
         <DataCredit independent className="mt-4 text-center" />
       </div>

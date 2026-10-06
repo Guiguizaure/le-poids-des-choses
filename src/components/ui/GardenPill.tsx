@@ -1,17 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { formatMass } from "@/lib/calc";
+import { format } from "@/lib/i18n";
+import { GARDEN_PILL } from "@/lib/i18n/messages/garden";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import { useJournal } from "@/lib/journal/useJournal";
 
 /** Pastille « Mon jardin · X kg d’écart » de la barre du haut (maquette 03, formulation honnête). */
 export function GardenPill() {
   const { totals, ready } = useJournal();
+  const locale = useLocale();
+  const t = GARDEN_PILL[locale];
   // Aucun écart pour l'instant : pas de « 0 g d’écart ».
   const label =
     ready && totals.totalAvoidedKg > 0
-      ? `Mon jardin · ${formatMass(totals.totalAvoidedKg)} d’écart`
-      : "Mon jardin";
+      ? format(t.withDifference, {
+          mass: formatMass(totals.totalAvoidedKg, locale),
+        })
+      : t.garden;
   return (
     <Link
       href="/jardin"

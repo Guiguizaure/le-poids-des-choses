@@ -1,30 +1,34 @@
-// Phrase de résultat du duel et équivalence parlante (fonctions pures).
+// Phrase de résultat du duel et équivalence parlante (fonctions pures). Textes dans
+// src/lib/i18n/messages/compare.ts (SENTENCES).
 import { formatMass, type Comparison } from "@/lib/calc";
 import type { Unit } from "@/lib/data/types";
+import { intlLocale, type Locale } from "@/lib/i18n";
+import { SENTENCES } from "@/lib/i18n/messages/compare";
 import { capitalize, type Noun, thanNoun } from "./nouns";
 
 /** Au-delà, on écrit « plus de 100 fois ». */
 export const RATIO_CAP = 100;
 
-/** « 1,8 », « 12 » : une décimale sous 10, sinon un entier. */
-export function formatRatio(ratio: number): string {
+/** « 1,8 », « 12 » : une décimale sous 10, sinon un entier (« 1.8 » en anglais). */
+export function formatRatio(ratio: number, locale: Locale = "fr"): string {
   const rounded = ratio < 10 ? Math.round(ratio * 10) / 10 : Math.round(ratio);
-  return String(rounded).replace(".", ",");
+  return String(rounded).replace(".", SENTENCES[locale].decimal);
 }
 
-const CONTEXT: Record<Unit, string> = {
-  km: "Sur ce trajet, ",
-  repas: "",
-  litre: "Pour un litre, ",
-  achat: "Pour un même achat, ",
-  objet: "",
-};
+function times(ratio: number, locale: Locale): string {
+  const t = SENTENCES[locale];
+  return ratio > RATIO_CAP
+    ? t.moreThanTimes(RATIO_CAP)
+    : t.times(formatRatio(ratio, locale));
+}
 
-/** « 76 fois plus léger », « plus de 100 fois plus légère ». */
-export function lighterBy(ratio: number, feminine: boolean): string {
-  const light = feminine ? "légère" : "léger";
-  if (ratio > RATIO_CAP) return `plus de ${RATIO_CAP} fois plus ${light}`;
-  return `${formatRatio(ratio)} fois plus ${light}`;
+/** « 76 fois plus léger », « plus de 100 fois plus légère », « 76 times lighter ». */
+export function lighterBy(
+  ratio: number,
+  feminine: boolean,
+  locale: Locale = "fr",
+): string {
+  return SENTENCES[locale].lighterBy(times(ratio, locale), feminine);
 }
 
 /**
@@ -36,23 +40,28 @@ export function resultSentence(
   comparison: Comparison,
   nouns: { a: Noun; b: Noun },
   unit: Unit,
+  locale: Locale = "fr",
 ): string {
+  const t = SENTENCES[locale];
   const lighter = comparison.lighter === "a" ? nouns.a : nouns.b;
   const heavier = comparison.lighter === "a" ? nouns.b : nouns.a;
-  const context = CONTEXT[unit];
+  const context = t.context[unit];
   const start = (text: string) =>
     context ? `${context}${text}` : capitalize(text);
-  const gap = `soit ${formatMass(comparison.differenceKg)} de CO2e en moins`;
+  const mass = formatMass(comparison.differenceKg, locale);
 
   if (comparison.almostEqual) {
-    return `${start(`${nouns.a.text} et ${nouns.b.text}`)} pèsent presque autant.`;
+    return t.almostEqual(start(t.and(nouns.a.text, nouns.b.text)));
   }
   if (comparison.ratio === null) {
-    return `${start(lighter.text)}, c’est zéro émission, contre ${formatMass(
-      comparison.differenceKg,
-    )} de CO2e pour ${heavier.text}.`;
+    return t.zero(start(lighter.text), mass, heavier.text);
   }
-  return `${start(lighter.text)} est ${lighterBy(comparison.ratio, lighter.feminine)} ${thanNoun(heavier)}, ${gap}.`;
+  return t.lighterThan(
+    start(lighter.text),
+    lighterBy(comparison.ratio, lighter.feminine, locale),
+    thanNoun(heavier, locale),
+    t.less(mass),
+  );
 }
 
 /**
@@ -64,27 +73,28 @@ export function objectSentence(
   otherLabel: string,
   chosenKg: number,
   otherKg: number,
+  locale: Locale = "fr",
 ): string {
-  const head = `${chosenLabel} plutôt que ${otherLabel}`;
+  const t = SENTENCES[locale];
+  const head = t.rather(chosenLabel, otherLabel);
   const diff = Math.abs(otherKg - chosenKg);
+  const mass = formatMass(diff, locale);
   const almostEqual =
     Math.max(chosenKg, otherKg) === 0 ||
     diff / Math.max(chosenKg, otherKg) < 0.1;
-  if (almostEqual) return `${head} : presque autant.`;
+  if (almostEqual) return t.objectAlmost(head);
   if (chosenKg > otherKg) {
-    if (otherKg === 0) return `${head} : ${formatMass(diff)} de CO2e de plus.`;
-    const ratio = chosenKg / otherKg;
-    const times =
-      ratio > RATIO_CAP
-        ? `plus de ${RATIO_CAP} fois`
-        : `${formatRatio(ratio)} fois`;
-    return `${head} : ${times} plus lourd, soit ${formatMass(diff)} de CO2e de plus.`;
+    if (otherKg === 0) return t.objectMore(head, mass);
+    return t.objectHeavier(head, times(chosenKg / otherKg, locale), mass);
   }
   // Objets : 0 kg veut dire « aucune nouvelle fabrication » (hypothèse de méthode : entretien et
   // fin de vie non comptés), pas « zéro émission », réservé à la marche.
-  if (chosenKg === 0)
-    return `${head} : aucune nouvelle fabrication, soit ${formatMass(diff)} de CO2e en moins.`;
-  return `${head} : ${lighterBy(otherKg / chosenKg, false)}, soit ${formatMass(diff)} de CO2e en moins.`;
+  if (chosenKg === 0) return t.objectNothingNew(head, mass);
+  return t.objectLighter(
+    head,
+    lighterBy(otherKg / chosenKg, false, locale),
+    mass,
+  );
 }
 
 /** kg CO2e d'un km en voiture thermique (facteur Impact CO2 « voiturethermique »). */
@@ -94,9 +104,9 @@ export function carKmFor(kg: number, carKgPerKm: number): number {
 }
 
 /** Arrondi lisible : 2 chiffres significatifs (« 77 km », « 1 300 km »). */
-function niceKm(km: number): string {
+function niceKm(km: number, locale: Locale): string {
   const rounded = Number(km.toPrecision(2));
-  return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 })
+  return new Intl.NumberFormat(intlLocale(locale), { maximumFractionDigits: 1 })
     .format(rounded)
     .replace(/ | /g, " ");
 }
@@ -105,9 +115,11 @@ function niceKm(km: number): string {
 export function equivalenceSentence(
   differenceKg: number,
   carKgPerKm: number,
+  locale: Locale = "fr",
 ): string {
+  const t = SENTENCES[locale];
   const km = carKmFor(differenceKg, carKgPerKm);
   if (km === 0) return "";
-  if (km < 1) return "L’écart équivaut à moins d’1 km en voiture thermique.";
-  return `L’écart équivaut à ${niceKm(km)} km en voiture thermique.`;
+  if (km < 1) return t.equivalenceUnderOne;
+  return t.equivalence(niceKm(km, locale));
 }

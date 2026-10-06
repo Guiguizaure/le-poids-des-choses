@@ -17,6 +17,9 @@ import { getGesture } from "@/lib/data";
 import type { Choice, JournalEntry } from "@/lib/data/types";
 import { HabitChooser } from "@/components/habits/HabitChooser";
 import { useJournal } from "@/lib/journal/useJournal";
+import { localizeHref } from "@/lib/i18n";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { useLocale, useMessages } from "@/lib/i18n/LocaleProvider";
 import { Duel } from "./Duel";
 import { GestureChooser } from "./GestureChooser";
 import { ObjectDuel } from "./ObjectDuel";
@@ -46,6 +49,8 @@ const HabitResult = dynamic(
 export function CompareFlow() {
   const params = useSearchParams();
   const journal = useJournal();
+  const locale = useLocale();
+  const t = useMessages(COMPARE);
   const { state, invalid } = useMemo(() => parseComparison(params), [params]);
   const query = comparisonQuery(state);
   const [result, setResult] = useState<{
@@ -58,18 +63,36 @@ export function CompareFlow() {
   // History API native : Next.js la synchronise avec useSearchParams, sans recharger la page.
   useEffect(() => {
     if (invalid)
-      window.history.replaceState(null, "", `${COMPARE_PATH}?lien=invalide`);
-  }, [invalid]);
+      window.history.replaceState(
+        null,
+        "",
+        localizeHref(`${COMPARE_PATH}?lien=invalide`, locale),
+      );
+  }, [invalid, locale]);
 
-  const go = useCallback((next: ComparisonState) => {
-    setNavigated(true);
-    setResult(null);
-    window.history.pushState(null, "", comparisonHref(next));
-    window.scrollTo({ top: 0 });
-  }, []);
-  const replace = useCallback((next: ComparisonState) => {
-    window.history.replaceState(null, "", comparisonHref(next));
-  }, []);
+  const go = useCallback(
+    (next: ComparisonState) => {
+      setNavigated(true);
+      setResult(null);
+      window.history.pushState(
+        null,
+        "",
+        localizeHref(comparisonHref(next), locale),
+      );
+      window.scrollTo({ top: 0 });
+    },
+    [locale],
+  );
+  const replace = useCallback(
+    (next: ComparisonState) => {
+      window.history.replaceState(
+        null,
+        "",
+        localizeHref(comparisonHref(next), locale),
+      );
+    },
+    [locale],
+  );
 
   // Le résultat n'appartient qu'à la comparaison qui l'a produit (retour arrière = duel).
   if (result && result.query === query) {
@@ -111,8 +134,7 @@ export function CompareFlow() {
               role="status"
               className="bg-tomate-douce text-corps-s text-encre mx-auto mt-4 w-[calc(100%-40px)] max-w-[390px] rounded-2xl p-3"
             >
-              Ce lien de comparaison n’est pas valable : choisis tes deux
-              gestes.
+              {t.invalidLink}
             </p>
           ) : null}
           <GestureChooser

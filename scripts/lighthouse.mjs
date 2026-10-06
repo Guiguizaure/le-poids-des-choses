@@ -2,7 +2,7 @@
 // exécuter dans la page) : scores Lighthouse (profil mobile) des pages principales, sur l'export
 // statique servi en local (`pnpm build` puis `pnpm serve:out`, ou BASE_URL=…).
 // Construire avec SITE_LAUNCHED=1 pour mesurer le SEO tel qu'il sera au lancement ; sans elle,
-// le SEO est mesuré avec le noindex.
+// le SEO est mesuré avec le noindex. LH_LANG=fr ou LH_LANG=en : une seule langue.
 import * as chromeLauncher from "chrome-launcher";
 import lighthouse from "lighthouse";
 
@@ -10,7 +10,7 @@ const BASE = (process.env.BASE_URL ?? "http://localhost:4322").replace(
   /\/$/,
   "",
 );
-const PAGES = [
+const ALL_PAGES = [
   ["Accueil", "/"],
   ["Comparer (choix des gestes)", "/comparer"],
   ["Duel (TGV, avion)", "/comparer?a=tgv&b=avion&q=300"],
@@ -18,7 +18,22 @@ const PAGES = [
   ["Carnet", "/jardin/carnet"],
   ["De saison", "/saison"],
   ["Méthode", "/methode"],
+  ["Home (en)", "/en"],
+  ["Compare (en)", "/en/compare"],
+  ["Duel (en)", "/en/compare?a=tgv&b=avion&q=300"],
+  ["My garden (en)", "/en/garden"],
+  ["Journal (en)", "/en/garden/journal"],
+  ["In season (en)", "/en/in-season"],
+  ["Method (en)", "/en/method"],
 ];
+const LANG = process.env.LH_LANG;
+const PAGES = ALL_PAGES.filter(([, path]) =>
+  LANG === "en"
+    ? path.startsWith("/en")
+    : LANG === "fr"
+      ? !path.startsWith("/en")
+      : true,
+);
 const CATEGORIES = ["performance", "accessibility", "best-practices", "seo"];
 
 async function main() {

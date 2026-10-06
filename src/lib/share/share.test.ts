@@ -288,7 +288,14 @@ describe("carte de partage : jour, nuit et visiteurs", () => {
     const names = gardenIllustrations(garden, "automne", { ...moment, sky });
     return {
       names,
-      svg: composeGardenSvg(garden, sky, sourcesFor(names), SCENE, "automne", moment),
+      svg: composeGardenSvg(
+        garden,
+        sky,
+        sourcesFor(names),
+        SCENE,
+        "automne",
+        moment,
+      ),
     };
   };
   it("la nuit : Nuit encre, cratères visibles, étoiles discrètes, hibou et renard éveillés", () => {

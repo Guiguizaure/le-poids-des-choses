@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useId, useState } from "react";
-import { HABITS, orderedHabits } from "@/lib/habits";
+import { habitsIn, orderedHabits } from "@/lib/habits";
+import { HABITS_UI } from "@/lib/i18n/messages/garden";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 
 const CHIP =
@@ -15,9 +16,11 @@ const CHIP =
  */
 export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
   const [declared, setDeclared] = useDeclaredHabits();
+  const locale = useLocale();
+  const t = HABITS_UI[locale];
   const [editing, setEditing] = useState(false);
   const panelId = useId();
-  const mine = orderedHabits(declared).filter((habit) =>
+  const mine = orderedHabits(declared, locale).filter((habit) =>
     declared.includes(habit.gesture),
   );
   const open = editing || mine.length === 0;
@@ -32,24 +35,20 @@ export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
         id="habitudes-titre"
         className="font-titre text-titre-m text-encre leading-[1.1]"
       >
-        Mes habitudes
+        {t.mine}
       </h2>
       <p className="text-corps-s text-texte-attenue leading-[1.4]">
-        Une habitude tenue ne se compare à rien et ne compte aucun kg : elle
-        arrose ton jardin, et tes plantes avancent vers la floraison.{" "}
+        {t.mineText}{" "}
         <Link
           href="/methode#habitudes"
           className="text-encre focus-visible:outline-outremer font-semibold underline focus-visible:outline-2"
         >
-          Comment ?
+          {t.how}
         </Link>
       </p>
 
       {mine.length > 0 ? (
-        <ul
-          className="flex flex-wrap gap-2"
-          aria-label="Noter une habitude d’un toucher"
-        >
+        <ul className="flex flex-wrap gap-2" aria-label={t.oneTap}>
           {mine.map((habit) => (
             <li key={habit.gesture}>
               <button
@@ -57,8 +56,7 @@ export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
                 className={CHIP}
                 onClick={() => onWater(habit.gesture)}
               >
-                J’ai tenu :{" "}
-                {habit.label.charAt(0).toLowerCase() + habit.label.slice(1)}
+                {t.done(habit.label)}
               </button>
             </li>
           ))}
@@ -68,7 +66,7 @@ export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
         href="/comparer?habitude="
         className="text-corps-s text-encre focus-visible:outline-outremer self-start leading-[1.3] font-semibold underline focus-visible:outline-2"
       >
-        Noter une autre habitude
+        {t.another}
       </Link>
 
       {mine.length > 0 ? (
@@ -79,21 +77,19 @@ export function MyHabits({ onWater }: { onWater: (gesture: string) => void }) {
           onClick={() => setEditing((value) => !value)}
           className="text-corps-s text-encre focus-visible:outline-outremer self-start leading-[1.3] font-semibold underline focus-visible:outline-2"
         >
-          Modifier mes habitudes
+          {t.edit}
         </button>
       ) : null}
 
       {open ? (
         <fieldset id={panelId} className="flex flex-col gap-2 pt-1">
           <legend className="text-corps-s text-encre mb-2 leading-[1.4] font-semibold">
-            Ce que tu fais déjà
+            {t.already}
           </legend>
           <p className="text-legende text-texte-attenue mb-1 leading-[1.4]">
-            Ces gestes te seront proposés en habitude, sans comparaison. Rien
-            n’est noté tant que tu ne le dis pas. Gardé sur cet appareil
-            seulement.
+            {t.alreadyHelp}
           </p>
-          {HABITS.map((habit) => {
+          {habitsIn(locale).map((habit) => {
             const checked = declared.includes(habit.gesture);
             return (
               <label

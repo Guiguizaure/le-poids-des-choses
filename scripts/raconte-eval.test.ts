@@ -6,13 +6,13 @@ import { parseCases, parseExpectedItem, score } from "./raconte-eval-lib";
 describe("jeu de phrases de « Raconte ta journée »", () => {
   const cases = parseCases(readFileSync("docs/raconte-phrases.md", "utf8"));
 
-  it("23 phrases numérotées, dont 3 en anglais et un texte vide", () => {
+  it("27 phrases numérotées, dont 7 en anglais et un texte vide", () => {
     expect(cases.map((item) => item.id)).toEqual(
-      Array.from({ length: 23 }, (_, i) => i + 1),
+      Array.from({ length: 27 }, (_, i) => i + 1),
     );
     expect(
       cases.filter((item) => item.trap.startsWith("anglais")),
-    ).toHaveLength(3);
+    ).toHaveLength(7);
     expect(cases.some((item) => item.text === "")).toBe(true);
   });
 

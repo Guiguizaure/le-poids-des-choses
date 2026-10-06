@@ -1,8 +1,9 @@
 // Carte de partage 1080×1350 (maquette Figma 41:310, variantes Éveillé 41:60 et Endormi
 // 41:183) : description de dessin pure, testée sans navigateur. Le jardin y est une image
 // (composeGardenSvg) ; aucun kg de CO2e, aucun choix lourd.
-import { plural } from "@/lib/garden/text";
 import { PALETTE } from "@/lib/garden/skies";
+import type { Locale } from "@/lib/i18n/routes";
+import { SHARE } from "@/lib/i18n/messages/garden";
 
 export const CARD = {
   width: 1080,
@@ -29,6 +30,8 @@ export type ShareCardInput = {
   asleep: boolean;
   /** Domaine du site (dérivé de SITE_URL), sans protocole. */
   siteHost: string;
+  /** Langue de la page d'où l'image est créée (français par défaut). */
+  locale?: Locale;
 };
 
 export type ShareCardTexts = {
@@ -42,16 +45,17 @@ export type ShareCardTexts = {
 };
 
 export function shareCardTexts(input: ShareCardInput): ShareCardTexts {
+  const t = SHARE[input.locale ?? "fr"].card;
   return {
-    kicker: "LE POIDS DES CHOSES",
-    title: input.asleep ? "Mon jardin se repose" : "Mon jardin",
-    wake: input.asleep ? "Il se réveille au prochain choix léger." : null,
+    kicker: t.kicker,
+    title: input.asleep ? t.titleAsleep : t.title,
+    wake: input.asleep ? t.wake : null,
     pills: [
-      plural(input.lightChoiceCount, "choix léger", "choix légers"),
-      plural(input.animalCount, "animal", "animaux"),
+      t.lightChoices(input.lightChoiceCount),
+      t.animals(input.animalCount),
     ],
     domain: input.siteHost,
-    tagline: "Chaque choix léger fait pousser quelque chose.",
+    tagline: t.tagline,
   };
 }
 

@@ -27,7 +27,7 @@ describe("langue d'un chemin", () => {
   it("/en et ses sous-pages sont en anglais, le reste en français", () => {
     expect(localeOfPath("/en")).toBe("en");
     expect(localeOfPath("/en/")).toBe("en");
-    expect(localeOfPath("/en/garden/notebook")).toBe("en");
+    expect(localeOfPath("/en/garden/journal")).toBe("en");
     expect(localeOfPath("/")).toBe("fr");
     expect(localeOfPath("/jardin")).toBe("fr");
     expect(localeOfPath("/entree")).toBe("fr");

@@ -2,7 +2,10 @@
 // Comme « Le savais-tu ? » : aucune valeur écrite à la main, l'équivalence est calculée avec
 // nos données et src/lib/calc ; seule l'unité de comparaison est rédigée.
 import { emissions } from "@/lib/calc";
-import { getGesture } from "@/lib/data";
+import { gestureLabel, getGesture } from "@/lib/data";
+import type { Locale } from "@/lib/i18n/routes";
+import { FACT_CARD } from "@/lib/i18n/messages/garden";
+import { MILESTONE_UNITS } from "@/lib/i18n/messages/facts";
 import type { Gesture, JournalEntry } from "@/lib/data/types";
 import { readableNumber } from "@/lib/facts";
 import { entryKg, isLightChoice } from "@/lib/journal/kind";
@@ -14,27 +17,20 @@ export type Milestone = (typeof MILESTONES_KG)[number];
 export type Equivalence = {
   /** Geste de comparaison (avec son mode pour un objet). */
   gesture: GestureRef;
-  /** Unité rédigée, accordée : « km en voiture thermique », « repas au bœuf »… */
-  unit: (count: number) => string;
 };
 
-const objects = (singular: string, plural: string) => (count: number) =>
-  count >= 2 ? plural : singular;
-
-/** Une équivalence par palier : l'écart du palier, rapporté à une unité du geste. */
+/**
+ * Une équivalence par palier : l'écart du palier, rapporté à une unité du geste. L'unité
+ * rédigée et accordée (« km en voiture thermique », « repas au bœuf »…) est dans
+ * MILESTONE_UNITS (src/lib/i18n/messages/facts.ts).
+ */
 export const MILESTONE_EQUIVALENCES: Record<Milestone, Equivalence> = {
-  10: { gesture: { id: "voiture" }, unit: () => "km en voiture thermique" },
-  50: { gesture: { id: "repas-boeuf" }, unit: () => "repas au bœuf" },
-  100: {
-    gesture: { id: "tshirt", mode: "neuf" },
-    unit: objects("T-shirt en coton neuf", "T-shirts en coton neufs"),
-  },
-  250: {
-    gesture: { id: "jean", mode: "neuf" },
-    unit: objects("jean neuf", "jeans neufs"),
-  },
-  500: { gesture: { id: "avion" }, unit: () => "km en avion (trajet court)" },
-  1000: { gesture: { id: "voiture" }, unit: () => "km en voiture thermique" },
+  10: { gesture: { id: "voiture" } },
+  50: { gesture: { id: "repas-boeuf" } },
+  100: { gesture: { id: "tshirt", mode: "neuf" } },
+  250: { gesture: { id: "jean", mode: "neuf" } },
+  500: { gesture: { id: "avion" } },
+  1000: { gesture: { id: "voiture" } },
 };
 
 /** Paliers atteints par un écart cumulé. */
@@ -86,20 +82,29 @@ type Lookup = (id: string) => Gesture | undefined;
 export function milestoneCard(
   milestone: Milestone,
   lookup: Lookup = getGesture,
+  locale: Locale = "fr",
 ): MilestoneCard | null {
+  const t = FACT_CARD[locale];
   const equivalence = MILESTONE_EQUIVALENCES[milestone];
   const gesture = resolveRef(equivalence.gesture, lookup);
   const base = lookup(equivalence.gesture.id);
   if (!gesture || !base) return null;
   const value = milestone / emissions(gesture, 1);
-  const shown = readableNumber(value);
-  const count = Number(shown.replace(/\s/g, "").replace(",", "."));
+  const shown = readableNumber(value, locale);
+  const count = Number(
+    locale === "en"
+      ? shown.replace(/,/g, "")
+      : shown.replace(/\s/g, "").replace(",", "."),
+  );
   return {
     milestone,
-    title: `${readableNumber(milestone)} kg de CO2e d’écart avec les autres options`,
-    text: `C’est autant que ${shown} ${equivalence.unit(count)}.`,
+    title: t.milestoneTitle(readableNumber(milestone, locale)),
+    text: t.milestoneText(shown, MILESTONE_UNITS[locale][milestone](count)),
     value,
-    source: { label: base.label, url: base.sourceUrl },
+    source: {
+      label: locale === "fr" ? base.label : gestureLabel(base.id, locale),
+      url: base.sourceUrl,
+    },
     methodHref: "/methode#ecart",
   };
 }

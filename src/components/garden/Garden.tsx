@@ -50,6 +50,7 @@ import {
   gardenDescription,
   wateringMessage,
 } from "@/lib/garden/text";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { FlightPath, FlyButton, useAutoFlights } from "./BirdFlight";
 
 type GardenProps = {
@@ -225,6 +226,7 @@ export function Garden({
   night: forcedNight,
   className = "",
 }: GardenProps) {
+  const locale = useLocale();
   const season = forcedSeason === undefined ? seasonAt(now) : forcedSeason;
   const night = forcedNight ?? isNightAt(now);
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -272,12 +274,13 @@ export function Garden({
     [entries, revealed, now],
   );
   const message = watered
-    ? wateringMessage(watered)
+    ? wateringMessage(watered, locale)
     : arrived
         .map((kind) =>
           arrivalMessage(
             kind,
             live.away.find((away) => away.kind === kind)?.why ?? null,
+            locale,
           ),
         )
         .join(". ");
@@ -372,10 +375,12 @@ export function Garden({
       <div
         ref={sceneRef}
         role="img"
-        aria-label={gardenDescription(garden, season, {
-          visitors: live.visitors.length,
-          night,
-        })}
+        aria-label={gardenDescription(
+          garden,
+          season,
+          { visitors: live.visitors.length, night },
+          locale,
+        )}
         className="relative aspect-[390/300] w-full overflow-hidden"
         data-sky={live.sky}
         data-season={season ?? undefined}

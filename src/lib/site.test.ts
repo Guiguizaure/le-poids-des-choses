@@ -38,14 +38,23 @@ describe("lancement (SITE_LAUNCHED)", () => {
     const urls = sitemapEntries(true, "https://x.fr").map((entry) => entry.url);
     expect(urls).toEqual([
       "https://x.fr",
+      "https://x.fr/en",
       "https://x.fr/comparer",
+      "https://x.fr/en/compare",
       "https://x.fr/raconte",
+      "https://x.fr/en/your-day",
       "https://x.fr/jardin",
+      "https://x.fr/en/garden",
       "https://x.fr/jardin/carnet",
+      "https://x.fr/en/garden/journal",
       "https://x.fr/saison",
+      "https://x.fr/en/in-season",
       "https://x.fr/methode",
+      "https://x.fr/en/method",
       "https://x.fr/mentions-legales",
+      "https://x.fr/en/legal-notice",
       "https://x.fr/confidentialite",
+      "https://x.fr/en/privacy",
     ]);
     expect(urls.some((url) => url.includes("labo"))).toBe(false);
     expect(PUBLIC_PATHS).not.toContain("/labo");
@@ -81,6 +90,40 @@ describe("métadonnées de partage", () => {
   });
   it("accueil : le nom du site seul", () => {
     expect(pageMetadata({ path: "/" }).title).toBe("Le poids des choses");
+  });
+  it("hreflang : chaque page dans les deux langues, le français par défaut", () => {
+    const meta = pageMetadata({
+      title: "My garden",
+      path: "/jardin",
+      locale: "en",
+    });
+    expect(meta.alternates).toEqual({
+      canonical: "/en/garden",
+      languages: { fr: "/jardin", en: "/en/garden", "x-default": "/jardin" },
+    });
+    expect(pageMetadata({ path: "/jardin" }).alternates?.canonical).toBe(
+      "/jardin",
+    );
+  });
+  it("anglais : Open Graph en_GB, image de partage anglaise, sous-titre dans la description", () => {
+    const meta = pageMetadata({ path: "/", locale: "en" });
+    expect(meta.openGraph).toMatchObject({ locale: "en_GB", url: "/en" });
+    expect(meta.openGraph?.images).toEqual([
+      expect.objectContaining({ url: "/og-en.png", width: 1200, height: 630 }),
+    ]);
+    expect(meta.description).toMatch(/^The weight of things\./);
+  });
+  it("sitemap : chaque adresse annonce ses deux langues", () => {
+    const [home] = sitemapEntries(true, "https://x.fr");
+    expect(home.alternates?.languages).toEqual({
+      fr: "https://x.fr",
+      en: "https://x.fr/en",
+    });
+  });
+  it("page hors de la table (labo) : pas de version anglaise annoncée", () => {
+    expect(pageMetadata({ path: "/labo" }).alternates).toEqual({
+      canonical: "/labo",
+    });
   });
 });
 

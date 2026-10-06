@@ -98,7 +98,11 @@ async function requireSession(
   return session;
 }
 
-/** POST /api/auth/link : { email, turnstileToken } → 202, même réponse pour toute adresse. */
+/**
+ * POST /api/auth/link : { email, turnstileToken, locale? } → 202, même réponse pour toute
+ * adresse. `locale` : langue de la page où le lien a été demandé (« en », sinon français) ;
+ * l'e-mail et la page d'arrivée suivent.
+ */
 export const handleLink = route(async (context, now) => {
   const origin = requireOrigin(context);
   const body = requestBody(await readJson(context.request));
@@ -123,10 +127,12 @@ export const handleLink = route(async (context, now) => {
     throw new HttpError(429, "rate-limited");
 
   const token = await createLoginToken(db, email, now);
+  const locale = body.locale === "en" ? "en" : "fr";
+  const page = locale === "en" ? "/en/sign-in" : "/connexion";
   await sendMail(
     env,
     email,
-    magicLinkMessage(`${origin}/connexion#jeton=${token}`),
+    magicLinkMessage(`${origin}${page}#jeton=${token}`, locale),
   );
   return json({ ok: true }, 202);
 });

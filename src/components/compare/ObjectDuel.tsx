@@ -15,7 +15,11 @@ import {
 } from "@/lib/compare";
 import { getGesture } from "@/lib/data";
 import type { IllustrationName } from "@/lib/illustrations/specs";
-import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
+import { pictoFor } from "@/lib/journal/display";
+import { format } from "@/lib/i18n";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFocusTitle } from "./useFocusTitle";
 import { FactCard } from "@/components/facts/FactCard";
 import { DataCredit } from "@/components/ui/DataCredit";
@@ -40,8 +44,12 @@ export function ObjectDuel({
   onChoose,
   focusTitle,
 }: ObjectDuelProps) {
+  const locale = useLocale();
+  const t = COMPARE[locale].object;
   const gesture = getGesture(object)!;
-  const noun = objectNoun(object);
+  const noun = objectNoun(object, locale);
+  const mine = possessive(noun, "moi", locale);
+  const yours = possessive(noun, "toi", locale);
   const titleRef = useFocusTitle<HTMLHeadingElement>(focusTitle);
   const car = getGesture("voiture")?.kgCo2ePerUnit ?? 0;
 
@@ -49,8 +57,7 @@ export function ObjectDuel({
   const kgOf = (choice: ObjectOption) =>
     gesture.modes?.[modeFor(choice, delivered)]?.kgCo2e ?? 0;
   const newKg = kgOf("neuf");
-  const usedLabel =
-    delivered && parcelKg !== undefined ? "d’occasion livré" : "d’occasion";
+  const usedDelivered = delivered && parcelKg !== undefined;
 
   const options: {
     id: ObjectOption;
@@ -60,56 +67,65 @@ export function ObjectDuel({
   }[] = [
     {
       id: "neuf",
-      title: "Neuf",
-      detail: `Fabrication ${noun.newOne}`,
+      title: t.newTitle,
+      detail: format(t.newDetail, { newOne: noun.newOne }),
       picto: pictoFor(object),
     },
     {
       id: "occasion",
-      title: "D’occasion",
-      detail: "Pas de nouvelle fabrication",
+      title: t.usedTitle,
+      detail: t.usedDetail,
       picto: "picto-occasion",
     },
     {
       id: "garder",
-      title: `Je garde ${possessive(noun, "moi")}`,
-      detail: "Rien de neuf à fabriquer",
+      title: format(t.keepTitle, { mine }),
+      detail: t.keepDetail,
       picto: "picto-garder",
     },
   ];
 
   const sentence =
     option === "neuf"
-      ? objectSentence("Neuf", usedLabel, newKg, kgOf("occasion"))
+      ? objectSentence(
+          t.sentenceNew,
+          usedDelivered ? t.sentenceUsedDeliveredOther : t.sentenceUsedOther,
+          newKg,
+          kgOf("occasion"),
+          locale,
+        )
       : option === "occasion"
         ? objectSentence(
-            usedLabel === "d’occasion" ? "D’occasion" : "D’occasion livré",
-            "neuf",
+            usedDelivered ? t.sentenceUsedDelivered : t.sentenceUsed,
+            t.sentenceNewOther,
             kgOf("occasion"),
             newKg,
+            locale,
           )
-        : objectSentence(`Garder ${possessive(noun, "toi")}`, "neuf", 0, newKg);
+        : objectSentence(
+            format(t.sentenceKeep, { yours }),
+            t.sentenceNewOther,
+            0,
+            newKg,
+            locale,
+          );
   const gap =
     option === "neuf" ? newKg - kgOf("occasion") : newKg - kgOf(option);
-  const equivalence = equivalenceSentence(Math.abs(gap), car);
+  const equivalence = equivalenceSentence(Math.abs(gap), car, locale);
   const action =
     option === "neuf"
-      ? "Je choisis neuf"
+      ? t.chooseNew
       : option === "occasion"
-        ? "Je choisis d’occasion"
-        : `Je garde ${possessive(noun, "moi")}`;
+        ? t.chooseUsed
+        : format(t.chooseKeep, { mine });
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
         <div className="flex items-center gap-1">
-          <IconLink
-            href={backHref}
-            label="Retour au choix des gestes"
-            icon="retour"
-          />
+          <IconLink href={backHref} label={t.back} icon="retour" />
           <p className="text-corps-s text-encre leading-[1.3] font-semibold">
-            {CATEGORY_LABELS[gesture.category]}
+            {CATEGORY_NAMES[locale][gesture.category]}
           </p>
         </div>
         <GardenPill />
@@ -127,11 +143,11 @@ export function ObjectDuel({
           tabIndex={-1}
           className="font-titre text-titre-l text-encre leading-[1.1] outline-none"
         >
-          Neuf, d’occasion, ou tu gardes {possessive(noun, "toi")} ?
+          {format(t.title, { yours })}
         </h1>
 
         <fieldset className="flex flex-col gap-2.5">
-          <legend className="sr-only">Comment l’obtenir</legend>
+          <legend className="sr-only">{t.how}</legend>
           {options.map((item) => {
             const checked = option === item.id;
             const kg = kgOf(item.id);
@@ -166,7 +182,7 @@ export function ObjectDuel({
                     </span>
                   </span>
                   <span className="text-corps-s text-encre shrink-0 leading-[1.3] font-semibold">
-                    {kg === 0 ? "0 kg" : formatMass(kg)}
+                    {kg === 0 ? "0 kg" : formatMass(kg, locale)}
                   </span>
                 </label>
                 {item.id === "occasion" && parcelKg !== undefined ? (
@@ -175,7 +191,9 @@ export function ObjectDuel({
                     onChange={(value) => onChange(option, value)}
                     className="pt-3 pl-[52px]"
                   >
-                    Livré en colis (+ {formatMass(parcelKg)})
+                    {format(t.delivered, {
+                      mass: formatMass(parcelKg, locale),
+                    })}
                   </Switch>
                 ) : null}
               </div>
@@ -191,9 +209,7 @@ export function ObjectDuel({
         </div>
 
         <PrimaryButton onClick={onChoose}>{action}</PrimaryButton>
-        <TextLink href="/methode#occasion">
-          Comment on compte l’occasion ?
-        </TextLink>
+        <TextLink href="/methode#occasion">{t.howWeCount}</TextLink>
         <FactCard related={[object]} className="mt-2" />
         <DataCredit independent className="text-center" />
       </div>

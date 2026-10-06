@@ -111,6 +111,57 @@ test.describe("partage du jardin (mobile)", () => {
     expect(shared.text).toBeTruthy();
   });
 
+  test("depuis /en : feuille et image en anglais, sans kg", async ({
+    page,
+  }) => {
+    await fakeShare(page);
+    // Textes dessinés sur le canvas de l'image.
+    await page.addInitScript(() => {
+      const w = window as unknown as { __drawn: string[] };
+      w.__drawn = [];
+      const fill = CanvasRenderingContext2D.prototype.fillText;
+      CanvasRenderingContext2D.prototype.fillText = function (text, ...rest) {
+        w.__drawn.push(String(text));
+        return fill.call(this, text, ...rest);
+      };
+    });
+    await seedJournal(page, TWELVE);
+    await page.goto("/en/garden");
+    await page.getByRole("button", { name: "Share", exact: true }).click();
+    const sheet = page.getByRole("dialog", { name: "Share my garden" });
+    await expect(sheet).toContainText(
+      "The image shows your garden and the number of your lighter choices. Not your journal, and no kilos of CO2e.",
+    );
+    await expect(sheet.locator("[data-share-preview]")).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(sheet.getByRole("img")).toHaveAttribute(
+      "alt",
+      /^Preview of the image to share: your garden, 12 lighter choices, \d+ animals?\.$/,
+    );
+    const drawn = await page.evaluate(
+      () => (window as unknown as { __drawn: string[] }).__drawn,
+    );
+    expect(drawn).toEqual(
+      expect.arrayContaining([
+        "My garden",
+        "12 lighter choices",
+        "Every lighter choice makes something grow.",
+      ]),
+    );
+    expect(drawn.join(" ")).not.toMatch(/kg|CO2|jardin|choix/);
+    await sheet.getByRole("button", { name: "Share the image" }).click();
+    const shared = (await page.evaluate(
+      () => (window as unknown as { __shared: unknown }).__shared,
+    )) as Shared;
+    expect(shared).toMatchObject({
+      name: "my-garden.png",
+      text: "My garden, in Le poids des choses.",
+      width: 1080,
+      height: 1350,
+    });
+  });
+
   test("partage annulé : rien ne se passe ; autre erreur : message discret", async ({
     page,
   }) => {

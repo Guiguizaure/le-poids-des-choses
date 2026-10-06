@@ -1,6 +1,7 @@
 // Serveur de test de l'export statique (out/), au plus près de Cloudflare Pages :
-// URL sans extension (/methode → methode.html), 404.html pour les pages inconnues, et
-// en-têtes de public/_headers (CSP comprise). Utilisé par Playwright.
+// URL sans extension (/methode → methode.html), le 404.html le plus proche pour les pages
+// inconnues (/en/… → en/404.html, comme Cloudflare Pages), et en-têtes de public/_headers (CSP
+// comprise). Utilisé par Playwright.
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
@@ -61,11 +62,21 @@ function resolve(path) {
   return candidates.find((file) => existsSync(file) && statSync(file).isFile());
 }
 
+/** 404.html du dossier le plus proche, en remontant jusqu'à la racine (Cloudflare Pages). */
+function nearest404(path) {
+  const parts = path.split("/").filter(Boolean).slice(0, -1);
+  for (let depth = parts.length; depth > 0; depth--) {
+    const file = join(ROOT, ...parts.slice(0, depth), "404.html");
+    if (existsSync(file)) return file;
+  }
+  return join(ROOT, "404.html");
+}
+
 createServer((request, response) => {
   const path = new URL(request.url, "http://localhost").pathname;
   const file = resolve(path === "/" ? "/index.html" : path);
   const status = file ? 200 : 404;
-  const served = file ?? join(ROOT, "404.html");
+  const served = file ?? nearest404(path);
   const headers = {
     "Content-Type": TYPES[extname(served)] ?? "application/octet-stream",
   };

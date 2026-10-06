@@ -1,5 +1,8 @@
-import Link from "next/link";
 import type { JournalEntry } from "@/lib/data/types";
+import { format } from "@/lib/i18n";
+import { FACT_CARD } from "@/lib/i18n/messages/garden";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
+import { getGesture } from "@/lib/data";
 import { milestoneCard, milestoneCrossed } from "@/lib/milestones";
 
 /**
@@ -12,8 +15,10 @@ export function MilestoneCard({
 }: {
   entries: readonly JournalEntry[];
 }) {
+  const locale = useLocale();
+  const t = FACT_CARD[locale];
   const milestone = milestoneCrossed(entries);
-  const card = milestone ? milestoneCard(milestone) : null;
+  const card = milestone ? milestoneCard(milestone, getGesture, locale) : null;
   if (!card) return null;
 
   return (
@@ -23,7 +28,7 @@ export function MilestoneCard({
       data-milestone={card.milestone}
     >
       <p className="text-legende text-encre leading-[1.3] font-semibold">
-        Palier franchi
+        {t.milestone}
       </p>
       <h2
         id="palier-titre"
@@ -40,15 +45,15 @@ export function MilestoneCard({
             rel="noopener noreferrer"
             className="focus-visible:outline-outremer underline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            Source : {card.source.label} sur Impact CO2
-            <span className="sr-only"> (nouvel onglet)</span>
+            {format(t.source, { label: card.source.label })}
+            <span className="sr-only">{t.newTab}</span>
           </a>
         ) : null}
         <Link
           href={card.methodHref}
           className="focus-visible:outline-outremer underline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-          Méthode
+          {t.method}
         </Link>
       </p>
     </aside>

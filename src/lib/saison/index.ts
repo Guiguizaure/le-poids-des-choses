@@ -1,6 +1,8 @@
 // Fruits et légumes de saison : lecture des données (saison.generated.json, écrit par
 // `pnpm build-saison`), filtrage par mois, tri par impact au kg, regroupement par catégorie.
 import { formatMass } from "@/lib/calc";
+import { PRODUCT_NAMES_EN } from "@/lib/i18n/messages/names";
+import type { Locale } from "@/lib/i18n/routes";
 import generated from "@/lib/data/saison.generated.json";
 import type { SeasonalProduct } from "@/lib/data/types";
 import {
@@ -37,20 +39,20 @@ export function getSeasonalProduct(slug: string): SeasonalProduct | undefined {
   return products.find((product) => product.slug === slug);
 }
 
-export const MONTH_NAMES = [
-  "janvier",
-  "février",
-  "mars",
-  "avril",
-  "mai",
-  "juin",
-  "juillet",
-  "août",
-  "septembre",
-  "octobre",
-  "novembre",
-  "décembre",
-] as const;
+/** Nom affiché d'un produit : celui de l'API en français, la table des noms en anglais. */
+export function productLabel(
+  product: Pick<SeasonalProduct, "slug" | "label">,
+  locale: Locale = "fr",
+): string {
+  return (locale === "en" && PRODUCT_NAMES_EN[product.slug]) || product.label;
+}
+
+/** Produits des données sans nom anglais (vide : tout va bien). */
+export function missingEnglishProductNames(
+  list: readonly SeasonalProduct[] = products,
+): string[] {
+  return list.filter((p) => !PRODUCT_NAMES_EN[p.slug]).map((p) => p.slug);
+}
 
 /** Mois de l'URL (« 10 » → 10) ; null si absent ou invalide. */
 export function parseMonth(value: string | null | undefined): number | null {
@@ -64,19 +66,22 @@ export function monthOf(now: number): number {
   return new Date(now).getMonth() + 1;
 }
 
-/** Du plus léger au plus lourd au kg ; à égalité, par ordre alphabétique. */
-function byImpact(a: SeasonalProduct, b: SeasonalProduct): number {
-  return a.kgCo2ePerKg - b.kgCo2ePerKg || a.label.localeCompare(b.label, "fr");
-}
+/** Du plus léger au plus lourd au kg ; à égalité, par ordre alphabétique (dans la langue). */
+const byImpact =
+  (locale: Locale) =>
+  (a: SeasonalProduct, b: SeasonalProduct): number =>
+    a.kgCo2ePerKg - b.kgCo2ePerKg ||
+    productLabel(a, locale).localeCompare(productLabel(b, locale), locale);
 
 /** Produits de saison ce mois-là, du plus léger au plus lourd au kg. */
 export function productsForMonth(
   month: number,
   list: readonly SeasonalProduct[] = products,
+  locale: Locale = "fr",
 ): SeasonalProduct[] {
   return list
     .filter((product) => product.months.includes(month))
-    .sort(byImpact);
+    .sort(byImpact(locale));
 }
 
 export type SeasonGroup = {
@@ -87,10 +92,13 @@ export type SeasonGroup = {
 /** Regroupe par catégorie de l'API (dans l'ordre de l'API), chaque groupe trié par impact. */
 export function groupByCategory(
   list: readonly SeasonalProduct[],
+  locale: Locale = "fr",
 ): SeasonGroup[] {
   return SEASON_CATEGORIES.map((category) => ({
     category,
-    products: list.filter((p) => p.category === category.api).sort(byImpact),
+    products: list
+      .filter((p) => p.category === category.api)
+      .sort(byImpact(locale)),
   })).filter((group) => group.products.length > 0);
 }
 
@@ -108,8 +116,11 @@ export function isYearRound(product: SeasonalProduct): boolean {
 export function seasonRange(
   month: number,
   list: readonly SeasonalProduct[] = products,
+  locale: Locale = "fr",
 ): SeasonalProduct[] {
-  const inSeason = productsForMonth(month, list).filter((p) => !isYearRound(p));
+  const inSeason = productsForMonth(month, list, locale).filter(
+    (p) => !isYearRound(p),
+  );
   if (inSeason.length < 2) return inSeason;
   const lightest = inSeason[0];
   const rest = inSeason.slice(1);
@@ -119,8 +130,11 @@ export function seasonRange(
 }
 
 /** Impact au kg, arrondi comme sur /saison : « 384 g CO2e/kg », « 4,8 kg CO2e/kg ». */
-export function formatPerKilo(kgCo2ePerKg: number): string {
-  return `${formatMass(kgCo2ePerKg).replace(" ", " ")} CO2e/kg`;
+export function formatPerKilo(
+  kgCo2ePerKg: number,
+  locale: Locale = "fr",
+): string {
+  return `${formatMass(kgCo2ePerKg, locale).replace(" ", "\u00a0")}\u00a0CO2e/kg`;
 }
 
 /** Lien vers /saison pour un mois donné. */

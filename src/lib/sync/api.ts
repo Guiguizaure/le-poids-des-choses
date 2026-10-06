@@ -1,6 +1,7 @@
 // Appels à l'API du compte (Pages Functions, même origine). Ne lève jamais d'erreur : chaque
 // appel renvoie un résultat ou un code d'erreur que l'interface sait formuler.
 import type { JournalEntry } from "@/lib/data/types";
+import type { Locale } from "@/lib/i18n/routes";
 
 export type ApiError =
   | "offline"
@@ -78,8 +79,13 @@ function send<T>(path: string, method: string, body: unknown) {
 }
 
 export const accountApi = {
-  requestLink: (email: string, turnstileToken: string) =>
-    send<{ ok: true }>("/api/auth/link", "POST", { email, turnstileToken }),
+  /** `locale` : langue de la page (l'e-mail et la page d'arrivée la suivent). */
+  requestLink: (email: string, turnstileToken: string, locale: Locale = "fr") =>
+    send<{ ok: true }>("/api/auth/link", "POST", {
+      email,
+      turnstileToken,
+      ...(locale === "en" ? { locale } : {}),
+    }),
   verify: (token: string) =>
     send<{ email: string }>("/api/auth/verify", "POST", { token }),
   session: () =>

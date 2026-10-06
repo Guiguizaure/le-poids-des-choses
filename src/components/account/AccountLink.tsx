@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { NAV } from "@/lib/i18n/messages/common";
+import { LocalLink as Link, useMessages } from "@/lib/i18n/LocaleProvider";
 import { useAccount } from "@/lib/sync/useAccount";
 
 /**
@@ -9,6 +10,7 @@ import { useAccount } from "@/lib/sync/useAccount";
  */
 export function AccountLink({ large = false }: { large?: boolean }) {
   const account = useAccount();
+  const t = useMessages(NAV);
   const look = `${large ? "text-corps-m" : "text-corps-s"} text-encre focus-visible:outline-outremer rounded-sm leading-[1.3] font-semibold underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2`;
 
   if (account.ready && account.email)
@@ -29,7 +31,7 @@ export function AccountLink({ large = false }: { large?: boolean }) {
       prefetch={false}
       className={`${look} ${account.ready ? "" : "invisible"}`}
     >
-      Se connecter
+      {t.signIn}
     </Link>
   );
 }

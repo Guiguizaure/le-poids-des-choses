@@ -16,7 +16,7 @@ export const ROUTES = {
   "/comparer": "/en/compare",
   "/raconte": "/en/your-day",
   "/jardin": "/en/garden",
-  "/jardin/carnet": "/en/garden/notebook",
+  "/jardin/carnet": "/en/garden/journal",
   "/saison": "/en/in-season",
   "/methode": "/en/method",
   "/mentions-legales": "/en/legal-notice",

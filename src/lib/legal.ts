@@ -12,6 +12,8 @@ export const PUBLISHER = {
 export const HOST = {
   name: "Cloudflare, Inc.",
   address: "101 Townsend St, San Francisco, CA 94107, États-Unis",
+  /** Même adresse, pour les pages anglaises. */
+  addressEn: "101 Townsend St, San Francisco, CA 94107, United States",
   website: "https://www.cloudflare.com",
 } as const;
 

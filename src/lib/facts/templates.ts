@@ -1,6 +1,7 @@
 // « Le savais-tu ? » : gabarits de faits. Aucun chiffre n'est écrit à la main : chaque valeur
 // est calculée depuis nos données (src/lib/data) avec les fonctions de src/lib/calc. Seule la
-// prémisse est rédigée (« un jean neuf », « un repas », « un litre », « un trajet »).
+// prémisse est rédigée (« un jean neuf », « un repas »…), dans les deux langues :
+// src/lib/i18n/messages/facts.ts (FACT_TEXTS, par id de gabarit).
 import { compare, compareModes, emissions, withMode } from "@/lib/calc";
 import type {
   AcquisitionMode,
@@ -22,10 +23,9 @@ export type ProductSource = {
 };
 
 type BaseTemplate = {
+  /** Clé de la phrase dans FACT_TEXTS. */
   id: string;
   kind: FactKind;
-  /** Phrase, avec la valeur déjà arrondie et mise en forme. */
-  text: (value: string) => string;
 };
 
 /** Gabarit sur des gestes ; le premier est le geste source (lien vers sa fiche Impact CO2). */
@@ -56,22 +56,18 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     kind: "km",
     gestures: [{ id: "jean", mode: "neuf" }, { id: "voiture" }],
     compute: per,
-    text: (km) => `Un jean neuf, c’est autant que ${km} en voiture thermique.`,
   }),
   gestureFact({
     id: "smartphone-tgv",
     kind: "km",
     gestures: [{ id: "smartphone", mode: "neuf" }, { id: "tgv" }],
     compute: per,
-    text: (km) => `Un smartphone neuf, c’est autant que ${km} en TGV.`,
   }),
   gestureFact({
     id: "television-voiture",
     kind: "km",
     gestures: [{ id: "television", mode: "neuf" }, { id: "voiture" }],
     compute: per,
-    text: (km) =>
-      `Une télévision neuve, c’est autant que ${km} en voiture thermique.`,
   }),
   gestureFact({
     id: "ordinateur-boeuf",
@@ -81,38 +77,30 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
       { id: "repas-boeuf" },
     ],
     compute: per,
-    text: (n) =>
-      `Un ordinateur portable neuf, c’est autant que ${n} repas au bœuf.`,
   }),
   gestureFact({
     id: "boeuf-vegetarien",
     kind: "count",
     gestures: [{ id: "repas-boeuf" }, { id: "repas-vegetarien" }],
     compute: per,
-    text: (n) => `Un repas au bœuf pèse autant que ${n} repas végétariens.`,
   }),
   gestureFact({
     id: "avion-tgv",
     kind: "ratio",
     gestures: [{ id: "avion" }, { id: "tgv" }],
     compute: ([avion, tgv]) => compare(avion, 1, tgv, 1).ratio ?? 0,
-    text: (n) => `Sur un même trajet, l’avion émet ${n} fois plus que le TGV.`,
   }),
   gestureFact({
     id: "bouteille-robinet",
     kind: "count",
     gestures: [{ id: "eau-bouteille" }, { id: "eau-robinet" }],
     compute: per,
-    text: (n) =>
-      `Un litre d’eau en bouteille, c’est autant que ${n} litres d’eau du robinet.`,
   }),
   gestureFact({
     id: "lait-soja",
     kind: "ratio",
     gestures: [{ id: "lait-vache" }, { id: "boisson-soja" }],
     compute: ([lait, soja]) => compare(lait, 1, soja, 1).ratio ?? 0,
-    text: (n) =>
-      `Un litre de lait de vache émet ${n} fois plus qu’un litre de boisson au soja.`,
   }),
   gestureFact({
     id: "jean-garder",
@@ -120,8 +108,6 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     gestures: [{ id: "jean" }],
     compute: ([jean]) =>
       compareModes(jean, 1, "neuf", "garder")?.differenceKg ?? 0,
-    text: (mass) =>
-      `Garder ton jean plutôt qu’en acheter un neuf, c’est ${mass} de CO2e d’écart.`,
   }),
   productFact({
     // La donnée distingue l'import par avion et par bateau pour la mangue seulement.
@@ -129,8 +115,6 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     kind: "ratio",
     products: ["mangue", "manguebateau"],
     compute: ([avion, bateau]) => compare(avion, 1, bateau, 1).ratio ?? 0,
-    text: (n) =>
-      `Une mangue importée par avion émet ${n} fois plus qu’une mangue importée par bateau.`,
   }),
   gestureFact({
     id: "relais-livraison",
@@ -138,8 +122,6 @@ export const FACT_TEMPLATES: readonly FactTemplate[] = [
     gestures: [{ id: "livraison-domicile" }, { id: "point-relais-pied" }],
     compute: ([domicile, relais]) =>
       compare(domicile, 1, relais, 1).differenceKg,
-    text: (mass) =>
-      `Aller à pied au point relais plutôt que te faire livrer à domicile, c’est ${mass} de CO2e d’écart par colis.`,
   }),
 ];
 

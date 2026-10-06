@@ -1,17 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import { AccountLink } from "@/components/account/AccountLink";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { Icon } from "@/components/ui/buttons";
 import { DataCredit } from "@/components/ui/DataCredit";
 import { formatMass } from "@/lib/calc";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
+import { format, localizeHref, type Locale } from "@/lib/i18n";
+import { NAV, SEASON } from "@/lib/i18n/messages/common";
+import { MONTHS, PRODUCT_CATEGORIES } from "@/lib/i18n/messages/names";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import {
   groupByCategory,
-  MONTH_NAMES,
   monthOf,
   parseMonth,
+  productLabel,
   productsForMonth,
   SAISON_BASE,
   SAISON_DOWNLOADED_AT,
@@ -20,8 +24,8 @@ import {
 } from "@/lib/saison";
 
 /** Change le mois dans l'URL (?mois=10) ; l'historique garde les mois consultés. */
-function chooseMonth(month: number) {
-  window.history.pushState(null, "", saisonHref(month));
+function chooseMonth(month: number, locale: Locale) {
+  window.history.pushState(null, "", localizeHref(saisonHref(month), locale));
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
@@ -32,12 +36,15 @@ function chooseMonth(month: number) {
  */
 export function SaisonScreen() {
   const now = useNow();
+  const locale = useLocale();
+  const t = SEASON[locale];
+  const monthNames = MONTHS[locale];
   const fromUrl = parseMonth(useSearchParam("mois"));
   const month = fromUrl ?? (now ? monthOf(now) : null);
-  const products = month ? productsForMonth(month) : [];
-  const groups = groupByCategory(products);
+  const products = month ? productsForMonth(month, undefined, locale) : [];
+  const groups = groupByCategory(products, locale);
   const heaviest = Math.max(...products.map((p) => p.kgCo2ePerKg), 0);
-  const monthName = month ? MONTH_NAMES[month - 1] : null;
+  const monthName = month ? monthNames[month - 1] : null;
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[640px] flex-col motion-reduce:animate-none">
@@ -47,14 +54,17 @@ export function SaisonScreen() {
           className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
         >
           <Icon name="retour" />
-          Retour
+          {NAV[locale].back}
         </Link>
-        <AccountLink />
+        <div className="text-corps-s flex items-center gap-4">
+          <LanguageSwitch className="font-normal" />
+          <AccountLink />
+        </div>
       </div>
 
       <div className="flex flex-col gap-5 px-6 pt-3 pb-9">
         <h1 className="font-titre text-titre-l text-encre min-h-[1.1em] leading-[1.1]">
-          {monthName ? `De saison en ${monthName}` : "De saison"}
+          {monthName ? format(t.titleInMonth, { month: monthName }) : t.title}
         </h1>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -62,17 +72,19 @@ export function SaisonScreen() {
             htmlFor="mois"
             className="text-corps-s text-texte-attenue leading-[1.3]"
           >
-            Mois
+            {t.month}
           </label>
           <select
             id="mois"
             value={month ?? ""}
             disabled={!month}
-            onChange={(event) => chooseMonth(Number(event.target.value))}
+            onChange={(event) =>
+              chooseMonth(Number(event.target.value), locale)
+            }
             className="bg-blanc border-encre/20 text-corps-m text-encre focus-visible:outline-outremer rounded-full border px-4 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {!month ? <option value="">…</option> : null}
-            {MONTH_NAMES.map((name, index) => (
+            {monthNames.map((name, index) => (
               <option key={name} value={index + 1}>
                 {name[0].toUpperCase() + name.slice(1)}
               </option>
@@ -83,9 +95,7 @@ export function SaisonScreen() {
         {month ? (
           <>
             <p className="text-corps-m text-encre leading-[1.4]">
-              {products.length} produits de saison en {monthName}, du plus léger
-              au plus lourd. L’impact est donné pour 1&nbsp;kg de produit, en
-              CO2e.
+              {t.count(products.length, monthName ?? "")}
             </p>
 
             {groups.map(({ category, products: list }) => (
@@ -103,7 +113,7 @@ export function SaisonScreen() {
                     className={`size-3 shrink-0 rounded-full ${category.dot}`}
                   />
                   <span>
-                    {category.label}{" "}
+                    {PRODUCT_CATEGORIES[locale][category.api] ?? category.label}{" "}
                     <span className="text-corps-s text-texte-attenue font-texte font-normal whitespace-nowrap">
                       ({list.length})
                     </span>
@@ -121,11 +131,11 @@ export function SaisonScreen() {
                             aria-hidden
                             className={`size-2 shrink-0 rounded-full ${category.dot}`}
                           />
-                          {product.label}
+                          {productLabel(product, locale)}
                         </span>
                         <span className="shrink-0 font-semibold tabular-nums">
-                          {formatMass(product.kgCo2ePerKg)}
-                          <span className="sr-only"> de CO2e par kg</span>
+                          {formatMass(product.kgCo2ePerKg, locale)}
+                          <span className="sr-only">{t.perKg}</span>
                         </span>
                       </span>
                       <span
@@ -146,22 +156,21 @@ export function SaisonScreen() {
             ))}
 
             <p className="text-corps-s text-texte-attenue leading-[1.4]">
-              La donnée ne précise pas d’où viennent les produits, sauf pour la
-              mangue (import par avion ou par bateau).{" "}
+              {t.origin}{" "}
               <Link
                 href="/methode#saison"
                 className="text-encre font-semibold underline underline-offset-2"
               >
-                Méthode
+                {t.method}
               </Link>
             </p>
             <p className="text-corps-s text-texte-attenue leading-[1.4]">
-              Source :{" "}
+              {t.source}{" "}
               <a
                 href={SAISON_TOOL_URL}
                 className="text-encre font-semibold underline underline-offset-2"
               >
-                Fruits et légumes de saison, Impact CO2
+                {t.tool}
               </a>
             </p>
             <DataCredit

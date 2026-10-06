@@ -1,7 +1,9 @@
 "use client";
 
-import { plural } from "@/lib/garden/text";
 import { NIGHT_HOURS } from "@/lib/garden/daytime";
+import { SKY_PICKER } from "@/lib/i18n/messages/garden";
+import { SKY_NAMES } from "@/lib/i18n/messages/names";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { SKIES, type SkyId } from "@/lib/garden/skies";
 
 /**
@@ -18,14 +20,16 @@ export function SkyPicker({
   lightChoiceCount: number;
   onChange: (id: SkyId) => void;
 }) {
+  const locale = useLocale();
+  const t = SKY_PICKER[locale];
   return (
     <fieldset className="bg-blanc flex flex-col gap-3 rounded-[20px] p-4">
-      <legend className="sr-only">Ciel du jardin</legend>
+      <legend className="sr-only">{t.title}</legend>
       <p
         aria-hidden
         className="text-corps-s text-encre leading-[1.3] font-semibold"
       >
-        Ciel du jardin
+        {t.title}
       </p>
       <div className="grid grid-cols-2 gap-2">
         {SKIES.map((sky) => {
@@ -63,11 +67,11 @@ export function SkyPicker({
               </span>
               <span className="flex min-w-0 flex-col">
                 <span className="text-corps-s text-encre leading-[1.3] font-semibold">
-                  {sky.label}
+                  {SKY_NAMES[locale][sky.id]}
                 </span>
                 {locked ? (
                   <span className="text-legende text-texte-attenue leading-[1.3]">
-                    Encore {plural(missing, "choix léger", "choix légers")}
+                    {t.missing(missing)}
                   </span>
                 ) : null}
               </span>
@@ -76,8 +80,7 @@ export function SkyPicker({
         })}
       </div>
       <p className="text-legende text-texte-attenue leading-[1.4]">
-        De {NIGHT_HOURS.start} h à {NIGHT_HOURS.end} h, ton jardin passe en Nuit
-        encre ; ton ciel revient au matin.
+        {t.night(NIGHT_HOURS.start, NIGHT_HOURS.end)}
       </p>
     </fieldset>
   );

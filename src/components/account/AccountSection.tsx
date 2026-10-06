@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { TextButton } from "@/components/ui/buttons";
 import { useNow } from "@/lib/hooks/useNow";
@@ -14,25 +13,18 @@ import {
 } from "@/lib/sync/messages";
 import { useAccount } from "@/lib/sync/useAccount";
 import { useTurnstile } from "@/lib/sync/useTurnstile";
+import { ACCOUNT } from "@/lib/i18n/messages/account";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 
 /** Ancre de la section (lien « Se connecter » / adresse de l'en-tête). */
 export const ACCOUNT_ANCHOR = "compte";
 
-const TITLES = {
-  // En bas d'un jardin qui pousse : le garder ailleurs aussi.
-  default: "Retrouve ton jardin sur un autre appareil",
-  // En haut d'un jardin vide, et sur /connexion : retrouver un jardin commencé ailleurs.
-  retrouver: "Retrouve ton jardin",
-} as const;
-
-const INTROS = {
-  default:
-    "Reçois un lien par e-mail, sans mot de passe : ton carnet sera gardé avec ton adresse, et tu le retrouveras partout où tu te connectes. C’est facultatif : ton jardin reste aussi sur cet appareil.",
-  retrouver:
-    "Ton jardin pousse déjà sur un autre appareil ? Reçois un lien par e-mail, sans mot de passe : ouvre-le ici et tes choix reviendront. C’est facultatif : sans compte, ton jardin reste sur l’appareil où tu le fais pousser.",
-} as const;
-
-export type AccountVariant = keyof typeof TITLES;
+/**
+ * `default` : en bas d'un jardin qui pousse (le garder ailleurs aussi) ; `retrouver` : en haut
+ * d'un jardin vide, et sur /connexion (retrouver un jardin commencé ailleurs). Titres et
+ * textes : ACCOUNT (src/lib/i18n/messages/account.ts).
+ */
+export type AccountVariant = "default" | "retrouver";
 
 const PILL =
   "press border-encre text-legende text-encre hover:bg-creme rounded-full border px-3 py-1.5 leading-[1.3] font-semibold transition-colors disabled:opacity-40 focus-visible:outline-outremer focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -40,6 +32,7 @@ const DARK =
   "press bg-encre text-creme text-corps-s rounded-full px-5 py-3 leading-[1.3] font-semibold transition-opacity hover:opacity-90 disabled:opacity-40 focus-visible:outline-outremer focus-visible:outline-2 focus-visible:outline-offset-2";
 
 function PrivacyLink() {
+  const t = ACCOUNT[useLocale()];
   return (
     // Pas de préchargement : lien secondaire, inutile de charger la page à l'avance.
     <Link
@@ -47,7 +40,7 @@ function PrivacyLink() {
       prefetch={false}
       className="text-encre font-semibold underline underline-offset-2"
     >
-      Confidentialité
+      {t.privacy}
     </Link>
   );
 }
@@ -74,6 +67,8 @@ export function AccountSection({
   variant?: AccountVariant;
 }) {
   const account = useAccount();
+  const locale = useLocale();
+  const t = ACCOUNT[locale];
   const [message, setMessage] = useState("");
   const section = useRef<HTMLElement>(null);
 
@@ -90,9 +85,10 @@ export function AccountSection({
     void getSyncEngine()
       .sync()
       .then((outcome) => {
-        if (outcome === "unauthorized") setMessage(errorMessage(outcome));
+        if (outcome === "unauthorized")
+          setMessage(errorMessage(outcome, locale));
       });
-  }, [account.ready, account.email]);
+  }, [account.ready, account.email, locale]);
 
   if (!account.ready) return null;
 
@@ -107,12 +103,12 @@ export function AccountSection({
         id="compte-titre"
         className="font-titre text-titre-m text-encre leading-[1.1]"
       >
-        {TITLES[variant]}
+        {t.titles[variant]}
       </h2>
       {account.email ? (
         <SignedIn email={account.email} onMessage={setMessage} />
       ) : (
-        <SignInForm intro={INTROS[variant]} onMessage={setMessage} />
+        <SignInForm intro={t.intros[variant]} onMessage={setMessage} />
       )}
       <p
         role="status"
@@ -130,12 +126,14 @@ export function AccountSection({
  * chargé qu'au premier usage : quand on entre dans le champ ou qu'on envoie.
  */
 export function SignInForm({
-  intro = INTROS.default,
+  intro,
   onMessage,
 }: {
   intro?: string;
   onMessage: (text: string) => void;
 }) {
+  const locale = useLocale();
+  const t = ACCOUNT[locale];
   const [email, setEmail] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [busy, setBusy] = useState<"" | "verification" | "envoi">("");
@@ -151,7 +149,7 @@ export function SignInForm({
     onMessage("");
     const normalized = normalizeEmail(email);
     if (!normalized) {
-      onMessage(errorMessage("invalid-email"));
+      onMessage(errorMessage("invalid-email", locale));
       return;
     }
     setBusy("verification");
@@ -160,18 +158,22 @@ export function SignInForm({
       setBusy("");
       onMessage(
         verification.reason === "load"
-          ? "La vérification anti-robot n’a pas pu se charger. Vérifie ta connexion et réessaie."
-          : errorMessage("turnstile"),
+          ? t.turnstileLoad
+          : errorMessage("turnstile", locale),
       );
       return;
     }
     setBusy("envoi");
-    const result = await accountApi.requestLink(normalized, verification.token);
+    const result = await accountApi.requestLink(
+      normalized,
+      verification.token,
+      locale,
+    );
     // Un jeton Turnstile ne sert qu'une fois.
     consume();
     setBusy("");
     if (result.ok) setSentTo(normalized);
-    else onMessage(errorMessage(result.error));
+    else onMessage(errorMessage(result.error, locale));
   };
 
   if (sentTo)
@@ -182,19 +184,20 @@ export function SignInForm({
           tabIndex={-1}
           className="text-corps-s text-encre leading-[1.4] outline-none"
         >
-          C’est envoyé ! Ouvre le lien reçu à <strong>{sentTo}</strong>, sur cet
-          appareil ou sur un autre. Il est valable 15 minutes et ne sert qu’une
-          fois. Rien reçu ? Jette un œil aux indésirables.
+          {t.sentBefore} <strong>{sentTo}</strong>
+          {t.sentAfter}
         </p>
         <TextButton onClick={() => setSentTo(null)}>
-          Changer d’adresse ou renvoyer un lien
+          {t.changeAddress}
         </TextButton>
       </>
     );
 
   return (
     <>
-      <p className="text-corps-s text-texte-attenue leading-[1.4]">{intro}</p>
+      <p className="text-corps-s text-texte-attenue leading-[1.4]">
+        {intro ?? t.intros.default}
+      </p>
       <form
         onSubmit={submit}
         noValidate
@@ -204,7 +207,7 @@ export function SignInForm({
           htmlFor="compte-email"
           className="text-corps-s text-encre leading-[1.3] font-semibold"
         >
-          Ton adresse e-mail
+          {t.emailLabel}
         </label>
         <input
           id="compte-email"
@@ -221,15 +224,14 @@ export function SignInForm({
         <div ref={widget} className="empty:hidden" />
         <button type="submit" className={DARK} disabled={busy !== ""}>
           {busy === "verification"
-            ? "Vérification…"
+            ? t.verifying
             : busy === "envoi"
-              ? "Envoi…"
-              : "Recevoir un lien"}
+              ? t.sending
+              : t.send}
         </button>
       </form>
       <p className="text-legende text-texte-attenue">
-        Ton adresse ne sert qu’à t’envoyer ce lien et à retrouver ton carnet.{" "}
-        <PrivacyLink />
+        {t.emailUse} <PrivacyLink />
       </p>
     </>
   );
@@ -243,6 +245,8 @@ function SignedIn({
   onMessage: (text: string) => void;
 }) {
   const account = useAccount();
+  const locale = useLocale();
+  const t = ACCOUNT[locale];
   const now = useNow();
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -264,25 +268,25 @@ function SignedIn({
     act(async () => {
       const outcome = await getSyncEngine().sync();
       if (outcome !== "ok" && outcome !== "signed-out")
-        onMessage(errorMessage(outcome));
+        onMessage(errorMessage(outcome, locale));
     });
 
   const exportData = () =>
     act(async () => {
       const result = await accountApi.exportFile();
       if (result.ok) download(result.data.blob, result.data.fileName);
-      else onMessage(errorMessage(result.error));
+      else onMessage(errorMessage(result.error, locale));
     });
 
   const signOut = () =>
     act(async () => {
       const result = await accountApi.logout();
       if (!result.ok && result.error !== "unauthorized") {
-        onMessage(errorMessage(result.error));
+        onMessage(errorMessage(result.error, locale));
         return;
       }
       getSyncEngine().signedOut();
-      onMessage("Déconnexion faite. Ton jardin reste sur cet appareil.");
+      onMessage(t.signedOut);
     });
 
   const deleteAccount = () =>
@@ -292,15 +296,13 @@ function SignedIn({
         if (result.error === "unauthorized") getSyncEngine().signedOut();
         onMessage(
           result.error === "unauthorized"
-            ? "Ta session a pris fin : reconnecte-toi pour supprimer ton compte."
-            : errorMessage(result.error),
+            ? t.sessionEndedDelete
+            : errorMessage(result.error, locale),
         );
         return;
       }
       getSyncEngine().signedOut();
-      onMessage(
-        "Ton compte est supprimé, avec tout ce qu’il gardait sur nos serveurs. Ton jardin reste sur cet appareil.",
-      );
+      onMessage(t.deleted);
     });
 
   const conflicts = account.conflicts.length;
@@ -308,14 +310,14 @@ function SignedIn({
   return (
     <>
       <p className="text-corps-s text-encre leading-[1.4]">
-        Connecté avec <strong className="break-all">{email}</strong>
+        {t.signedInAs} <strong className="break-all">{email}</strong>
       </p>
       <p className="text-legende text-texte-attenue">
-        {syncStatus(account, new Date(now))}
+        {syncStatus(account, new Date(now), locale)}
       </p>
       {conflicts > 0 ? (
         <p className="text-legende text-texte-attenue">
-          {conflictsMessage(conflicts)}
+          {conflictsMessage(conflicts, locale)}
         </p>
       ) : null}
       <div className="flex flex-wrap gap-2">
@@ -325,7 +327,7 @@ function SignedIn({
           onClick={syncNow}
           disabled={busy || account.syncing}
         >
-          Synchroniser
+          {t.sync}
         </button>
         <button
           type="button"
@@ -333,7 +335,7 @@ function SignedIn({
           onClick={exportData}
           disabled={busy}
         >
-          Exporter mes données
+          {t.exportData}
         </button>
         <button
           type="button"
@@ -341,7 +343,7 @@ function SignedIn({
           onClick={signOut}
           disabled={busy}
         >
-          Me déconnecter
+          {t.signOut}
         </button>
       </div>
       {confirming ? (
@@ -356,11 +358,10 @@ function SignedIn({
             tabIndex={-1}
             className="text-corps-s text-encre leading-[1.3] font-semibold outline-none"
           >
-            Supprimer ton compte ?
+            {t.deleteQuestion}
           </p>
           <p className="text-corps-s text-encre leading-[1.4]">
-            Ton adresse et ton carnet seront effacés tout de suite de nos
-            serveurs. Ton jardin reste sur cet appareil.
+            {t.deleteText}
           </p>
           <div className="flex flex-wrap gap-2">
             <button
@@ -369,7 +370,7 @@ function SignedIn({
               onClick={deleteAccount}
               disabled={busy}
             >
-              Oui, supprimer mon compte
+              {t.deleteConfirm}
             </button>
             <button
               type="button"
@@ -379,13 +380,13 @@ function SignedIn({
                 requestAnimationFrame(() => deleteButton.current?.focus());
               }}
             >
-              Annuler
+              {t.cancel}
             </button>
           </div>
         </div>
       ) : (
         <TextButton ref={deleteButton} onClick={() => setConfirming(true)}>
-          Supprimer mon compte
+          {t.deleteAccount}
         </TextButton>
       )}
       <p className="text-legende text-texte-attenue">

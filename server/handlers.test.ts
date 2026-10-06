@@ -172,6 +172,33 @@ describe("POST /api/auth/link", () => {
     expect(mails[0].html).toContain(`href="${ORIGIN}/connexion#jeton=`);
   });
 
+  it("demandé depuis une page anglaise : e-mail en anglais, lien vers /en/sign-in", async () => {
+    const response = await requestLink("sam@example.com", {
+      body: { email: "sam@example.com", turnstileToken: "ok", locale: "en" },
+    });
+    expect(response.status).toBe(202);
+    expect(mails[0].subject).toBe("Your link to find your garden");
+    expect(mails[0].text).toContain(`${ORIGIN}/en/sign-in#jeton=`);
+    expect(mails[0].text).toContain("valid for 15 minutes");
+    expect(mails[0].html).toContain('<html lang="en">');
+    expect(mails[0].html).toContain(`href="${ORIGIN}/en/sign-in#jeton=`);
+    // Le jeton se vérifie comme un autre.
+    const token = mails[0].text.match(/#jeton=([A-Za-z0-9_-]{43})/)![1];
+    const verified = await handleVerify(
+      context("/api/auth/verify", { body: { token } }),
+      NOW,
+    );
+    expect(verified.status).toBe(200);
+  });
+
+  it("langue inconnue : e-mail en français", async () => {
+    await requestLink("a@exemple.fr", {
+      body: { email: "a@exemple.fr", turnstileToken: "ok", locale: "de" },
+    });
+    expect(mails[0].subject).toBe("Ton lien pour retrouver ton jardin");
+    expect(mails[0].text).toContain(`${ORIGIN}/connexion#jeton=`);
+  });
+
   it("preview : le lien garde l'adresse de la preview", async () => {
     const preview = "https://feat-comptes.le-poids-des-choses.pages.dev";
     await requestLink("a@exemple.fr", { origin: preview, base: preview });

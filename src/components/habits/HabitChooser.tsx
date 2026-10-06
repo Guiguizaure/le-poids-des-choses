@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { IconLink, PrimaryButton, TextLink } from "@/components/ui/buttons";
@@ -8,6 +7,9 @@ import { useFocusTitle } from "@/components/compare/useFocusTitle";
 import { orderedHabits } from "@/lib/habits";
 import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 import { pictoFor } from "@/lib/journal/display";
+import { COMPARE } from "@/lib/i18n/messages/compare";
+import { HABITS_UI } from "@/lib/i18n/messages/garden";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 
 type HabitChooserProps = {
   /** Habitude choisie (?habitude=velo), ou null. */
@@ -28,6 +30,8 @@ export function HabitChooser({
   focusTitle,
 }: HabitChooserProps) {
   const [declared] = useDeclaredHabits();
+  const locale = useLocale();
+  const t = HABITS_UI[locale];
   // Choix gardé ici (l'URL suit, sans entrée d'historique), comme pour les gestes.
   const [selected, setSelected] = useState(initial);
   const select = (gesture: string | null) => {
@@ -40,16 +44,8 @@ export function HabitChooser({
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between px-5 pt-[22px] pb-2">
-        <IconLink
-          href="/comparer"
-          label="Retour au choix des gestes"
-          icon="retour"
-        />
-        <IconLink
-          href="/"
-          label="Fermer et revenir à l’accueil"
-          icon="fermer"
-        />
+        <IconLink href="/comparer" label={t.back} icon="retour" />
+        <IconLink href="/" label={COMPARE[locale].close} icon="fermer" />
       </div>
 
       <div className="flex flex-col gap-[18px] px-5 pt-3 pb-8">
@@ -58,29 +54,27 @@ export function HabitChooser({
           tabIndex={-1}
           className="font-titre text-titre-l text-encre leading-[1.1] outline-none"
         >
-          Noter une habitude
+          {t.title}
         </h1>
         <p
           id="habitudes-aide"
           className="text-corps-s text-texte-attenue leading-[1.4]"
         >
-          Ce que tu fais déjà n’a pas à être comparé à ce que tu ne ferais
-          jamais. Une habitude tenue ne compte aucun kg : elle arrose ton
-          jardin.{" "}
+          {t.help}{" "}
           <Link
             href="/methode#habitudes"
             className="text-encre focus-visible:outline-outremer font-semibold underline focus-visible:outline-2"
           >
-            Pourquoi ?
+            {t.why}
           </Link>
         </p>
 
         <div
           className="grid grid-cols-2 gap-3"
           role="group"
-          aria-label="Habitudes"
+          aria-label={t.group}
         >
-          {orderedHabits(declared).map((habit) => {
+          {orderedHabits(declared, locale).map((habit) => {
             const pressed = selected === habit.gesture;
             return (
               <button
@@ -104,7 +98,7 @@ export function HabitChooser({
                   </span>
                   {mine.has(habit.gesture) ? (
                     <span className="text-legende text-texte-attenue">
-                      Mon habitude
+                      {t.myHabit}
                     </span>
                   ) : null}
                 </span>
@@ -117,14 +111,12 @@ export function HabitChooser({
           disabled={!selected}
           onClick={() => selected && onConfirm(selected)}
         >
-          Je l’ai fait aujourd’hui
+          {t.didIt}
         </PrimaryButton>
         <p className="text-legende text-texte-attenue text-center">
-          {selected
-            ? "Retouche l’habitude pour la retirer."
-            : "Touche l’habitude que tu as tenue aujourd’hui."}
+          {selected ? t.hintSelected : t.hintNone}
         </p>
-        <TextLink href="/jardin#habitudes">Choisir mes habitudes</TextLink>
+        <TextLink href="/jardin#habitudes">{t.choose}</TextLink>
       </div>
     </main>
   );

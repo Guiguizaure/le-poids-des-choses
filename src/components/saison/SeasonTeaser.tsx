@@ -1,13 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useId } from "react";
 import { DataCredit } from "@/components/ui/DataCredit";
 import { useNow } from "@/lib/hooks/useNow";
+import { format } from "@/lib/i18n";
+import { SEASON } from "@/lib/i18n/messages/common";
+import { MONTHS } from "@/lib/i18n/messages/names";
+import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import {
   formatPerKilo,
-  MONTH_NAMES,
   monthOf,
+  productLabel,
   SAISON_BASE,
   SAISON_DOWNLOADED_AT,
   SAISON_TOOL_URL,
@@ -30,9 +33,13 @@ export function SeasonTeaser({
   className?: string;
 }) {
   const now = useNow();
+  const locale = useLocale();
+  const t = SEASON[locale];
   const month = forcedMonth ?? (now ? monthOf(now) : null);
   const titleId = useId();
-  const [lightest, heaviest] = month ? seasonRange(month) : [];
+  const [lightest, heaviest] = month
+    ? seasonRange(month, undefined, locale)
+    : [];
 
   return (
     <aside
@@ -45,7 +52,9 @@ export function SeasonTeaser({
             id={titleId}
             className="text-corps-s text-encre leading-[1.3] font-semibold"
           >
-            {month ? `De saison en ${MONTH_NAMES[month - 1]}` : "De saison"}
+            {month
+              ? format(t.titleInMonth, { month: MONTHS[locale][month - 1] })
+              : t.title}
           </h2>
           {/* Trois lignes réservées : le texte n'arrive qu'avec le mois. */}
           <p
@@ -54,16 +63,20 @@ export function SeasonTeaser({
           >
             {lightest ? (
               <>
-                {heaviest
-                  ? "Du plus léger au plus lourd au kilo :"
-                  : "Au kilo :"}
+                {heaviest ? t.lightestToHeaviest : t.perKilo}
                 <br />
-                <Product label={lightest.label} kg={lightest.kgCo2ePerKg} />
+                <Product
+                  label={productLabel(lightest, locale)}
+                  kg={formatPerKilo(lightest.kgCo2ePerKg, locale)}
+                />
                 {heaviest ? (
                   <>
                     {" "}
                     …<br />
-                    <Product label={heaviest.label} kg={heaviest.kgCo2ePerKg} />
+                    <Product
+                      label={productLabel(heaviest, locale)}
+                      kg={formatPerKilo(heaviest.kgCo2ePerKg, locale)}
+                    />
                   </>
                 ) : null}
               </>
@@ -73,7 +86,7 @@ export function SeasonTeaser({
             href="/saison"
             className="text-corps-s text-encre focus-visible:outline-outremer self-start leading-[1.3] font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            Tous les fruits et légumes de saison
+            {t.seeAll}
           </Link>
           <DataCredit
             downloadedAt={SAISON_DOWNLOADED_AT}
@@ -87,10 +100,10 @@ export function SeasonTeaser({
   );
 }
 
-function Product({ label, kg }: { label: string; kg: number }) {
+function Product({ label, kg }: { label: string; kg: string }) {
   return (
     <>
-      <span className="font-semibold">{label}</span> ({formatPerKilo(kg)})
+      <span className="font-semibold">{label}</span> ({kg})
     </>
   );
 }
