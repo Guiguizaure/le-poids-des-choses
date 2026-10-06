@@ -1345,3 +1345,78 @@ chargée) : Mon jardin 90 puis 93, accessibilité et bonnes pratiques 100.
 - Poussé sur la PR #25 : la CI GitHub tranche pour les tests du compte qui échouaient sous la
   charge locale.
 
+## 2026-10-06 (soir) — Version anglaise du site (branche feat/anglais)
+
+**Demandé** : gel des fonctionnalités jusqu'à la version anglaise et l'étude de cas (règle
+ajoutée en tête de CLAUDE.md), puis le site en anglais britannique sous `/en`, le français
+restant à la racine : table des adresses, sélecteur de langue qui garde la page, bandeau
+proposé aux navigateurs en anglais (sans redirection), hreflang, canonical, sitemap et image
+de partage par langue, tous les textes dans des fichiers de traduction (build en échec si une
+clé manque), noms des gestes, produits, animaux et visiteurs par table, e-mail de connexion et
+image de partage dans la langue de la page, /method, /privacy et la notice légale en anglais.
+
+**Proposé, puis validé avec retouches** (arrêt avant la traduction complète) : table des
+adresses, glossaire de 41 termes (`docs/glossaire-en.md`), accueil traduit en échantillon.
+Retouches de Guillaume : nom « Le poids des choses » partout, avec le sous-titre « The weight
+of things » sur l'accueil anglais et dans la description de partage ; « Tell us about your
+day » gardé ; TGV et TER gardés, précisés « high-speed train » / « regional train » ;
+paramètres et ancres identiques ; `/en/garden/notebook` → `/en/garden/journal` ; carnet →
+« journal » partout ; écart → « difference » dans les phrases (« gap » seulement dans les
+explications de /en/method) ; « Find it » → « Find it here ».
+
+**Fait** :
+
+- Structure : deux mises en page racines (`(fr)` et `(en)/en`, `lang` propre à chacune,
+  `RootDocument` commun). Changer de langue recharge la page (deux documents), voulu. La 404
+  française passe par `global-not-found.tsx` (option expérimentale `globalNotFound` : sans
+  elle, le 404.html exporté n'avait ni `lang` ni styles) ; l'anglaise est une page
+  `/en/404`, exportée en `out/en/404.html`, que Cloudflare Pages sert pour toute adresse
+  inconnue sous `/en` (le serveur de test fait de même). Manifeste anglais (ouverture sur
+  `/en`, même `id`).
+- Dictionnaires `src/lib/i18n/messages/` : `defineMessages(fr, en)`, l'anglais typé sur la
+  forme du français (une clé oubliée casse la vérification des types, donc le build) ; les
+  textes à accords (pluriels, genre) sont des fonctions. Les modules de texte existants
+  (`garden/text`, `compare/sentence`, `journal/display`, `raconte/text`, `sync/messages`,
+  faits, paliers, carte de partage) prennent une langue, français par défaut : tous les
+  tests français passent sans changement.
+- Noms : 34 gestes, 76 produits de saison et leurs 6 catégories, 6 animaux (« ladybird »),
+  14 visiteurs, 4 ciels, mois, 12 habitudes. Garde-fou du build : un geste ou un produit des
+  données sans nom anglais fait échouer `check-data` (toujours bloquant).
+- Sélecteur « English / Français » dans les en-têtes (accueil, pages de texte, /saison) et
+  le pied de page ; bandeau anglais sur les pages françaises (première langue du navigateur
+  en anglais), en bas d'écran (aucun décalage), fermable, mémorisé (`lpdc:langue:v1`) ;
+  mentionné sur les deux pages de confidentialité.
+- E-mail : `locale: "en"` envoyé à `/api/auth/link`, e-mail anglais et lien vers
+  `/en/sign-in#jeton=…` ; toute autre valeur donne le français.
+- Image de partage OG anglaise (`public/og-en.png`, sous-titre « The weight of things ») ;
+  carte de partage du jardin en anglais depuis /en (« My garden », « 12 lighter choices »).
+- Pages de texte anglaises écrites en anglais dans leur page, mêmes ancres (testé) ; notice
+  légale : « The French version of the legal notice is the authoritative one. ».
+- `docs/raconte-phrases.md` : 4 phrases en anglais britannique de plus (27, dont 7 en
+  anglais).
+
+**Choix faits sans demander** : `/labo` reste en français (non liée, noindex) ; la 404
+globale n'a pas de pied de page (elle n'a pas de mise en page) ; « voiture thermique » →
+« Petrol or diesel car » ; « Repas végétal » → « Plant-based meal » ; « S’habiller » →
+« Clothes » ; le bouton du duel pour la marche dit « I’ll walk » ; la date des données sur
+/en/method est écrite « 5 October 2026 ».
+
+**Finition hors glossaire** : Lighthouse classait « Start » parmi les textes de lien trop
+vagues (SEO 92 sur l'accueil anglais) : le bouton dit « Start comparing » (glossaire mis à
+jour). À valider.
+
+**À signaler** : sous forte charge, WebKit refuse parfois à axe-core la lecture d'un petit
+canvas (sa détection des ligatures d'icônes) et l'écrit en console ; ce seul message est
+ignoré par `e2e/fixtures.ts` (le site n'appelle jamais `getImageData`). Les tests du compte
+sur WebKit restent sensibles à la charge locale (un `ECONNRESET` du faux Resend, un
+chargement annulé) : relancés seuls, ils passent.
+
+**Vérifications** : lint, types, 1 053 tests unitaires (dont `english.test.ts`,
+`messages.test.ts`, qui couvre tous les dictionnaires, et un test serveur de l'e-mail
+anglais), `STRICT_DATA=1 pnpm build` (29 pages), `pnpm raconte:eval` sur le vrai modèle :
+27 / 27, précision et rappel 100 % (≈ 0,06 $). Bout en bout Chromium et WebKit avec axe :
+suite complète 213 passés, 2 échecs WebKit du compte dus à la charge, puis compte et
+« Raconte ta journée » relancés seuls : 35 passés ; `e2e/anglais.spec.ts` : 46 passés, deux
+fois de suite. Lighthouse mobile (`SITE_LAUNCHED=1`, `serve:out`) : Home 98 / 100 / 100 /
+100, Compare 94, Duel 92, My garden 91, Journal 94, In season 96, Method 96 (accessibilité,
+bonnes pratiques et SEO à 100 partout) ; français inchangé (accueil 100, jardin 91).

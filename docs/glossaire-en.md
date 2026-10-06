@@ -1,28 +1,29 @@
-# Glossaire anglais (à relire)
+# Glossaire anglais (validé le 6 octobre 2026)
 
 Anglais britannique, ton chaleureux et direct, tutoiement → « you ». Une fois validé, ce
 glossaire fait foi : chaque terme est traduit de la même façon partout (interface, /method,
-e-mails, image de partage). Les noms des gestes et des produits de saison viendront d'une
-table à part (lot de traduction complète).
+e-mails, image de partage). Les noms des gestes, des produits de saison, des animaux et des
+visiteurs sont dans les tables de `src/lib/i18n/messages/names.ts`.
 
 Règle d'honnêteté conservée : jamais « saved », « avoided », « reduced » ni « won » pour les
-kg. On ne mesure qu'un **gap** avec l'autre option.
+kg. On ne mesure qu'une **difference** avec l'autre option ; « gap » reste possible dans les
+explications de /en/method.
 
 ## Le site et ses pages
 
-| #   | Français                                | Anglais proposé                    | Note                                                                                                           |
-| --- | --------------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 1   | Le poids des choses                     | Le poids des choses                | Nom gardé en français (marque, vitrine webjuno) ; « The weight of things » seulement en description si tu veux |
-| 2   | Comparateur carbone illustré            | Illustrated carbon comparison      | Surtitre de l'accueil                                                                                          |
-| 3   | Comparer (page, bouton)                 | Compare                            | /en/compare                                                                                                    |
-| 4   | Mon jardin                              | My garden                          | /en/garden                                                                                                     |
-| 5   | Carnet                                  | Notebook                           | /en/garden/notebook ; « journal » évité (trop intime), « log » trop technique                                  |
-| 6   | De saison / Fruits et légumes de saison | In season / Seasonal fruit and veg | /en/in-season ; « In season in October »                                                                       |
-| 7   | Méthode et sources                      | Method and sources                 | /en/method ; lien court : « Method »                                                                           |
-| 8   | Mentions légales                        | Legal notice                       | /en/legal-notice                                                                                               |
-| 9   | Confidentialité                         | Privacy                            | /en/privacy                                                                                                    |
-| 10  | Raconte ta journée                      | Tell us about your day             | /en/your-day (ton intitulé) ; voir la question en fin de fichier                                               |
-| 11  | Connexion / Se connecter                | Sign in                            | /en/sign-in ; « Sign in », pas « Log in »                                                                      |
+| #   | Français                                | Anglais proposé                    | Note                                                                                                                    |
+| --- | --------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 1   | Le poids des choses                     | Le poids des choses                | Nom gardé partout ; sous-titre discret « The weight of things » sur l'accueil anglais et dans la description de partage |
+| 2   | Comparateur carbone illustré            | Illustrated carbon comparison      | Surtitre de l'accueil                                                                                                   |
+| 3   | Comparer (page, bouton)                 | Compare                            | /en/compare                                                                                                             |
+| 4   | Mon jardin                              | My garden                          | /en/garden                                                                                                              |
+| 5   | Carnet                                  | Journal                            | /en/garden/journal ; partout (« Add to journal », « Journal backup »)                                                   |
+| 6   | De saison / Fruits et légumes de saison | In season / Seasonal fruit and veg | /en/in-season ; « In season in October »                                                                                |
+| 7   | Méthode et sources                      | Method and sources                 | /en/method ; lien court : « Method »                                                                                    |
+| 8   | Mentions légales                        | Legal notice                       | /en/legal-notice                                                                                                        |
+| 9   | Confidentialité                         | Privacy                            | /en/privacy                                                                                                             |
+| 10  | Raconte ta journée                      | Tell us about your day             | /en/your-day                                                                                                            |
+| 11  | Connexion / Se connecter                | Sign in                            | /en/sign-in ; « Sign in », pas « Log in »                                                                               |
 
 ## Comparer
 
@@ -31,8 +32,8 @@ kg. On ne mesure qu'un **gap** avec l'autre option.
 | 12  | geste (du quotidien)                 | (everyday) action                     | « Choisir un geste » → « Pick an action » ; « gesture » serait un faux ami             |
 | 13  | balance                              | the scales                            | « Put two options on the scales »                                                      |
 | 14  | option                               | option                                |                                                                                        |
-| 15  | écart                                | gap                                   | « 12 kg CO2e gap with the other options » (bilan), « 12 kg gap » (carte de révélation) |
-| 16  | Mon jardin · X kg d’écart (pastille) | My garden · X kg gap                  |                                                                                        |
+| 15  | écart                                | difference                            | « 12 kg CO2e difference from the other options » (bilan), « 12 kg difference » (carte) |
+| 16  | Mon jardin · X kg d’écart (pastille) | My garden · X kg difference           |                                                                                        |
 | 17  | choix léger / le plus léger          | lighter choice / the lighter one      |                                                                                        |
 | 18  | choix lourd / le plus lourd          | heavier choice / the heavier one      |                                                                                        |
 | 19  | Je choisis …                         | I’ll go for …                         | Plus parlé que « I choose » ; « I’ll go for the train »                                |
@@ -67,12 +68,12 @@ kg. On ne mesure qu'un **gap** avec l'autre option.
 
 ## Boutons et actions
 
-| #   | Français                                                                          | Anglais proposé                                                        | Note                                                             |
-| --- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 38  | Commencer / Comment ça marche ?                                                   | Start / How does it work?                                              |                                                                  |
-| 39  | Ajouter au carnet / Analyser mon texte / À vérifier / Modifier                    | Add to notebook / Read my day / Check this / Change                    | « Analyse my text » sonne machine ; « Read my day » garde le ton |
-| 40  | Exporter / Importer / Partager / Tout voir / Installer l’appli / Garde ton jardin | Export / Import / Share / See all / Install the app / Keep your garden | Sauvegarde du carnet → « Notebook backup »                       |
-| 41  | J’ai déjà un jardin ? Le retrouver / Retrouve ton jardin / Recevoir un lien       | Already have a garden? Find it / Find your garden / Send me a link     | Lien magique → « sign-in link » ; compte → « account »           |
+| #   | Français                                                                          | Anglais proposé                                                         | Note                                                             |
+| --- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 38  | Commencer / Comment ça marche ?                                                   | Start comparing / How does it work?                                     |                                                                  |
+| 39  | Ajouter au carnet / Analyser mon texte / À vérifier / Modifier                    | Add to journal / Read my day / Check this / Change                      | « Analyse my text » sonne machine ; « Read my day » garde le ton |
+| 40  | Exporter / Importer / Partager / Tout voir / Installer l’appli / Garde ton jardin | Export / Import / Share / See all / Install the app / Keep your garden  | Sauvegarde du carnet → « Journal backup »                        |
+| 41  | J’ai déjà un jardin ? Le retrouver / Retrouve ton jardin / Recevoir un lien       | Already have a garden? Find it here / Find your garden / Send me a link | Lien magique → « sign-in link » ; compte → « account »           |
 
 ## Formats
 
@@ -82,10 +83,11 @@ kg. On ne mesure qu'un **gap** avec l'autre option.
   majuscule (« In season in October »).
 - Unités : km, kg CO2e inchangés ; pas de miles.
 
-## Questions ouvertes
+## Décisions
 
-1. Nom du site : garder « Le poids des choses » partout (ma proposition), ou un titre anglais ?
-2. « Tell us about your day » : le site tutoie une seule voix (« Tell me » serait plus proche
-   du français, mais c'est Claude qui lit, pas une personne). Je garde ton intitulé.
-3. Trains : « TGV » et « TER » restent tels quels avec une glose au premier passage
-   (« TGV (high-speed train) », « TER (regional train) ») ? Proposé dans la table des gestes.
+1. Nom : « Le poids des choses » partout ; sous-titre discret « The weight of things » sur
+   l'accueil anglais et dans la description de partage.
+2. « Tell us about your day » gardé.
+3. TGV et TER gardés, avec « (high-speed train) » / « (regional train) » au premier passage
+   (choix des gestes : en précision sous le nom).
+4. Paramètres et ancres identiques dans les deux langues.

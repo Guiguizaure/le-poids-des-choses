@@ -78,3 +78,12 @@ l'occasion et ne dit rien de la durée de vie réelle. À mentionner honnêtemen
   débloquent pas et ne comptent nulle part.
 - De 21 h à 6 h (heure de l'appareil), le jardin passe en Nuit encre. Un décor : aucun
   chiffre ne change.
+
+## Version anglaise
+
+La version anglaise (`/en`) ne change aucune valeur : seuls les noms passent par des tables
+(gestes, produits de saison, catégories, animaux, visiteurs), et les nombres sont écrits à
+l'anglaise (point décimal). Les phrases anglaises disent « difference » là où le français dit
+« écart » ; « gap » n'apparaît que dans les explications de /en/method. Le crédit reste celui
+demandé par l'ADEME, traduit : « Data: Impact CO2 – ADEME ». Les fiches Impact CO2 vers
+lesquelles renvoient les faits sont en français.
