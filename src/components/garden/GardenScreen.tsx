@@ -19,7 +19,6 @@ import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
 import { effectiveSky } from "@/lib/garden/skies";
-import { seasonAt } from "@/lib/garden/seasons";
 import { siteHost } from "@/lib/share/card";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
@@ -193,7 +192,6 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           key={shareOpen}
           garden={garden}
           sky={sky}
-          season={seasonAt(now)}
           unlockedCount={garden.unlocked.length}
           siteHost={siteHost(siteUrl)}
           siteUrl={siteUrl}

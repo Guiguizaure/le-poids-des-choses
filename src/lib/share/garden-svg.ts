@@ -1,5 +1,6 @@
-// Jardin de l'image de partage : le même rendu que <Garden> (mêmes plantes, mêmes animaux aux
-// mêmes places, même ciel, brume s'il dort), en un seul SVG statique, sans navigateur.
+// Jardin de l'image de partage : le même rendu que <Garden> (mêmes plantes, mêmes animaux et
+// visiteurs aux mêmes places, même ciel, jour ou nuit selon l'heure de création, brume s'il
+// dort), en un seul SVG statique, sans navigateur.
 import {
   animalIllustration,
   illustrationFor,
@@ -7,6 +8,8 @@ import {
   type GardenState,
 } from "@/lib/garden/model";
 import { fallingParticles, particleAt } from "@/lib/geometry/fall";
+import { STARS_OPACITY } from "@/lib/garden/daytime";
+import { liveScene, type LiveScene } from "@/lib/garden/live";
 import { SCENE } from "@/lib/garden/scene";
 import type { Season } from "@/lib/garden/seasons";
 import { skyColors, type SkyId } from "@/lib/garden/skies";
@@ -19,14 +22,38 @@ export type SvgSources = Partial<Record<IllustrationName, string>>;
 /** Brume du jardin assoupi : toute la largeur, à mi-hauteur (comme dans <Garden>). */
 const MIST_TOP = SCENE.height / 2;
 
+/** Moment de l'image : saison, nuit (heure de création), date (places des visiteurs). */
+export type ShareMoment = {
+  season?: Season | null;
+  night?: boolean;
+  date?: Date;
+};
+
+function liveFor(
+  garden: GardenState,
+  sky: SkyId,
+  moment: ShareMoment,
+): LiveScene {
+  return liveScene(
+    garden,
+    { season: moment.season ?? null, night: moment.night ?? false },
+    sky,
+    moment.date ?? new Date(),
+  );
+}
+
 /** Illustrations dont la composition a besoin, dans l'ordre d'affichage. */
 export function gardenIllustrations(
   garden: GardenState,
   season: Season | null = null,
+  moment: Omit<ShareMoment, "season"> & { sky?: SkyId } = {},
 ): IllustrationName[] {
+  const live = liveFor(garden, moment.sky ?? "jour", { ...moment, season });
   return [
     "scene-paysage",
+    ...(live.stars ? (["etoiles"] as const) : []),
     ...(season === "hiver" ? (["saison-hiver-neige"] as const) : []),
+    ...live.visitors.map((visitor) => visitor.illustration),
     ...garden.plants.flatMap((plant) => {
       const look = plantLook(plant, season);
       return [
@@ -34,7 +61,7 @@ export function gardenIllustrations(
         ...(look.bloom.level > 0 ? [look.bloom.illustration] : []),
       ];
     }),
-    ...garden.animals.map((animal) =>
+    ...live.animals.map((animal) =>
       animalIllustration(animal.kind, animal.asleep),
     ),
     ...(season === "hiver" ? (["saison-hiver-flocons"] as const) : []),
@@ -96,15 +123,21 @@ function inner(svg: string): string {
   return svg.slice(open + 1, close);
 }
 
-/** Recolore les remplissages d'un calque (<g id="…">) du paysage. */
+/**
+ * Recolore les remplissages d'un calque (<g id="…">) du paysage, jusqu'au premier groupe
+ * imbriqué ou à sa fin : les cratères, groupe dans le soleil, gardent leur couleur.
+ */
 function recolor(svg: string, layer: string, color: string): string {
   return svg.replace(
-    new RegExp(`(<g id="${layer}"[^>]*>)([\\s\\S]*?)(</g>)`, "g"),
-    (_, open: string, body: string, close: string) =>
-      open +
-      body.replace(/fill="#[0-9A-Fa-f]{3,8}"/g, `fill="${color}"`) +
-      close,
+    new RegExp(`(<g id="${layer}"[^>]*>)((?:(?!<\\/?g[\\s>])[\\s\\S])*)`, "g"),
+    (_, open: string, body: string) =>
+      open + body.replace(/fill="#[0-9A-Fa-f]{3,8}"/g, `fill="${color}"`),
   );
+}
+
+/** La nuit, la lune montre ses cratères (invisibles le jour, opacité 0 dans le dessin). */
+function showCraters(svg: string): string {
+  return svg.replace(/(<g id="crateres"[^>]*?)\sopacity="0"/, "$1");
 }
 
 /**
@@ -156,8 +189,10 @@ export function composeGardenSvg(
   sources: SvgSources,
   size: { width: number; height: number } = SCENE,
   season: Season | null = null,
+  moment: Omit<ShareMoment, "season"> = {},
 ): string {
-  const colors = skyColors(sky, season);
+  const live = liveFor(garden, sky, { ...moment, season });
+  const colors = skyColors(live.sky, season);
   const landscape = placed(
     "scene-paysage",
     { x: 0, y: 0, width: SCENE.width },
@@ -169,9 +204,19 @@ export function composeGardenSvg(
         ["halo-soleil", colors.halo],
         ["nuage-1", colors.nuage],
         ["nuage-2", colors.nuage],
-      ].reduce((acc, [layer, color]) => recolor(acc, layer, color), svg),
+      ].reduce(
+        (acc, [layer, color]) => recolor(acc, layer, color),
+        live.night ? showCraters(svg) : svg,
+      ),
   );
   const full = { x: 0, y: 0, width: SCENE.width };
+  const stars = live.stars
+    ? [`<g opacity="${STARS_OPACITY}">${placed("etoiles", full, sources)}</g>`]
+    : [];
+  const visitors = (ground: boolean) =>
+    live.visitors
+      .filter((visitor) => (visitor.rule.place === "plant") === ground)
+      .map((visitor) => placed(visitor.illustration, visitor.box, sources));
   const snow =
     season === "hiver" ? [placed("saison-hiver-neige", full, sources)] : [];
   const plants = garden.plants.flatMap((plant) => {
@@ -190,7 +235,7 @@ export function composeGardenSvg(
       ),
     ];
   });
-  const animals = garden.animals.map((animal) =>
+  const animals = live.animals.map((animal) =>
     placed(animalIllustration(animal.kind, animal.asleep), animal.box, sources),
   );
   // Ce qui tombe, figé : flocons l'hiver, quelques pétales ou feuilles en l'air.
@@ -214,8 +259,11 @@ export function composeGardenSvg(
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${SCENE.width} ${SCENE.height}">`,
     landscape,
+    ...stars,
     ...snow,
+    ...visitors(true),
     ...plants,
+    ...visitors(false),
     ...animals,
     ...falling,
     ...mist,

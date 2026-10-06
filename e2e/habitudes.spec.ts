@@ -59,9 +59,7 @@ test("noter une habitude depuis /comparer : aucun kg, le jardin est arrosé", as
   page,
 }) => {
   await page.goto("/comparer");
-  await page
-    .getByRole("button", { name: /^Noter une habitude/ })
-    .click();
+  await page.getByRole("button", { name: /^Noter une habitude/ }).click();
   await expect(page).toHaveURL(/\/comparer\?habitude=$/);
   const title = page.getByRole("heading", {
     level: 1,
@@ -220,6 +218,8 @@ test("au clavier : choisir une habitude et la noter", async ({
 });
 
 test.describe("saisons", () => {
+  // Heures fixées à midi, à Paris : le jour (la nuit commence à 21 h).
+  test.use({ timezoneId: "Europe/Paris" });
   const WINTER = Date.UTC(2027, 0, 15, 11);
   const SPRING = Date.UTC(2027, 3, 15, 10);
 

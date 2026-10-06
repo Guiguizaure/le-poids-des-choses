@@ -155,3 +155,19 @@ body {
 [data-sky] [data-wind] path {
   stroke: var(--sky-vent);
 }
+/* La nuit (21 h à 6 h), le soleil devient lune : ses cratères apparaissent. */
+[data-night] [data-part="crateres"] {
+  opacity: 1;
+}
+/* Passage du jour à la nuit : en douceur, jamais en mouvement réduit. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-sky] [data-part="ciel"] > *,
+  [data-sky] [data-part="soleil"] > *,
+  [data-sky] [data-part="halo-soleil"] > *,
+  [data-sky] [data-part^="nuage-"] > * {
+    transition: fill 2s ease;
+  }
+  [data-sky] [data-part="crateres"] {
+    transition: opacity 2s ease;
+  }
+}

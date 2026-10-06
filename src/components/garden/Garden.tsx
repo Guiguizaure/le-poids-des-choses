@@ -25,13 +25,20 @@ import { Snail } from "@/components/scene/Snail";
 import { Tree } from "@/components/scene/Tree";
 import { Wind } from "@/components/scene/Wind";
 import { SeasonFall, SeasonGround } from "@/components/scene/SeasonLayers";
+import { Visitor } from "@/components/scene/Visitor";
+import { isNightAt, STARS_OPACITY } from "@/lib/garden/daytime";
+import { NO_FLIGHT_SKIES } from "@/lib/garden/fauna";
+import {
+  liveScene,
+  type LiveAnimal,
+  type LiveVisitor,
+} from "@/lib/garden/live";
 import type { JournalEntry } from "@/lib/data/types";
 import {
   animalsArrivedWith,
   buildGarden,
   waterRevealForEntry,
   type Box,
-  type GardenAnimal,
   type GardenPlant,
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
@@ -60,6 +67,8 @@ type GardenProps = {
   sky?: SkyId;
   /** Saison imposée (labo) ; par défaut, celle de `now` (aucune au rendu serveur). */
   season?: Season | null;
+  /** Nuit imposée (labo) ; par défaut, de 21 h à 6 h à l'heure de l'appareil. */
+  night?: boolean;
   className?: string;
 };
 
@@ -111,7 +120,7 @@ function Animal({
   flying,
   onLanded,
 }: {
-  animal: GardenAnimal;
+  animal: LiveAnimal;
   flying: boolean;
   onLanded: () => void;
 }) {
@@ -136,7 +145,15 @@ function Animal({
 }
 
 /** Un animal qui vient de s'installer entre par le bord droit de la scène. */
-function Entering({ box, children }: { box: Box; children: ReactNode }) {
+function Entering({
+  box,
+  kind,
+  children,
+}: {
+  box: Box;
+  kind: string;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceRef = useMotion(ref, () => {});
   useGSAP(
@@ -153,13 +170,33 @@ function Entering({ box, children }: { box: Box; children: ReactNode }) {
     { scope: ref },
   );
   return (
-    <div ref={ref} className="absolute" style={place(box)}>
+    <div ref={ref} className="absolute" style={place(box)} data-animal={kind}>
       {children}
     </div>
   );
 }
 
 const NONE: readonly string[] = [];
+
+/** Un visiteur à sa place (cadre en unités de scène). */
+function VisitorAt({
+  visitor,
+  still,
+}: {
+  visitor: LiveVisitor;
+  still: boolean;
+}) {
+  return (
+    <div
+      className="absolute"
+      style={place(visitor.box)}
+      data-visitor={visitor.kind}
+      data-asleep={visitor.asleep ? "" : undefined}
+    >
+      <Visitor visitor={visitor} still={still} />
+    </div>
+  );
+}
 
 /** Arrivée groupée : toutes les plantes en moins d'1,5 s, quel que soit leur nombre. */
 export const ARRIVAL = {
@@ -185,9 +222,11 @@ export function Garden({
   arriving = NONE,
   sky = DEFAULT_SKY,
   season: forcedSeason,
+  night: forcedNight,
   className = "",
 }: GardenProps) {
   const season = forcedSeason === undefined ? seasonAt(now) : forcedSeason;
+  const night = forcedNight ?? isNightAt(now);
   const sceneRef = useRef<HTMLDivElement>(null);
   const messageRef = useRef<HTMLParagraphElement>(null);
   // Choix à révéler : retenu une fois (l'URL peut ensuite perdre son paramètre), puis masqué
@@ -216,6 +255,11 @@ export function Garden({
     () => buildGarden(visibleEntries, new Date(now)),
     [visibleEntries, now],
   );
+  // Le jardin vivant : animaux présents selon la saison et l'heure, visiteurs, ciel de nuit.
+  const live = useMemo(
+    () => liveScene(garden, { season, night }, sky, new Date(now)),
+    [garden, season, night, sky, now],
+  );
   const revealed = revealId && !pending ? revealId : null;
   const arrived = useMemo(
     () => (revealed ? animalsArrivedWith(entries, revealed) : []),
@@ -229,7 +273,14 @@ export function Garden({
   );
   const message = watered
     ? wateringMessage(watered)
-    : arrived.map(arrivalMessage).join(". ");
+    : arrived
+        .map((kind) =>
+          arrivalMessage(
+            kind,
+            live.away.find((away) => away.kind === kind)?.why ?? null,
+          ),
+        )
+        .join(". ");
   const awake = !garden.asleep && garden.plants.length > 0;
 
   useAutoGusts(awake, sceneRef);
@@ -240,7 +291,8 @@ export function Garden({
   const canFly =
     !reduced &&
     !garden.asleep &&
-    garden.animals.some((animal) => animal.kind === "bird");
+    !NO_FLIGHT_SKIES.includes(live.sky) &&
+    live.animals.some((animal) => animal.kind === "bird" && !animal.asleep);
   const [flying, setFlying] = useState(false);
   if (flying && !canFly) setFlying(false);
   const startFlight = useCallback(() => setFlying(true), []);
@@ -320,14 +372,35 @@ export function Garden({
       <div
         ref={sceneRef}
         role="img"
-        aria-label={gardenDescription(garden, season)}
+        aria-label={gardenDescription(garden, season, {
+          visitors: live.visitors.length,
+          night,
+        })}
         className="relative aspect-[390/300] w-full overflow-hidden"
-        data-sky={sky}
+        data-sky={live.sky}
         data-season={season ?? undefined}
-        style={skyStyle(sky, season) as CSSProperties}
+        data-night={night ? "" : undefined}
+        style={skyStyle(live.sky, season) as CSSProperties}
       >
         <Landscape className="absolute inset-0" still={garden.asleep} />
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-[2000ms] motion-reduce:transition-none"
+          style={{ opacity: live.stars ? STARS_OPACITY : 0 }}
+          data-stars
+          aria-hidden
+        >
+          <Illustration name="etoiles" className="block h-auto w-full" />
+        </div>
         <SeasonGround season={season} />
+        {live.visitors
+          .filter((visitor) => visitor.rule.place === "plant")
+          .map((visitor) => (
+            <VisitorAt
+              key={visitor.kind}
+              visitor={visitor}
+              still={garden.asleep}
+            />
+          ))}
         <Wind className="absolute inset-x-0 top-[30%]" />
         {garden.plants.map((plant) => (
           <div
@@ -346,9 +419,18 @@ export function Garden({
             />
           </div>
         ))}
-        {garden.animals.map((animal) =>
+        {live.visitors
+          .filter((visitor) => visitor.rule.place !== "plant")
+          .map((visitor) => (
+            <VisitorAt
+              key={visitor.kind}
+              visitor={visitor}
+              still={garden.asleep}
+            />
+          ))}
+        {live.animals.map((animal) =>
           arrived.includes(animal.kind) ? (
-            <Entering key={animal.kind} box={animal.box}>
+            <Entering key={animal.kind} box={animal.box} kind={animal.kind}>
               <Animal animal={animal} flying={flying} onLanded={land} />
             </Entering>
           ) : (
@@ -356,6 +438,8 @@ export function Garden({
               key={animal.kind}
               className="absolute"
               style={place(animal.box)}
+              data-animal={animal.kind}
+              data-asleep={animal.asleep ? "" : undefined}
             >
               <Animal animal={animal} flying={flying} onLanded={land} />
             </div>

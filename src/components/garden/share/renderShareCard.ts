@@ -4,7 +4,7 @@
 // et le jardin (composeGardenSvg) sur un canvas 1080×1350, puis un PNG.
 import type { GardenState } from "@/lib/garden/model";
 import type { SkyId } from "@/lib/garden/skies";
-import type { Season } from "@/lib/garden/seasons";
+import { momentAt } from "@/lib/garden/live";
 import {
   CARD,
   shareCardLayout,
@@ -14,6 +14,7 @@ import {
 import {
   composeGardenSvg,
   gardenIllustrations,
+  type ShareMoment,
   type SvgSources,
 } from "@/lib/share/garden-svg";
 
@@ -63,9 +64,14 @@ async function step<T>(name: string, run: () => Promise<T>): Promise<T> {
 
 async function loadSources(
   garden: GardenState,
-  season: Season | null,
+  sky: SkyId,
+  moment: ShareMoment,
 ): Promise<SvgSources> {
-  const names = [...new Set(gardenIllustrations(garden, season))];
+  const names = [
+    ...new Set(
+      gardenIllustrations(garden, moment.season ?? null, { ...moment, sky }),
+    ),
+  ];
   const entries = await Promise.all(
     names.map(async (name) => {
       const response = await fetch(`/illustrations/${name}.svg`);
@@ -184,21 +190,25 @@ function drawOp(
 export async function renderShareCard({
   garden,
   sky,
-  season = null,
+  created = new Date(),
   siteHost,
   unlockedCount,
 }: {
   garden: GardenState;
   sky: SkyId;
-  /** Saison du jardin à l'écran : la même sur l'image. */
-  season?: Season | null;
+  /** Heure de création : saison, jour ou nuit, places des visiteurs. */
+  created?: Date;
   siteHost: string;
   unlockedCount: number;
 }): Promise<Blob> {
+  const moment: ShareMoment = {
+    ...momentAt(created.getTime()),
+    date: created,
+  };
   const fonts = siteFonts();
   const [, sources] = await Promise.all([
     loadFonts(fonts),
-    step("illustrations", () => loadSources(garden, season)),
+    step("illustrations", () => loadSources(garden, sky, moment)),
   ]);
   const { image, release } = await step("image du jardin", async () =>
     svgImage(
@@ -207,7 +217,8 @@ export async function renderShareCard({
         sky,
         sources,
         { width: CARD.garden.width, height: CARD.garden.height },
-        season,
+        moment.season,
+        moment,
       ),
     ),
   );

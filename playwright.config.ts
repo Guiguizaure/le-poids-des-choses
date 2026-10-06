@@ -9,6 +9,18 @@ const PORT = 4323;
 const FAKE_PORT = 4330;
 const PAGES_PORT = 4331;
 
+/**
+ * Le jardin passe en nuit de 21 h à 6 h (heure de l'appareil) : pour que les tests ne
+ * dépendent pas de l'heure du lancement, le navigateur vit dans un fuseau où il est vers 13 h.
+ * Les tests de la nuit fixent eux-mêmes leur heure et leur fuseau (e2e/jardin-vivant.spec.ts).
+ */
+function middayTimeZone(now = new Date()): string {
+  const offset = 13 - now.getUTCHours();
+  if (offset === 0) return "Etc/GMT";
+  // Les fuseaux Etc/GMT ont le signe inversé : Etc/GMT-3 vaut UTC+3.
+  return offset > 0 ? `Etc/GMT-${offset}` : `Etc/GMT+${-offset}`;
+}
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -22,6 +34,7 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
     locale: "fr-FR",
+    timezoneId: middayTimeZone(),
   },
   projects: [
     {
