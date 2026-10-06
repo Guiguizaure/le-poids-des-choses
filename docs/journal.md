@@ -1334,3 +1334,14 @@ complet, mais la machine était très chargée (charge 70 à 110) : deux tests d
 échoué (délai), avec des échecs différents à chaque relance. Relancés seuls, compte (16) et
 « Raconte ta journée » (15) passent. Lighthouse mobile (`serve:out`, noindex, machine
 chargée) : Mon jardin 90 puis 93, accessibilité et bonnes pratiques 100.
+
+### 2026-10-06 (soir) — Jardin vivant : renard en boule, 4 visiteurs au plus
+
+- `renard-endormi.svg` remplacé par le renard roulé en boule. Il n'a pas de calque `pattes`
+  (le brief disait « mêmes calques ») : contrat adapté (`corps`, `queue`, `tete`, `oeil`).
+- 4 visiteurs visibles au plus, nocturnes compris (`MAX_VISIBLE_VISITORS`, `capVisitors`) : le
+  hibou et le renard passent d'abord, puis les visiteurs de saison dans un ordre tiré de la
+  saison et de l'année. Les places ne bougent pas. Tests unitaires et e2e (hiver) adaptés.
+- Poussé sur la PR #25 : la CI GitHub tranche pour les tests du compte qui échouaient sous la
+  charge locale.
+

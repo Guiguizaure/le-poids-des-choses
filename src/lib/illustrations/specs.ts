@@ -159,7 +159,8 @@ export const ILLUSTRATION_SPECS = {
     "pattes",
   ]),
   renard: critter(["queue", "corps", "pattes", "tete", "oeil"]),
-  "renard-endormi": critter(["queue", "corps", "pattes", "tete", "oeil"]),
+  // Roulé en boule : pas de pattes visibles.
+  "renard-endormi": critter(["corps", "queue", "tete", "oeil"]),
   hibou: owl,
   "hibou-endormi": owl,
   "perce-neige": flower(["feuilles", "tige", "clochette"]),

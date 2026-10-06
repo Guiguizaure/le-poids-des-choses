@@ -13,6 +13,7 @@ import {
 import { seasonAt, type Season } from "./seasons";
 import type { SkyId } from "./skies";
 import {
+  capVisitors,
   placeVisitors,
   seasonYear,
   visitorIllustration,
@@ -94,27 +95,28 @@ export function liveScene(
         box: animalBox(kind),
       });
   }
-  const visitors: LiveVisitor[] = moment.season
-    ? placeVisitors(
-        garden,
-        moment.season,
-        seasonYear(now, moment.season),
-      ).flatMap((visitor) => {
-        const presence = visitorPresence(visitor.rule, {
-          night: moment.night,
-          sky,
-        });
-        if (presence === "absent") return [];
-        // Jardin assoupi : les visiteurs restent (immobiles), tels quels.
-        return [
-          {
-            ...visitor,
-            asleep: presence === "asleep",
-            illustration: visitorIllustration(visitor.rule, presence),
-          },
-        ];
-      })
-    : [];
+  const visitors: LiveVisitor[] = [];
+  if (moment.season) {
+    const year = seasonYear(now, moment.season);
+    for (const visitor of placeVisitors(garden, moment.season, year)) {
+      const presence = visitorPresence(visitor.rule, {
+        night: moment.night,
+        sky,
+      });
+      if (presence === "absent") continue;
+      // Jardin assoupi : les visiteurs restent (immobiles), tels quels.
+      visitors.push({
+        ...visitor,
+        asleep: presence === "asleep",
+        illustration: visitorIllustration(visitor.rule, presence),
+      });
+    }
+    visitors.splice(
+      0,
+      visitors.length,
+      ...capVisitors(visitors, moment.season, year),
+    );
+  }
   return {
     ...moment,
     sky,

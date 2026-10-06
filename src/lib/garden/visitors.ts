@@ -172,6 +172,34 @@ export function visitorRule(kind: VisitorKind): VisitorRule {
   return rule;
 }
 
+/** Visiteurs visibles en même temps, nocturnes compris : le jardin reste aéré. */
+export const MAX_VISIBLE_VISITORS = 4;
+
+/**
+ * Garde au plus MAX_VISIBLE_VISITORS visiteurs : le hibou et le renard d'abord (ils prennent
+ * la place de visiteurs de saison), puis les visiteurs de saison dans un ordre tiré de la
+ * saison et de l'année (même choix sur tous les appareils). Les places ne bougent pas : un
+ * visiteur écarté garde la sienne, vide.
+ */
+export function capVisitors<T extends { kind: VisitorKind; rule: VisitorRule }>(
+  visible: readonly T[],
+  season: Season,
+  year: number,
+): T[] {
+  const nightly = (visitor: T) => visitor.rule.seasons.length > 1;
+  const rank = (visitor: T) =>
+    nightly(visitor)
+      ? -1
+      : pickIndex(`${year}:${season}:${visitor.kind}:rang`, 1_000_000);
+  const kept = new Set(
+    [...visible]
+      .sort((a, b) => rank(a) - rank(b) || a.kind.localeCompare(b.kind))
+      .slice(0, MAX_VISIBLE_VISITORS)
+      .map((visitor) => visitor.kind),
+  );
+  return visible.filter((visitor) => kept.has(visitor.kind));
+}
+
 /** Le renard marche au sol la nuit : sa place compte ce va-et-vient (unités de scène). */
 export const FOX_WALK = 10;
 

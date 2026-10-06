@@ -425,7 +425,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     sur l'emprise dessinée des plantes ni des animaux, jamais sur un autre visiteur ; volants
     dans la bande de ciel, jamais sur le soleil ; places indépendantes de l'heure. La nuit :
     hirondelle et libellule absentes, rouge-gorge endormi. L'hirondelle n'apparaît jamais sur
-    Nuit encre (contraste). Jardin assoupi : visiteurs gardés, immobiles.
+    Nuit encre (contraste). Jardin assoupi : visiteurs gardés, immobiles. Au plus
+    `MAX_VISIBLE_VISITORS` (4) visibles en même temps, nocturnes compris (`capVisitors` :
+    hibou et renard d'abord, puis un ordre tiré de la saison et de l'année ; un visiteur
+    écarté garde sa place, vide).
   - Jour et nuit (`daytime.ts`, heure locale de l'appareil) : de 21 h à 6 h, le ciel affiché
     passe en Nuit encre (le ciel choisi reste choisi, mention sous le sélecteur) ; soleil →
     lune : groupe `crateres` du calque `soleil` de scene-paysage (opacité 0, 1 la nuit) ;

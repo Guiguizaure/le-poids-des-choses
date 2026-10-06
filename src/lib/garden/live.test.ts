@@ -32,6 +32,7 @@ import { SPECIES } from "./species";
 import { arrivalMessage, gardenDescription } from "./text";
 import {
   drawnBox,
+  MAX_VISIBLE_VISITORS,
   overlaps,
   placeVisitors,
   seasonYear,
@@ -471,5 +472,50 @@ describe("description accessible", () => {
     expect(
       gardenDescription(garden, "hiver", { visitors: 3, night: true }),
     ).toBe("Jardin : 1 plante, 1 animal, 3 visiteurs, en hiver, la nuit");
+  });
+});
+
+describe("au plus 4 visiteurs visibles en même temps", () => {
+  const gardens = [gardenWith(0, 0, 0), gardenWith(0, 3), gardenWith(3, 2)];
+  it("jamais plus de 4, nocturnes compris, de jour comme de nuit", () => {
+    expect(MAX_VISIBLE_VISITORS).toBe(4);
+    for (const garden of gardens)
+      for (const moment of MOMENTS)
+        expect(
+          liveScene(garden, moment, "jour", NOW).visitors.length,
+        ).toBeLessThanOrEqual(MAX_VISIBLE_VISITORS);
+  });
+  it("le hibou et le renard prennent la place de visiteurs de saison", () => {
+    const garden = gardenWith(3, 2);
+    for (const moment of MOMENTS) {
+      const kinds = liveScene(garden, moment, "jour", NOW).visitors.map(
+        (v) => v.kind,
+      );
+      expect(kinds).toEqual(expect.arrayContaining(["hibou", "renard"]));
+      expect(kinds.length).toBe(MAX_VISIBLE_VISITORS);
+    }
+  });
+  it("même jardin, même moment : mêmes visiteurs ; un visiteur gardé ne change pas de place", () => {
+    const garden = gardenWith(3, 2);
+    const a = liveScene(garden, { season: "ete", night: false }, "jour", NOW);
+    const b = liveScene(garden, { season: "ete", night: false }, "jour", NOW);
+    expect(a.visitors).toEqual(b.visitors);
+    const placed = placeVisitors(garden, "ete", seasonYear(NOW, "ete"));
+    for (const visitor of a.visitors)
+      expect(visitor.box).toEqual(
+        placed.find((p) => p.kind === visitor.kind)!.box,
+      );
+  });
+  it("assez de place pour moins de 4 : tous restent", () => {
+    const empty = gardenWith(0, 0, 0);
+    const kinds = liveScene(
+      empty,
+      { season: "automne", night: false },
+      "jour",
+      NOW,
+    )
+      .visitors.map((v) => v.kind)
+      .sort();
+    expect(kinds).toEqual(["champignons", "ecureuil", "renard"]);
   });
 });

@@ -79,7 +79,7 @@ test("la nuit : Nuit encre, lune à cratères, étoiles ; papillon et abeille pa
   await expectNoAxeViolations(page);
 });
 
-test("le jour en hiver : rouge-gorge, perce-neige et houx ; papillon, abeille, coccinelle absents", async ({
+test("le jour en hiver : visiteurs d'hiver (4 au plus) ; papillon, abeille, coccinelle absents", async ({
   page,
 }) => {
   // Midi à Paris, en janvier.
@@ -99,15 +99,13 @@ test("le jour en hiver : rouge-gorge, perce-neige et houx ; papillon, abeille, c
   expect(animals).toEqual(
     expect.arrayContaining(["bird", "snail (endormi)", "hedgehog (endormi)"]),
   );
+  // Au plus 4 visiteurs : le renard (endormi le jour), le hibou s'il y a un grand arbre, puis
+  // ceux de l'hiver.
   const visitors = await shown(page, "visitor");
-  expect(visitors).toEqual(
-    expect.arrayContaining([
-      "rouge-gorge",
-      "perce-neige",
-      "houx",
-      "renard (endormi)",
-    ]),
-  );
+  expect(visitors).toHaveLength(4);
+  expect(visitors).toContain("renard (endormi)");
+  for (const visitor of visitors.filter((v) => !/^(hibou|renard)/.test(v)))
+    expect(["rouge-gorge", "perce-neige", "houx"]).toContain(visitor);
   await expect(page.getByLabel("Bilan")).toContainText("6 animaux");
   await expectNoAxeViolations(page);
 });
