@@ -3,7 +3,8 @@
 # Le poids des choses
 
 Comparateur carbone illustré : deux gestes du quotidien sur une balance, un choix noté, un
-jardin dessiné qui grandit à chaque choix plus léger. Projet vitrine pour webjuno.com.
+jardin dessiné qui grandit à chaque choix plus léger, arrosé par les habitudes tenues et qui
+suit les saisons. Projet vitrine pour webjuno.com.
 Projet indépendant, non affilié à l'ADEME.
 
 ## Règles
@@ -112,12 +113,14 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   Open Graph, carte Twitter), robots et sitemap ; `src/lib/legal.ts` — éditeur et hébergeur ;
   `src/lib/install.ts` — règles du bandeau d'installation
 - `src/components/illustrations` — `<Illustration>` et le fichier généré
-- `src/components/scene` — `Tree`, `Flower` (via `StagedPlant`), `Scale`, `Butterfly`, `Bird`,
-  `Bee`, `Ladybug`, `Snail`, `Hedgehog`, `Sparkle`, `Wind` (animés)
+- `src/components/scene` — `Tree`, `Flower` (via `StagedPlant` : couleur de saison `paint`,
+  épanouissement `bloom`), `Scale`, `Butterfly`, `Bird`, `Bee`, `Ladybug`, `Snail`,
+  `Hedgehog`, `Sparkle`, `Wind`, `SeasonGround` / `SeasonFall` (`SeasonLayers.tsx`) (animés)
 - `src/components/motion` — GSAP, `MotionProvider`, `useMotion` (préférence de mouvement),
   `gust.ts` (`playGust`, `useGust`, `useAutoGusts`)
 - `src/lib/illustrations/specs.ts` — contrat des SVG (tailles, points d'appui, calques)
-- `src/lib/journal` — carnet sur l'appareil : format et validation (`schema.ts`), fusion,
+- `src/lib/journal` — carnet sur l'appareil : format et validation (`schema.ts`), sortes
+  d'entrées (`kind.ts` : `isHabit`, `isComparison`, `isLightChoice`, `entryKg`), fusion,
   export et import (`merge.ts`), stockage avec repli en mémoire (`store.ts`), création
   d'une entrée (`entry.ts`), textes d'une entrée (`display.ts`), hook `useJournal`, carnet
   analysé (`analysis.ts` : tri, filtres, vue dans l'URL, choix légers sur 7 jours)
@@ -126,13 +129,18 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `src/lib/share` — carte de partage sans navigateur : description de dessin (`card.ts`)
   et jardin en SVG statique (`garden-svg.ts`)
 - `src/lib/garden` — modèle pur du jardin (`buildGarden` : plantes, emplacements, animaux,
-  endormissement), géométrie de la scène (`scene.ts`, d'après `scene.generated.ts`), textes
-  (`text.ts`), ciels à débloquer (`skies.ts`)
+  endormissement, arrosage ; `waterRevealForEntry`), géométrie de la scène (`scene.ts`,
+  d'après `scene.generated.ts`), textes (`text.ts`), ciels à débloquer et ciel « Jour » de
+  saison (`skies.ts`), espèces (`species.ts`), saisons (`seasons.ts`), arrosage
+  (`watering.ts`)
+- `src/lib/habits` — table `HABITS`, « Mes habitudes » (`declared.ts`, `useDeclaredHabits`) ;
+  `src/components/habits` — `HabitChooser` (/comparer?habitude), `MyHabits` (/jardin)
 - `src/components/garden` — `<Garden entries now highlightId sky />`, écran `/jardin`,
   `CarnetScreen` (`/jardin/carnet`), `WeekChart`, `MilestoneCard`, `SkyPicker` et
   `useSky`, partage (`share/` : `renderShareCard`, `useShareSupport`, `ShareSheet`)
 - `src/components/compare` — parcours : `CompareFlow` (piloté par l'URL), `GestureChooser`
-  (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a v2 / 05b v2, carte de révélation)
+  (02), `Duel` (03), `ObjectDuel` (03b), `ChoiceResult` (05a v2 / 05b v2, carte de révélation,
+  `Vitrine`), `HabitResult` (après une habitude)
 - `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
   « Mon jardin · X kg d’écart »
 - `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
@@ -173,6 +181,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
 - Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.
+  Une habitude ne compte AUCUN kg (ni total, ni pastille, ni paliers, ni choix légers) :
+  elle arrose le jardin (/methode#habitudes).
   Le site ne mesure qu'un écart avec l'autre option comparée : « X kg de CO2e d’écart avec
   les autres options » (bilan), « Mon jardin · X kg d’écart » (pastille), « X kg d’écart »
   (carte de révélation, sans « + ») ; expliqué dans /methode#ecart. Le champ `avoidedKg` garde son nom
@@ -254,6 +264,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - Pousse : `GROWTH` (`StagedPlant`) — 0,7 s, montée depuis le pied avec dépassement
   (`back.out`), puis éclat. Le balancement au repos reste calme (±1,5°).
 - Carnet : `localStorage`, clé versionnée `lpdc:journal:v1` (`{ version: 1, entries }`).
+  Deux sortes d'entrées (`JournalEntry = ComparisonEntry | HabitEntry`) : comparaison, SANS
+  champ `kind` (les entrées existantes ne sont jamais réécrites : leur empreinte changerait
+  sur le compte) ; habitude `{ kind: "habit", id, date, gesture }`, refusée si elle porte
+  `avoidedKg`, `gestureA`, `gestureB`, `chosen`, `quantity`, `modeA` ou `modeB` ; autre
+  `kind` → entrée illisible (mise de côté). Même format, même clé, synchro et D1 inchangées
+  (payload JSON, aucune migration).
   Il ne fait que s'allonger ; entrées invalides ignorées mais conservées ; une future v2
   lira l'ancienne clé via `MIGRATIONS`. Stockage indisponible (navigation privée) : carnet
   en mémoire et message. Stockage persistant demandé au premier ajout. Export JSON, import
@@ -284,8 +300,23 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     mouvement réduit (pas de bouton) ;
   - petites bêtes cernées d'encre 1,5 px (`vector-effect="non-scaling-stroke"` : le trait
     reste fin quelle que soit la taille d'affichage) ;
-  - assoupi après 21 jours sans entrée : brume, oiseau/escargot/hérisson endormis, autres
-    animaux partis, ni balancement ni vent ; réveil à l'entrée suivante.
+  - assoupi après 21 jours sans entrée (habitude comprise) : brume, oiseau/escargot/hérisson
+    endormis, autres animaux partis, ni balancement ni vent ; réveil à l'entrée suivante ;
+  - arrosage (`watering.ts`) : un jour arrosé = un jour (heure de Paris) avec au moins une
+    habitude ; chaque plante avance d'un cran tous les `WATER_DAYS_PER_STEP` (3, provisoire)
+    jours arrosés depuis sa plantation : stade (pousse → jeune → grand / fleurie), puis
+    épanouissement 1 à 3 (`bloom`). Emplacement fixé au stade de départ. Jamais de
+    régression (test de propriété). Jardin sans plante : rien ne pousse, message ;
+  - espèces (`species.ts`, préparé pour la V3) : dessins, épanouissement (un seul groupe
+    `epanoui-N` affiché), calques de feuillage, caduc / persistant, couleur par saison,
+    `bloomRestsInWinter` (l'épanouissement des caducs dort de décembre à février, niveau
+    gardé) ; tirage au hasard figé sur les six espèces d'origine (`randomPool`) ;
+  - saisons (`seasons.ts`, hémisphère nord, mois à Paris ; aucune au rendu serveur) :
+    feuillage des caducs (tomate en automne, blanc cerné d'encre en hiver), ciel « Jour » de
+    saison (`SEASONAL_DAY_SKY` ; un ciel débloqué choisi ne change pas), neige sous les
+    plantes, flocons qui glissent, pétales / feuilles qui tombent (`src/lib/geometry/fall.ts`,
+    pause onglet caché ou hors écran ; rien ne tombe en mouvement réduit ni jardin
+    assoupi) ; même saison sur l'image de partage (particules figées).
 - Lancement (`SITE_LAUNCHED=1`, activé par l'utilisateur dans Cloudflare) : au build, elle
   retire le noindex, remplit sitemap.xml et ouvre robots.txt (sauf /labo). Sans elle, tout
   reste en noindex. Penser aussi à `SITE_URL` si
@@ -354,6 +385,17 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   Un gabarit porte sur des gestes (`gestures`) ou sur des produits de saison (`products`,
   slugs de l'API : celui des deux mangues) ; un geste ou un produit disparu fait échouer
   le build.
+- « Tenir une habitude » : table `HABITS` (vélo, marche, bus, métro, TER, TGV, repas
+  végétarien et végétal, eau du robinet, boisson au soja, courses et colis à pied ; chacune
+  plus légère que son alternative, testé). Où : /comparer (« Noter une habitude »,
+  `?habitude=` puis `?habitude=velo`, « Je l’ai fait aujourd’hui » → `HabitResult` →
+  `/jardin?arrose=<id>`), raccourci quand le premier geste touché est une habitude
+  déclarée ; /jardin section « Mes habitudes » (`#habitudes` : « J’ai tenu : … » d'un
+  toucher, déclaration) ; « Raconte ta journée » (choix « Comparer » / « Habitude tenue » par
+  geste de la table, habitude par défaut si déclarée ; jamais décidé par l'IA). « Mes
+  habitudes » : `lpdc:habitudes:v1` (`{ version: 1, gestures }`), sur l'appareil seulement ;
+  déclarer ne note rien. Carnet : « arrosé », filtre `choix=habitudes`, tri par écart :
+  habitudes à la fin ; « N jours arrosés cette semaine » sous le graphique.
 - Carnet analysé : section Carnet de /jardin (graphique de la semaine, 5 derniers choix,
   « Tout voir » → /jardin/carnet). Sur /jardin/carnet : tri (date par défaut, écart,
   catégorie) et filtres (catégorie, choix légers ou notés) dans l'URL

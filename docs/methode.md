@@ -54,3 +54,18 @@ l'empreinte a été « payée » par le premier propriétaire. D'autres méthode
 l'empreinte de fabrication entre tous les utilisateurs successifs (ou selon la durée
 d'usage), ce qui donnerait une valeur non nulle à l'occasion. Notre choix est favorable à
 l'occasion et ne dit rien de la durée de vie réelle. À mentionner honnêtement sur le site.
+
+## Habitudes : aucun kg, le jardin est arrosé
+
+- Une habitude (« Tenir une habitude ») est un geste noté sans comparaison : un repas
+  végétarien, le vélo pour le travail. Sans comparaison, pas d'écart : elle ne compte aucun
+  kg, n'entre ni dans le total, ni dans les paliers, ni dans les choix légers (animaux,
+  ciels). Seuls les gestes de la table `HABITS` (`src/lib/habits`) peuvent l'être ; un test
+  vérifie, avec les données, que chacun est plus léger que l'option qu'il remplace dans
+  `ALTERNATIVES`.
+- Elle arrose le jardin : un « jour arrosé » est un jour (heure de Paris) où au moins une
+  habitude est notée. Chaque plante avance d'un cran tous les `WATER_DAYS_PER_STEP` (3,
+  provisoire) jours arrosés depuis sa plantation : pousse → jeune → grand (arbres), pousse →
+  fleurie (fleurs), puis épanouissement 1, 2 et 3. C'est une règle de jeu, pas une mesure.
+- Saisons (hémisphère nord, d'après le mois) : un décor seulement. L'hiver, l'épanouissement
+  des arbres caducs dort (niveau gardé, rien d'affiché) jusqu'au printemps.

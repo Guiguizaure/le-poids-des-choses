@@ -1227,3 +1227,59 @@ dans la carte, un message bien visible, un bouton qui mène au premier manque.
 - Bout en bout : nouveau test mobile (Pixel 7 et iPhone 14) : marche sans distance → carte
   bordée et message visible → toucher le bouton → défilement et focus sur le champ → saisie
   → ajout ; parcours complet adapté. Faux Anthropic : « à pied » → marche.
+
+## 2026-10-06 — « Tenir une habitude » et jardin des saisons (branche feat/habitudes-saisons)
+
+**Demandé** : une deuxième façon de nourrir le jardin. Comparer (existant) fait pousser une
+plante et compte des kg d'écart ; tenir une habitude (« repas végé », « vélo pour le
+travail ») se note sans comparaison, ne compte AUCUN kg et arrose le jardin (les plantes
+s'épanouissent, le jardin reste éveillé). Plus un jardin qui suit les saisons. Illustrations
+fournies (zip) ; conception à montrer avant de coder.
+
+**Conception proposée puis validée** : règle B (l'arrosage fait d'abord grandir les pousses
+jusqu'à l'âge adulte, puis s'épanouir), jours arrosés à l'heure de Paris, un cran tous les 3
+jours arrosés (constante), liste HABITS de 12 gestes sans objet, feuillage des caducs blanc
+cerné d'encre l'hiver, « Mes habitudes » sur l'appareil seulement. Ajout de Guillaume :
+l'épanouissement des caducs dort l'hiver (niveau gardé, rien d'affiché de décembre à
+février), champ par espèce, testé et expliqué sur /methode.
+
+**Fait** :
+
+- Illustrations : 11 fichiers dans `public/illustrations`, contrat dans `specs.ts`. Écart au
+  brief : les feuilles d'automne font 16×16 (pas 24×24). Le test des dessins de produits de
+  saison ignore `saison-hiver-…`, `saison-automne-…`, `saison-printemps-…` ; les fichiers
+  `-epanoui` sont exclus de l'emprise des plantes (vitrine).
+- Carnet : union `ComparisonEntry | HabitEntry` ; une comparaison reste sans `kind` (jamais
+  réécrite) ; une habitude `{ kind: "habit", id, date, gesture }` est refusée si elle porte
+  un champ de comparaison. Même clé, même export ; serveur et D1 inchangés (payload JSON),
+  testé côté serveur.
+- Modèle : `watering.ts` (jours arrosés, crans), `species.ts` (table des espèces, tirage figé),
+  `seasons.ts`, ciel « Jour » de saison, `waterRevealForEntry` ; totaux, paliers, filtres et
+  graphique n'additionnent que les comparaisons.
+- Rendu : `StagedPlant` (couleur de saison du feuillage, épanouissement qui suit le
+  balancement et s'ouvre avec l'éclat), `SeasonGround` / `SeasonFall` (neige, flocons,
+  pétales, feuilles ; pause onglet caché ou hors écran ; rien en mouvement réduit ni jardin
+  assoupi), image de partage à la même saison.
+- Interface : /comparer « Noter une habitude » (`?habitude=`), raccourci pour une habitude
+  déclarée, `HabitResult` ; /jardin « Mes habitudes » (un toucher pour arroser, déclaration),
+  « N jours arrosés » au bilan et sous le graphique ; carnet « arrosé » et filtre
+  « Habitudes tenues » ; « Raconte ta journée » : « Comparer » / « Habitude tenue » par
+  geste de la table (une habitude ne demande plus de distance) ; /methode#habitudes (texte
+  validé + phrase sur l'hiver + saisons = décor), renvoi depuis #ecart ; /confidentialite
+  (« Mes habitudes » sur l'appareil).
+- /labo : « Saisons et épanouissement » (curseurs saison, niveau d'épanouissement sur les six
+  espèces, jours arrosés sur un jardin de démonstration).
+- Libellés renommés pour ne pas doubler des noms existants dans les tests (« Mes habitudes »
+  plutôt que « Arroser mon jardin », qui contenait « Mon jardin » ; bouton « Noter une
+  habitude », sans « comparer »). Description du jardin : la saison vient en dernier
+  (« Jardin : 3 plantes, 1 animal, en automne »).
+- `e2e/fixtures.ts` : une animation CSS annulée avant la mesure axe (AbortError, WebKit) ne
+  fait plus échouer le test.
+
+**Vérifications** : lint, typecheck, 808 tests unitaires (dont une propriété « jamais de
+régression » sur des carnets générés), `STRICT_DATA=1 pnpm build`, bout en bout complet
+(172 passés, 16 ignorés, Chromium et WebKit, axe compris ; nouveau `e2e/habitudes.spec.ts`
+et un test « habitude » dans `e2e/raconte.spec.ts`). Lighthouse mobile (`serve:out`,
+noindex) : Mon jardin 95 / 100 / 100. Contrôle visuel de /labo (automne, hiver, printemps)
+dans Chrome ; la chute des pétales n'a pas pu être vue dans l'onglet piloté (onglet tenu
+pour caché, animations en pause) : elle est vérifiée par le bout en bout.
