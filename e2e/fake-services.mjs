@@ -25,6 +25,7 @@ const FAKE_GESTURES = [
   { pattern: /pris le TER/i, gestureId: "ter", certainty: "explicit" },
   { pattern: /un burger/i, gestureId: "repas-boeuf", certainty: "inferred" },
   { pattern: /un café/i, gestureId: "cafe", certainty: "explicit" },
+  { pattern: /à pied/i, gestureId: "marche", certainty: "explicit" },
   {
     pattern: /une voiture de (\d+) km/i,
     gestureId: "voiture",

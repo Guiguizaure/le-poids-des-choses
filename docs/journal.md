@@ -1189,3 +1189,41 @@ en bout complet vert (155 passés, 15 ignorés, Chromium et WebKit, axe compris)
 charge machine de 25 à 40. Lighthouse mobile sur `serve:out` (noindex) : Comparer 95,
 accessibilité et bonnes pratiques 100 partout. `pnpm raconte:eval` pas encore lancé (clé
 réelle nécessaire, à faire par Guillaume).
+
+### 2026-10-05 (soir) — CI de la PR #22 : incident GitHub Actions
+
+Les trois premiers lancements de la CI de la PR #22 ont été annulés après 15 minutes sans
+qu'aucune étape ne démarre (aucun journal, `runner_name` vide, annotation « The job was not
+acquired by Runner of type hosted even after multiple attempts »). Ce n'était pas le
+`timeout-minutes` du workflow (20 min, jamais atteint : la CI dure ~5 min, bout en bout
+~3 min) mais un incident GitHub (« delays in assigning GitHub-hosted runners », ouvert à
+19 h 12 UTC, résolu vers 23 h 27 UTC). Relancée après la résolution : verte en 5 min 04
+(bout en bout 3 min 08). Workflow inchangé.
+
+## 2026-10-06 — « Raconte ta journée » : gestes à compléter (branche fix/raconte-ajout)
+
+**Demandé** (retour de test sur téléphone) : « Ajouter au carnet » restait désactivé à cause
+d'un trajet sans distance, et le message sous le bouton passait inaperçu. Mettre le manque
+dans la carte, un message bien visible, un bouton qui mène au premier manque.
+
+**Fait** :
+
+- Carte à compléter (cochée, distance ou option manquante) : bordure tomate ; le champ
+  « Distance du trajet (km) » (ou le choix neuf / d'occasion / je garde) est affiché dans la
+  carte dès l'analyse, sans passer par « Modifier », et y reste une fois rempli (le focus ne
+  saute pas). « Modifier » ne garde alors que l'option comparée ; pour un objet à compléter,
+  il disparaît (il n'aurait rien d'autre à montrer).
+- Sous le bouton : « 1 geste à compléter » / « N gestes à compléter » (texte encre, gras, sur
+  pastille tomate douce), lui-même un bouton ; aucun geste coché : « Coche au moins un geste
+  pour l'ajouter au carnet. ».
+- « Ajouter au carnet » : `aria-disabled` au lieu de `disabled` (toujours touchable, annoncé
+  comme indisponible, décrit par le message) ; le toucher, ou toucher le message, fait
+  défiler jusqu'au premier geste à compléter (carte au centre, sans animation en mouvement
+  réduit) et place le focus sur son champ (ou sur sa case quand rien n'est coché).
+- « décoche-le » : le code l'écrivait déjà avec le trait d'union ; l'ancienne phrase
+  « Précise la distance de … avec « Modifier », ou décoche-le » est remplacée par le compte.
+- Logique pure dans `src/lib/raconte/text.ts` (`blockingFor`, `inlineNeed`, ids stables
+  `rowFieldId` / `rowCheckboxId`), testée.
+- Bout en bout : nouveau test mobile (Pixel 7 et iPhone 14) : marche sans distance → carte
+  bordée et message visible → toucher le bouton → défilement et focus sur le champ → saisie
+  → ajout ; parcours complet adapté. Faux Anthropic : « à pied » → marche.

@@ -23,22 +23,32 @@ import { raconte, type RaconteError } from "@/lib/raconte/api";
 import { RACONTE_MAX_CHARS, RACONTE_KM_RANGE } from "@/lib/raconte/detections";
 import {
   alternativeChoices,
+  missingFor,
   proposalEntry,
   toProposal,
   type Proposal,
 } from "@/lib/raconte/proposal";
 import {
-  blockingMessage,
+  blockingFor,
   comparedToLabel,
   ERROR_MESSAGES,
+  inlineNeed,
   NOTHING_FOUND,
   objectOptionLabel,
   PRIVACY_NOTICE,
   proposalSubtitle,
+  rowCheckboxId,
+  rowFieldId,
 } from "@/lib/raconte/text";
 import { useTurnstile } from "@/lib/sync/useTurnstile";
 
-type Row = { proposal: Proposal; checked: boolean; open: boolean };
+type Row = {
+  proposal: Proposal;
+  checked: boolean;
+  open: boolean;
+  /** Distance ou option à remplir dans la carte (gardé une fois rempli : le focus reste). */
+  inline: "quantity" | "object-option" | null;
+};
 
 type State =
   | { step: "idle" }
@@ -127,12 +137,16 @@ export function RaconteScreen() {
     }
     setState({
       step: "results",
-      rows: result.detections.map((detection, index) => ({
-        proposal: toProposal(detection, index),
-        // Gestes déduits (« À vérifier ») : décochés, la personne choisit.
-        checked: detection.certainty === "explicit",
-        open: false,
-      })),
+      rows: result.detections.map((detection, index) => {
+        const proposal = toProposal(detection, index);
+        return {
+          proposal,
+          // Gestes déduits (« À vérifier ») : décochés, la personne choisit.
+          checked: detection.certainty === "explicit",
+          open: false,
+          inline: inlineNeed(proposal),
+        };
+      }),
     });
   };
 
@@ -149,7 +163,12 @@ export function RaconteScreen() {
     );
 
   const add = () => {
-    if (state.step !== "results" || blockingMessage(state.rows)) return;
+    if (state.step !== "results") return;
+    const blocked = blockingFor(state.rows);
+    if (blocked) {
+      goTo(blocked.focusId);
+      return;
+    }
     const entries = state.rows
       .filter((row) => row.checked)
       .map((row) => proposalEntry(row.proposal))
@@ -174,8 +193,7 @@ export function RaconteScreen() {
       </Shell>
     );
 
-  const blocking =
-    state.step === "results" ? blockingMessage(state.rows) : null;
+  const blocking = state.step === "results" ? blockingFor(state.rows) : null;
 
   return (
     <Shell>
@@ -282,21 +300,32 @@ export function RaconteScreen() {
               />
             ))}
           </ul>
+          {/* aria-disabled plutôt que disabled : le bouton reste touchable et annoncé, et
+              mène au premier geste à compléter. */}
           <PrimaryButton
             onClick={add}
-            disabled={blocking !== null}
+            aria-disabled={blocking !== null}
             aria-describedby={blocking ? ids.blocking : undefined}
+            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-40"
           >
             Ajouter au carnet
           </PrimaryButton>
-          <p
+          <div
             id={ids.blocking}
             role="status"
             aria-live="polite"
-            className="text-legende text-texte-attenue text-center empty:hidden"
+            className="flex justify-center empty:hidden"
           >
-            {blocking ?? ""}
-          </p>
+            {blocking ? (
+              <button
+                type="button"
+                onClick={() => goTo(blocking.focusId)}
+                className="press bg-tomate-douce text-corps-s text-encre focus-visible:outline-outremer rounded-full px-4 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                {blocking.message}
+              </button>
+            ) : null}
+          </div>
         </section>
       ) : null}
 
@@ -342,6 +371,18 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Fait défiler jusqu'à l'élément (sa carte au centre) et y place le focus. */
+function goTo(id: string) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  (element.closest("li") ?? element).scrollIntoView({
+    block: "center",
+    behavior: reduced ? "auto" : "smooth",
+  });
+  element.focus({ preventScroll: true });
+}
+
 /** Message doux, toujours avec une autre voie : choisir ses gestes soi-même. */
 function Gentle({ message }: { message: string }) {
   return (
@@ -364,9 +405,13 @@ function ProposalRow({
   const { proposal } = row;
   const gesture = getGesture(proposal.gestureId);
   const panelId = useId();
-  const checkId = useId();
+  const checkId = rowCheckboxId(proposal.key);
   const detailsId = useId();
   if (!gesture) return null;
+  // À compléter : coché, mais distance ou option manquante.
+  const incomplete = row.checked && missingFor(proposal) !== null;
+  // Objet dont l'option se choisit dans la carte : « Modifier » n'aurait rien d'autre.
+  const editable = !(row.inline && gesture.unit === "objet");
   const set = (patch: Partial<Proposal>) =>
     onChange((current) => ({
       ...current,
@@ -375,7 +420,11 @@ function ProposalRow({
   const compared = comparedToLabel(proposal);
 
   return (
-    <li className="bg-blanc flex flex-col gap-3 rounded-2xl px-3.5 py-3">
+    <li
+      className={`bg-blanc flex flex-col gap-3 rounded-2xl border-2 px-3 py-2.5 ${
+        incomplete ? "border-tomate" : "border-transparent"
+      }`}
+    >
       <div className="flex items-center gap-3">
         <span className="relative flex size-[22px] shrink-0">
           <input
@@ -430,127 +479,188 @@ function ProposalRow({
             ) : null}
           </span>
         </div>
-        <TextButton
-          aria-expanded={row.open}
-          aria-controls={panelId}
-          onClick={() =>
-            onChange((current) => ({ ...current, open: !current.open }))
-          }
-          className="text-legende shrink-0"
-        >
-          Modifier<span className="sr-only"> {gesture.label}</span>
-        </TextButton>
+        {editable ? (
+          <TextButton
+            aria-expanded={row.open}
+            aria-controls={panelId}
+            onClick={() =>
+              onChange((current) => ({ ...current, open: !current.open }))
+            }
+            className="text-legende shrink-0"
+          >
+            Modifier<span className="sr-only"> {gesture.label}</span>
+          </TextButton>
+        ) : null}
       </div>
-      {row.open ? (
+      {row.inline === "quantity" ? (
+        <DistanceField
+          id={rowFieldId(proposal.key)}
+          label="Distance du trajet (km)"
+          proposal={proposal}
+          onSet={set}
+        />
+      ) : null}
+      {row.inline === "object-option" ? (
+        <ObjectOptions
+          firstId={rowFieldId(proposal.key)}
+          proposal={proposal}
+          onSet={set}
+        />
+      ) : null}
+      {row.open && editable ? (
         <div
           id={panelId}
           className="border-encre/15 flex flex-col gap-3 border-t pt-3"
         >
-          <ProposalEditor proposal={proposal} onSet={set} />
+          <ProposalEditor
+            proposal={proposal}
+            onSet={set}
+            withPrimary={row.inline === null}
+          />
         </div>
       ) : null}
     </li>
   );
 }
 
-function ProposalEditor({
+function DistanceField({
+  id,
+  label,
   proposal,
   onSet,
 }: {
+  id: string;
+  label: string;
   proposal: Proposal;
   onSet: (patch: Partial<Proposal>) => void;
 }) {
-  const gesture = getGesture(proposal.gestureId)!;
-  const ids = { distance: useId(), compared: useId(), options: useId() };
+  const hintId = useId();
   const [distance, setDistance] = useState(
     proposal.quantity === null ? "" : String(proposal.quantity),
   );
+  return (
+    <div className="flex flex-col gap-1">
+      <label
+        htmlFor={id}
+        className="text-corps-s text-encre leading-[1.3] font-semibold"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        type="number"
+        inputMode="numeric"
+        min={RACONTE_KM_RANGE.min}
+        max={RACONTE_KM_RANGE.max}
+        step={1}
+        value={distance}
+        aria-describedby={hintId}
+        onChange={(event) => {
+          setDistance(event.target.value);
+          const value = Number(event.target.value);
+          onSet({
+            quantity:
+              event.target.value !== "" &&
+              Number.isInteger(value) &&
+              value >= RACONTE_KM_RANGE.min &&
+              value <= RACONTE_KM_RANGE.max
+                ? value
+                : null,
+          });
+        }}
+        className={`${SMALL_FIELD} w-32`}
+      />
+      <span id={hintId} className="text-legende text-texte-attenue">
+        Un nombre entier, de {RACONTE_KM_RANGE.min} à{" "}
+        {RACONTE_KM_RANGE.max.toLocaleString("fr-FR")} km.
+      </span>
+    </div>
+  );
+}
 
-  if (gesture.unit === "objet") {
-    const options: ObjectOption[] = ["neuf", "occasion", "garder"];
-    return (
-      <>
-        <fieldset className="flex flex-col gap-2">
-          <legend className="text-corps-s text-encre mb-1 leading-[1.3] font-semibold">
-            Neuf, d’occasion, ou tu gardes{" "}
-            {possessive(objectNoun(gesture.id), "toi")} ?
-          </legend>
-          {options.map((option) => (
-            <label
-              key={option}
-              className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5"
-            >
-              <input
-                type="radio"
-                name={ids.options}
-                checked={proposal.objectOption === option}
-                onChange={() => onSet({ objectOption: option })}
-                className="accent-encre size-4"
-              />
-              {objectOptionLabel(gesture.id, option)}
-            </label>
-          ))}
-        </fieldset>
-        {proposal.objectOption === "occasion" ? (
-          <Switch
-            checked={proposal.delivered}
-            onChange={(delivered) => onSet({ delivered })}
+function ObjectOptions({
+  firstId,
+  proposal,
+  onSet,
+}: {
+  firstId?: string;
+  proposal: Proposal;
+  onSet: (patch: Partial<Proposal>) => void;
+}) {
+  const name = useId();
+  const options: ObjectOption[] = ["neuf", "occasion", "garder"];
+  return (
+    <>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-corps-s text-encre mb-1 leading-[1.3] font-semibold">
+          Neuf, d’occasion, ou tu gardes{" "}
+          {possessive(objectNoun(proposal.gestureId), "toi")} ?
+        </legend>
+        {options.map((option, index) => (
+          <label
+            key={option}
+            className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5"
           >
-            Livré en colis
-          </Switch>
-        ) : null}
-      </>
-    );
-  }
+            <input
+              id={index === 0 ? firstId : undefined}
+              type="radio"
+              name={name}
+              checked={proposal.objectOption === option}
+              onChange={() => onSet({ objectOption: option })}
+              className="accent-encre size-4"
+            />
+            {objectOptionLabel(proposal.gestureId, option)}
+          </label>
+        ))}
+      </fieldset>
+      {proposal.objectOption === "occasion" ? (
+        <Switch
+          checked={proposal.delivered}
+          onChange={(delivered) => onSet({ delivered })}
+        >
+          Livré en colis
+        </Switch>
+      ) : null}
+    </>
+  );
+}
+
+/** Panneau « Modifier » : distance ou option (si elles ne sont pas déjà dans la carte), option comparée. */
+function ProposalEditor({
+  proposal,
+  onSet,
+  withPrimary,
+}: {
+  proposal: Proposal;
+  onSet: (patch: Partial<Proposal>) => void;
+  withPrimary: boolean;
+}) {
+  const gesture = getGesture(proposal.gestureId)!;
+  const distanceId = useId();
+  const comparedId = useId();
+
+  if (gesture.unit === "objet")
+    return <ObjectOptions proposal={proposal} onSet={onSet} />;
 
   return (
     <>
-      {gesture.unit === "km" ? (
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor={ids.distance}
-            className="text-corps-s text-encre leading-[1.3] font-semibold"
-          >
-            Distance en km
-          </label>
-          <input
-            id={ids.distance}
-            type="number"
-            inputMode="numeric"
-            min={RACONTE_KM_RANGE.min}
-            max={RACONTE_KM_RANGE.max}
-            step={1}
-            value={distance}
-            onChange={(event) => {
-              setDistance(event.target.value);
-              const value = Number(event.target.value);
-              onSet({
-                quantity:
-                  event.target.value !== "" &&
-                  Number.isInteger(value) &&
-                  value >= RACONTE_KM_RANGE.min &&
-                  value <= RACONTE_KM_RANGE.max
-                    ? value
-                    : null,
-              });
-            }}
-            className={`${SMALL_FIELD} w-32`}
-          />
-          <span className="text-legende text-texte-attenue">
-            Un nombre entier, de {RACONTE_KM_RANGE.min} à{" "}
-            {RACONTE_KM_RANGE.max.toLocaleString("fr-FR")} km.
-          </span>
-        </div>
+      {gesture.unit === "km" && withPrimary ? (
+        <DistanceField
+          id={distanceId}
+          label="Distance du trajet (km)"
+          proposal={proposal}
+          onSet={onSet}
+        />
       ) : null}
       <div className="flex flex-col gap-1">
         <label
-          htmlFor={ids.compared}
+          htmlFor={comparedId}
           className="text-corps-s text-encre leading-[1.3] font-semibold"
         >
           Comparé à
         </label>
         <select
-          id={ids.compared}
+          id={comparedId}
           value={proposal.alternativeId ?? ""}
           onChange={(event) => onSet({ alternativeId: event.target.value })}
           className={SMALL_FIELD}
