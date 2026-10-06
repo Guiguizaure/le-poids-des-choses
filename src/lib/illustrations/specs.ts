@@ -31,6 +31,14 @@ const tree = {
 } as const;
 const flower = (parts: readonly string[]) =>
   ({ width: 60, height: 80, anchor: FLOWER_FOOT, parts }) as const;
+// Épanouissement : posé par-dessus la plante adulte, même cadre et même pied. Trois groupes
+// exclusifs (un seul affiché, celui du niveau atteint).
+const BLOOM_PARTS = ["epanoui-1", "epanoui-2", "epanoui-3"] as const;
+const treeBloom = { ...tree, parts: BLOOM_PARTS } as const;
+const flowerBloom = flower(BLOOM_PARTS);
+// Particules de saison (feuilles d'automne, pétales de printemps) qui tombent sur la scène.
+const particle = (parts: readonly string[]) =>
+  ({ width: 16, height: 16, parts }) as const;
 const bird = {
   width: 64,
   height: 48,
@@ -83,6 +91,25 @@ export const ILLUSTRATION_SPECS = {
   "fleur-2-fleurie": flower(["tige", "feuilles", "petales"]),
   "fleur-3-pousse": flower(["brins"]),
   "fleur-3-fleurie": flower(["brins", "baies"]),
+
+  "arbre-1-grand-epanoui": treeBloom,
+  "arbre-2-grand-epanoui": treeBloom,
+  "arbre-3-grand-epanoui": treeBloom,
+  "fleur-1-fleurie-epanoui": flowerBloom,
+  "fleur-2-fleurie-epanoui": flowerBloom,
+  "fleur-3-fleurie-epanoui": flowerBloom,
+
+  // Saisons du jardin : neige posée sur les collines et le haut du sol, flocons par-dessus
+  // la scène (même cadre que scene-paysage) ; feuilles et pétales qui tombent.
+  "saison-hiver-neige": {
+    width: 390,
+    height: 300,
+    parts: ["neige-colline-arriere", "neige-colline-avant", "neige-sol"],
+  },
+  "saison-hiver-flocons": { width: 390, height: 300, parts: ["flocons"] },
+  "saison-automne-feuille-1": particle(["feuille", "nervure"]),
+  "saison-automne-feuille-2": particle(["feuille", "nervure"]),
+  "saison-printemps-petale": particle(["petale"]),
 
   oiseau: bird,
   "oiseau-endormi": bird,
