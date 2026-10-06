@@ -1,7 +1,7 @@
 "use client";
 
 import type { IllustrationName } from "@/lib/illustrations/specs";
-import { StagedPlant } from "./StagedPlant";
+import { StagedPlant, type PlantBloom, type PlantPaint } from "./StagedPlant";
 
 export const TREE_STAGES = ["pousse", "jeune", "grand"] as const;
 export type TreeStage = (typeof TREE_STAGES)[number];
@@ -22,6 +22,10 @@ type TreeProps = {
   popIn?: boolean;
   /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
   strokeScale?: number;
+  /** Couleur de saison du feuillage (null : celle du dessin). */
+  paint?: PlantPaint | null;
+  /** Épanouissement, posé sur la plante adulte. */
+  bloom?: Omit<PlantBloom<string>, "stage"> | null;
 };
 
 /** Arbre à trois stades ; le feuillage se balance et se couche au vent. */
@@ -34,6 +38,8 @@ export function Tree({
   still,
   popIn,
   strokeScale,
+  paint,
+  bloom,
 }: TreeProps) {
   return (
     <StagedPlant
@@ -47,6 +53,8 @@ export function Tree({
       still={still}
       popIn={popIn}
       strokeScale={strokeScale}
+      paint={paint}
+      bloom={bloom ? { ...bloom, stage: "grand" } : null}
     />
   );
 }

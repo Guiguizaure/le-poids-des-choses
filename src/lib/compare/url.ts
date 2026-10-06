@@ -1,5 +1,6 @@
 // La comparaison est encodée dans l'URL (/comparer?…), lue côté client (export statique).
 import { getGesture } from "@/lib/data";
+import { isHabitGesture } from "@/lib/habits";
 import {
   areComparable,
   defaultQuantity,
@@ -9,6 +10,8 @@ import {
 
 export type ComparisonState =
   | { step: "first" }
+  /** Noter une habitude, sans comparer (?habitude, ou ?habitude=velo une fois choisie). */
+  | { step: "habit"; habit: string | null }
   | { step: "second"; first: string }
   | { step: "duel"; a: string; b: string; quantity: number }
   | {
@@ -31,6 +34,14 @@ const INVALID: ParsedComparison = { state: { step: "first" }, invalid: true };
 type Params = { get(name: string): string | null; has(name: string): boolean };
 
 export function parseComparison(params: Params): ParsedComparison {
+  const habit = params.get("habitude");
+  if (habit !== null) {
+    if (habit === "")
+      return { state: { step: "habit", habit: null }, invalid: false };
+    return isHabitGesture(habit)
+      ? { state: { step: "habit", habit }, invalid: false }
+      : INVALID;
+  }
   const objectId = params.get("objet");
   if (objectId !== null) {
     const object = getGesture(objectId);
@@ -72,6 +83,9 @@ export function comparisonQuery(state: ComparisonState): string {
   const params = new URLSearchParams();
   switch (state.step) {
     case "first":
+      break;
+    case "habit":
+      params.set("habitude", state.habit ?? "");
       break;
     case "second":
       params.set("a", state.first);

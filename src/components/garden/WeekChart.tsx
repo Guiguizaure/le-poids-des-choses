@@ -1,5 +1,5 @@
 import type { JournalEntry } from "@/lib/data/types";
-import { lightChoicesByDay } from "@/lib/journal/analysis";
+import { lightChoicesByDay, wateredDaysInLast } from "@/lib/journal/analysis";
 
 const WEEKDAY = new Intl.DateTimeFormat("fr-FR", { weekday: "short" });
 const FULL_DAY = new Intl.DateTimeFormat("fr-FR", {
@@ -25,6 +25,7 @@ export function WeekChart({
   headingLevel?: 2 | 3;
 }) {
   const days = lightChoicesByDay(entries, now);
+  const watered = wateredDaysInLast(entries, now);
   const total = days.reduce((sum, day) => sum + day.count, 0);
   const max = Math.max(1, ...days.map((day) => day.count));
   const step = CHART.width / days.length;
@@ -114,6 +115,16 @@ export function WeekChart({
           </p>
         </>
       )}
+      {watered > 0 ? (
+        // Les habitudes n'ont pas de barre (aucun kg) : seulement les jours arrosés.
+        <p
+          className="text-legende text-texte-attenue"
+          data-watered-days={watered}
+        >
+          {watered} jour{watered > 1 ? "s" : ""} arrosé{watered > 1 ? "s" : ""}{" "}
+          cette semaine
+        </p>
+      ) : null}
       <table className="sr-only">
         <caption>Choix légers par jour, sur les 7 derniers jours</caption>
         <thead>

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type { JournalEntry } from "../src/lib/data/types";
+import type { ComparisonEntry, JournalEntry } from "../src/lib/data/types";
 import { importJournal } from "../src/lib/journal/merge";
 import { upsertUser } from "./auth";
 import { SYNC_MAX_ENTRIES, SYNC_PAGE_SIZE } from "./config";
@@ -23,7 +23,10 @@ beforeEach(async () => {
   userId = (await upsertUser(db, "camille@exemple.fr", NOW)).id;
 });
 
-function entry(id: string, over: Partial<JournalEntry> = {}): JournalEntry {
+function entry(
+  id: string,
+  over: Partial<ComparisonEntry> = {},
+): ComparisonEntry {
   return {
     id,
     date: "2026-10-01T10:00:00.000Z",
@@ -80,12 +83,14 @@ describe("syncJournal", () => {
     const result = await sync(0, [entry("a", { avoidedKg: 99 })]);
     expect(result.accepted).toBe(1);
     expect(result.conflicts).toEqual(["a"]);
-    expect(result.entries.map((e) => e.avoidedKg)).toEqual([12.5, 99]);
+    expect(result.entries.map((e) => (e as ComparisonEntry).avoidedKg)).toEqual(
+      [12.5, 99],
+    );
   });
 
   it("entrées invalides refusées, les autres enregistrées (champs inconnus gardés)", async () => {
     const result = await sync(0, [
-      entry("a", { extra: "gardé" } as Partial<JournalEntry>),
+      entry("a", { extra: "gardé" } as Partial<ComparisonEntry>),
       { id: "b" },
       "texte",
       entry("c", { avoidedKg: -1 }),
@@ -94,6 +99,23 @@ describe("syncJournal", () => {
     expect(result.accepted).toBe(1);
     expect(result.rejected).toBe(4);
     expect(result.entries[0]).toMatchObject({ id: "a", extra: "gardé" });
+  });
+
+  it("habitudes : acceptées telles quelles (aucune migration), refusées si elles portent des kg", async () => {
+    const habit = {
+      kind: "habit",
+      id: "h1",
+      date: new Date(NOW).toISOString(),
+      gesture: "velo",
+    };
+    const result = await sync(0, [
+      habit,
+      { ...habit, id: "h2", avoidedKg: 3 },
+      { ...habit, id: "h3", kind: "autre" },
+    ]);
+    expect(result.accepted).toBe(1);
+    expect(result.rejected).toBe(2);
+    expect(result.entries).toEqual([habit]);
   });
 
   it("chaque compte ne voit que ses entrées", async () => {

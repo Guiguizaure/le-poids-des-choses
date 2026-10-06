@@ -200,7 +200,8 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             Ton navigateur garde aussi, sur ton appareil : le carnet, le ciel
-            choisi et, si tu es connecté, l’état de la synchronisation.
+            choisi, « Mes habitudes » (jamais envoyées au compte) et, si tu es
+            connecté, l’état de la synchronisation.
           </li>
           <li>
             La mesure d’audience utilise Cloudflare Web Analytics, sans cookie :

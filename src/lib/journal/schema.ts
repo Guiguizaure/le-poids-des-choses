@@ -25,13 +25,33 @@ function isNonNegativeNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 
-/** Vrai si `value` est une entrée de carnet utilisable. Les champs inconnus sont tolérés. */
+/** Champs d'une comparaison, interdits dans une habitude (qui ne compte aucun kg). */
+const COMPARISON_FIELDS = [
+  "gestureA",
+  "gestureB",
+  "quantity",
+  "chosen",
+  "avoidedKg",
+  "modeA",
+  "modeB",
+] as const;
+
+/**
+ * Vrai si `value` est une entrée de carnet utilisable : une comparaison (sans `kind`) ou une
+ * habitude (`kind: "habit"`). Les champs inconnus sont tolérés, sauf ceux d'une comparaison
+ * dans une habitude ; une autre valeur de `kind` rend l'entrée illisible (mise de côté).
+ */
 export function isJournalEntry(value: unknown): value is JournalEntry {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const entry = value as Record<string, unknown>;
   if (!isNonEmptyString(entry.id)) return false;
   if (!isNonEmptyString(entry.date) || Number.isNaN(Date.parse(entry.date)))
     return false;
+  if ("kind" in entry) {
+    if (entry.kind !== "habit" || !isNonEmptyString(entry.gesture))
+      return false;
+    return COMPARISON_FIELDS.every((field) => !(field in entry));
+  }
   if (!isNonEmptyString(entry.gestureA) || !isNonEmptyString(entry.gestureB))
     return false;
   if (

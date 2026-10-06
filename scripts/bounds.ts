@@ -71,8 +71,12 @@ export function contentBounds(svg: string): Bounds {
   };
 }
 
-/** Plantes concernées : arbres et fleurs (tous les stades). */
-export const isPlant = (name: string) => /^(arbre|fleur)-/.test(name);
+/**
+ * Plantes concernées : arbres et fleurs (tous les stades). Les calques d'épanouissement
+ * (`…-epanoui`) se posent sur la plante adulte : ce ne sont pas des plantes à part.
+ */
+export const isPlant = (name: string) =>
+  /^(arbre|fleur)-/.test(name) && !/-epanoui(\.svg)?$/.test(name);
 
 export function generateBoundsModule(bounds: Record<string, Bounds>): string {
   const lines = Object.entries(bounds)

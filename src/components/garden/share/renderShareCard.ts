@@ -4,6 +4,7 @@
 // et le jardin (composeGardenSvg) sur un canvas 1080×1350, puis un PNG.
 import type { GardenState } from "@/lib/garden/model";
 import type { SkyId } from "@/lib/garden/skies";
+import type { Season } from "@/lib/garden/seasons";
 import {
   CARD,
   shareCardLayout,
@@ -60,8 +61,11 @@ async function step<T>(name: string, run: () => Promise<T>): Promise<T> {
   }
 }
 
-async function loadSources(garden: GardenState): Promise<SvgSources> {
-  const names = [...new Set(gardenIllustrations(garden))];
+async function loadSources(
+  garden: GardenState,
+  season: Season | null,
+): Promise<SvgSources> {
+  const names = [...new Set(gardenIllustrations(garden, season))];
   const entries = await Promise.all(
     names.map(async (name) => {
       const response = await fetch(`/illustrations/${name}.svg`);
@@ -133,8 +137,7 @@ function drawOp(
   switch (op.type) {
     case "rect": {
       ctx.beginPath();
-      if (op.radius)
-        roundRect(ctx, op.x, op.y, op.width, op.height, op.radius);
+      if (op.radius) roundRect(ctx, op.x, op.y, op.width, op.height, op.radius);
       else ctx.rect(op.x, op.y, op.width, op.height);
       ctx.fillStyle = op.fill;
       ctx.fill();
@@ -181,25 +184,31 @@ function drawOp(
 export async function renderShareCard({
   garden,
   sky,
+  season = null,
   siteHost,
   unlockedCount,
 }: {
   garden: GardenState;
   sky: SkyId;
+  /** Saison du jardin à l'écran : la même sur l'image. */
+  season?: Season | null;
   siteHost: string;
   unlockedCount: number;
 }): Promise<Blob> {
   const fonts = siteFonts();
   const [, sources] = await Promise.all([
     loadFonts(fonts),
-    step("illustrations", () => loadSources(garden)),
+    step("illustrations", () => loadSources(garden, season)),
   ]);
   const { image, release } = await step("image du jardin", async () =>
     svgImage(
-      composeGardenSvg(garden, sky, sources, {
-        width: CARD.garden.width,
-        height: CARD.garden.height,
-      }),
+      composeGardenSvg(
+        garden,
+        sky,
+        sources,
+        { width: CARD.garden.width, height: CARD.garden.height },
+        season,
+      ),
     ),
   );
 

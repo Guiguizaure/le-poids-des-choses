@@ -2,10 +2,14 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { gardenTotals, type GardenTotals } from "@/lib/calc";
-import type { JournalEntry } from "@/lib/data/types";
+import type {
+  ComparisonEntry,
+  HabitEntry,
+  JournalEntry,
+} from "@/lib/data/types";
 import { afterEntryAdded } from "@/lib/sync/browser";
 import { getBrowserStore } from "./browser";
-import { createEntry, type NewEntry } from "./entry";
+import { createEntry, createHabitEntry, type NewEntry } from "./entry";
 import { exportFileName, exportJournal } from "./merge";
 
 type Snapshot = {
@@ -56,7 +60,9 @@ export type ImportOutcome =
 
 export type UseJournal = Snapshot & {
   totals: GardenTotals;
-  add: (input: NewEntry) => JournalEntry;
+  add: (input: NewEntry) => ComparisonEntry;
+  /** Note une habitude tenue aujourd'hui (aucun kg : elle arrose le jardin). */
+  addHabit: (gesture: string) => HabitEntry;
   exportFile: () => void;
   importFile: (file: File) => Promise<ImportOutcome>;
   reset: () => void;
@@ -82,6 +88,13 @@ export function useJournal(): UseJournal {
     const entry = createEntry(input);
     getBrowserStore().add(entry);
     // Compte connecté : l'entrée part vers le compte (ou attend le retour en ligne).
+    afterEntryAdded(entry);
+    return entry;
+  }, []);
+
+  const addHabit = useCallback((gesture: string) => {
+    const entry = createHabitEntry(gesture);
+    getBrowserStore().add(entry);
     afterEntryAdded(entry);
     return entry;
   }, []);
@@ -130,6 +143,7 @@ export function useJournal(): UseJournal {
     ...snapshot,
     totals,
     add,
+    addHabit,
     exportFile,
     importFile,
     reset,

@@ -2,6 +2,8 @@
 // couleurs de la palette (src/app/globals.css). Le choix est gardé sur l'appareil (clé dédiée,
 // versionnée) ; un ciel pas encore débloqué n'est jamais appliqué.
 
+import type { Season } from "./seasons";
+
 export type SkyId = "jour" | "aube" | "midi" | "nuit";
 
 export type SkyColors = {
@@ -108,6 +110,31 @@ export function getSky(id: SkyId): Sky {
   return SKIES.find((sky) => sky.id === id) ?? SKIES[0];
 }
 
+/**
+ * Ciel « Jour » selon la saison (palette seulement) : le printemps garde celui du dessin. Un ciel
+ * débloqué et choisi par la personne ne change pas avec la saison.
+ */
+export const SEASONAL_DAY_SKY: Record<Season, SkyColors> = {
+  printemps: SKIES[0].colors,
+  ete: { ...SKIES[0].colors, nuage: PALETTE.blanc },
+  automne: {
+    ...SKIES[0].colors,
+    ciel: PALETTE.tomateDouce,
+    nuage: PALETTE.creme,
+  },
+  hiver: {
+    ...SKIES[0].colors,
+    ciel: PALETTE.blanc,
+    soleil: PALETTE.soleil,
+    halo: PALETTE.creme,
+  },
+};
+
+/** Couleurs d'un ciel, pour une saison (null : saison inconnue, couleurs du ciel). */
+export function skyColors(id: SkyId, season: Season | null = null): SkyColors {
+  return id === "jour" && season ? SEASONAL_DAY_SKY[season] : getSky(id).colors;
+}
+
 export function isSkyUnlocked(id: SkyId, lightChoiceCount: number): boolean {
   return lightChoiceCount >= getSky(id).unlockAt;
 }
@@ -148,8 +175,11 @@ export function parseStoredSky(text: string | null): SkyId | null {
 }
 
 /** Variables CSS posées sur la scène (lues par globals.css sur les calques du paysage). */
-export function skyStyle(id: SkyId): Record<string, string> {
-  const { colors } = getSky(id);
+export function skyStyle(
+  id: SkyId,
+  season: Season | null = null,
+): Record<string, string> {
+  const colors = skyColors(id, season);
   return {
     "--sky-ciel": colors.ciel,
     "--sky-soleil": colors.soleil,

@@ -115,7 +115,8 @@ export async function expectNoAxeViolations(page: Page) {
           (animation) =>
             animation.effect?.getComputedTiming().iterations !== Infinity,
         )
-        .map((animation) => animation.finished),
+        // Une animation annulée (élément retiré entre-temps) rejette avec AbortError.
+        .map((animation) => animation.finished.catch(() => undefined)),
     ),
   );
   const results = await new AxeBuilder({ page })

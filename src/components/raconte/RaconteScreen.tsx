@@ -17,17 +17,21 @@ import { objectNoun, possessive, type ObjectOption } from "@/lib/compare";
 import { getGesture } from "@/lib/data";
 import type { JournalEntry } from "@/lib/data/types";
 import { pictoFor } from "@/lib/journal/display";
+import { isComparison, isHabit, isLightChoice } from "@/lib/journal/kind";
 import { useJournal } from "@/lib/journal/useJournal";
 import { plural } from "@/lib/garden/text";
 import { raconte, type RaconteError } from "@/lib/raconte/api";
 import { RACONTE_MAX_CHARS, RACONTE_KM_RANGE } from "@/lib/raconte/detections";
 import {
   alternativeChoices,
+  canBeHabit,
   missingFor,
   proposalEntry,
+  proposalHabit,
   toProposal,
   type Proposal,
 } from "@/lib/raconte/proposal";
+import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 import {
   blockingFor,
   comparedToLabel,
@@ -90,6 +94,7 @@ function useAvailability(): "checking" | "enabled" | "disabled" {
  */
 export function RaconteScreen() {
   const journal = useJournal();
+  const [declaredHabits] = useDeclaredHabits();
   const availability = useAvailability();
   const [text, setText] = useState("");
   const [state, setState] = useState<State>({ step: "idle" });
@@ -138,7 +143,8 @@ export function RaconteScreen() {
     setState({
       step: "results",
       rows: result.detections.map((detection, index) => {
-        const proposal = toProposal(detection, index);
+        // Gestes déclarés dans « Mes habitudes » : notés en habitude par défaut.
+        const proposal = toProposal(detection, index, declaredHabits);
         return {
           proposal,
           // Gestes déduits (« À vérifier ») : décochés, la personne choisit.
@@ -169,11 +175,14 @@ export function RaconteScreen() {
       goTo(blocked.focusId);
       return;
     }
-    const entries = state.rows
-      .filter((row) => row.checked)
-      .map((row) => proposalEntry(row.proposal))
-      .filter((input) => input !== null)
-      .map((input) => journal.add(input));
+    const entries: JournalEntry[] = [];
+    for (const row of state.rows) {
+      if (!row.checked) continue;
+      const habit = proposalHabit(row.proposal);
+      const input = habit ? null : proposalEntry(row.proposal);
+      if (habit) entries.push(journal.addHabit(habit));
+      else if (input) entries.push(journal.add(input));
+    }
     setState({ step: "added", entries });
   };
 
@@ -407,11 +416,15 @@ function ProposalRow({
   const panelId = useId();
   const checkId = rowCheckboxId(proposal.key);
   const detailsId = useId();
+  const modeName = useId();
   if (!gesture) return null;
   // À compléter : coché, mais distance ou option manquante.
   const incomplete = row.checked && missingFor(proposal) !== null;
-  // Objet dont l'option se choisit dans la carte : « Modifier » n'aurait rien d'autre.
-  const editable = !(row.inline && gesture.unit === "objet");
+  // Objet dont l'option se choisit dans la carte : « Modifier » n'aurait rien d'autre. Une
+  // habitude ne se compare à rien : rien à modifier ni à compléter.
+  const habit = proposal.asHabit;
+  const editable = !habit && !(row.inline && gesture.unit === "objet");
+  const inline = habit ? null : row.inline;
   const set = (patch: Partial<Proposal>) =>
     onChange((current) => ({
       ...current,
@@ -492,7 +505,34 @@ function ProposalRow({
           </TextButton>
         ) : null}
       </div>
-      {row.inline === "quantity" ? (
+      {canBeHabit(proposal) ? (
+        <fieldset className="flex flex-col gap-1.5">
+          <legend className="sr-only">
+            Comparer {gesture.label} ou le noter en habitude
+          </legend>
+          <label className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.3]">
+            <input
+              type="radio"
+              name={modeName}
+              checked={!habit}
+              onChange={() => set({ asHabit: false })}
+              className="accent-encre size-4"
+            />
+            Comparer
+          </label>
+          <label className="text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.3]">
+            <input
+              type="radio"
+              name={modeName}
+              checked={habit}
+              onChange={() => set({ asHabit: true })}
+              className="accent-encre size-4"
+            />
+            Habitude tenue (aucun kg : elle arrose ton jardin)
+          </label>
+        </fieldset>
+      ) : null}
+      {inline === "quantity" ? (
         <DistanceField
           id={rowFieldId(proposal.key)}
           label="Distance du trajet (km)"
@@ -500,7 +540,7 @@ function ProposalRow({
           onSet={set}
         />
       ) : null}
-      {row.inline === "object-option" ? (
+      {inline === "object-option" ? (
         <ObjectOptions
           firstId={rowFieldId(proposal.key)}
           proposal={proposal}
@@ -515,7 +555,7 @@ function ProposalRow({
           <ProposalEditor
             proposal={proposal}
             onSet={set}
-            withPrimary={row.inline === null}
+            withPrimary={inline === null}
           />
         </div>
       ) : null}
@@ -686,8 +726,11 @@ function AddedView({
   onRestart: () => void;
 }) {
   const now = new Date();
-  const lastLight = [...entries].reverse().find((entry) => entry.avoidedKg > 0);
-  const hasHeavier = entries.some((entry) => entry.avoidedKg === 0);
+  const lastLight = [...entries].reverse().find(isLightChoice);
+  const lastHabit = [...entries].reverse().find(isHabit);
+  const hasHeavier = entries.some(
+    (entry) => isComparison(entry) && entry.avoidedKg === 0,
+  );
   return (
     <>
       <h1
@@ -714,7 +757,9 @@ function AddedView({
         href={
           lastLight
             ? `/jardin?nouveau=${encodeURIComponent(lastLight.id)}`
-            : "/jardin"
+            : lastHabit
+              ? `/jardin?arrose=${encodeURIComponent(lastHabit.id)}`
+              : "/jardin"
         }
       >
         Voir mon jardin

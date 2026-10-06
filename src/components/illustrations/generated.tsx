@@ -29,6 +29,15 @@ function Arbre1Grand({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Arbre1GrandEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><circle cx="40.0" cy="32.8" r="2.7" fill="#FFF3DC" /><circle cx="43.0" cy="35.0" r="2.7" fill="#FFF3DC" /><circle cx="41.9" cy="38.6" r="2.7" fill="#FFF3DC" /><circle cx="38.1" cy="38.6" r="2.7" fill="#FFF3DC" /><circle cx="37.0" cy="35.0" r="2.7" fill="#FFF3DC" /><circle cx="40" cy="36" r="2.2" fill="#FFC93C" /><circle cx="76.0" cy="36.8" r="2.7" fill="#FFF3DC" /><circle cx="79.0" cy="39.0" r="2.7" fill="#FFF3DC" /><circle cx="77.9" cy="42.6" r="2.7" fill="#FFF3DC" /><circle cx="74.1" cy="42.6" r="2.7" fill="#FFF3DC" /><circle cx="73.0" cy="39.0" r="2.7" fill="#FFF3DC" /><circle cx="76" cy="40" r="2.2" fill="#FFC93C" /><circle cx="58.0" cy="60.8" r="2.7" fill="#FFF3DC" /><circle cx="61.0" cy="63.0" r="2.7" fill="#FFF3DC" /><circle cx="59.9" cy="66.6" r="2.7" fill="#FFF3DC" /><circle cx="56.1" cy="66.6" r="2.7" fill="#FFF3DC" /><circle cx="55.0" cy="63.0" r="2.7" fill="#FFF3DC" /><circle cx="58" cy="64" r="2.2" fill="#FFC93C" /><circle cx="32.0" cy="58.8" r="2.7" fill="#FFF3DC" /><circle cx="35.0" cy="61.0" r="2.7" fill="#FFF3DC" /><circle cx="33.9" cy="64.6" r="2.7" fill="#FFF3DC" /><circle cx="30.1" cy="64.6" r="2.7" fill="#FFF3DC" /><circle cx="29.0" cy="61.0" r="2.7" fill="#FFF3DC" /><circle cx="32" cy="62" r="2.2" fill="#FFC93C" /><circle cx="84.0" cy="62.8" r="2.7" fill="#FFF3DC" /><circle cx="87.0" cy="65.0" r="2.7" fill="#FFF3DC" /><circle cx="85.9" cy="68.6" r="2.7" fill="#FFF3DC" /><circle cx="82.1" cy="68.6" r="2.7" fill="#FFF3DC" /><circle cx="81.0" cy="65.0" r="2.7" fill="#FFF3DC" /><circle cx="84" cy="66" r="2.2" fill="#FFC93C" /></g><g data-part="epanoui-2"><circle cx="40.0" cy="32.8" r="2.7" fill="#FFF3DC" /><circle cx="43.0" cy="35.0" r="2.7" fill="#FFF3DC" /><circle cx="41.9" cy="38.6" r="2.7" fill="#FFF3DC" /><circle cx="38.1" cy="38.6" r="2.7" fill="#FFF3DC" /><circle cx="37.0" cy="35.0" r="2.7" fill="#FFF3DC" /><circle cx="40" cy="36" r="2.2" fill="#FFC93C" /><circle cx="76.0" cy="36.8" r="2.7" fill="#FFF3DC" /><circle cx="79.0" cy="39.0" r="2.7" fill="#FFF3DC" /><circle cx="77.9" cy="42.6" r="2.7" fill="#FFF3DC" /><circle cx="74.1" cy="42.6" r="2.7" fill="#FFF3DC" /><circle cx="73.0" cy="39.0" r="2.7" fill="#FFF3DC" /><circle cx="76" cy="40" r="2.2" fill="#FFC93C" /><circle cx="58.0" cy="60.8" r="2.7" fill="#FFF3DC" /><circle cx="61.0" cy="63.0" r="2.7" fill="#FFF3DC" /><circle cx="59.9" cy="66.6" r="2.7" fill="#FFF3DC" /><circle cx="56.1" cy="66.6" r="2.7" fill="#FFF3DC" /><circle cx="55.0" cy="63.0" r="2.7" fill="#FFF3DC" /><circle cx="58" cy="64" r="2.2" fill="#FFC93C" /><circle cx="32.0" cy="58.8" r="2.7" fill="#FFF3DC" /><circle cx="35.0" cy="61.0" r="2.7" fill="#FFF3DC" /><circle cx="33.9" cy="64.6" r="2.7" fill="#FFF3DC" /><circle cx="30.1" cy="64.6" r="2.7" fill="#FFF3DC" /><circle cx="29.0" cy="61.0" r="2.7" fill="#FFF3DC" /><circle cx="32" cy="62" r="2.2" fill="#FFC93C" /><circle cx="84.0" cy="62.8" r="2.7" fill="#FFF3DC" /><circle cx="87.0" cy="65.0" r="2.7" fill="#FFF3DC" /><circle cx="85.9" cy="68.6" r="2.7" fill="#FFF3DC" /><circle cx="82.1" cy="68.6" r="2.7" fill="#FFF3DC" /><circle cx="81.0" cy="65.0" r="2.7" fill="#FFF3DC" /><circle cx="84" cy="66" r="2.2" fill="#FFC93C" /><circle cx="52.0" cy="20.4" r="3.1" fill="#FF8FB1" /><circle cx="55.4" cy="22.9" r="3.1" fill="#FF8FB1" /><circle cx="54.1" cy="26.9" r="3.1" fill="#FF8FB1" /><circle cx="49.9" cy="26.9" r="3.1" fill="#FF8FB1" /><circle cx="48.6" cy="22.9" r="3.1" fill="#FF8FB1" /><circle cx="52" cy="24" r="2.5" fill="#FF4F2E" /><circle cx="70.0" cy="18.4" r="3.1" fill="#FF8FB1" /><circle cx="73.4" cy="20.9" r="3.1" fill="#FF8FB1" /><circle cx="72.1" cy="24.9" r="3.1" fill="#FF8FB1" /><circle cx="67.9" cy="24.9" r="3.1" fill="#FF8FB1" /><circle cx="66.6" cy="20.9" r="3.1" fill="#FF8FB1" /><circle cx="70" cy="22" r="2.5" fill="#FF4F2E" /><circle cx="44.0" cy="44.4" r="3.1" fill="#FF8FB1" /><circle cx="47.4" cy="46.9" r="3.1" fill="#FF8FB1" /><circle cx="46.1" cy="50.9" r="3.1" fill="#FF8FB1" /><circle cx="41.9" cy="50.9" r="3.1" fill="#FF8FB1" /><circle cx="40.6" cy="46.9" r="3.1" fill="#FF8FB1" /><circle cx="44" cy="48" r="2.5" fill="#FF4F2E" /><circle cx="80.0" cy="46.4" r="3.1" fill="#FF8FB1" /><circle cx="83.4" cy="48.9" r="3.1" fill="#FF8FB1" /><circle cx="82.1" cy="52.9" r="3.1" fill="#FF8FB1" /><circle cx="77.9" cy="52.9" r="3.1" fill="#FF8FB1" /><circle cx="76.6" cy="48.9" r="3.1" fill="#FF8FB1" /><circle cx="80" cy="50" r="2.5" fill="#FF4F2E" /><circle cx="62.0" cy="76.4" r="3.1" fill="#FF8FB1" /><circle cx="65.4" cy="78.9" r="3.1" fill="#FF8FB1" /><circle cx="64.1" cy="82.9" r="3.1" fill="#FF8FB1" /><circle cx="59.9" cy="82.9" r="3.1" fill="#FF8FB1" /><circle cx="58.6" cy="78.9" r="3.1" fill="#FF8FB1" /><circle cx="62" cy="80" r="2.5" fill="#FF4F2E" /><circle cx="26.0" cy="42.4" r="3.1" fill="#FF8FB1" /><circle cx="29.4" cy="44.9" r="3.1" fill="#FF8FB1" /><circle cx="28.1" cy="48.9" r="3.1" fill="#FF8FB1" /><circle cx="23.9" cy="48.9" r="3.1" fill="#FF8FB1" /><circle cx="22.6" cy="44.9" r="3.1" fill="#FF8FB1" /><circle cx="26" cy="46" r="2.5" fill="#FF4F2E" /><circle cx="92.0" cy="36.4" r="3.1" fill="#FF8FB1" /><circle cx="95.4" cy="38.9" r="3.1" fill="#FF8FB1" /><circle cx="94.1" cy="42.9" r="3.1" fill="#FF8FB1" /><circle cx="89.9" cy="42.9" r="3.1" fill="#FF8FB1" /><circle cx="88.6" cy="38.9" r="3.1" fill="#FF8FB1" /><circle cx="92" cy="40" r="2.5" fill="#FF4F2E" /></g><g data-part="epanoui-3"><path d="M36 71 V66" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="36" cy="76" r="5" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M60 85 V80" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="60" cy="90" r="5" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M86 73 V68" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="86" cy="78" r="5" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M54 47 V42" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="54" cy="52" r="5" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M74 59 V54" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="74" cy="64" r="5" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /></g>
+    </svg>
+  );
+}
+
 function Arbre1Jeune({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
@@ -56,6 +65,15 @@ function Arbre2Grand({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Arbre2GrandEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><circle cx="52.0" cy="27.2" r="2.4" fill="#FFF3DC" /><circle cx="54.7" cy="29.1" r="2.4" fill="#FFF3DC" /><circle cx="53.6" cy="32.3" r="2.4" fill="#FFF3DC" /><circle cx="50.4" cy="32.3" r="2.4" fill="#FFF3DC" /><circle cx="49.3" cy="29.1" r="2.4" fill="#FFF3DC" /><circle cx="52" cy="30" r="2.0" fill="#FFC93C" /><circle cx="68.0" cy="41.2" r="2.4" fill="#FFF3DC" /><circle cx="70.7" cy="43.1" r="2.4" fill="#FFF3DC" /><circle cx="69.6" cy="46.3" r="2.4" fill="#FFF3DC" /><circle cx="66.4" cy="46.3" r="2.4" fill="#FFF3DC" /><circle cx="65.3" cy="43.1" r="2.4" fill="#FFF3DC" /><circle cx="68" cy="44" r="2.0" fill="#FFC93C" /><circle cx="50.0" cy="59.2" r="2.4" fill="#FFF3DC" /><circle cx="52.7" cy="61.1" r="2.4" fill="#FFF3DC" /><circle cx="51.6" cy="64.3" r="2.4" fill="#FFF3DC" /><circle cx="48.4" cy="64.3" r="2.4" fill="#FFF3DC" /><circle cx="47.3" cy="61.1" r="2.4" fill="#FFF3DC" /><circle cx="50" cy="62" r="2.0" fill="#FFC93C" /><circle cx="70.0" cy="77.2" r="2.4" fill="#FFF3DC" /><circle cx="72.7" cy="79.1" r="2.4" fill="#FFF3DC" /><circle cx="71.6" cy="82.3" r="2.4" fill="#FFF3DC" /><circle cx="68.4" cy="82.3" r="2.4" fill="#FFF3DC" /><circle cx="67.3" cy="79.1" r="2.4" fill="#FFF3DC" /><circle cx="70" cy="80" r="2.0" fill="#FFC93C" /><circle cx="56.0" cy="95.2" r="2.4" fill="#FFF3DC" /><circle cx="58.7" cy="97.1" r="2.4" fill="#FFF3DC" /><circle cx="57.6" cy="100.3" r="2.4" fill="#FFF3DC" /><circle cx="54.4" cy="100.3" r="2.4" fill="#FFF3DC" /><circle cx="53.3" cy="97.1" r="2.4" fill="#FFF3DC" /><circle cx="56" cy="98" r="2.0" fill="#FFC93C" /></g><g data-part="epanoui-2"><circle cx="52.0" cy="27.2" r="2.4" fill="#FFF3DC" /><circle cx="54.7" cy="29.1" r="2.4" fill="#FFF3DC" /><circle cx="53.6" cy="32.3" r="2.4" fill="#FFF3DC" /><circle cx="50.4" cy="32.3" r="2.4" fill="#FFF3DC" /><circle cx="49.3" cy="29.1" r="2.4" fill="#FFF3DC" /><circle cx="52" cy="30" r="2.0" fill="#FFC93C" /><circle cx="68.0" cy="41.2" r="2.4" fill="#FFF3DC" /><circle cx="70.7" cy="43.1" r="2.4" fill="#FFF3DC" /><circle cx="69.6" cy="46.3" r="2.4" fill="#FFF3DC" /><circle cx="66.4" cy="46.3" r="2.4" fill="#FFF3DC" /><circle cx="65.3" cy="43.1" r="2.4" fill="#FFF3DC" /><circle cx="68" cy="44" r="2.0" fill="#FFC93C" /><circle cx="50.0" cy="59.2" r="2.4" fill="#FFF3DC" /><circle cx="52.7" cy="61.1" r="2.4" fill="#FFF3DC" /><circle cx="51.6" cy="64.3" r="2.4" fill="#FFF3DC" /><circle cx="48.4" cy="64.3" r="2.4" fill="#FFF3DC" /><circle cx="47.3" cy="61.1" r="2.4" fill="#FFF3DC" /><circle cx="50" cy="62" r="2.0" fill="#FFC93C" /><circle cx="70.0" cy="77.2" r="2.4" fill="#FFF3DC" /><circle cx="72.7" cy="79.1" r="2.4" fill="#FFF3DC" /><circle cx="71.6" cy="82.3" r="2.4" fill="#FFF3DC" /><circle cx="68.4" cy="82.3" r="2.4" fill="#FFF3DC" /><circle cx="67.3" cy="79.1" r="2.4" fill="#FFF3DC" /><circle cx="70" cy="80" r="2.0" fill="#FFC93C" /><circle cx="56.0" cy="95.2" r="2.4" fill="#FFF3DC" /><circle cx="58.7" cy="97.1" r="2.4" fill="#FFF3DC" /><circle cx="57.6" cy="100.3" r="2.4" fill="#FFF3DC" /><circle cx="54.4" cy="100.3" r="2.4" fill="#FFF3DC" /><circle cx="53.3" cy="97.1" r="2.4" fill="#FFF3DC" /><circle cx="56" cy="98" r="2.0" fill="#FFC93C" /><circle cx="60.0" cy="14.8" r="2.7" fill="#FFC93C" /><circle cx="63.0" cy="17.0" r="2.7" fill="#FFC93C" /><circle cx="61.9" cy="20.6" r="2.7" fill="#FFC93C" /><circle cx="58.1" cy="20.6" r="2.7" fill="#FFC93C" /><circle cx="57.0" cy="17.0" r="2.7" fill="#FFC93C" /><circle cx="60" cy="18" r="2.2" fill="#FFF3DC" /><circle cx="46.0" cy="42.8" r="2.7" fill="#FFC93C" /><circle cx="49.0" cy="45.0" r="2.7" fill="#FFC93C" /><circle cx="47.9" cy="48.6" r="2.7" fill="#FFC93C" /><circle cx="44.1" cy="48.6" r="2.7" fill="#FFC93C" /><circle cx="43.0" cy="45.0" r="2.7" fill="#FFC93C" /><circle cx="46" cy="46" r="2.2" fill="#FFF3DC" /><circle cx="73.0" cy="58.8" r="2.7" fill="#FFC93C" /><circle cx="76.0" cy="61.0" r="2.7" fill="#FFC93C" /><circle cx="74.9" cy="64.6" r="2.7" fill="#FFC93C" /><circle cx="71.1" cy="64.6" r="2.7" fill="#FFC93C" /><circle cx="70.0" cy="61.0" r="2.7" fill="#FFC93C" /><circle cx="73" cy="62" r="2.2" fill="#FFF3DC" /><circle cx="49.0" cy="82.8" r="2.7" fill="#FFC93C" /><circle cx="52.0" cy="85.0" r="2.7" fill="#FFC93C" /><circle cx="50.9" cy="88.6" r="2.7" fill="#FFC93C" /><circle cx="47.1" cy="88.6" r="2.7" fill="#FFC93C" /><circle cx="46.0" cy="85.0" r="2.7" fill="#FFC93C" /><circle cx="49" cy="86" r="2.2" fill="#FFF3DC" /><circle cx="66.0" cy="102.8" r="2.7" fill="#FFC93C" /><circle cx="69.0" cy="105.0" r="2.7" fill="#FFC93C" /><circle cx="67.9" cy="108.6" r="2.7" fill="#FFC93C" /><circle cx="64.1" cy="108.6" r="2.7" fill="#FFC93C" /><circle cx="63.0" cy="105.0" r="2.7" fill="#FFC93C" /><circle cx="66" cy="106" r="2.2" fill="#FFF3DC" /><circle cx="62.0" cy="30.8" r="2.7" fill="#FFC93C" /><circle cx="65.0" cy="33.0" r="2.7" fill="#FFC93C" /><circle cx="63.9" cy="36.6" r="2.7" fill="#FFC93C" /><circle cx="60.1" cy="36.6" r="2.7" fill="#FFC93C" /><circle cx="59.0" cy="33.0" r="2.7" fill="#FFC93C" /><circle cx="62" cy="34" r="2.2" fill="#FFF3DC" /></g><g data-part="epanoui-3"><path d="M48 65 V60" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="48" cy="70" r="5" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /><path d="M72 87 V82" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="72" cy="92" r="5" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /><path d="M60 47 V42" stroke="#1F1A17" strokeWidth="1.6" strokeLinecap="round" fill="none" /><circle cx="60" cy="52" r="5" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /></g>
+    </svg>
+  );
+}
+
 function Arbre2Jeune({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
@@ -79,6 +97,15 @@ function Arbre3Grand({ svgProps, children }: GeneratedSvgProps) {
     <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
       {children}
       <g data-part="tronc"><rect x="56" y="90" width="8" height="66" fill="#1F1A17" /></g><g data-part="feuillage"><circle cx="42" cy="76" r="28" fill="#FF8FB1" /><circle cx="78" cy="68" r="26" fill="#FF8FB1" /><circle cx="62" cy="42" r="26" fill="#FF8FB1" /></g>
+    </svg>
+  );
+}
+
+function Arbre3GrandEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={120} height={160} viewBox="0 0 120 160" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><circle cx="36.0" cy="67.0" r="2.5" fill="#FFF3DC" /><circle cx="38.9" cy="69.1" r="2.5" fill="#FFF3DC" /><circle cx="37.8" cy="72.4" r="2.5" fill="#FFF3DC" /><circle cx="34.2" cy="72.4" r="2.5" fill="#FFF3DC" /><circle cx="33.1" cy="69.1" r="2.5" fill="#FFF3DC" /><circle cx="36" cy="70" r="2.1" fill="#FFC93C" /><circle cx="50.0" cy="81.0" r="2.5" fill="#FFF3DC" /><circle cx="52.9" cy="83.1" r="2.5" fill="#FFF3DC" /><circle cx="51.8" cy="86.4" r="2.5" fill="#FFF3DC" /><circle cx="48.2" cy="86.4" r="2.5" fill="#FFF3DC" /><circle cx="47.1" cy="83.1" r="2.5" fill="#FFF3DC" /><circle cx="50" cy="84" r="2.1" fill="#FFC93C" /><circle cx="80.0" cy="59.0" r="2.5" fill="#FFF3DC" /><circle cx="82.9" cy="61.1" r="2.5" fill="#FFF3DC" /><circle cx="81.8" cy="64.4" r="2.5" fill="#FFF3DC" /><circle cx="78.2" cy="64.4" r="2.5" fill="#FFF3DC" /><circle cx="77.1" cy="61.1" r="2.5" fill="#FFF3DC" /><circle cx="80" cy="62" r="2.1" fill="#FFC93C" /><circle cx="86.0" cy="75.0" r="2.5" fill="#FFF3DC" /><circle cx="88.9" cy="77.1" r="2.5" fill="#FFF3DC" /><circle cx="87.8" cy="80.4" r="2.5" fill="#FFF3DC" /><circle cx="84.2" cy="80.4" r="2.5" fill="#FFF3DC" /><circle cx="83.1" cy="77.1" r="2.5" fill="#FFF3DC" /><circle cx="86" cy="78" r="2.1" fill="#FFC93C" /><circle cx="56.0" cy="31.0" r="2.5" fill="#FFF3DC" /><circle cx="58.9" cy="33.1" r="2.5" fill="#FFF3DC" /><circle cx="57.8" cy="36.4" r="2.5" fill="#FFF3DC" /><circle cx="54.2" cy="36.4" r="2.5" fill="#FFF3DC" /><circle cx="53.1" cy="33.1" r="2.5" fill="#FFF3DC" /><circle cx="56" cy="34" r="2.1" fill="#FFC93C" /><circle cx="68.0" cy="43.0" r="2.5" fill="#FFF3DC" /><circle cx="70.9" cy="45.1" r="2.5" fill="#FFF3DC" /><circle cx="69.8" cy="48.4" r="2.5" fill="#FFF3DC" /><circle cx="66.2" cy="48.4" r="2.5" fill="#FFF3DC" /><circle cx="65.1" cy="45.1" r="2.5" fill="#FFF3DC" /><circle cx="68" cy="46" r="2.1" fill="#FFC93C" /></g><g data-part="epanoui-2"><circle cx="36.0" cy="67.0" r="2.5" fill="#FFF3DC" /><circle cx="38.9" cy="69.1" r="2.5" fill="#FFF3DC" /><circle cx="37.8" cy="72.4" r="2.5" fill="#FFF3DC" /><circle cx="34.2" cy="72.4" r="2.5" fill="#FFF3DC" /><circle cx="33.1" cy="69.1" r="2.5" fill="#FFF3DC" /><circle cx="36" cy="70" r="2.1" fill="#FFC93C" /><circle cx="50.0" cy="81.0" r="2.5" fill="#FFF3DC" /><circle cx="52.9" cy="83.1" r="2.5" fill="#FFF3DC" /><circle cx="51.8" cy="86.4" r="2.5" fill="#FFF3DC" /><circle cx="48.2" cy="86.4" r="2.5" fill="#FFF3DC" /><circle cx="47.1" cy="83.1" r="2.5" fill="#FFF3DC" /><circle cx="50" cy="84" r="2.1" fill="#FFC93C" /><circle cx="80.0" cy="59.0" r="2.5" fill="#FFF3DC" /><circle cx="82.9" cy="61.1" r="2.5" fill="#FFF3DC" /><circle cx="81.8" cy="64.4" r="2.5" fill="#FFF3DC" /><circle cx="78.2" cy="64.4" r="2.5" fill="#FFF3DC" /><circle cx="77.1" cy="61.1" r="2.5" fill="#FFF3DC" /><circle cx="80" cy="62" r="2.1" fill="#FFC93C" /><circle cx="86.0" cy="75.0" r="2.5" fill="#FFF3DC" /><circle cx="88.9" cy="77.1" r="2.5" fill="#FFF3DC" /><circle cx="87.8" cy="80.4" r="2.5" fill="#FFF3DC" /><circle cx="84.2" cy="80.4" r="2.5" fill="#FFF3DC" /><circle cx="83.1" cy="77.1" r="2.5" fill="#FFF3DC" /><circle cx="86" cy="78" r="2.1" fill="#FFC93C" /><circle cx="56.0" cy="31.0" r="2.5" fill="#FFF3DC" /><circle cx="58.9" cy="33.1" r="2.5" fill="#FFF3DC" /><circle cx="57.8" cy="36.4" r="2.5" fill="#FFF3DC" /><circle cx="54.2" cy="36.4" r="2.5" fill="#FFF3DC" /><circle cx="53.1" cy="33.1" r="2.5" fill="#FFF3DC" /><circle cx="56" cy="34" r="2.1" fill="#FFC93C" /><circle cx="68.0" cy="43.0" r="2.5" fill="#FFF3DC" /><circle cx="70.9" cy="45.1" r="2.5" fill="#FFF3DC" /><circle cx="69.8" cy="48.4" r="2.5" fill="#FFF3DC" /><circle cx="66.2" cy="48.4" r="2.5" fill="#FFF3DC" /><circle cx="65.1" cy="45.1" r="2.5" fill="#FFF3DC" /><circle cx="68" cy="46" r="2.1" fill="#FFC93C" /><circle cx="28.0" cy="78.6" r="2.9" fill="#FF4F2E" /><circle cx="31.2" cy="80.9" r="2.9" fill="#FF4F2E" /><circle cx="30.0" cy="84.8" r="2.9" fill="#FF4F2E" /><circle cx="26.0" cy="84.8" r="2.9" fill="#FF4F2E" /><circle cx="24.8" cy="80.9" r="2.9" fill="#FF4F2E" /><circle cx="28" cy="82" r="2.4" fill="#FFC93C" /><circle cx="44.0" cy="56.6" r="2.9" fill="#FF4F2E" /><circle cx="47.2" cy="58.9" r="2.9" fill="#FF4F2E" /><circle cx="46.0" cy="62.8" r="2.9" fill="#FF4F2E" /><circle cx="42.0" cy="62.8" r="2.9" fill="#FF4F2E" /><circle cx="40.8" cy="58.9" r="2.9" fill="#FF4F2E" /><circle cx="44" cy="60" r="2.4" fill="#FFC93C" /><circle cx="72.0" cy="72.6" r="2.9" fill="#FF4F2E" /><circle cx="75.2" cy="74.9" r="2.9" fill="#FF4F2E" /><circle cx="74.0" cy="78.8" r="2.9" fill="#FF4F2E" /><circle cx="70.0" cy="78.8" r="2.9" fill="#FF4F2E" /><circle cx="68.8" cy="74.9" r="2.9" fill="#FF4F2E" /><circle cx="72" cy="76" r="2.4" fill="#FFC93C" /><circle cx="92.0" cy="62.6" r="2.9" fill="#FF4F2E" /><circle cx="95.2" cy="64.9" r="2.9" fill="#FF4F2E" /><circle cx="94.0" cy="68.8" r="2.9" fill="#FF4F2E" /><circle cx="90.0" cy="68.8" r="2.9" fill="#FF4F2E" /><circle cx="88.8" cy="64.9" r="2.9" fill="#FF4F2E" /><circle cx="92" cy="66" r="2.4" fill="#FFC93C" /><circle cx="62.0" cy="20.6" r="2.9" fill="#FF4F2E" /><circle cx="65.2" cy="22.9" r="2.9" fill="#FF4F2E" /><circle cx="64.0" cy="26.8" r="2.9" fill="#FF4F2E" /><circle cx="60.0" cy="26.8" r="2.9" fill="#FF4F2E" /><circle cx="58.8" cy="22.9" r="2.9" fill="#FF4F2E" /><circle cx="62" cy="24" r="2.4" fill="#FFC93C" /><circle cx="48.0" cy="36.6" r="2.9" fill="#FF4F2E" /><circle cx="51.2" cy="38.9" r="2.9" fill="#FF4F2E" /><circle cx="50.0" cy="42.8" r="2.9" fill="#FF4F2E" /><circle cx="46.0" cy="42.8" r="2.9" fill="#FF4F2E" /><circle cx="44.8" cy="38.9" r="2.9" fill="#FF4F2E" /><circle cx="48" cy="40" r="2.4" fill="#FFC93C" /><circle cx="76.0" cy="36.6" r="2.9" fill="#FF4F2E" /><circle cx="79.2" cy="38.9" r="2.9" fill="#FF4F2E" /><circle cx="78.0" cy="42.8" r="2.9" fill="#FF4F2E" /><circle cx="74.0" cy="42.8" r="2.9" fill="#FF4F2E" /><circle cx="72.8" cy="38.9" r="2.9" fill="#FF4F2E" /><circle cx="76" cy="40" r="2.4" fill="#FFC93C" /></g><g data-part="epanoui-3"><path d="M32 96 L27 108 M32 96 L37 108" stroke="#1F1A17" strokeWidth="1.4" strokeLinecap="round" fill="none" /><circle cx="27" cy="110" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="37" cy="110" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M84 86 L79 98 M84 86 L89 98" stroke="#1F1A17" strokeWidth="1.4" strokeLinecap="round" fill="none" /><circle cx="79" cy="100" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="89" cy="100" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><path d="M58 82 L53 94 M58 82 L63 94" stroke="#1F1A17" strokeWidth="1.4" strokeLinecap="round" fill="none" /><circle cx="53" cy="96" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="63" cy="96" r="4" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /></g>
     </svg>
   );
 }
@@ -164,6 +191,15 @@ function Fleur1Fleurie({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Fleur1FleurieEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><path d="M30 62 Q 40 56 46 44" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><ellipse cx="47" cy="40" rx="4" ry="6" transform="rotate(25 47 40)" fill="#FF8FB1" /><ellipse cx="45" cy="45" rx="3" ry="2" fill="#1B6B45" /></g><g data-part="epanoui-2"><path d="M30 62 Q 40 56 46 44" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><ellipse cx="47" cy="40" rx="4" ry="6" transform="rotate(25 47 40)" fill="#FF8FB1" /><ellipse cx="45" cy="45" rx="3" ry="2" fill="#1B6B45" /><circle cx="47.0" cy="35.6" r="3.7" fill="#FF8FB1" /><circle cx="51.2" cy="38.6" r="3.7" fill="#FF8FB1" /><circle cx="49.6" cy="43.6" r="3.7" fill="#FF8FB1" /><circle cx="44.4" cy="43.6" r="3.7" fill="#FF8FB1" /><circle cx="42.8" cy="38.6" r="3.7" fill="#FF8FB1" /><circle cx="47" cy="40" r="3.1" fill="#FFC93C" /></g><g data-part="epanoui-3"><path d="M30 62 Q 40 56 46 44" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><ellipse cx="47" cy="40" rx="4" ry="6" transform="rotate(25 47 40)" fill="#FF8FB1" /><ellipse cx="45" cy="45" rx="3" ry="2" fill="#1B6B45" /><circle cx="47.0" cy="35.6" r="3.7" fill="#FF8FB1" /><circle cx="51.2" cy="38.6" r="3.7" fill="#FF8FB1" /><circle cx="49.6" cy="43.6" r="3.7" fill="#FF8FB1" /><circle cx="44.4" cy="43.6" r="3.7" fill="#FF8FB1" /><circle cx="42.8" cy="38.6" r="3.7" fill="#FF8FB1" /><circle cx="47" cy="40" r="3.1" fill="#FFC93C" /><path d="M30 56 Q 20 50 14 40" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><circle cx="13.0" cy="33.0" r="3.4" fill="#FFF3DC" /><circle cx="16.8" cy="35.8" r="3.4" fill="#FFF3DC" /><circle cx="15.4" cy="40.2" r="3.4" fill="#FFF3DC" /><circle cx="10.6" cy="40.2" r="3.4" fill="#FFF3DC" /><circle cx="9.2" cy="35.8" r="3.4" fill="#FFF3DC" /><circle cx="13" cy="37" r="2.8" fill="#FFC93C" /><ellipse cx="38" cy="66" rx="8" ry="4" transform="rotate(25 38 66)" fill="#1B6B45" /></g>
+    </svg>
+  );
+}
+
 function Fleur1Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
@@ -182,6 +218,15 @@ function Fleur2Fleurie({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Fleur2FleurieEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><path d="M30 76 C 44 70, 46 56, 42 48 C 34 56, 30 64, 30 76 Z" fill="#2FBF71" /></g><g data-part="epanoui-2"><path d="M30 76 C 44 70, 46 56, 42 48 C 34 56, 30 64, 30 76 Z" fill="#2FBF71" /><path d="M30 60 Q 42 52 46 40" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><path d="M41 40 Q 41 30 46 26 Q 51 30 51 40 Q 46 44 41 40 Z" fill="#FF8FB1" /></g><g data-part="epanoui-3"><path d="M30 76 C 44 70, 46 56, 42 48 C 34 56, 30 64, 30 76 Z" fill="#2FBF71" /><path d="M30 60 Q 42 52 46 40" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><path d="M41 40 Q 41 30 46 26 Q 51 30 51 40 Q 46 44 41 40 Z" fill="#FF8FB1" /><path d="M30 66 Q 18 58 14 46" stroke="#1F1A17" strokeWidth="2.4" strokeLinecap="round" fill="none" /><path d="M7 46 Q 7 36 11 32 L 14 36 L 17 32 Q 21 36 21 46 Q 14 50 7 46 Z" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
 function Fleur2Pousse({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
@@ -196,6 +241,15 @@ function Fleur3Fleurie({ svgProps, children }: GeneratedSvgProps) {
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
       <g data-part="brins"><path d="M20 78 Q 16 60 8 50 M26 78 Q 24 56 20 40 M32 78 Q 34 54 40 38 M38 78 Q 42 62 52 52 M30 78 Q 30 60 30 46" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" /></g><g data-part="baies"><circle cx="20" cy="38" r="5" fill="#FF4F2E" /><circle cx="40" cy="36" r="5" fill="#FF4F2E" /><circle cx="30" cy="44" r="4" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function Fleur3FleurieEpanoui({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="epanoui-1"><circle cx="8" cy="50" r="4" fill="#FF4F2E" /><circle cx="52" cy="52" r="4" fill="#FF4F2E" /></g><g data-part="epanoui-2"><circle cx="8" cy="50" r="4" fill="#FF4F2E" /><circle cx="52" cy="52" r="4" fill="#FF4F2E" /><circle cx="22" cy="52" r="3.5" fill="#FF8FB1" /><circle cx="36" cy="50" r="3.5" fill="#FF8FB1" /><circle cx="14" cy="62" r="3" fill="#FF8FB1" /><circle cx="46" cy="62" r="3" fill="#FF8FB1" /></g><g data-part="epanoui-3"><circle cx="8" cy="50" r="4" fill="#FF4F2E" /><circle cx="52" cy="52" r="4" fill="#FF4F2E" /><circle cx="22" cy="52" r="3.5" fill="#FF8FB1" /><circle cx="36" cy="50" r="3.5" fill="#FF8FB1" /><circle cx="14" cy="62" r="3" fill="#FF8FB1" /><circle cx="46" cy="62" r="3" fill="#FF8FB1" /><circle cx="30.0" cy="37.0" r="2.5" fill="#FFF3DC" /><circle cx="32.9" cy="39.1" r="2.5" fill="#FFF3DC" /><circle cx="31.8" cy="42.4" r="2.5" fill="#FFF3DC" /><circle cx="28.2" cy="42.4" r="2.5" fill="#FFF3DC" /><circle cx="27.1" cy="39.1" r="2.5" fill="#FFF3DC" /><circle cx="30" cy="40" r="2.1" fill="#FFC93C" /><circle cx="20.0" cy="31.4" r="2.2" fill="#FFF3DC" /><circle cx="22.5" cy="33.2" r="2.2" fill="#FFF3DC" /><circle cx="21.5" cy="36.1" r="2.2" fill="#FFF3DC" /><circle cx="18.5" cy="36.1" r="2.2" fill="#FFF3DC" /><circle cx="17.5" cy="33.2" r="2.2" fill="#FFF3DC" /><circle cx="20" cy="34" r="1.8" fill="#FFC93C" /><circle cx="41.0" cy="29.4" r="2.2" fill="#FFF3DC" /><circle cx="43.5" cy="31.2" r="2.2" fill="#FFF3DC" /><circle cx="42.5" cy="34.1" r="2.2" fill="#FFF3DC" /><circle cx="39.5" cy="34.1" r="2.2" fill="#FFF3DC" /><circle cx="38.5" cy="31.2" r="2.2" fill="#FFF3DC" /><circle cx="41" cy="32" r="1.8" fill="#FFC93C" /></g>
     </svg>
   );
 }
@@ -641,6 +695,24 @@ function SaisonAubergine({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonAutomneFeuille1({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={16} height={16} viewBox="0 0 16 16" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuille"><path d="M3 13 C 3 7, 7 3, 13 3 C 13 9, 9 13, 3 13 Z" fill="#FF4F2E" stroke="#1F1A17" strokeWidth="1.2" /></g><g data-part="nervure"><path d="M4 12 L 11 5" stroke="#1F1A17" strokeWidth="1.2" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
+function SaisonAutomneFeuille2({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={16} height={16} viewBox="0 0 16 16" fill="none" {...svgProps}>
+      {children}
+      <g data-part="feuille"><path d="M3 13 C 3 7, 7 3, 13 3 C 13 9, 9 13, 3 13 Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /></g><g data-part="nervure"><path d="M4 12 L 11 5" stroke="#1F1A17" strokeWidth="1.2" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
 function SaisonBetterave({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
@@ -722,6 +794,24 @@ function SaisonFraise({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonHiverFlocons({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={390} height={300} viewBox="0 0 390 300" fill="none" {...svgProps}>
+      {children}
+      <g data-part="flocons"><circle cx="30" cy="30" r="3.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="80" cy="90" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="140" cy="40" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="190" cy="120" r="3.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="240" cy="70" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="290" cy="140" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="340" cy="30" r="3.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="360" cy="110" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="60" cy="150" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="120" cy="180" r="3.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="210" cy="20" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="270" cy="190" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="20" cy="200" r="3.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="330" cy="180" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="160" cy="90" r="2.5" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /></g>
+    </svg>
+  );
+}
+
+function SaisonHiverNeige({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={390} height={300} viewBox="0 0 390 300" fill="none" {...svgProps}>
+      {children}
+      <g data-part="neige-colline-arriere"><path d="M 31.8 198.5 L 37.6 195.3 L 43.4 192.3 L 49.2 189.5 L 55.0 187.0 L 60.9 184.7 L 66.8 182.7 L 72.6 180.9 L 78.5 179.3 L 84.4 178.0 L 90.3 176.9 L 96.2 176.1 L 102.0 175.5 L 107.9 175.1 L 113.8 175.0 L 119.6 175.1 L 125.4 175.5 L 131.2 176.1 L 137.0 176.9 L 142.8 178.0 L 148.5 179.3 L 154.3 180.9 L 160.0 182.7 L 165.6 184.7 L 171.3 187.0 L 176.8 189.5 L 182.4 192.3 L 187.9 195.3 L 193.4 198.5 Q 177.2 208 161.1 200 Q 144.9 204 128.7 200 Q 112.6 208 96.4 200 Q 80.3 204 64.1 200 Q 47.9 208 31.8 200 Z" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /></g><g data-part="neige-colline-avant"><path d="M 206.4 205.7 L 212.1 203.0 L 217.7 200.5 L 223.4 198.2 L 229.1 196.1 L 234.9 194.2 L 240.6 192.6 L 246.4 191.1 L 252.2 189.9 L 258.0 188.9 L 263.8 188.0 L 269.6 187.4 L 275.4 187.1 L 281.3 186.9 L 287.1 186.9 L 293.0 187.1 L 298.9 187.6 L 304.7 188.3 L 310.6 189.1 L 316.5 190.2 L 322.5 191.5 L 328.4 193.0 L 334.3 194.7 L 340.3 196.6 L 346.2 198.7 L 352.2 201.0 L 358.1 203.6 L 364.1 206.3 Q 348.3 216 332.6 208 Q 316.8 212 301.0 208 Q 285.2 216 269.5 208 Q 253.7 212 237.9 208 Q 222.2 216 206.4 208 Z" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /></g><g data-part="neige-sol"><path d="M0 240 H390 V252 Q 375 247 360 253 Q 345 247 330 254 Q 312 246 296 253 Q 280 247 262 254 Q 245 246 228 253 Q 212 247 195 254 Q 178 246 160 253 Q 144 247 128 254 Q 110 246 94 253 Q 78 247 62 254 Q 45 246 30 253 Q 15 247 0 252 Z" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.2" /></g>
+    </svg>
+  );
+}
+
 function SaisonKiwi({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
@@ -776,6 +866,15 @@ function SaisonPomme({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function SaisonPrintempsPetale({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={16} height={16} viewBox="0 0 16 16" fill="none" {...svgProps}>
+      {children}
+      <g data-part="petale"><path d="M8 2 C 13 5, 13 11, 8 14 C 3 11, 3 5, 8 2 Z" fill="#FF8FB1" stroke="#1F1A17" strokeWidth="1" /></g>
+    </svg>
+  );
+}
+
 function SaisonRadis({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
@@ -824,12 +923,15 @@ function Vent({ svgProps, children }: GeneratedSvgProps) {
 export const generatedIllustrations: Record<IllustrationName, ComponentType<GeneratedSvgProps>> = {
   "abeille": Abeille,
   "arbre-1-grand": Arbre1Grand,
+  "arbre-1-grand-epanoui": Arbre1GrandEpanoui,
   "arbre-1-jeune": Arbre1Jeune,
   "arbre-1-pousse": Arbre1Pousse,
   "arbre-2-grand": Arbre2Grand,
+  "arbre-2-grand-epanoui": Arbre2GrandEpanoui,
   "arbre-2-jeune": Arbre2Jeune,
   "arbre-2-pousse": Arbre2Pousse,
   "arbre-3-grand": Arbre3Grand,
+  "arbre-3-grand-epanoui": Arbre3GrandEpanoui,
   "arbre-3-jeune": Arbre3Jeune,
   "arbre-3-pousse": Arbre3Pousse,
   "balance": Balance,
@@ -839,10 +941,13 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "escargot": Escargot,
   "escargot-endormi": EscargotEndormi,
   "fleur-1-fleurie": Fleur1Fleurie,
+  "fleur-1-fleurie-epanoui": Fleur1FleurieEpanoui,
   "fleur-1-pousse": Fleur1Pousse,
   "fleur-2-fleurie": Fleur2Fleurie,
+  "fleur-2-fleurie-epanoui": Fleur2FleurieEpanoui,
   "fleur-2-pousse": Fleur2Pousse,
   "fleur-3-fleurie": Fleur3Fleurie,
+  "fleur-3-fleurie-epanoui": Fleur3FleurieEpanoui,
   "fleur-3-pousse": Fleur3Pousse,
   "herisson": Herisson,
   "herisson-endormi": HerissonEndormi,
@@ -892,6 +997,8 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "saison-abricot": SaisonAbricot,
   "saison-asperge": SaisonAsperge,
   "saison-aubergine": SaisonAubergine,
+  "saison-automne-feuille-1": SaisonAutomneFeuille1,
+  "saison-automne-feuille-2": SaisonAutomneFeuille2,
   "saison-betterave": SaisonBetterave,
   "saison-carotte": SaisonCarotte,
   "saison-cerise": SaisonCerise,
@@ -901,12 +1008,15 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "saison-courgette": SaisonCourgette,
   "saison-endive": SaisonEndive,
   "saison-fraise": SaisonFraise,
+  "saison-hiver-flocons": SaisonHiverFlocons,
+  "saison-hiver-neige": SaisonHiverNeige,
   "saison-kiwi": SaisonKiwi,
   "saison-melon": SaisonMelon,
   "saison-petits-pois": SaisonPetitsPois,
   "saison-poire": SaisonPoire,
   "saison-poireau": SaisonPoireau,
   "saison-pomme": SaisonPomme,
+  "saison-printemps-petale": SaisonPrintempsPetale,
   "saison-radis": SaisonRadis,
   "saison-raisin": SaisonRaisin,
   "saison-tomate": SaisonTomate,

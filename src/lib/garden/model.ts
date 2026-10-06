@@ -6,26 +6,40 @@ import {
   ILLUSTRATION_SPECS,
   type IllustrationName,
 } from "@/lib/illustrations/specs";
+import { isHabit, isLightChoice } from "@/lib/journal/kind";
 import { sortEntries } from "@/lib/journal/schema";
 import { hashString, pickIndex } from "./hash";
 import { SCENE, surfaceY } from "./scene";
+import {
+  SPECIES,
+  type PlantKind,
+  type PlantStage,
+  type PlantType,
+  type PlantVariant,
+} from "./species";
+import {
+  daysToNextStep,
+  MAX_BLOOM,
+  wateredDayCount,
+  wateredDaysSince,
+  waterings,
+  wateringSteps,
+  type BloomLevel,
+} from "./watering";
 
 // ---- Plantes -------------------------------------------------------------------------------
 
-export type PlantType = "tree" | "flower";
-export type PlantVariant = 1 | 2 | 3;
-export type PlantKind = { type: PlantType; variant: PlantVariant };
+export type { PlantKind, PlantStage, PlantType, PlantVariant };
 /** 0 : pousse ; 1 : jeune (arbre) ou fleurie (fleur) ; 2 : grand (arbre) ou fleurie (fleur). */
 export type GrowthLevel = 0 | 1 | 2;
 
-export const PLANT_KINDS: readonly PlantKind[] = [
-  { type: "tree", variant: 1 },
-  { type: "tree", variant: 2 },
-  { type: "tree", variant: 3 },
-  { type: "flower", variant: 1 },
-  { type: "flower", variant: 2 },
-  { type: "flower", variant: 3 },
-];
+/**
+ * Espèces du tirage au hasard (table SPECIES, `randomPool`), dans un ordre figé : le changer
+ * changerait l'espèce des plantes déjà là.
+ */
+export const PLANT_KINDS: readonly PlantKind[] = SPECIES.filter(
+  (species) => species.randomPool,
+).map((species) => species.kind);
 
 /**
  * Seuils PROVISOIRES du stade d'une plante, selon l'écart (kg) du choix qui l'a fait
@@ -50,8 +64,6 @@ export function levelForKg(kg: number): GrowthLevel {
 export function maxLevel(kind: PlantKind): GrowthLevel {
   return kind.type === "flower" ? 1 : 2;
 }
-
-export type PlantStage = "pousse" | "jeune" | "grand" | "fleurie";
 
 export function stageFor(kind: PlantKind, level: GrowthLevel): PlantStage {
   if (kind.type === "flower") return level === 0 ? "pousse" : "fleurie";
@@ -253,8 +265,13 @@ export type GardenPlant = {
   /** Id de l'entrée qui l'a fait pousser. */
   id: string;
   kind: PlantKind;
+  /** Stade affiché (écart du choix, jardin plein, puis arrosage). */
   level: GrowthLevel;
   stage: PlantStage;
+  /** Épanouissement atteint (0 à 3), une fois adulte ; l'affichage dépend de la saison. */
+  bloom: BloomLevel;
+  /** Jours arrosés depuis qu'elle a été plantée. */
+  wateredDays: number;
   slot: Slot;
   box: Box;
 };
@@ -269,13 +286,30 @@ export type GardenState = {
   /** Animaux installés, visibles ou partis le temps du sommeil. */
   unlocked: AnimalKind[];
   asleep: boolean;
+  /** Comparaisons notées (les habitudes sont comptées à part). */
   choiceCount: number;
   lightChoiceCount: number;
+  /** Écart cumulé : comparaisons seulement (une habitude ne compte aucun kg). */
   totalAvoidedKg: number;
+  habitCount: number;
+  /** Jours où au moins une habitude a été notée. */
+  wateredDayCount: number;
 };
 
-function isLight(entry: JournalEntry): boolean {
-  return entry.avoidedKg > 0;
+const isLight = isLightChoice;
+
+/** Rang de progression d'une plante : stade, puis épanouissement (pour comparer deux états). */
+export function plantProgress(
+  plant: Pick<GardenPlant, "level" | "bloom">,
+): number {
+  return plant.level + plant.bloom;
+}
+
+/** Vrai si la plante peut encore avancer (stade adulte et épanouissement maximal non atteints). */
+export function canProgress(
+  plant: Pick<GardenPlant, "kind" | "level" | "bloom">,
+): boolean {
+  return plant.level < maxLevel(plant.kind) || plant.bloom < MAX_BLOOM;
 }
 
 export function buildGarden(
@@ -284,13 +318,22 @@ export function buildGarden(
   asleepDays: number = DEFAULT_ASLEEP_DAYS,
 ): GardenState {
   const sorted = sortEntries(entries);
-  const plants: Omit<GardenPlant, "stage" | "box">[] = [];
+  const plants: {
+    id: string;
+    kind: PlantKind;
+    level: GrowthLevel;
+    slot: Slot;
+    plantedAt: number;
+  }[] = [];
   const taken = new Set<number>();
   let lightChoiceCount = 0;
   let totalAvoidedKg = 0;
+  let habitCount = 0;
 
   for (const entry of sorted) {
-    if (!isLight(entry)) continue; // un choix lourd n'ajoute rien et ne retire rien
+    if (isHabit(entry)) habitCount += 1;
+    // Un choix lourd n'ajoute rien et ne retire rien ; une habitude arrose (plus bas).
+    if (!isLight(entry)) continue;
     lightChoiceCount += 1;
     totalAvoidedKg += entry.avoidedKg;
     if (plants.length < MAX_PLANTS) {
@@ -299,9 +342,16 @@ export function buildGarden(
         levelForKg(entry.avoidedKg),
         maxLevel(kind),
       ) as GrowthLevel;
+      // L'emplacement dépend du stade de départ seulement : l'arrosage ne déplace rien.
       const slotIndex = pickSlot(entry.id, level, taken);
       taken.add(slotIndex);
-      plants.push({ id: entry.id, kind, level, slot: GARDEN_SLOTS[slotIndex] });
+      plants.push({
+        id: entry.id,
+        kind,
+        level,
+        slot: GARDEN_SLOTS[slotIndex],
+        plantedAt: Date.parse(entry.date),
+      });
     } else {
       // Jardin plein : le choix fait grandir d'un cran la plus ancienne plante qui peut encore
       // grandir (jusqu'à son aspect maximal, puis on passe à la suivante).
@@ -314,27 +364,46 @@ export function buildGarden(
   const asleep = last ? isAsleep(last.date, now, asleepDays) : false;
   const unlocked = unlockedAnimals(lightChoiceCount);
 
+  const watered = waterings(sorted);
+
   return {
     plants: plants
-      .map((plant) => ({
-        ...plant,
-        stage: stageFor(plant.kind, plant.level),
-        box: boxAt(
-          illustrationFor(plant.kind, plant.level),
-          plant.slot.x,
-          plant.slot.y,
-          PLANT_FRAME_WIDTH[plant.kind.type],
-        ),
-      }))
+      .map(({ plantedAt, ...plant }) => {
+        // Arrosage : un cran tous les WATER_DAYS_PER_STEP jours arrosés depuis la plantation,
+        // d'abord vers l'âge adulte, puis vers l'épanouissement.
+        const wateredDays = wateredDaysSince(watered, plantedAt);
+        const progress = plant.level + wateringSteps(wateredDays);
+        const max = maxLevel(plant.kind);
+        const level = Math.min(progress, max) as GrowthLevel;
+        const bloom = Math.min(
+          MAX_BLOOM,
+          Math.max(0, progress - max),
+        ) as BloomLevel;
+        return {
+          ...plant,
+          level,
+          bloom,
+          wateredDays,
+          stage: stageFor(plant.kind, level),
+          box: boxAt(
+            illustrationFor(plant.kind, level),
+            plant.slot.x,
+            plant.slot.y,
+            PLANT_FRAME_WIDTH[plant.kind.type],
+          ),
+        };
+      })
       .sort((a, b) => a.slot.y - b.slot.y || a.slot.x - b.slot.x),
     animals: unlocked
       .filter((kind) => !asleep || SLEEPERS.includes(kind))
       .map((kind) => ({ kind, asleep, box: animalBox(kind) })),
     unlocked,
     asleep,
-    choiceCount: sorted.length,
+    choiceCount: sorted.length - habitCount,
     lightChoiceCount,
     totalAvoidedKg,
+    habitCount,
+    wateredDayCount: wateredDayCount(watered),
   };
 }
 
@@ -359,7 +428,7 @@ export function gardenSignature(state: GardenState): number {
     state.plants
       .map(
         (p) =>
-          `${p.id}:${p.kind.type}${p.kind.variant}:${p.level}:${p.slot.row}.${p.slot.index}`,
+          `${p.id}:${p.kind.type}${p.kind.variant}:${p.level}:${p.bloom}:${p.slot.row}.${p.slot.index}`,
       )
       .join("|"),
   );
@@ -400,4 +469,65 @@ export function revealForEntry(
     return previous && previous.level !== plant.level;
   });
   return grown ? { plant: grown, isNew: false, animals } : null;
+}
+
+// ---- Arrosage d'une habitude --------------------------------------------------------------
+
+export type WaterReveal = {
+  /** Premier arrosage de ce jour (sinon le jour était déjà arrosé : rien ne change). */
+  newDay: boolean;
+  /** Plantes qui avancent d'un cran grâce à cette habitude, à leur nouvel état. */
+  moved: GardenPlant[];
+  /** Plante à montrer : la plus avancée de celles qui bougent (la plus ancienne à égalité). */
+  featured: GardenPlant | null;
+  plantCount: number;
+  /** Jours arrosés avant le prochain cran de la plante la plus proche (null : rien à faire). */
+  nextStepIn: number | null;
+};
+
+/**
+ * Ce que l'habitude `entryId` apporte au jardin : même calcul que `buildGarden`, avec et sans
+ * cette entrée. Null si l'entrée n'est pas une habitude du carnet.
+ */
+export function waterRevealForEntry(
+  entries: readonly JournalEntry[],
+  entryId: string,
+  now: Date = new Date(),
+): WaterReveal | null {
+  const sorted = sortEntries(entries);
+  const index = sorted.findIndex((entry) => entry.id === entryId);
+  const entry = sorted[index];
+  if (!entry || !isHabit(entry)) return null;
+  const day = waterings([entry])[0]?.day;
+  const newDay = !waterings(sorted.slice(0, index)).some(
+    (watering) => watering.day === day,
+  );
+  const before = buildGarden(
+    sorted.filter((other) => other.id !== entryId),
+    now,
+  );
+  const after = buildGarden(sorted, now);
+  const previous = new Map(before.plants.map((plant) => [plant.id, plant]));
+  const moved = after.plants.filter((plant) => {
+    const old = previous.get(plant.id);
+    return old !== undefined && plantProgress(plant) > plantProgress(old);
+  });
+  const featured =
+    [...moved].sort(
+      (a, b) =>
+        plantProgress(b) - plantProgress(a) ||
+        sorted.findIndex((e) => e.id === a.id) -
+          sorted.findIndex((e) => e.id === b.id),
+    )[0] ?? null;
+  const growing = after.plants.filter(canProgress);
+  const nextStepIn = growing.length
+    ? Math.min(...growing.map((plant) => daysToNextStep(plant.wateredDays)))
+    : null;
+  return {
+    newDay,
+    moved,
+    featured,
+    plantCount: after.plants.length,
+    nextStepIn,
+  };
 }

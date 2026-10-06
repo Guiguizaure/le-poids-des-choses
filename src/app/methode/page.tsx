@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/ContentPage";
 import { DataCredit } from "@/components/ui/DataCredit";
 import { PaperCutout } from "@/components/ui/PaperCutout";
+import { WATER_DAYS_PER_STEP } from "@/lib/garden/watering";
 import generated from "@/lib/data/gestures.generated.json";
 import {
   SAISON_BASE,
@@ -178,7 +179,38 @@ export default function MethodePage() {
         <p id="ecart" className="scroll-mt-6">
           Le site ne mesure pas des kilos évités ou économisés : il compte
           l’écart entre l’option que tu choisis et l’autre option comparée, sans
-          savoir ce que tu aurais fait sans lui.
+          savoir ce que tu aurais fait sans lui. Une habitude notée sans
+          comparaison ne compte aucun kg (voir{" "}
+          <Link href="#habitudes" className="font-semibold underline">
+            comparer ou tenir une habitude
+          </Link>
+          ).
+        </p>
+      </Section>
+
+      <Section id="habitudes" title="Comparer ou tenir une habitude">
+        <p>
+          Comparer deux gestes donne un écart : la différence entre les deux
+          options, calculée avec les données Impact CO2. C’est cet écart, et lui
+          seul, que ton jardin additionne.
+        </p>
+        <p>
+          Une habitude ne se compare à rien : si tu ne manges jamais de viande,
+          comparer ton repas à un plat de viande donnerait un écart qui ne
+          correspond à rien de réel. Une habitude tenue ne compte donc aucun kg,
+          n’entre ni dans le total ni dans les paliers. Elle arrose ton jardin :
+          chaque jour où tu en notes au moins une, les plantes déjà là avancent
+          d’un cran tous les {WATER_DAYS_PER_STEP} jours arrosés. C’est une
+          règle de jeu, pas une mesure.
+        </p>
+        <p>
+          L’hiver, l’épanouissement des arbres caducs dort : le niveau atteint
+          est gardé, mais leurs fleurs et leurs fruits ne réapparaissent qu’au
+          printemps.
+        </p>
+        <p>
+          Le jardin suit aussi les saisons de l’hémisphère nord (feuillage,
+          ciel, neige) : un simple décor, qui ne change aucun chiffre.
         </p>
       </Section>
 

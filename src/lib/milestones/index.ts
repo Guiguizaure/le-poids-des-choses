@@ -5,6 +5,7 @@ import { emissions } from "@/lib/calc";
 import { getGesture } from "@/lib/data";
 import type { Gesture, JournalEntry } from "@/lib/data/types";
 import { readableNumber } from "@/lib/facts";
+import { entryKg, isLightChoice } from "@/lib/journal/kind";
 import { resolveRef, type GestureRef } from "@/lib/facts/templates";
 
 export const MILESTONES_KG = [10, 50, 100, 250, 500, 1000] as const;
@@ -50,7 +51,7 @@ export function milestoneCrossed(
 ): Milestone | null {
   let last = -1;
   for (let i = entries.length - 1; i >= 0; i--) {
-    if (entries[i].avoidedKg > 0) {
+    if (isLightChoice(entries[i])) {
       last = i;
       break;
     }
@@ -58,8 +59,9 @@ export function milestoneCrossed(
   if (last < 0) return null;
   const before = entries
     .slice(0, last)
-    .reduce((sum, entry) => sum + Math.max(0, entry.avoidedKg), 0);
-  const after = before + entries[last].avoidedKg;
+    .reduce((sum, entry) => sum + Math.max(0, entryKg(entry)), 0);
+  // Une habitude ne compte aucun kg : elle n'entre jamais dans les paliers.
+  const after = before + entryKg(entries[last]);
   const crossed = MILESTONES_KG.filter(
     (milestone) => before < milestone && after >= milestone,
   );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { JournalEntry } from "@/lib/data/types";
+import type { ComparisonEntry } from "@/lib/data/types";
 import { canonicalJson, sameEntry } from "./canonical";
 import { normalizeEmail } from "./email";
 import { addConflicts, mergeRemote } from "./merge";
@@ -7,8 +7,8 @@ import { addConflicts, mergeRemote } from "./merge";
 function entry(
   id: string,
   day: number,
-  over: Partial<JournalEntry> = {},
-): JournalEntry {
+  over: Partial<ComparisonEntry> = {},
+): ComparisonEntry {
   return {
     id,
     date: `2026-10-${String(day).padStart(2, "0")}T10:00:00.000Z`,

@@ -1,4 +1,16 @@
-export { createEntry, newEntryId, type NewEntry } from "./entry";
+export {
+  createEntry,
+  createHabitEntry,
+  newEntryId,
+  type NewEntry,
+} from "./entry";
+export {
+  doneGesture,
+  entryKg,
+  isComparison,
+  isHabit,
+  isLightChoice,
+} from "./kind";
 export {
   appendEntry,
   exportFileName,

@@ -10,7 +10,7 @@ import {
   it,
   vi,
 } from "vitest";
-import type { JournalEntry } from "../src/lib/data/types";
+import type { ComparisonEntry, JournalEntry } from "../src/lib/data/types";
 import { LINK_TTL_MS, SESSION_COOKIE } from "./config";
 import type { D1Database, Env } from "./env";
 import {
@@ -141,7 +141,10 @@ async function signIn(email = "camille@exemple.fr", at = NOW) {
   return sessionFrom(response);
 }
 
-function entry(id: string, over: Partial<JournalEntry> = {}): JournalEntry {
+function entry(
+  id: string,
+  over: Partial<ComparisonEntry> = {},
+): ComparisonEntry {
   return {
     id,
     date: "2026-10-01T10:00:00.000Z",

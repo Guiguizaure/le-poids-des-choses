@@ -20,6 +20,24 @@ describe("gardenTotals", () => {
       totalAvoidedKg: 0,
       choiceCount: 0,
       lightChoiceCount: 0,
+      habitCount: 0,
+    });
+  });
+  it("une habitude ne compte aucun kg ni aucun choix", () => {
+    const totals = gardenTotals([
+      entry(2, "1"),
+      {
+        kind: "habit",
+        id: "h",
+        date: "2026-01-02T00:00:00.000Z",
+        gesture: "velo",
+      },
+    ]);
+    expect(totals).toEqual({
+      totalAvoidedKg: 2,
+      choiceCount: 1,
+      lightChoiceCount: 1,
+      habitCount: 1,
     });
   });
   it("somme les kg, compte tous les choix et les choix légers", () => {

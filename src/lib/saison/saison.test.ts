@@ -164,8 +164,11 @@ describe("fruits et légumes dessinés", () => {
     }
   });
   it("tous les dessins de produits sont dans la table", () => {
-    const drawings = Object.keys(ILLUSTRATION_SPECS).filter((name) =>
-      name.startsWith("saison-"),
+    // saison-hiver-…, saison-automne-…, saison-printemps-… : saisons du jardin, pas des produits.
+    const drawings = Object.keys(ILLUSTRATION_SPECS).filter(
+      (name) =>
+        name.startsWith("saison-") &&
+        !/^saison-(printemps|ete|automne|hiver)-/.test(name),
     );
     expect(Object.keys(SEASON_DRAWINGS).sort()).toEqual(drawings.sort());
   });

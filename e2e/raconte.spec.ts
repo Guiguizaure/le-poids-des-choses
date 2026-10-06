@@ -245,6 +245,49 @@ test("trajet sans distance : message visible, le bouton mène au champ, puis ajo
   );
 });
 
+test("habitude : un geste déclaré est noté en habitude par défaut, sans distance ni kg", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "lpdc:habitudes:v1",
+      '{"version":1,"gestures":["marche"]}',
+    ),
+  );
+  await page.goto("/raconte");
+  await analyse(page, "Un café au réveil, puis à pied jusqu'au marché.");
+  const marche = row(page, "Marche");
+  const asHabit = marche.getByRole("radio", { name: /Habitude tenue/ });
+  await expect(asHabit).toBeChecked();
+  await expect(marche).toContainText("Se déplacer · habitude, aucun kg");
+  await expect(marche).not.toContainText("Comparé à");
+  await expect(marche.getByLabel("Distance du trajet (km)")).toHaveCount(0);
+  // Le café n'est pas une habitude : pas de choix.
+  await expect(row(page, "Café").getByRole("radio")).toHaveCount(0);
+  const add = page.getByRole("button", { name: "Ajouter au carnet" });
+  await expect(add).not.toHaveAttribute("aria-disabled", "true");
+  await expectNoAxeViolations(page);
+
+  // Repassée en comparaison, la distance manque de nouveau ; puis retour à l'habitude.
+  await marche.getByRole("radio", { name: "Comparer" }).check();
+  await expect(
+    page.getByRole("button", { name: "1 geste à compléter" }),
+  ).toBeVisible();
+  await expect(marche).toContainText("Comparé à : Voiture thermique");
+  await asHabit.check();
+  await add.click();
+  await expect(page.getByText("2 gestes ajoutés à ton carnet.")).toBeVisible();
+  const entries = (await journal(page)) as unknown as Record<string, unknown>[];
+  const habit = entries.find((entry) => entry.kind === "habit");
+  expect(habit).toMatchObject({ kind: "habit", gesture: "marche" });
+  expect(habit).not.toHaveProperty("avoidedKg");
+  await expect(page.getByText("arrosé", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Voir mon jardin" }),
+  ).toHaveAttribute("href", /\/jardin\?nouveau=|\/jardin\?arrose=/);
+});
+
 test("objet : l'option écrite est reprise, l'écart suit les règles du duel objet", async ({
   page,
 }, testInfo) => {
