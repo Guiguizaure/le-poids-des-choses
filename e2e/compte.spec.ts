@@ -17,6 +17,7 @@ import {
   expectNoAxeViolations,
   seedJournal,
   test,
+  letGardenChoose,
 } from "./fixtures";
 
 // Ports de playwright.config.ts.
@@ -229,6 +230,7 @@ test("parcours complet : lien, connexion, synchro entre deux appareils, export, 
   // Appareil 1 : nouveau choix, envoyé tout de suite ; l'appareil 2 le retrouve.
   await page.goto("/comparer?a=tgv&b=avion&q=300");
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
   ).toBeVisible();
@@ -450,6 +452,7 @@ test("hors ligne : le choix attend, puis part au retour du réseau", async ({
     route.abort("internetdisconnected"),
   );
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
   ).toBeVisible();

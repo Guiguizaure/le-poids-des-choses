@@ -100,6 +100,22 @@ export const ILLUSTRATION_SPECS = {
   "fleur-2-fleurie": flower(["tige", "feuilles", "petales"]),
   "fleur-3-pousse": flower(["brins"]),
   "fleur-3-fleurie": flower(["brins", "baies"]),
+  // Espèces à débloquer : olivier, sapin, figuier ; marguerite, lavande, pissenlit.
+  "arbre-4-pousse": treeShoot,
+  "arbre-4-jeune": tree,
+  "arbre-4-grand": tree,
+  "arbre-5-pousse": treeShoot,
+  "arbre-5-jeune": tree,
+  "arbre-5-grand": tree,
+  "arbre-6-pousse": treeShoot,
+  "arbre-6-jeune": tree,
+  "arbre-6-grand": tree,
+  "fleur-4-pousse": flower(["tige", "feuilles"]),
+  "fleur-4-fleurie": flower(["tige", "feuilles", "petales", "coeur"]),
+  "fleur-5-pousse": flower(["feuilles"]),
+  "fleur-5-fleurie": flower(["tige", "feuilles", "petales"]),
+  "fleur-6-pousse": flower(["feuilles"]),
+  "fleur-6-fleurie": flower(["tige", "feuilles", "petales", "coeur"]),
 
   "arbre-1-grand-epanoui": treeBloom,
   "arbre-2-grand-epanoui": treeBloom,
@@ -107,6 +123,12 @@ export const ILLUSTRATION_SPECS = {
   "fleur-1-fleurie-epanoui": flowerBloom,
   "fleur-2-fleurie-epanoui": flowerBloom,
   "fleur-3-fleurie-epanoui": flowerBloom,
+  "arbre-4-grand-epanoui": treeBloom,
+  "arbre-5-grand-epanoui": treeBloom,
+  "arbre-6-grand-epanoui": treeBloom,
+  "fleur-4-fleurie-epanoui": flowerBloom,
+  "fleur-5-fleurie-epanoui": flowerBloom,
+  "fleur-6-fleurie-epanoui": flowerBloom,
 
   // Visiteurs de saison et de la nuit (jardin vivant) : ils ne se débloquent pas.
   "rouge-gorge": critter([

@@ -154,3 +154,18 @@ export async function tabTo(page: Page, text: string, max = 40) {
   }
   throw new Error(`« ${text} » n'a pas été atteint au clavier`);
 }
+
+/**
+ * Un choix léger ouvre « Que veux-tu planter ? » : on laisse le jardin choisir (comportement
+ * d'avant le choix des espèces).
+ */
+export async function letGardenChoose(page: Page) {
+  const picker = page.locator("[data-species-picker]");
+  await expect(picker).toBeVisible();
+  await picker
+    .getByRole("button", {
+      name: /^(Laisse le jardin choisir|Let the garden choose)$/,
+    })
+    .click();
+  await expect(picker).toBeHidden();
+}

@@ -34,6 +34,7 @@ import { entryTitle } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { useFocusTitle } from "./useFocusTitle";
 import { DataCredit } from "@/components/ui/DataCredit";
+import { SpeciesUnlocked } from "@/components/garden/SpeciesUnlocked";
 import { format } from "@/lib/i18n";
 import { COMPARE } from "@/lib/i18n/messages/compare";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -290,6 +291,11 @@ export function ChoiceResult({
           <p className="text-corps-m text-encre leading-[1.4]">
             {format(light ? t.lightText : t.heavyText, { title })}
           </p>
+          <SpeciesUnlocked
+            entries={journal.entries}
+            entryIds={[entry.id]}
+            className="w-full"
+          />
           {light ? (
             <PrimaryLink
               href={`/jardin?nouveau=${encodeURIComponent(entry.id)}`}

@@ -23,7 +23,12 @@ import { GustLab } from "./GustLab";
 import { JournalSimulator } from "./JournalSimulator";
 import { Panel, Switch, ToggleButton } from "./ui";
 
-const VARIANTS: TreeVariant[] = [1, 2, 3];
+const VARIANTS: TreeVariant[] = [1, 2, 3, 4, 5, 6];
+const allStages = (stage: TreeStage) =>
+  Object.fromEntries(VARIANTS.map((variant) => [variant, stage])) as Record<
+    TreeVariant,
+    TreeStage
+  >;
 
 export function LaboControls() {
   const systemReduced = useSystemReducedMotion();
@@ -32,13 +37,15 @@ export function LaboControls() {
     1: "pousse",
     2: "jeune",
     3: "grand",
+    4: "pousse",
+    5: "jeune",
+    6: "grand",
   });
   const [tilt, setTilt] = useState(0);
   const [asleep, setAsleep] = useState(false);
   const [sparkleCount, setSparkleCount] = useState(0);
 
-  const setAllStages = (stage: TreeStage) =>
-    setStages({ 1: stage, 2: stage, 3: stage });
+  const setAllStages = (stage: TreeStage) => setStages(allStages(stage));
 
   return (
     <MotionProvider forceReduced={forceReduced}>

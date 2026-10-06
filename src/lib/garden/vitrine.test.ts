@@ -22,7 +22,8 @@ function placed(name: IllustrationName) {
 
 describe("vitrine de révélation", () => {
   it("couvre tous les arbres et toutes les fleurs, à chaque stade", () => {
-    expect(PLANTS).toHaveLength(15);
+    // 6 arbres à 3 stades, 6 fleurs à 2 stades.
+    expect(PLANTS).toHaveLength(30);
   });
   it.each(PLANTS)(
     "%s : pied au sommet de la colline, dessin dans la vitrine",
@@ -42,10 +43,15 @@ describe("vitrine de révélation", () => {
       );
     },
   );
-  it("chaque plante occupe l'essentiel de la hauteur de la vitrine", () => {
+  it("chaque plante occupe l'essentiel de la hauteur de la vitrine (ou de sa largeur, pour une pousse basse et large)", () => {
     for (const name of PLANTS) {
-      const { top } = placed(name);
-      expect(VITRINE.foot.y - top, name).toBeGreaterThan(90);
+      const { top, left, right } = placed(name);
+      const tall = VITRINE.foot.y - top > 90;
+      // Bornée par sa demi-largeur, d'un côté du pied ou de l'autre.
+      const limit = VITRINE.plantHalfWidth * 0.9;
+      const wide =
+        VITRINE.foot.x - left > limit || right - VITRINE.foot.x > limit;
+      expect(tall || wide, name).toBe(true);
     }
   });
   it("une pousse est agrandie, un grand arbre garde à peu près sa taille", () => {

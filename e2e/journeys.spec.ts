@@ -6,6 +6,7 @@ import {
   expectNoAxeViolations,
   seedJournal,
   test,
+  letGardenChoose,
 } from "./fixtures";
 
 test("comparaison complète jusqu'au jardin", async ({ page }) => {
@@ -22,6 +23,7 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
     page.getByText(/le TGV est \d+ fois plus léger que l’avion/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+  await letGardenChoose(page);
 
   // Révélation : la plante exacte que ce choix fera pousser, et le papillon qui arrive.
   await expect(
@@ -66,6 +68,7 @@ test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au 
 }) => {
   await page.goto("/comparer?a=velo&b=voiture&q=2");
   await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByRole("heading", { name: "Une petite pousse va sortir de terre" }),
   ).toBeFocused();
@@ -138,6 +141,7 @@ test.describe("animations réduites", () => {
   }) => {
     await page.goto("/comparer?a=tgv&b=avion&q=300");
     await page.getByRole("button", { name: "Je choisis le TGV" }).click();
+    await letGardenChoose(page);
     await expect(
       page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
     ).toBeVisible();
@@ -198,6 +202,7 @@ test("objet : neuf, d'occasion (livré par défaut) et je garde le mien", async 
   ).toBeChecked();
   await expect(page.getByText(/aucune nouvelle fabrication/)).toBeVisible();
   await page.getByRole("button", { name: "Je garde le mien" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByText("25,1 kg d’écart", { exact: true }),
   ).toBeVisible();

@@ -1462,3 +1462,71 @@ Playwright n'y publie plus ses navigateurs. Sur une branche `chore/…` : rempla
 jour si besoin (`pnpm up @playwright/test`), ouvrir la demande de fusion et vérifier que
 `playwright install --with-deps chromium webkit` et les tests WebKit passent avant de
 fusionner.
+
+## 2026-10-06 (nuit) — Lot « Espèces » (branche feat/especes)
+
+**Demandé** : dernière exception au gel avant l'étude de cas. Six nouvelles espèces dessinées
+(olivier, sapin, figuier ; marguerite, lavande, pissenlit, 21 SVG), des fiches FR/EN pour les
+12 espèces avec anecdotes vérifiées, un choix « Que veux-tu planter ? » à chaque nouvelle
+plante, un déblocage progressif, des jardins existants inchangés, le choix gardé avec la
+plante (synchronisé si simple).
+
+**Fait** :
+
+- Dessins : 21 fichiers dans `public/illustrations`, contrat dans `specs.ts`. Les nouveaux
+  SVG utilisent `transform` sur leurs formes : l'extraction des emprises
+  (`scripts/bounds.ts`) les applique maintenant (translate, rotate, scale) ; les emprises
+  des anciens dessins sont identiques à l'octet près. Le sapin adulte montait à y = −20
+  (pointe coupée par son cadre) : `arbre-5-grand` et son épanouissement ramenés dans le
+  cadre (échelle 0,85 autour du pied, rien d'autre ne change).
+- Noms : aucune espèce n'était nommée dans le code ; noms du brouillon, tous gardés
+  (pommier, poirier, cerisier, églantine, tulipe, herbes folles ; olivier, sapin, figuier,
+  marguerite, lavande, pissenlit).
+- `species.ts` : olivier et sapin persistants, figuier caduc ; marguerite, lavande, pissenlit
+  avec `bloomRestsInWinter`. Perchoirs relus sur les dessins pour l'olivier et le figuier ;
+  le sapin n'en a pas (tronc caché sous les étages).
+- Déblocage : compteur `growthSteps` = choix légers + jours arrosés (deux compteurs du
+  carnet qui ne font que monter, aucun kg). Une espèce tous les 3 pas : marguerite (3),
+  olivier (6), lavande (9), figuier (12), pissenlit (15), sapin (18). Annonce « Nouvelle
+  espèce : … » sur les cartes de résultat et après « Raconte ta journée ».
+- Choix : `SpeciesPicker` (`<dialog>`, feuille en bas sur mobile, fenêtre au centre sur grand
+  écran), ouvert AVANT que le choix léger soit noté (une entrée ne change plus ensuite) ;
+  « Laisse le jardin choisir », Échap ou la croix = tirage habituel. Un seul choix pour
+  toutes les plantes d'un ajout de « Raconte ta journée ».
+- Stockage : champ `species` de l'entrée (choix léger seulement). Le carnet tolérait déjà
+  les champs inconnus, côté navigateur comme côté serveur : synchro du compte et export sans
+  migration ni changement d'API. Une espèce inconnue retombe sur le tirage.
+- Jardins existants : empreinte d'un carnet de référence calculée sur main puis figée dans
+  un test (même valeur sur la branche).
+- Fiches : `messages/species.ts` ; sources dans `docs/especes-sources.md`. Douze anecdotes
+  confirmées, dont quatre réécrites pour coller à la source : poirier (« mûrissent mal sur
+  l'arbre »), églantine en anglais (la source parle de poil à gratter fabriqué, pas
+  d'enfants), marguerite (« nombreuses » fleurs, pas « des centaines »), lavande (« en
+  France », les surfaces de la source sont nationales).
+- Bonus (toucher une plante ouvre sa fiche) : pas fait. La scène est une image unique pour
+  les lecteurs d'écran ; ajouter un bouton par plante (jusqu'à 40) demandait plus qu'un
+  bonus simple.
+
+**À signaler** :
+
+- Poirier (arbre-2) : la fiche dit « Caduc » (vrai pour un poirier), mais l'arbre-2 est
+  persistant dans le jardin depuis le début (« élancé, comme un cyprès ») ; le changer
+  modifierait l'automne et l'hiver des jardins existants. Choix à faire.
+- Contrastes sur les collines (rapport de luminance) : vert sapin (olivier, sapin, feuilles
+  foncées du figuier) 1,10:1 sur la colline bleue, 2,72:1 sur le vert ; feuilles claires du
+  figuier (pomme) 1:1 sur l'herbe ; épis de la lavande (outremer) 1:1 sur la colline bleue,
+  où ils disparaissent. Teinte différente pour le vert sapin sur le bleu (lisible à l'œil),
+  mais pas pour la lavande. Dessins non retouchés : piste, un contour encre sur les épis,
+  ou une autre couleur de la palette.
+- Olivier (110 unités de large) et figuier (103) dépassent la plus large plante d'origine
+  (90) : deux voisins d'une même rangée peuvent se chevaucher un peu.
+
+**Vérifications** : lint, types, 1 141 tests unitaires (dont `especes.test.ts` : jardins
+existants à l'empreinte figée, choix, déblocage, jamais de régression, jamais de kg, fiches
+complètes dans les deux langues), `STRICT_DATA=1 pnpm build`. Bout en bout Chromium et
+WebKit avec axe : 207 passés (dont `e2e/especes.spec.ts` : choix de l'olivier gardé avec la
+plante, Échap et « Laisse le jardin choisir », choix plus lourd sans feuille, annonce
+« Nouvelle espèce : la marguerite », version anglaise) ; compte et « Raconte ta journée »
+relancés seuls : 35 passés. Dans la suite complète, sous la charge locale, l'axe de /labo
+(douze espèces à analyser) dépassait 30 s sur WebKit : `test.slow()` pour cette page ; un
+test du compte WebKit a perdu sa connexion au serveur local (connu), il passe relancé.

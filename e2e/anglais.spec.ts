@@ -10,6 +10,7 @@ import {
   expectNoAxeViolations,
   seedJournal,
   test,
+  letGardenChoose,
 } from "./fixtures";
 
 test.use({ locale: "en-GB" });
@@ -145,6 +146,7 @@ test("comparaison complète en anglais, jusqu'au jardin", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText(/^Data:/)).toBeVisible();
   await page.getByRole("button", { name: "I’ll go for the TGV" }).click();
+  await letGardenChoose(page);
 
   await expect(
     page.getByRole("heading", {
@@ -176,6 +178,7 @@ test("objet d'occasion et habitude tenue, en anglais", async ({ page }) => {
     page.getByText(/^Second-hand(, delivered)? rather than new: /),
   ).toBeVisible();
   await page.getByRole("button", { name: "I’ll go for second-hand" }).click();
+  await letGardenChoose(page);
   await expect(
     page.getByText(
       /^Second-hand jeans(, delivered,)? rather than new: noted in your journal\.$/,

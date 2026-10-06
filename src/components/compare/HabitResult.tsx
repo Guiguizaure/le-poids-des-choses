@@ -18,6 +18,7 @@ import { habitLabel } from "@/lib/habits";
 import { pictoFor } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { Vitrine } from "./ChoiceResult";
+import { SpeciesUnlocked } from "@/components/garden/SpeciesUnlocked";
 import { useFocusTitle } from "./useFocusTitle";
 import { format } from "@/lib/i18n";
 import { COMPARE } from "@/lib/i18n/messages/compare";
@@ -126,6 +127,11 @@ export function HabitResult({
               {wateringMessage(reveal, locale)}
             </p>
           ) : null}
+          <SpeciesUnlocked
+            entries={journal.entries}
+            entryIds={[entry.id]}
+            className="w-full"
+          />
           <PrimaryLink href={`/jardin?arrose=${encodeURIComponent(entry.id)}`}>
             {t.seeGarden}
           </PrimaryLink>
