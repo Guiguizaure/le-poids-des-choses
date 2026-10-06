@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { JournalEntry } from "@/lib/data/types";
 import { buildGarden } from "@/lib/garden/model";
-import { getSky } from "@/lib/garden/skies";
+import { SCENE } from "@/lib/garden/scene";
+import { getSky, PALETTE } from "@/lib/garden/skies";
 import type { IllustrationName } from "@/lib/illustrations/specs";
 import {
   CARD,
@@ -13,6 +14,7 @@ import {
   type ShareCardInput,
 } from "./card";
 import {
+  keepBloomGroup,
   composeGardenSvg,
   gardenIllustrations,
   type SvgSources,
@@ -194,5 +196,87 @@ describe("carte de partage : jardin", () => {
     expect(() => composeGardenSvg(garden, "jour", {})).toThrow(
       /scene-paysage.*manquante/,
     );
+  });
+});
+
+describe("carte de partage : saisons et épanouissement", () => {
+  const DAYS = 24 * 60 * 60 * 1000;
+  const habits = (count: number): JournalEntry[] =>
+    Array.from({ length: count }, (_, i) => ({
+      kind: "habit" as const,
+      id: `arrose-${i}`,
+      date: new Date(NOW.getTime() + (i + 1) * DAYS).toISOString(),
+      gesture: "velo",
+    }));
+  const later = new Date(NOW.getTime() + 20 * DAYS);
+  const watered = buildGarden([...journal(6), ...habits(9)], later);
+
+  it("hiver : neige sous les plantes, flocons figés, feuillage des caducs sous la neige", () => {
+    const names = gardenIllustrations(watered, "hiver");
+    expect(names).toContain("saison-hiver-neige");
+    expect(names).toContain("saison-hiver-flocons");
+    const svg = composeGardenSvg(
+      watered,
+      "jour",
+      sourcesFor(names),
+      SCENE,
+      "hiver",
+    );
+    const deciduous = watered.plants.some(
+      (plant) =>
+        plant.kind.type === "tree" &&
+        plant.kind.variant !== 2 &&
+        plant.level > 0,
+    );
+    expect(deciduous).toBe(true);
+    expect(svg).toContain(
+      `fill="${PALETTE.blanc}" stroke="${PALETTE.encre}" stroke-width="2.4"`,
+    );
+    expect(svg).not.toMatch(/\sid="/);
+  });
+  it("épanouissement : un seul groupe par plante, aucun l'hiver pour un caduc", () => {
+    const bloomed = watered.plants.filter((plant) => plant.bloom > 0);
+    expect(bloomed.length).toBeGreaterThan(0);
+    const spring = gardenIllustrations(watered, "printemps");
+    const winter = gardenIllustrations(watered, "hiver");
+    const blooms = (names: string[]) =>
+      names.filter((n) => n.endsWith("-epanoui"));
+    expect(blooms(spring)).toHaveLength(bloomed.length);
+    const evergreen = bloomed.filter(
+      (plant) => !(plant.kind.type === "tree" && plant.kind.variant !== 2),
+    );
+    expect(blooms(winter)).toHaveLength(evergreen.length);
+    // Chaque dessin d'épanouissement ne garde qu'un groupe : jamais deux niveaux à la fois.
+    const source = read("arbre-1-grand-epanoui");
+    const groups = ["epanoui-1", "epanoui-2", "epanoui-3"];
+    for (const level of [1, 2, 3]) {
+      const kept = keepBloomGroup(source, groups, level);
+      expect(kept.match(/<g id="/g)).toHaveLength(1);
+      expect(kept).toContain(`<g id="epanoui-${level}"`);
+    }
+  });
+  it("printemps et automne : pétales ou feuilles figés ; été : rien ne tombe", () => {
+    const spring = gardenIllustrations(watered, "printemps");
+    expect(spring).toContain("saison-printemps-petale");
+    expect(gardenIllustrations(watered, "automne")).toContain(
+      "saison-automne-feuille-1",
+    );
+    expect(
+      gardenIllustrations(watered, "ete").some((n) => n.startsWith("saison-")),
+    ).toBe(false);
+    expect(() =>
+      composeGardenSvg(watered, "jour", sourcesFor(spring), SCENE, "printemps"),
+    ).not.toThrow();
+  });
+  it("automne : ciel « Jour » de saison", () => {
+    const names = gardenIllustrations(watered, "automne");
+    const svg = composeGardenSvg(
+      watered,
+      "jour",
+      sourcesFor(names),
+      SCENE,
+      "automne",
+    );
+    expect(svg).toContain(`fill="${PALETTE.tomateDouce}"`);
   });
 });

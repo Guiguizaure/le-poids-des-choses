@@ -1,5 +1,6 @@
 // Textes du jardin (français, tutoiement).
-import type { AnimalKind, GardenState } from "./model";
+import type { AnimalKind, GardenState, WaterReveal } from "./model";
+import { SEASON_LABELS, type Season } from "./seasons";
 
 type AnimalName = {
   name: string;
@@ -65,12 +66,56 @@ export function plural(
   return `${count} ${count > 1 ? pluralForm : singular}`;
 }
 
-/** Description accessible : « 12 plantes, 3 animaux ». */
-export function gardenDescription(state: GardenState): string {
-  if (state.plants.length === 0) return "Jardin vide";
-  const parts = [plural(state.plants.length, "plante", "plantes")];
+/** « au printemps », « en été », « en automne », « en hiver » */
+export function inSeason(season: Season): string {
+  return season === "printemps"
+    ? "au printemps"
+    : `en ${SEASON_LABELS[season]}`;
+}
+
+/**
+ * Description accessible : « Jardin : 12 plantes dont 2 épanouies, 3 animaux, en automne ».
+ * La saison vient en dernier (avant l'assoupissement).
+ */
+export function gardenDescription(
+  state: GardenState,
+  season: Season | null = null,
+): string {
+  const when = season ? `, ${inSeason(season)}` : "";
+  if (state.plants.length === 0) return `Jardin vide${when}`;
+  const bloomed = state.plants.filter((plant) => plant.bloom > 0).length;
+  const parts = [
+    plural(state.plants.length, "plante", "plantes") +
+      (bloomed > 0 ? ` dont ${plural(bloomed, "épanouie", "épanouies")}` : ""),
+  ];
   if (state.unlocked.length > 0)
     parts.push(plural(state.unlocked.length, "animal", "animaux"));
-  const text = `Jardin : ${parts.join(", ")}`;
+  const text = `Jardin : ${parts.join(", ")}${when}`;
   return state.asleep ? `${text}, assoupi sous la brume` : text;
+}
+
+/**
+ * Après une habitude : « Ton jardin est arrosé : 2 plantes avancent d’un cran », ou le
+ * prochain cran, ou « déjà arrosé aujourd’hui ». Jamais de kg.
+ */
+export function wateringMessage(reveal: WaterReveal): string {
+  if (reveal.plantCount === 0)
+    return "Ton jardin est arrosé. Il attend sa première pousse : compare deux gestes pour la planter.";
+  if (!reveal.newDay)
+    return "Ton jardin est déjà arrosé aujourd’hui : c’est noté.";
+  if (reveal.moved.length > 0)
+    return `Ton jardin est arrosé : ${plural(reveal.moved.length, "plante avance", "plantes avancent")} d’un cran.`;
+  if (reveal.nextStepIn === null)
+    return "Ton jardin est arrosé : toutes tes plantes sont épanouies.";
+  return `Ton jardin est arrosé. Encore ${plural(reveal.nextStepIn, "jour arrosé", "jours arrosés")} avant le prochain cran.`;
+}
+
+/** Titre de la carte après une habitude : « Une fleur s’épanouit », « Un arbre grandit »… */
+export function wateringTitle(reveal: WaterReveal): string {
+  const plant = reveal.featured;
+  if (!plant) return reveal.newDay ? "Ton jardin est arrosé" : "C’est noté";
+  const tree = plant.kind.type === "tree";
+  if (plant.bloom > 0)
+    return tree ? "Un arbre s’épanouit" : "Une fleur s’épanouit";
+  return tree ? "Un arbre grandit" : "Une fleur grandit";
 }

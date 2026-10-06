@@ -3,9 +3,11 @@
 import { CATEGORY_ORDER } from "@/lib/compare/duel";
 import { getGesture } from "@/lib/data";
 import type { Category, JournalEntry } from "@/lib/data/types";
+import { gardenDay } from "@/lib/garden/seasons";
+import { doneGesture, entryKg, isHabit, isLightChoice } from "./kind";
 
 export type JournalSort = "date" | "ecart" | "categorie";
-export type ChoiceFilter = "tous" | "legers" | "notes";
+export type ChoiceFilter = "tous" | "legers" | "notes" | "habitudes";
 
 /** Vue du carnet : tri, catégorie (null : toutes), type de choix. */
 export type JournalView = {
@@ -30,6 +32,7 @@ export const CHOICE_LABELS: Record<ChoiceFilter, string> = {
   tous: "Tous les choix",
   legers: "Choix légers",
   notes: "Choix notés (plus lourds)",
+  habitudes: "Habitudes tenues",
 };
 
 const SORTS = Object.keys(SORT_LABELS) as JournalSort[];
@@ -67,11 +70,23 @@ export function viewQuery(view: JournalView): string {
 
 /** Catégorie du geste choisi (null s'il n'existe plus dans les données). */
 export function entryCategoryId(entry: JournalEntry): Category | null {
-  const id = entry.chosen === "a" ? entry.gestureA : entry.gestureB;
-  return getGesture(id)?.category ?? null;
+  return getGesture(doneGesture(entry))?.category ?? null;
 }
 
-export const isLight = (entry: JournalEntry) => entry.avoidedKg > 0;
+export const isLight = isLightChoice;
+
+function matchesChoice(entry: JournalEntry, choix: ChoiceFilter): boolean {
+  switch (choix) {
+    case "tous":
+      return true;
+    case "legers":
+      return isLight(entry);
+    case "notes":
+      return !isHabit(entry) && !isLight(entry);
+    case "habitudes":
+      return isHabit(entry);
+  }
+}
 
 export function filterEntries(
   entries: readonly JournalEntry[],
@@ -80,8 +95,7 @@ export function filterEntries(
   return entries.filter(
     (entry) =>
       (!view.categorie || entryCategoryId(entry) === view.categorie) &&
-      (view.choix === "tous" ||
-        (view.choix === "legers" ? isLight(entry) : !isLight(entry))),
+      matchesChoice(entry, view.choix),
   );
 }
 
@@ -89,8 +103,9 @@ const time = (entry: JournalEntry) => new Date(entry.date).getTime() || 0;
 const newestFirst = (a: JournalEntry, b: JournalEntry) => time(b) - time(a);
 
 /**
- * date : du plus récent au plus ancien ; écart : du plus grand au plus petit ; catégorie :
- * dans l'ordre des catégories du parcours. À égalité, le plus récent d'abord.
+ * date : du plus récent au plus ancien ; écart : du plus grand au plus petit, les habitudes
+ * (aucun kg) à la fin ; catégorie : dans l'ordre des catégories du parcours. À égalité, le plus
+ * récent d'abord.
  */
 export function sortEntries(
   entries: readonly JournalEntry[],
@@ -101,8 +116,10 @@ export function sortEntries(
     return category ? CATEGORY_ORDER.indexOf(category) : CATEGORY_ORDER.length;
   };
   return [...entries].sort((a, b) => {
-    if (sort === "ecart" && b.avoidedKg !== a.avoidedKg)
-      return b.avoidedKg - a.avoidedKg;
+    if (sort === "ecart") {
+      if (isHabit(a) !== isHabit(b)) return isHabit(a) ? 1 : -1;
+      if (entryKg(b) !== entryKg(a)) return entryKg(b) - entryKg(a);
+    }
     if (sort === "categorie" && rank(a) !== rank(b)) return rank(a) - rank(b);
     return newestFirst(a, b);
   });
@@ -161,4 +178,27 @@ export function lightChoicesByDay(
     if (day) day.count++;
   }
   return result;
+}
+
+/**
+ * Jours arrosés (au moins une habitude notée, jour du jardin à Paris) parmi les `days` derniers
+ * jours, aujourd'hui compris.
+ */
+export function wateredDaysInLast(
+  entries: readonly JournalEntry[],
+  now: Date,
+  days = 7,
+): number {
+  const keys = new Set(
+    Array.from({ length: days }, (_, index) =>
+      gardenDay(new Date(now.getTime() - index * 24 * 60 * 60 * 1000)),
+    ),
+  );
+  const watered = new Set<string>();
+  for (const entry of entries) {
+    if (!isHabit(entry)) continue;
+    const day = gardenDay(entry.date);
+    if (day && keys.has(day)) watered.add(day);
+  }
+  return watered.size;
 }

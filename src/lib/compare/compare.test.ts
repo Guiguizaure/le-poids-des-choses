@@ -404,3 +404,24 @@ describe("noms des objets", () => {
     }
   });
 });
+
+describe("URL : noter une habitude", () => {
+  const parse = (query: string) => parseComparison(new URLSearchParams(query));
+  it("?habitude (aucune choisie) et ?habitude=velo", () => {
+    expect(parse("habitude=").state).toEqual({ step: "habit", habit: null });
+    expect(parse("habitude=velo").state).toEqual({
+      step: "habit",
+      habit: "velo",
+    });
+  });
+  it("habitude inconnue ou geste qui n'en est pas une : lien invalide", () => {
+    expect(parse("habitude=avion").invalid).toBe(true);
+    expect(parse("habitude=inconnu").invalid).toBe(true);
+  });
+  it("aller-retour", () => {
+    expect(comparisonQuery({ step: "habit", habit: "velo" })).toBe(
+      "habitude=velo",
+    );
+    expect(comparisonQuery({ step: "habit", habit: null })).toBe("habitude=");
+  });
+});

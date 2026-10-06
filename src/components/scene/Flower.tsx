@@ -1,7 +1,7 @@
 "use client";
 
 import type { IllustrationName } from "@/lib/illustrations/specs";
-import { StagedPlant } from "./StagedPlant";
+import { StagedPlant, type PlantBloom, type PlantPaint } from "./StagedPlant";
 
 export const FLOWER_STAGES = ["pousse", "fleurie"] as const;
 export type FlowerStage = (typeof FLOWER_STAGES)[number];
@@ -20,6 +20,10 @@ type FlowerProps = {
   popIn?: boolean;
   /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
   strokeScale?: number;
+  /** Couleur de saison du feuillage (null : celle du dessin). */
+  paint?: PlantPaint | null;
+  /** Épanouissement, posé sur la plante adulte. */
+  bloom?: Omit<PlantBloom<string>, "stage"> | null;
 };
 
 /** Fleur à deux stades ; elle se balance et se couche au vent depuis son pied. */
@@ -32,6 +36,8 @@ export function Flower({
   still,
   popIn,
   strokeScale,
+  paint,
+  bloom,
 }: FlowerProps) {
   return (
     <StagedPlant
@@ -45,6 +51,8 @@ export function Flower({
       still={still}
       popIn={popIn}
       strokeScale={strokeScale}
+      paint={paint}
+      bloom={bloom ? { ...bloom, stage: "fleurie" } : null}
     />
   );
 }

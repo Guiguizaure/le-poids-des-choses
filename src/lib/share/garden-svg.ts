@@ -6,8 +6,11 @@ import {
   type Box,
   type GardenState,
 } from "@/lib/garden/model";
+import { fallingParticles, particleAt } from "@/lib/geometry/fall";
 import { SCENE } from "@/lib/garden/scene";
-import { getSky, type SkyId } from "@/lib/garden/skies";
+import type { Season } from "@/lib/garden/seasons";
+import { skyColors, type SkyId } from "@/lib/garden/skies";
+import { plantLook, type PlantLook } from "@/lib/garden/species";
 import { getSpec, type IllustrationName } from "@/lib/illustrations/specs";
 
 /** Sources SVG des illustrations (contenu des fichiers de public/illustrations). */
@@ -17,15 +20,73 @@ export type SvgSources = Partial<Record<IllustrationName, string>>;
 const MIST_TOP = SCENE.height / 2;
 
 /** Illustrations dont la composition a besoin, dans l'ordre d'affichage. */
-export function gardenIllustrations(garden: GardenState): IllustrationName[] {
+export function gardenIllustrations(
+  garden: GardenState,
+  season: Season | null = null,
+): IllustrationName[] {
   return [
     "scene-paysage",
-    ...garden.plants.map((plant) => illustrationFor(plant.kind, plant.level)),
+    ...(season === "hiver" ? (["saison-hiver-neige"] as const) : []),
+    ...garden.plants.flatMap((plant) => {
+      const look = plantLook(plant, season);
+      return [
+        illustrationFor(plant.kind, plant.level),
+        ...(look.bloom.level > 0 ? [look.bloom.illustration] : []),
+      ];
+    }),
     ...garden.animals.map((animal) =>
       animalIllustration(animal.kind, animal.asleep),
     ),
+    ...(season === "hiver" ? (["saison-hiver-flocons"] as const) : []),
+    ...fallingParticles(season).map((particle) => particle.name),
     ...(garden.asleep ? (["brume"] as const) : []),
   ];
+}
+
+/** Couleur de saison du feuillage : remplissage (et trait) des formes des calques donnés. */
+function paintFoliage(svg: string, paint: PlantLook["paint"]): string {
+  if (!paint) return svg;
+  return paint.layers.reduce(
+    (acc, layer) =>
+      acc.replace(
+        new RegExp(`(<g id="${layer}"[^>]*>)([\\s\\S]*?)(</g>)`, "g"),
+        (_, open: string, body: string, close: string) =>
+          open +
+          body.replace(
+            /<(circle|ellipse|rect|path)\b([^>]*?)\s*(\/?)>/g,
+            (__, tag: string, attributes: string, selfClosing: string) => {
+              const kept = attributes.replace(
+                /\s(fill|stroke|stroke-width)="[^"]*"/g,
+                "",
+              );
+              const stroke = paint.stroke
+                ? ` stroke="${paint.stroke}" stroke-width="${paint.strokeWidth ?? 1}"`
+                : "";
+              return `<${tag}${kept} fill="${paint.fill}"${stroke}${selfClosing ? " /" : ""}>`;
+            },
+          ) +
+          close,
+      ),
+    svg,
+  );
+}
+
+/** Épanouissement : seul le groupe du niveau affiché reste (les autres sont retirés). */
+export function keepBloomGroup(
+  svg: string,
+  groups: readonly string[],
+  level: number,
+): string {
+  return groups.reduce(
+    (acc, group, index) =>
+      index + 1 === level
+        ? acc
+        : acc.replace(
+            new RegExp(`<g id="${group}"[^>]*>[\\s\\S]*?</g>`, "g"),
+            "",
+          ),
+    svg,
+  );
 }
 
 function inner(svg: string): string {
@@ -94,8 +155,9 @@ export function composeGardenSvg(
   sky: SkyId,
   sources: SvgSources,
   size: { width: number; height: number } = SCENE,
+  season: Season | null = null,
 ): string {
-  const { colors } = getSky(sky);
+  const colors = skyColors(sky, season);
   const landscape = placed(
     "scene-paysage",
     { x: 0, y: 0, width: SCENE.width },
@@ -109,20 +171,53 @@ export function composeGardenSvg(
         ["nuage-2", colors.nuage],
       ].reduce((acc, [layer, color]) => recolor(acc, layer, color), svg),
   );
-  const plants = garden.plants.map((plant) =>
-    placed(illustrationFor(plant.kind, plant.level), plant.box, sources),
-  );
+  const full = { x: 0, y: 0, width: SCENE.width };
+  const snow =
+    season === "hiver" ? [placed("saison-hiver-neige", full, sources)] : [];
+  const plants = garden.plants.flatMap((plant) => {
+    const look = plantLook(plant, season);
+    const drawn = placed(
+      illustrationFor(plant.kind, plant.level),
+      plant.box,
+      sources,
+      (svg) => paintFoliage(svg, look.paint),
+    );
+    if (look.bloom.level === 0) return [drawn];
+    return [
+      drawn,
+      placed(look.bloom.illustration, plant.box, sources, (svg) =>
+        keepBloomGroup(svg, look.bloom.groups, look.bloom.level),
+      ),
+    ];
+  });
   const animals = garden.animals.map((animal) =>
     placed(animalIllustration(animal.kind, animal.asleep), animal.box, sources),
   );
+  // Ce qui tombe, figé : flocons l'hiver, quelques pétales ou feuilles en l'air.
+  const falling = [
+    ...(season === "hiver"
+      ? [placed("saison-hiver-flocons", full, sources)]
+      : []),
+    ...fallingParticles(season).map((particle) => {
+      const pose = particleAt(particle, particle.still);
+      const center = particle.size / 2;
+      return `<g transform="rotate(${round(pose.rotation)} ${round(pose.x + center)} ${round(pose.y + center)})">${placed(
+        particle.name,
+        { x: pose.x, y: pose.y, width: particle.size },
+        sources,
+      )}</g>`;
+    }),
+  ];
   const mist = garden.asleep
     ? [placed("brume", { x: 0, y: MIST_TOP, width: SCENE.width }, sources)]
     : [];
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${SCENE.width} ${SCENE.height}">`,
     landscape,
+    ...snow,
     ...plants,
     ...animals,
+    ...falling,
     ...mist,
     "</svg>",
   ].join("");

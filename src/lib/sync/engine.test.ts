@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { JournalEntry } from "@/lib/data/types";
+import type { ComparisonEntry, JournalEntry } from "@/lib/data/types";
 import { createJournalStore, type StorageLike } from "@/lib/journal/store";
 import type { ApiResult, SyncPayload, SyncReply } from "./api";
 import { canonicalJson } from "./canonical";
@@ -19,7 +19,10 @@ class MemoryStorage implements StorageLike {
   }
 }
 
-function entry(id: string, over: Partial<JournalEntry> = {}): JournalEntry {
+function entry(
+  id: string,
+  over: Partial<ComparisonEntry> = {},
+): ComparisonEntry {
   return {
     id,
     date: `2026-10-01T10:00:${String(id.length).padStart(2, "0")}.000Z`,
@@ -164,7 +167,7 @@ describe("moteur de synchro", () => {
     expect(phone.journal.getEntries()).toEqual([entry("a")]);
     const { conflicts } = phone.engine.getSnapshot();
     expect(conflicts).toHaveLength(1);
-    expect(conflicts[0].other.avoidedKg).toBe(99);
+    expect((conflicts[0].other as ComparisonEntry).avoidedKg).toBe(99);
     // Le serveur garde aussi les deux versions.
     expect(server.rows).toHaveLength(2);
   });

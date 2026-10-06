@@ -24,17 +24,25 @@ import { Ladybug } from "@/components/scene/Ladybug";
 import { Snail } from "@/components/scene/Snail";
 import { Tree } from "@/components/scene/Tree";
 import { Wind } from "@/components/scene/Wind";
+import { SeasonFall, SeasonGround } from "@/components/scene/SeasonLayers";
 import type { JournalEntry } from "@/lib/data/types";
 import {
   animalsArrivedWith,
   buildGarden,
+  waterRevealForEntry,
   type Box,
   type GardenAnimal,
   type GardenPlant,
 } from "@/lib/garden/model";
 import { SCENE } from "@/lib/garden/scene";
+import { seasonAt, type Season } from "@/lib/garden/seasons";
 import { DEFAULT_SKY, skyStyle, type SkyId } from "@/lib/garden/skies";
-import { arrivalMessage, gardenDescription } from "@/lib/garden/text";
+import { plantLook } from "@/lib/garden/species";
+import {
+  arrivalMessage,
+  gardenDescription,
+  wateringMessage,
+} from "@/lib/garden/text";
 import { FlightPath, FlyButton, useAutoFlights } from "./BirdFlight";
 
 type GardenProps = {
@@ -50,6 +58,8 @@ type GardenProps = {
   arriving?: readonly string[];
   /** Ciel du jardin (débloqué par les choix légers ; voir src/lib/garden/skies.ts). */
   sky?: SkyId;
+  /** Saison imposée (labo) ; par défaut, celle de `now` (aucune au rendu serveur). */
+  season?: Season | null;
   className?: string;
 };
 
@@ -66,12 +76,21 @@ function Plant({
   plant,
   still,
   popIn,
+  season,
 }: {
   plant: GardenPlant;
   still: boolean;
   popIn: boolean;
+  season: Season | null;
 }) {
-  const common = { className: "w-full", still, popIn };
+  const look = plantLook(plant, season);
+  const common = {
+    className: "w-full",
+    still,
+    popIn,
+    paint: look.paint,
+    bloom: look.bloom,
+  };
   return plant.kind.type === "tree" ? (
     <Tree
       variant={plant.kind.variant}
@@ -165,8 +184,10 @@ export function Garden({
   highlightId = null,
   arriving = NONE,
   sky = DEFAULT_SKY,
+  season: forcedSeason,
   className = "",
 }: GardenProps) {
+  const season = forcedSeason === undefined ? seasonAt(now) : forcedSeason;
   const sceneRef = useRef<HTMLDivElement>(null);
   const messageRef = useRef<HTMLParagraphElement>(null);
   // Choix à révéler : retenu une fois (l'URL peut ensuite perdre son paramètre), puis masqué
@@ -200,7 +221,15 @@ export function Garden({
     () => (revealed ? animalsArrivedWith(entries, revealed) : []),
     [entries, revealed],
   );
-  const message = arrived.map(arrivalMessage).join(". ");
+  // Habitude qui vient d'être notée : le jardin est arrosé (des plantes avancent, peut-être).
+  const watered = useMemo(
+    () =>
+      revealed ? waterRevealForEntry(entries, revealed, new Date(now)) : null,
+    [entries, revealed, now],
+  );
+  const message = watered
+    ? wateringMessage(watered)
+    : arrived.map(arrivalMessage).join(". ");
   const awake = !garden.asleep && garden.plants.length > 0;
 
   useAutoGusts(awake, sceneRef);
@@ -218,12 +247,13 @@ export function Garden({
   const land = useCallback(() => setFlying(false), []);
   useAutoFlights(canFly && !flying, startFlight);
 
+  const gusty = !watered || watered.moved.length > 0;
   useEffect(() => {
-    if (!revealed || garden.asleep) return;
+    if (!revealed || garden.asleep || !gusty) return;
     // La rafale passe une fois la nouvelle plante sortie de terre.
     const timer = window.setTimeout(() => playGust(sceneRef.current), 700);
     return () => window.clearTimeout(timer);
-  }, [revealed, garden.asleep]);
+  }, [revealed, garden.asleep, gusty]);
 
   const reduceRef = useMotion(sceneRef, () => {});
   useGSAP(
@@ -290,12 +320,14 @@ export function Garden({
       <div
         ref={sceneRef}
         role="img"
-        aria-label={gardenDescription(garden)}
+        aria-label={gardenDescription(garden, season)}
         className="relative aspect-[390/300] w-full overflow-hidden"
         data-sky={sky}
-        style={skyStyle(sky) as CSSProperties}
+        data-season={season ?? undefined}
+        style={skyStyle(sky, season) as CSSProperties}
       >
         <Landscape className="absolute inset-0" still={garden.asleep} />
+        <SeasonGround season={season} />
         <Wind className="absolute inset-x-0 top-[30%]" />
         {garden.plants.map((plant) => (
           <div
@@ -303,11 +335,14 @@ export function Garden({
             className="absolute"
             style={place(plant.box)}
             data-plant={plant.id}
+            data-stage-level={plant.level}
+            data-bloom-level={plant.bloom}
           >
             <Plant
               plant={plant}
               still={garden.asleep}
               popIn={plant.id === revealed}
+              season={season}
             />
           </div>
         ))}
@@ -326,6 +361,7 @@ export function Garden({
             </div>
           ),
         )}
+        <SeasonFall season={season} still={garden.asleep} />
         <div
           className="pointer-events-none absolute inset-x-0 top-1/2 transition-opacity duration-1000"
           style={{ opacity: garden.asleep ? 1 : 0 }}

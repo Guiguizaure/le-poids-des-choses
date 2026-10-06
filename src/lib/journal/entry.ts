@@ -3,9 +3,11 @@ import { getGesture } from "@/lib/data";
 import type {
   AcquisitionMode,
   Choice,
+  ComparisonEntry,
   Gesture,
-  JournalEntry,
+  HabitEntry,
 } from "@/lib/data/types";
+import { isHabitGesture } from "@/lib/habits";
 
 export type NewEntry = {
   gestureA: string;
@@ -39,11 +41,11 @@ export function newEntryId(): string {
 export function createEntry(
   input: NewEntry,
   { now = new Date(), id = newEntryId() }: { now?: Date; id?: string } = {},
-): JournalEntry {
+): ComparisonEntry {
   const a = resolve(input.gestureA, input.modeA);
   const b = resolve(input.gestureB, input.modeB);
   const comparison = compare(a, input.quantity, b, input.quantity);
-  const entry: JournalEntry = {
+  const entry: ComparisonEntry = {
     id,
     date: now.toISOString(),
     gestureA: input.gestureA,
@@ -55,4 +57,14 @@ export function createEntry(
   if (input.modeA) entry.modeA = input.modeA;
   if (input.modeB) entry.modeB = input.modeB;
   return entry;
+}
+
+/** Crée une entrée « habitude » : un geste tenu, sans comparaison ni kg. */
+export function createHabitEntry(
+  gesture: string,
+  { now = new Date(), id = newEntryId() }: { now?: Date; id?: string } = {},
+): HabitEntry {
+  if (!isHabitGesture(gesture))
+    throw new Error(`Ce geste ne se note pas en habitude : ${gesture}`);
+  return { kind: "habit", id, date: now.toISOString(), gesture };
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { PrimaryButton } from "@/components/ui/buttons";
 import type { GardenState } from "@/lib/garden/model";
 import type { SkyId } from "@/lib/garden/skies";
+import type { Season } from "@/lib/garden/seasons";
 import { plural } from "@/lib/garden/text";
 import { renderShareCard } from "./renderShareCard";
 
@@ -21,6 +22,7 @@ type Card = { file: File; previewUrl: string };
 export function ShareSheet({
   garden,
   sky,
+  season = null,
   unlockedCount,
   siteHost,
   siteUrl,
@@ -28,6 +30,7 @@ export function ShareSheet({
 }: {
   garden: GardenState;
   sky: SkyId;
+  season?: Season | null;
   unlockedCount: number;
   siteHost: string;
   siteUrl: string;
@@ -44,7 +47,7 @@ export function ShareSheet({
   useEffect(() => {
     let cancelled = false;
     let url: string | null = null;
-    renderShareCard({ garden, sky, siteHost, unlockedCount })
+    renderShareCard({ garden, sky, season, siteHost, unlockedCount })
       .then((blob) => {
         if (cancelled) return;
         url = URL.createObjectURL(blob);
@@ -68,7 +71,7 @@ export function ShareSheet({
       cancelled = true;
       if (url) URL.revokeObjectURL(url);
     };
-  }, [garden, sky, siteHost, unlockedCount]);
+  }, [garden, sky, season, siteHost, unlockedCount]);
 
   const close = () => {
     dialogRef.current?.close();

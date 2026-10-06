@@ -19,6 +19,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
 import { effectiveSky } from "@/lib/garden/skies";
+import { seasonAt } from "@/lib/garden/seasons";
 import { siteHost } from "@/lib/share/card";
 import { nextAnimalMessage, plural } from "@/lib/garden/text";
 import { useNow } from "@/lib/hooks/useNow";
@@ -28,6 +29,8 @@ import { FactCard } from "@/components/facts/FactCard";
 import { AccountSection } from "@/components/account/AccountSection";
 import { InstallButton } from "@/components/install/InstallButton";
 import type { JournalEntry } from "@/lib/data/types";
+import { MyHabits } from "@/components/habits/MyHabits";
+import { doneGesture, isComparison } from "@/lib/journal/kind";
 
 const RECENT_COUNT = 5;
 
@@ -67,11 +70,14 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   // Choix arrivés pendant la visite (synchro du compte, autre onglet, import) : leurs plantes
   // apparaissent ensemble, en fondu, avec un seul message ; rien pour le carnet déjà là.
   const [seen, setSeen] = useState<readonly JournalEntry[] | null>(null);
+  // Habitudes notées ici même (« J’ai tenu … ») : pas des choix « retrouvés ».
+  const [noted, setNoted] = useState<readonly string[]>([]);
+  const [wateredHere, setWateredHere] = useState<string | null>(null);
   const [arriving, setArriving] = useState<readonly string[]>([]);
   const [foundMessage, setFoundMessage] = useState("");
   if (journal.ready && seen !== journal.entries) {
     if (seen) {
-      const known = new Set(seen.map((entry) => entry.id));
+      const known = new Set([...seen.map((entry) => entry.id), ...noted]);
       const fresh = journal.entries
         .filter((entry) => !known.has(entry.id))
         .map((entry) => entry.id);
@@ -97,12 +103,21 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   );
   const visible = newestFirst.slice(0, RECENT_COUNT);
   const hasEntries = journal.entries.length > 0;
-  // Arrivée depuis « Aller la planter » : /jardin?nouveau=<id de l'entrée>.
-  const nouveau = useSearchParam("nouveau");
-  const revealId =
+  // Arrivée depuis « Aller la planter » (/jardin?nouveau=<id de l'entrée>) ou après une
+  // habitude (/jardin?arrose=<id>), ou habitude notée ici même.
+  const planted = useSearchParam("nouveau");
+  const wateredParam = useSearchParam("arrose");
+  const nouveau = planted ?? wateredParam;
+  const fromUrl =
     nouveau && journal.entries.some((entry) => entry.id === nouveau)
       ? nouveau
       : null;
+  const revealId = wateredHere ?? fromUrl;
+  const water = (gesture: string) => {
+    const entry = journal.addHabit(gesture);
+    setNoted((ids) => [...ids, entry.id]);
+    setWateredHere(entry.id);
+  };
 
   useEffect(() => {
     if (!nouveau || !journal.ready) return;
@@ -178,6 +193,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           key={shareOpen}
           garden={garden}
           sky={sky}
+          season={seasonAt(now)}
           unlockedCount={garden.unlocked.length}
           siteHost={siteHost(siteUrl)}
           siteUrl={siteUrl}
@@ -251,6 +267,8 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
         {journal.ready && !hasEntries ? <RaconteLink /> : null}
 
+        {journal.ready ? <MyHabits onWater={water} /> : null}
+
         {hasEntries ? (
           <>
             <section
@@ -268,6 +286,15 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
                 <span>
                   {plural(garden.choiceCount, "choix noté", "choix notés")}
                 </span>
+                {garden.wateredDayCount > 0 ? (
+                  <span>
+                    {plural(
+                      garden.wateredDayCount,
+                      "jour arrosé",
+                      "jours arrosés",
+                    )}
+                  </span>
+                ) : null}
                 <span>{plural(garden.plants.length, "plante", "plantes")}</span>
                 <span>
                   {plural(garden.unlocked.length, "animal", "animaux")}
@@ -323,9 +350,11 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           <FactCard
             seed={newestFirst[0]?.id}
             related={
-              newestFirst[0]
+              newestFirst[0] && isComparison(newestFirst[0])
                 ? [newestFirst[0].gestureA, newestFirst[0].gestureB]
-                : []
+                : newestFirst[0]
+                  ? [doneGesture(newestFirst[0])]
+                  : []
             }
           />
         ) : null}

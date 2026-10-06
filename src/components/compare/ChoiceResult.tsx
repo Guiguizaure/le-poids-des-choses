@@ -19,7 +19,7 @@ import {
   TextButton,
 } from "@/components/ui/buttons";
 import { formatMass } from "@/lib/calc";
-import type { JournalEntry } from "@/lib/data/types";
+import type { ComparisonEntry } from "@/lib/data/types";
 import {
   illustrationFor,
   revealForEntry,
@@ -28,6 +28,8 @@ import {
 } from "@/lib/garden/model";
 import { arrivalExclamation, revealTitle } from "@/lib/garden/text";
 import { VITRINE, vitrineFit } from "@/lib/garden/vitrine";
+import { seasonFor, type Season } from "@/lib/garden/seasons";
+import { plantLook } from "@/lib/garden/species";
 import { entryTitle } from "@/lib/journal/display";
 import { useJournal } from "@/lib/journal/useJournal";
 import { useFocusTitle } from "./useFocusTitle";
@@ -57,19 +59,23 @@ function VitrineAnimal({ kind }: { kind: AnimalKind }) {
   }
 }
 
-/** La plante exacte que ce choix fait pousser, puis l'animal qui arrive. */
-function Vitrine({
+/** La plante exacte que ce choix fait pousser (ou que l'arrosage fait avancer), puis l'animal. */
+export function Vitrine({
   reveal,
   landed,
   animalIn,
+  season,
 }: {
-  reveal: Reveal;
+  reveal: Pick<Reveal, "plant" | "animals">;
   landed: boolean;
   animalIn: boolean;
+  /** Saison du choix : feuillage et épanouissement comme dans le jardin. */
+  season: Season | null;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { plant } = reveal;
   const tree = plant.kind.type === "tree";
+  const look = plantLook(plant, season);
   // La plante occupe la hauteur de la vitrine quel que soit son stade (une pousse est agrandie).
   const fit = vitrineFit(illustrationFor(plant.kind, plant.level));
   const plantStyle: CSSProperties = {
@@ -134,6 +140,8 @@ function Vitrine({
               popIn
               sparkle={false}
               strokeScale={fit.strokeScale}
+              paint={look.paint}
+              bloom={look.bloom}
             />
           ) : (
             <Flower
@@ -143,6 +151,8 @@ function Vitrine({
               popIn
               sparkle={false}
               strokeScale={fit.strokeScale}
+              paint={look.paint}
+              bloom={look.bloom}
             />
           )}
         </div>
@@ -166,7 +176,7 @@ export function ChoiceResult({
   entry,
   onCompareAgain,
 }: {
-  entry: JournalEntry;
+  entry: ComparisonEntry;
   onCompareAgain: () => void;
 }) {
   const journal = useJournal();
@@ -244,7 +254,12 @@ export function ChoiceResult({
           </p>
 
           {reveal ? (
-            <Vitrine reveal={reveal} landed={landed} animalIn={animalIn} />
+            <Vitrine
+              reveal={reveal}
+              landed={landed}
+              animalIn={animalIn}
+              season={seasonFor(new Date(entry.date))}
+            />
           ) : !light ? (
             <div className="w-[200px] max-w-full py-2" aria-hidden>
               {/* La balance oscille puis se stabilise une fois la carte posée. */}

@@ -47,7 +47,10 @@ function detailFor(proposal: Proposal): string {
 export function proposalSubtitle(proposal: Proposal): string {
   const gesture = getGesture(proposal.gestureId);
   if (!gesture) return "";
-  const parts = [CATEGORY_LABELS[gesture.category], detailFor(proposal)];
+  const parts = [
+    CATEGORY_LABELS[gesture.category],
+    proposal.asHabit ? "habitude, aucun kg" : detailFor(proposal),
+  ];
   if (proposal.certainty === "inferred")
     parts.push(`d’après « ${proposal.excerpt} »`);
   return parts.join(" · ");
@@ -55,7 +58,7 @@ export function proposalSubtitle(proposal: Proposal): string {
 
 /** Option comparée, écrite en clair (rien pour un objet : l'option le dit). */
 export function comparedToLabel(proposal: Proposal): string | null {
-  if (!proposal.alternativeId) return null;
+  if (proposal.asHabit || !proposal.alternativeId) return null;
   const other = getGesture(proposal.alternativeId);
   return other ? `Comparé à : ${other.label}` : null;
 }

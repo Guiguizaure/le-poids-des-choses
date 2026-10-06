@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { JournalEntry } from "@/lib/data/types";
+import type { ComparisonEntry } from "@/lib/data/types";
 import { createEntry } from "./entry";
 import {
   appendEntry,
@@ -19,8 +19,8 @@ function entry(
   id: string,
   day: number,
   avoidedKg = 1,
-  extra: Partial<JournalEntry> = {},
-): JournalEntry {
+  extra: Partial<ComparisonEntry> = {},
+): ComparisonEntry {
   return {
     id,
     date: new Date(Date.UTC(2026, 9, day, 12)).toISOString(),
@@ -118,7 +118,9 @@ describe("ajout, export, import", () => {
       [entry("a", 1, 50), entry("c", 3)],
     );
     expect(added).toBe(1);
-    expect(entries.map((e) => [e.id, e.avoidedKg])).toEqual([
+    expect(
+      entries.map((e) => [e.id, (e as ComparisonEntry).avoidedKg]),
+    ).toEqual([
       ["a", 1],
       ["c", 1],
     ]);

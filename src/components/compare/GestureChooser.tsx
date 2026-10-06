@@ -20,6 +20,7 @@ import { CATEGORY_LABELS, pictoFor } from "@/lib/journal/display";
 import { useFocusTitle } from "./useFocusTitle";
 import { RaconteLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
+import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 
 type GestureChooserProps = {
   /** Premier geste déjà choisi (lien partagé, retour depuis le duel). */
@@ -29,6 +30,8 @@ type GestureChooserProps = {
   onFirstChange: (first: string | null) => void;
   onCompare: (a: string, b: string) => void;
   onObject: (object: string) => void;
+  /** Noter une habitude sans comparer (null : choisir laquelle). */
+  onHabit: (habit: string | null) => void;
   focusTitle: boolean;
 };
 
@@ -55,8 +58,10 @@ export function GestureChooser({
   onFirstChange,
   onCompare,
   onObject,
+  onHabit,
   focusTitle,
 }: GestureChooserProps) {
+  const [declared] = useDeclaredHabits();
   const initial = initialFirst ? getGesture(initialFirst) : undefined;
   const [category, setCategory] = useState<Category>(
     initial?.category ?? "transport",
@@ -219,6 +224,31 @@ export function GestureChooser({
               ? "Ensuite, choisis la seconde option."
               : "Retouche un geste pour le retirer."}
         </p>
+        {selection.first &&
+        !selection.second &&
+        declared.includes(selection.first) ? (
+          // Une habitude déclarée n'a pas à être comparée : on propose de la noter telle quelle.
+          <button
+            type="button"
+            onClick={() => onHabit(selection.first)}
+            className="press bg-pomme-douce text-corps-s text-encre focus-visible:outline-outremer rounded-2xl px-4 py-3 text-left leading-[1.35] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            C’est une de tes habitudes : la noter sans comparer
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => onHabit(null)}
+          className="press border-encre bg-blanc focus-visible:outline-outremer mt-2 flex flex-col gap-0.5 rounded-[18px] border px-4 py-3.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          <span className="text-corps-s text-encre leading-[1.3] font-semibold underline">
+            Noter une habitude
+          </span>
+          <span className="text-legende text-texte-attenue leading-[1.35]">
+            Un repas végé, le vélo pour aller au travail : sans comparaison ni
+            kg, ça arrose ton jardin.
+          </span>
+        </button>
         <RaconteLink className="mt-2" />
         <SeasonTeaser className="mt-2" />
       </div>

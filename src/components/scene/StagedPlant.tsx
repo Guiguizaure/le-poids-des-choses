@@ -24,6 +24,27 @@ const SWAY_ANGLE = 1.5;
 
 const FOLIAGE = '[data-part="feuillage"], [data-part="feuilles"]';
 
+/** Couleur de saison du feuillage (table des espèces, src/lib/garden/species.ts). */
+export type PlantPaint = {
+  layers: readonly string[];
+  fill: string;
+  stroke?: string;
+  /** Épaisseur du trait, en unités du dessin. */
+  strokeWidth?: number;
+};
+
+/**
+ * Épanouissement posé sur la plante adulte : un seul groupe affiché (celui du niveau), jamais
+ * plusieurs ; aucun au niveau 0.
+ */
+export type PlantBloom<S extends string> = {
+  illustration: IllustrationName;
+  groups: readonly string[];
+  /** Stade adulte, sur lequel il se pose. */
+  stage: S;
+  level: 0 | 1 | 2 | 3;
+};
+
 type SwayItem = { sway: number; lean: number; apply: () => void };
 
 type StagedPlantProps<S extends string> = {
@@ -45,6 +66,10 @@ type StagedPlantProps<S extends string> = {
   popIn?: boolean;
   /** Facteur appliqué aux épaisseurs de trait (vitrine : celles du jardin). */
   strokeScale?: number;
+  /** Couleur de saison du feuillage (null : celle du dessin). */
+  paint?: PlantPaint | null;
+  /** Épanouissement (absent : la plante n'en a pas). */
+  bloom?: PlantBloom<S> | null;
 };
 
 /**
@@ -63,10 +88,15 @@ export function StagedPlant<S extends string>({
   still = false,
   popIn = false,
   strokeScale = 1,
+  paint = null,
+  bloom = null,
 }: StagedPlantProps<S>) {
   const ref = useRef<HTMLDivElement>(null);
   const sparkleRef = useRef<HTMLDivElement>(null);
+  const bloomRef = useRef<HTMLDivElement>(null);
   const previousStage = useRef(stage);
+  const bloomShown = bloom && bloom.stage === stage ? bloom.level : 0;
+  const previousBloom = useRef(bloomShown);
   const swayItems = useRef<SwayItem[]>([]);
   const firstName = illustrationFor(stages[0]);
   const spec = getSpec(firstName);
@@ -89,6 +119,49 @@ export function StagedPlant<S extends string>({
     };
   }, [strokeScale]);
 
+  // Couleur de saison du feuillage : posée sur les formes des calques de la table des espèces.
+  const paintKey = paint ? JSON.stringify(paint) : "";
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root || !paint) return;
+    const selector = paint.layers
+      .map((layer) => `[data-stage] [data-part="${layer}"] > *`)
+      .join(", ");
+    const shapes = Array.from(root.querySelectorAll<SVGElement>(selector));
+    for (const shape of shapes) {
+      shape.style.fill = paint.fill;
+      if (paint.stroke) {
+        shape.style.stroke = paint.stroke;
+        shape.style.strokeWidth = String(
+          (paint.strokeWidth ?? 1) * strokeScale,
+        );
+      }
+    }
+    return () => {
+      for (const shape of shapes) {
+        shape.style.fill = "";
+        shape.style.stroke = "";
+        shape.style.strokeWidth = "";
+      }
+    };
+    // paintKey résume `paint` (un nouvel objet à chaque rendu).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paintKey, strokeScale]);
+
+  // Épanouissement : seul le groupe du niveau affiché est visible.
+  const bloomGroups = bloom?.groups.join(",") ?? "";
+  useLayoutEffect(() => {
+    const layer = bloomRef.current;
+    if (!layer || !bloom) return;
+    bloom.groups.forEach((group, index) => {
+      const element = layer.querySelector<SVGElement>(`[data-part="${group}"]`);
+      if (element)
+        element.style.display = index + 1 === bloomShown ? "" : "none";
+    });
+    // bloomGroups résume `bloom.groups`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bloomGroups, bloomShown]);
+
   const reduceRef = useMotion(
     ref,
     (reduce) => {
@@ -99,9 +172,25 @@ export function StagedPlant<S extends string>({
         swing === "foliage"
           ? gsap.utils.toArray<Element>(FOLIAGE, root)
           : gsap.utils.toArray<Element>("[data-stage]", root);
+      // L'épanouissement suit le feuillage (arbres) ou la plante entière (fleurs).
+      const bloomLayer = bloomRef.current;
+      if (bloomLayer) targets.push(bloomLayer);
       const items = targets.map((target) => {
         gsap.set(target, {
-          transformOrigin: swing === "foliage" ? "50% 100%" : origin,
+          transformOrigin:
+            target === bloomLayer
+              ? swing === "foliage"
+                ? foliageBase(
+                    root,
+                    bloom?.stage,
+                    spec.width,
+                    spec.height,
+                    origin,
+                  )
+                : origin
+              : swing === "foliage"
+                ? "50% 100%"
+                : origin,
         });
         const setRotation = gsap.quickSetter(target, "rotation", "deg");
         // Le balancement et l'inclinaison au vent s'additionnent sur la même rotation.
@@ -132,7 +221,7 @@ export function StagedPlant<S extends string>({
         swayItems.current = [];
       };
     },
-    [still],
+    [still, bloom?.stage],
   );
 
   useGust(ref, reduceRef, (delay) => {
@@ -221,6 +310,34 @@ export function StagedPlant<S extends string>({
     { scope: ref, dependencies: [stage] },
   );
 
+  // Épanouissement qui gagne un niveau : le nouveau groupe s'ouvre, avec l'éclat.
+  useGSAP(
+    () => {
+      const from = previousBloom.current;
+      previousBloom.current = bloomShown;
+      const inner = bloomRef.current?.firstElementChild;
+      if (!inner || bloomShown <= from) return;
+      const reduce = reduceRef.current;
+      gsap.fromTo(
+        inner,
+        reduce ? { autoAlpha: 0 } : { autoAlpha: 0.3, scale: 0.85 },
+        reduce
+          ? { autoAlpha: 1, duration: 0.2 }
+          : {
+              autoAlpha: 1,
+              scale: 1,
+              duration: GROWTH.duration,
+              ease: GROWTH.ease,
+            },
+      );
+      const current = ref.current?.querySelector<HTMLElement>(
+        `[data-stage="${stage}"]`,
+      );
+      if (current) sparkleOver(current, reduce);
+    },
+    { scope: ref, dependencies: [bloomShown] },
+  );
+
   // Apparition (nouvelle plante dans le jardin) : elle pousse depuis son pied, puis l'éclat.
   useGSAP(
     () => {
@@ -274,6 +391,21 @@ export function StagedPlant<S extends string>({
           />
         </div>
       ))}
+      {bloom ? (
+        <div
+          ref={bloomRef}
+          data-bloom={bloomShown}
+          className="pointer-events-none absolute inset-0"
+          style={{ visibility: bloomShown > 0 ? "visible" : "hidden" }}
+        >
+          <div className="absolute inset-0" style={{ transformOrigin: origin }}>
+            <Illustration
+              name={bloom.illustration}
+              className="block h-full w-full"
+            />
+          </div>
+        </div>
+      ) : null}
       {sparkle ? (
         <div
           ref={sparkleRef}
@@ -325,4 +457,30 @@ function topOfDrawing(
     // getBBox indisponible (élément non rendu) : on garde le milieu du cadre.
   }
   return frameHeight / 2;
+}
+
+/**
+ * Pivot du balancement de l'épanouissement d'un arbre : la base du feuillage adulte (là où
+ * pivote le feuillage, `50% 100%` de son emprise), exprimée dans le cadre de la plante.
+ */
+function foliageBase(
+  root: HTMLElement,
+  stage: string | undefined,
+  frameWidth: number,
+  frameHeight: number,
+  fallback: string,
+): string {
+  const foliage = root.querySelector<SVGGraphicsElement>(
+    `[data-stage="${stage}"] [data-part="feuillage"]`,
+  );
+  try {
+    if (foliage) {
+      const box = foliage.getBBox();
+      const pct = (value: number) => `${Math.round(value * 1000) / 10}%`;
+      return `${pct((box.x + box.width / 2) / frameWidth)} ${pct((box.y + box.height) / frameHeight)}`;
+    }
+  } catch {
+    // getBBox indisponible : on garde le pied de la plante.
+  }
+  return fallback;
 }

@@ -67,7 +67,12 @@ export type Gesture = {
 
 export type Choice = "a" | "b";
 
-export type JournalEntry = {
+/**
+ * Entrée « comparaison » : deux gestes comparés, l'un choisi. Sans champ `kind` (les carnets
+ * existants ne sont jamais réécrits : leur empreinte changerait sur le compte).
+ */
+export type ComparisonEntry = {
+  kind?: undefined;
   id: string;
   /** Date ISO 8601. */
   date: string;
@@ -85,6 +90,21 @@ export type JournalEntry = {
   modeA?: AcquisitionMode;
   modeB?: AcquisitionMode;
 };
+
+/**
+ * Entrée « habitude » : un geste tenu, noté sans comparaison. Elle ne compte aucun kg (pas de
+ * comparaison, donc pas d'écart) : elle arrose le jardin. Jamais de `avoidedKg`, `gestureB`
+ * ni `chosen` (la validation refuse une habitude qui en porterait).
+ */
+export type HabitEntry = {
+  kind: "habit";
+  id: string;
+  /** Date ISO 8601. */
+  date: string;
+  gesture: string;
+};
+
+export type JournalEntry = ComparisonEntry | HabitEntry;
 
 /**
  * Produit de l'outil « Fruits et légumes de saison » d'Impact CO2 (API publique), tel que

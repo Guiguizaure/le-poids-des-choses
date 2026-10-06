@@ -2,6 +2,8 @@
 import { objectNoun } from "@/lib/compare/nouns";
 import { getGesture } from "@/lib/data";
 import type { AcquisitionMode, Category, JournalEntry } from "@/lib/data/types";
+import { habitLabel } from "@/lib/habits";
+import { doneGesture } from "./kind";
 import {
   ILLUSTRATION_SPECS,
   type IllustrationName,
@@ -62,8 +64,12 @@ function modeWord(mode: AcquisitionMode, objectId: string): string {
   }
 }
 
-/** Titre d'une entrée : « Train plutôt qu’avion », « Jean neuf plutôt que d’occasion ». */
+/**
+ * Titre d'une entrée : « Train plutôt qu’avion », « Jean neuf plutôt que d’occasion » ; pour
+ * une habitude, son nom (« À vélo », « Repas végétarien »).
+ */
 export function entryTitle(entry: JournalEntry): string {
+  if (entry.kind === "habit") return habitLabel(entry.gesture);
   const chosenIsA = entry.chosen === "a";
   const chosenId = chosenIsA ? entry.gestureA : entry.gestureB;
   const otherId = chosenIsA ? entry.gestureB : entry.gestureA;
@@ -111,9 +117,7 @@ export function relativeDay(iso: string, now: Date): string {
 }
 
 export function entryCategory(entry: JournalEntry): string {
-  const gesture = getGesture(
-    entry.chosen === "a" ? entry.gestureA : entry.gestureB,
-  );
+  const gesture = getGesture(doneGesture(entry));
   return gesture ? CATEGORY_LABELS[gesture.category] : "";
 }
 
@@ -135,6 +139,7 @@ export function pictoFor(
 }
 
 export function entryPicto(entry: JournalEntry): IllustrationName {
+  if (entry.kind === "habit") return pictoFor(entry.gesture);
   return entry.chosen === "a"
     ? pictoFor(entry.gestureA, entry.modeA)
     : pictoFor(entry.gestureB, entry.modeB);

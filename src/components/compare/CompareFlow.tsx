@@ -15,6 +15,7 @@ import {
 } from "@/lib/compare";
 import { getGesture } from "@/lib/data";
 import type { Choice, JournalEntry } from "@/lib/data/types";
+import { HabitChooser } from "@/components/habits/HabitChooser";
 import { useJournal } from "@/lib/journal/useJournal";
 import { Duel } from "./Duel";
 import { GestureChooser } from "./GestureChooser";
@@ -24,6 +25,14 @@ import { ObjectDuel } from "./ObjectDuel";
 // demande, il n'alourdit pas l'affichage du duel.
 const ChoiceResult = dynamic(
   () => import("./ChoiceResult").then((m) => m.ChoiceResult),
+  {
+    ssr: false,
+    loading: () => <main className="min-h-screen" aria-busy="true" />,
+  },
+);
+
+const HabitResult = dynamic(
+  () => import("./HabitResult").then((m) => m.HabitResult),
   {
     ssr: false,
     loading: () => <main className="min-h-screen" aria-busy="true" />,
@@ -64,7 +73,9 @@ export function CompareFlow() {
 
   // Le résultat n'appartient qu'à la comparaison qui l'a produit (retour arrière = duel).
   if (result && result.query === query) {
-    return (
+    return result.entry.kind === "habit" ? (
+      <HabitResult entry={result.entry} onAgain={() => go({ step: "first" })} />
+    ) : (
       <ChoiceResult
         entry={result.entry}
         onCompareAgain={() => go({ step: "first" })}
@@ -73,6 +84,23 @@ export function CompareFlow() {
   }
 
   switch (state.step) {
+    case "habit":
+      return (
+        <HabitChooser
+          key="habit"
+          selected={state.habit}
+          focusTitle={navigated}
+          onSelect={(habit) => replace({ step: "habit", habit })}
+          onConfirm={(habit) => {
+            const entry = journal.addHabit(habit);
+            const noted = { step: "habit" as const, habit };
+            replace(noted); // le résultat appartient à cette URL
+            setNavigated(true);
+            setResult({ entry, query: comparisonQuery(noted) });
+            window.scrollTo({ top: 0 });
+          }}
+        />
+      );
     case "first":
     case "second":
       // Un seul écran pour les deux gestes : la même clé garde la sélection quand ?a= change.
@@ -103,6 +131,7 @@ export function CompareFlow() {
                 delivered: true,
               })
             }
+            onHabit={(habit) => go({ step: "habit", habit })}
             onCompare={(a, b) =>
               go({
                 step: "duel",
