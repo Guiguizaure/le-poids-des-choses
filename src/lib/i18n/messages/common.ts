@@ -106,6 +106,9 @@ export const SEASON = defineMessages(
     lightestToHeaviest: "Du plus léger au plus lourd au kilo :",
     perKilo: "Au kilo :",
     seeAll: "Tous les fruits et légumes de saison",
+    lightestPerKilo: "Le plus léger au kilo :",
+    seeAllProduce: "Voir tous les produits de saison",
+    produce: "Quelques produits du mois",
     month: "Mois",
     count: (count: number, month: string) =>
       `${count} produits de saison en ${month}, du plus léger au plus lourd. L’impact est donné pour 1 kg de produit, en CO2e.`,
@@ -122,6 +125,9 @@ export const SEASON = defineMessages(
     lightestToHeaviest: "Lightest to heaviest, per kilo:",
     perKilo: "Per kilo:",
     seeAll: "All the fruit and veg in season",
+    lightestPerKilo: "Lightest per kilo:",
+    seeAllProduce: "See all the produce in season",
+    produce: "A few of this month’s products",
     month: "Month",
     count: (count: number, month: string) =>
       `${count} products in season in ${month}, from lightest to heaviest. The impact is given for 1 kg of produce, in CO2e.`,

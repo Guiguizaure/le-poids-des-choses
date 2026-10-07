@@ -108,6 +108,13 @@ export type HabitEntry = {
   /** Date ISO 8601. */
   date: string;
   gesture: string;
+  /**
+   * Plante arrosée en bonus (id de l'entrée qui l'a fait pousser), choisie au moment où
+   * l'habitude est notée ; null : aucune plante (jardin vide, tout épanoui, habitude déjà
+   * notée ce jour-là). Absent sur les habitudes notées avant l'arrosage ciblé : elles ne
+   * donnent aucun bonus (la règle de base, elle, vaut pour toutes).
+   */
+  plant?: string | null;
 };
 
 export type JournalEntry = ComparisonEntry | HabitEntry;

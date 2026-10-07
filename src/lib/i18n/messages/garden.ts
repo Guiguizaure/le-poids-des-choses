@@ -53,13 +53,43 @@ export const GARDEN_TEXT = defineMessages(
         `Ton jardin est arrosé : ${pluralFr(n, "plante avance", "plantes avancent")} d’un cran.`,
       allBloomed: "Ton jardin est arrosé : toutes tes plantes sont épanouies.",
       next: (n: number) =>
-        `Ton jardin est arrosé. Encore ${pluralFr(n, "jour arrosé", "jours arrosés")} avant le prochain cran.`,
+        `Ton jardin est arrosé. Encore ${pluralFr(n, "arrosage", "arrosages")} avant le prochain cran.`,
       titleWatered: "Ton jardin est arrosé",
       titleNoted: "C’est noté",
       bloom: (tree: boolean) =>
         tree ? "Un arbre s’épanouit" : "Une fleur s’épanouit",
       grow: (tree: boolean) =>
         tree ? "Un arbre grandit" : "Une fleur grandit",
+      // Arrosage ciblé : « Tu as arrosé le pommier : il grandira au prochain arrosage. »
+      targetMoved: (name: string, pronoun: string, bloom: boolean) => {
+        const plural = pronoun.endsWith("s");
+        const verb = bloom
+          ? plural
+            ? "s’épanouissent"
+            : "s’épanouit"
+          : plural
+            ? "grandissent"
+            : "grandit";
+        return `Tu as arrosé ${name} : ${pronoun} ${verb} d’un cran.`;
+      },
+      targetNext: (
+        name: string,
+        pronoun: string,
+        bloom: boolean,
+        n: number,
+      ) => {
+        const plural = pronoun.endsWith("s");
+        const verb = bloom
+          ? plural
+            ? "s’épanouiront"
+            : "s’épanouira"
+          : plural
+            ? "grandiront"
+            : "grandira";
+        return `Tu as arrosé ${name} : ${pronoun} ${verb} ${n > 1 ? `dans ${n} arrosages` : "au prochain arrosage"}.`;
+      },
+      othersMoved: (n: number) =>
+        ` Et ${pluralFr(n, "autre plante avance", "autres plantes avancent")} d’un cran.`,
     },
   },
   {
@@ -102,13 +132,19 @@ export const GARDEN_TEXT = defineMessages(
       allBloomed:
         "Your garden’s been watered: all your plants are in full bloom.",
       next: (n: number) =>
-        `Your garden’s been watered. ${pluralEn(n, "more watered day", "more watered days")} until the next step.`,
+        `Your garden’s been watered. ${pluralEn(n, "more watering", "more waterings")} until the next step.`,
       titleWatered: "Your garden’s been watered",
       titleNoted: "Noted",
       bloom: (tree: boolean) =>
         tree ? "A tree is flourishing" : "A flower is blooming",
       grow: (tree: boolean) =>
         tree ? "A tree is growing" : "A flower is growing",
+      targetMoved: (name: string, pronoun: string, bloom: boolean) =>
+        `You watered the ${name}: ${pronoun} ${bloom ? "bloomed a little more" : "grew a step"}.`,
+      targetNext: (name: string, pronoun: string, bloom: boolean, n: number) =>
+        `You watered the ${name}: ${pronoun} will ${bloom ? "bloom a little more" : "grow"} ${n > 1 ? `in ${n} waterings` : "with the next watering"}.`,
+      othersMoved: (n: number) =>
+        ` ${pluralEn(n, "other plant", "other plants")} moved up a step too.`,
     },
   },
 );
@@ -426,12 +462,8 @@ export const HABITS_UI = defineMessages(
     mineText:
       "Une habitude tenue ne se compare à rien et ne compte aucun kg : elle arrose ton jardin, et tes plantes avancent vers la floraison.",
     how: "Comment ?",
-    oneTap: "Noter une habitude d’un toucher",
-    done: (label: string) =>
-      `J’ai tenu : ${label.charAt(0).toLowerCase()}${label.slice(1)}`,
     another: "Noter une autre habitude",
     edit: "Modifier mes habitudes",
-    already: "Ce que tu fais déjà",
     alreadyHelp:
       "Ces gestes te seront proposés en habitude, sans comparaison. Rien n’est noté tant que tu ne le dis pas. Gardé sur cet appareil seulement.",
     back: "Retour au choix des gestes",
@@ -444,18 +476,29 @@ export const HABITS_UI = defineMessages(
     hintSelected: "Retouche l’habitude pour la retirer.",
     hintNone: "Touche l’habitude que tu as tenue aujourd’hui.",
     choose: "Choisir mes habitudes",
+    // Arrosage ciblé : choix des habitudes, puis une icône par habitude.
+    chooseLegend: "Quelles habitudes tiens-tu déjà ?",
+    tapHelp: "Touche une habitude tenue aujourd’hui pour arroser une plante.",
+    water: (label: string) => `${label} : arroser une plante`,
+    watered: (label: string) => `${label} : arrosée aujourd’hui`,
+    wateredShort: "Arrosée aujourd’hui",
+    icons: "Mes habitudes, à arroser",
+    confirm: "Valider",
+    cancel: "Annuler",
+    barLabel: "Tes habitudes",
+    selected: (n: number) =>
+      pluralFr(n, "habitude choisie", "habitudes choisies"),
+    selectedAnnounce: (n: number) =>
+      `${pluralFr(n, "habitude choisie", "habitudes choisies")} : tu peux valider.`,
+    noneSelected: "Choisis au moins une habitude.",
   },
   {
     mine: "My habits",
     mineText:
       "A habit you keep isn’t compared with anything and counts no kg: it waters your garden, and your plants move towards flowering.",
     how: "How?",
-    oneTap: "Log a habit with one tap",
-    done: (label: string) =>
-      `Done today: ${label.charAt(0).toLowerCase()}${label.slice(1)}`,
     another: "Log another habit",
     edit: "Edit my habits",
-    already: "What you already do",
     alreadyHelp:
       "These actions will be offered to you as habits, with no comparison. Nothing is noted until you say so. Kept on this device only.",
     back: "Back to the actions",
@@ -468,6 +511,19 @@ export const HABITS_UI = defineMessages(
     hintSelected: "Tap the habit again to remove it.",
     hintNone: "Tap the habit you kept today.",
     choose: "Choose my habits",
+    chooseLegend: "Which habits do you already keep?",
+    tapHelp: "Tap a habit you kept today to water a plant.",
+    water: (label: string) => `${label}: water a plant`,
+    watered: (label: string) => `${label}: watered today`,
+    wateredShort: "Watered today",
+    icons: "My habits, ready to water",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    barLabel: "Your habits",
+    selected: (n: number) => pluralEn(n, "habit selected", "habits selected"),
+    selectedAnnounce: (n: number) =>
+      `${pluralEn(n, "habit selected", "habits selected")}: you can confirm.`,
+    noneSelected: "Choose at least one habit.",
   },
 );
 
@@ -537,3 +593,28 @@ export const HABIT_NAMES = defineMessages<
     },
   },
 );
+
+/** Indices de première utilisation (un seul par situation, la première fois). */
+export const HINTS = defineMessages(
+  {
+    label: "Astuce",
+    close: "Fermer l’astuce",
+    emptyGarden:
+      "Ton jardin est vide pour l’instant : compare deux gestes et choisis le plus léger, ta première plante poussera ici.",
+    firstPlant:
+      "Touche une espèce pour la planter. Le « i » ouvre sa fiche ; tu peux aussi laisser le jardin choisir.",
+    firstWatering:
+      "Chaque habitude tenue arrose tout le jardin, et une plante en plus. Trois arrosages, et elle grandit d’un cran.",
+  },
+  {
+    label: "Tip",
+    close: "Close the tip",
+    emptyGarden:
+      "Your garden is empty for now: compare two actions and choose the lighter one, and your first plant will grow here.",
+    firstPlant:
+      "Tap a species to plant it. The “i” opens its sheet; you can also let the garden choose.",
+    firstWatering:
+      "Every habit you keep waters the whole garden, plus one plant extra. Three waterings and it grows a step.",
+  },
+);
+

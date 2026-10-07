@@ -64,9 +64,13 @@ l'occasion et ne dit rien de la durée de vie réelle. À mentionner honnêtemen
   vérifie, avec les données, que chacun est plus léger que l'option qu'il remplace dans
   `ALTERNATIVES`.
 - Elle arrose le jardin : un « jour arrosé » est un jour (heure de Paris) où au moins une
-  habitude est notée. Chaque plante avance d'un cran tous les `WATER_DAYS_PER_STEP` (3,
-  provisoire) jours arrosés depuis sa plantation : pousse → jeune → grand (arbres), pousse →
-  fleurie (fleurs), puis épanouissement 1, 2 et 3. C'est une règle de jeu, pas une mesure.
+  habitude est notée ; il compte pour toutes les plantes déjà là. En plus, chaque habitude
+  touchée arrose en bonus une plante (la moins avancée, puis la plus proche de son prochain
+  cran, puis la plus ancienne ; au plus un bonus par plante et par jour ; une même habitude
+  une fois par jour). Chaque plante avance d'un cran tous les `WATER_DAYS_PER_STEP` (3,
+  provisoire) arrosages (jours arrosés depuis sa plantation + bonus) : pousse → jeune →
+  grand (arbres), pousse → fleurie (fleurs), puis épanouissement 1, 2 et 3. C'est une règle
+  de jeu, pas une mesure.
 - Saisons (hémisphère nord, d'après le mois) : un décor seulement. L'hiver, l'épanouissement
   des arbres caducs dort (niveau gardé, rien d'affiché) jusqu'au printemps.
 

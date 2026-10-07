@@ -199,9 +199,13 @@ export default function MethodePage() {
           comparer ton repas à un plat de viande donnerait un écart qui ne
           correspond à rien de réel. Une habitude tenue ne compte donc aucun kg,
           n’entre ni dans le total ni dans les paliers. Elle arrose ton jardin :
-          chaque jour où tu en notes au moins une, les plantes déjà là avancent
-          d’un cran tous les {WATER_DAYS_PER_STEP} jours arrosés. C’est une
-          règle de jeu, pas une mesure.
+          chaque jour où tu en notes au moins une compte pour toutes les plantes
+          déjà là. En plus, chaque habitude touchée dans « Mes habitudes »
+          arrose une plante de plus (la moins avancée, une fois par jour au
+          plus). Une plante avance d’un cran tous les {WATER_DAYS_PER_STEP}{" "}
+          arrosages : elle grandit, puis s’épanouit. Une même habitude n’arrose
+          qu’une fois par jour (jusqu’à minuit, heure de Paris). C’est une règle
+          de jeu, pas une mesure.
         </p>
         <p>
           L’hiver, l’épanouissement des arbres caducs dort : le niveau atteint

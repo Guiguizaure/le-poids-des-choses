@@ -14,6 +14,8 @@ import { useShareSupport } from "@/components/garden/share/useShareSupport";
 import { useSky } from "@/components/garden/useSky";
 import { WeekChart } from "@/components/garden/WeekChart";
 import { Logo } from "@/components/ui/Logo";
+import { Illustration } from "@/components/illustrations/Illustration";
+import { PLANT_BOUNDS } from "@/lib/illustrations/bounds.generated";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
@@ -31,6 +33,11 @@ import { AccountSection } from "@/components/account/AccountSection";
 import { InstallButton } from "@/components/install/InstallButton";
 import type { JournalEntry } from "@/lib/data/types";
 import { MyHabits } from "@/components/habits/MyHabits";
+import { GardenSeasonCard } from "@/components/saison/GardenSeasonCard";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
+import { FirstHint } from "@/components/ui/FirstHint";
+import { HINTS } from "@/lib/i18n/messages/garden";
+import { markHintSeen } from "@/lib/hints/useHint";
 import { doneGesture, isComparison } from "@/lib/journal/kind";
 
 const RECENT_COUNT = 5;
@@ -55,6 +62,15 @@ function PillButton({
     </button>
   );
 }
+
+/** Petite pousse du bouton principal, recadrée sur son dessin (lisible à 32 px). */
+const SPROUT = PLANT_BOUNDS["fleur-1-pousse"];
+const SPROUT_VIEWBOX = [
+  SPROUT.x - 2,
+  SPROUT.y - 2,
+  SPROUT.width + 4,
+  SPROUT.height + 4,
+].join(" ");
 
 /** Page « Mon jardin » (maquette 04 · Mon jardin). */
 export function GardenScreen({ siteUrl }: { siteUrl: string }) {
@@ -113,8 +129,20 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
       ? nouveau
       : null;
   const revealId = wateredHere ?? fromUrl;
+  const gardenRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  // Une plante a poussé : l'astuce du jardin vide ne reviendra plus.
+  useEffect(() => {
+    if (garden.plants.length > 0) markHintSeen("jardin-vide");
+  }, [garden.plants.length]);
   const water = (gesture: string) => {
     const entry = journal.addHabit(gesture);
+    markHintSeen("premier-arrosage");
+    // L'arrosoir passe au-dessus de la plante : le jardin revient à l'écran.
+    gardenRef.current?.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "center",
+    });
     setNoted((ids) => [...ids, entry.id]);
     setWateredHere(entry.id);
   };
@@ -200,13 +228,15 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         </h1>
       </div>
 
-      <Garden
-        entries={journal.entries}
-        now={now}
-        highlightId={revealId}
-        arriving={arriving}
-        sky={sky}
-      />
+      <div ref={gardenRef}>
+        <Garden
+          entries={journal.entries}
+          now={now}
+          highlightId={revealId}
+          arriving={arriving}
+          sky={sky}
+        />
+      </div>
       <p
         role="status"
         aria-live="polite"
@@ -221,18 +251,35 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         </p>
       ) : null}
 
-      {/* Action principale de la page, juste sous le jardin : encre sur tomate (5,3:1). */}
+      {/* Action principale de la page, juste sous le jardin : papier découpé jaune soleil,
+          texte encre (paire vérifiée par le test du thème), contour et ombre nette encre ;
+          appuyé, l'ombre se réduit et le bouton descend de 2 px (rien en mouvement réduit). */}
       <div className="px-5 pt-4">
         <Link
           href="/comparer"
           data-grow-plant
-          className="press bg-tomate text-encre focus-visible:outline-outremer flex w-full flex-col items-center gap-0.5 rounded-[20px] px-6 py-4 text-center focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="bg-soleil text-encre border-encre focus-visible:outline-outremer flex w-full items-center justify-center gap-3 rounded-[20px] border-2 px-5 py-3.5 shadow-[4px_4px_0_0_var(--color-encre)] transition-[transform,box-shadow] duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-[2px] active:shadow-[2px_2px_0_0_var(--color-encre)] motion-reduce:transition-none motion-reduce:active:translate-y-0 motion-reduce:active:shadow-[4px_4px_0_0_var(--color-encre)]"
         >
-          <span className="text-corps-m leading-[1.3] font-semibold">
-            {t.grow}
+          <Illustration
+            name="fleur-1-pousse"
+            viewBox={SPROUT_VIEWBOX}
+            className="size-8 shrink-0"
+            data-grow-sprout
+          />
+          <span className="flex flex-col items-start text-left">
+            <span className="text-corps-m leading-[1.3] font-semibold">
+              {t.grow}
+            </span>
+            <span className="text-corps-s leading-[1.35]">{t.growSub}</span>
           </span>
-          <span className="text-corps-s leading-[1.35]">{t.growSub}</span>
         </Link>
+        <FirstHint
+          id="jardin-vide"
+          active={journal.ready && garden.plants.length === 0}
+          className="pt-3"
+        >
+          {HINTS[locale].emptyGarden}
+        </FirstHint>
       </div>
 
       <div className="flex flex-col gap-4 px-5 pt-4 pb-8">
@@ -259,7 +306,11 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
         {journal.ready && !hasEntries ? <RaconteLink /> : null}
 
-        {journal.ready ? <MyHabits onWater={water} /> : null}
+        {journal.ready ? (
+          <MyHabits entries={journal.entries} now={now} onWater={water} />
+        ) : null}
+
+        <GardenSeasonCard />
 
         {hasEntries ? (
           <>

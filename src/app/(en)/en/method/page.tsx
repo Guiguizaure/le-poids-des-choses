@@ -196,10 +196,13 @@ export default function MethodPage() {
           A habit isn’t compared with anything: if you never eat meat, comparing
           your meal with a meat dish would give a difference that matches
           nothing real. So a habit you keep counts no kg and goes into neither
-          the total nor the milestones. It waters your garden: on each day you
-          note at least one, the plants already there move up a step every{" "}
-          {WATER_DAYS_PER_STEP} watered days. It’s a rule of the game, not a
-          measurement.
+          the total nor the milestones. It waters your garden: each day you note
+          at least one counts for all the plants already there. On top of that,
+          each habit you tap in “My habits” waters one more plant (the least
+          grown one, at most once a day). A plant moves up a step every{" "}
+          {WATER_DAYS_PER_STEP} waterings: it grows, then blooms. The same habit
+          only waters once a day (until midnight, Paris time). It’s a rule of
+          the game, not a measurement.
         </p>
         <p>
           In winter, the bloom of deciduous trees sleeps: the level reached is

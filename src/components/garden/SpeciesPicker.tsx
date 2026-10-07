@@ -4,6 +4,9 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { DidYouKnow } from "@/components/facts/DidYouKnow";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { Icon } from "@/components/ui/buttons";
+import { FirstHint } from "@/components/ui/FirstHint";
+import { markHintSeen } from "@/lib/hints/useHint";
+import { HINTS } from "@/lib/i18n/messages/garden";
 import {
   adultIllustration,
   speciesCards,
@@ -97,6 +100,8 @@ export function SpeciesPicker({
 
   /** Ferme la feuille : les places vides reviennent au tirage habituel. */
   const finish = (species: (string | null)[]) => {
+    // Première plante choisie (ou laissée au jardin) : l'astuce ne reviendra plus.
+    markHintSeen("premiere-plante");
     dialogRef.current?.close();
     onPick(species);
   };
@@ -200,7 +205,11 @@ export function SpeciesPicker({
                 >
                   {t.counter(filled, count)}
                 </p>
-                <p aria-live="polite" className="sr-only">
+                <p
+                  aria-live="polite"
+                  data-plant-counter-live
+                  className="sr-only"
+                >
                   {t.counterLive(filled, count)}
                 </p>
               </>
@@ -218,6 +227,10 @@ export function SpeciesPicker({
             </button>
           )}
         </div>
+
+        <FirstHint id="premiere-plante" active={!shown} className="px-5 pb-2">
+          {HINTS[locale].firstPlant}
+        </FirstHint>
 
         {multi && !shown ? (
           <ol aria-label={t.slots} className="flex flex-wrap gap-1.5 px-5 pb-2">

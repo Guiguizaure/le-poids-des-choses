@@ -118,6 +118,24 @@ describe("syncJournal", () => {
     expect(result.entries).toEqual([habit]);
   });
 
+  it("arrosage ciblé : la plante arrosée (`plant`) fait l'aller-retour, null compris ; une valeur invalide est refusée", async () => {
+    const base = {
+      kind: "habit",
+      date: new Date(NOW).toISOString(),
+      gesture: "velo",
+    };
+    const targeted = { ...base, id: "p1", plant: "e-42" };
+    const none = { ...base, id: "p2", plant: null };
+    const result = await sync(0, [
+      targeted,
+      none,
+      { ...base, id: "p3", plant: 7 },
+    ]);
+    expect(result.accepted).toBe(2);
+    expect(result.rejected).toBe(1);
+    expect(result.entries).toEqual(expect.arrayContaining([targeted, none]));
+  });
+
   it("chaque compte ne voit que ses entrées", async () => {
     const other = (await upsertUser(db, "dominique@exemple.fr", NOW)).id;
     await sync(0, [entry("a")]);

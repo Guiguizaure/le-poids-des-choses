@@ -1763,3 +1763,94 @@ runner>-<version exacte de @playwright/test installée>`, par exemple
 - Portée du cache : un cache créé sur une demande de fusion ne sert qu'à elle ; celui de `main`
   sert à toutes les branches. Le premier passage sur `main` après la fusion le recréera
   (installation complète, une fois).
+
+### 2026-10-07 — Refonte des habitudes : arrosage ciblé (feat/habitudes-arrosage)
+
+Demande de Guillaume, en deux temps : un plan d'abord (validé avec une modification), puis le
+code. **Gel des fonctionnalités : exception validée** pour ce lot, dernier gros lot avant
+les testeurs (noté dans CLAUDE.md).
+
+Plan proposé, puis décisions :
+
+- Ma première proposition faisait de l'arrosage ciblé un remplacement (une plante par
+  habitude) : la pousse aurait été environ N fois plus lente dans un jardin de N plantes.
+  **Décision : l'arrosage ciblé est un bonus.** La règle actuelle reste la base pour toutes
+  les habitudes (chaque jour arrosé compte pour toutes les plantes plantées avant lui) ; en
+  plus, chaque nouvelle habitude donne un arrosage à sa plante cible, au plus un par plante
+  et par jour (heure de Paris). Compteur d'une plante = jours arrosés + arrosages bonus ; un
+  cran tous les 3, même échelle (stade, puis épanouissement).
+- Validés : cible enregistrée dans l'habitude (`plant`, choisie au moment du toucher : une
+  entrée synchronisée plus tard, même datée d'avant, ne change jamais une cible passée ; un
+  recalcul aurait pu faire reculer une plante) ; cible = la moins avancée, puis la plus
+  proche de son prochain cran, puis la plus ancienne, parmi les plantes qui peuvent encore
+  avancer et sans bonus aujourd'hui ; anciennes habitudes sans `plant` : règle de base
+  seule, aucune entrée réécrite ; cas limites (jardin vide, tout épanoui, même habitude deux
+  fois le même jour : `plant: null`) ; `aria-disabled` pour « Arrosée aujourd'hui ».
+
+Règles de pousse :
+
+- Avant : compteur = jours arrosés depuis la plantation (toutes les habitudes) ; un cran
+  tous les 3.
+- Après : compteur = jours arrosés depuis la plantation (inchangé) + arrosages bonus (jours
+  distincts où une habitude l'a visée) ; un cran tous les 3.
+
+Impact sur les jardins existants : **aucun ne bouge au déploiement** (aucune habitude
+existante n'a de `plant`, donc aucun bonus) ; aucun n'avancera moins vite ensuite. Testé
+(`src/lib/garden/arrosage.test.ts`) : empreinte de référence identique (1344701095) ; sur
+30 carnets tirés (comparaisons, anciennes habitudes, habitudes ciblées vers une plante, une
+inconnue ou aucune, dates dans le désordre comme après une synchro) : aucune plante ne
+recule quand une entrée s'ajoute, et pour tout carnet, compteur nouveau ≥ compteur de la
+règle de base, progression ≥, mêmes emplacements ; sans habitude ciblée, jardin identique.
+
+Livré :
+
+- Modèle : `bonusDaysByPlant`, `waterCount` / `bonusDays` par plante, `wateringTarget`,
+  révélation (`target`, `targetMoved`, `targetToNext`) ; habitude `plant?: string | null`
+  (validée, tolérée par les anciennes versions, gardée telle quelle par la synchro : test
+  serveur). `addHabit` choisit la cible pour tous les chemins (/jardin, /comparer,
+  « Raconte ta journée » : plusieurs habitudes, plusieurs plantes).
+- Messages : « Tu as arrosé le pommier : il grandira au prochain arrosage. », « … : elle
+  s’épanouit d’un cran. », « Et 2 autres plantes avancent d’un cran. » ; pronom ajouté aux
+  fiches d'espèces (il, elle, elles ; it, they). Le message sans cible parle désormais
+  d'« arrosages » au lieu de « jours arrosés » (bonus compris). En anglais, « Confirm » et non
+  « Save » (le garde-fou interdit « save » partout).
+- « Mes habitudes » : pastille `badge-arrosage`, premier passage en cases à cocher avec
+  « Valider » dans la page et dans la barre fixe (`StickyBar`, généralisée depuis
+  `CompareBar`), icônes, « Arrosée aujourd’hui » jusqu'à minuit (heure de Paris),
+  « Modifier mes habitudes » / « Annuler ».
+- Arrosoir (`arrosage.svg`, 80×80) au-dessus de la plante visée : apparition, inclinaison,
+  gouttes 1 à 5 en décalé, fondu (environ 2,4 s) ; rien en mouvement réduit (le message
+  reste). Le jardin revient à l'écran au toucher.
+- Astuces de première utilisation (`FirstHint`, `lpdc:indices:v1`) : jardin vide, première
+  plante, premier arrosage ; une seule fois chacune, fermées d'un geste ou par l'action ;
+  annoncées sans prendre le focus.
+- Dessins : `arrosage`, `badge-arrosage`, `picto-arrosoir` (144 illustrations ;
+  `picto-arrosoir` sur la carte d’habitude notée quand aucune plante n’avance encore).
+- /methode#habitudes (FR, EN) et `docs/methode.md` : le bonus expliqué.
+- Bout en bout : `e2e/arrosage.spec.ts` (premier passage et barre, arrosoir au-dessus de la
+  plante visée, deux habitudes vers deux plantes, mouvement réduit, remise à minuit avec
+  l'horloge de Playwright, « Modifier » et « Annuler », astuces une seule fois, anglais,
+  axe) ; `e2e/habitudes.spec.ts` réécrit pour le nouveau parcours.
+
+Relecture de la PR #32 (même jour), deux retouches :
+
+1. « Faire pousser une plante » : papier découpé jaune soleil (#FFC93C) au lieu de tomate,
+   texte encre (paire encre / soleil du test du thème), contour encre 2 px, ombre décalée
+   nette de 4 px sans flou. À gauche, la petite pousse `fleur-1-pousse` (décorative, 32 px) :
+   son dessin n'occupe que 26 × 23 unités d'un cadre de 60 × 80 ; affichée telle quelle, elle
+   aurait fait une dizaine de pixels, elle est donc recadrée sur son emprise
+   (`PLANT_BOUNDS`, `viewBox`). Appuyé : ombre de 2 px et descente de 2 px ; rien en
+   mouvement réduit. Focus : contour outremer, 3,8:1 sur le soleil et 5,4:1 sur la crème
+   (deux paires ajoutées au test du thème, minimum 3:1 pour un élément non textuel).
+2. Carte « De saison en octobre » / “In season in October” sous « Mes habitudes »
+   (`GardenSeasonCard`) : 4 produits dessinés au plus (mêmes dessins et même choix que
+   l'encart de l'accueil, `drawnForMonth`), le plus léger au kilo en une ligne
+   (`seasonRange`), « Voir tous les produits de saison » vers /saison (/en/in-season) et le
+   crédit des données. Mois en heure de Paris (`gardenMonth`, testé avec un appareil à New
+   York le 31 octobre au soir : « novembre »). Fond blanc, titre en corps de texte, lien
+   texte : rien qui rivalise avec le bouton. Aucune animation (les dessins ne flottent pas
+   ici).
+
+Bout en bout : `e2e/raccourcis.spec.ts` (couleurs, contour, ombre, pousse de 32 px, focus,
+état appuyé, mouvement réduit ; carte : nombre de produits, ligne du plus léger, lien, place
+sous « Mes habitudes », fuseau, mouvement réduit, anglais, axe), Chromium et WebKit.

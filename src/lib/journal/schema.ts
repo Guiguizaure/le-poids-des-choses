@@ -51,6 +51,13 @@ export function isJournalEntry(value: unknown): value is JournalEntry {
   if ("kind" in entry) {
     if (entry.kind !== "habit" || !isNonEmptyString(entry.gesture))
       return false;
+    // Plante arrosée en bonus : l'id d'une entrée, ou null (aucune).
+    if (
+      entry.plant !== undefined &&
+      entry.plant !== null &&
+      !isNonEmptyString(entry.plant)
+    )
+      return false;
     return COMPARISON_FIELDS.every((field) => !(field in entry));
   }
   if (!isNonEmptyString(entry.gestureA) || !isNonEmptyString(entry.gestureB))

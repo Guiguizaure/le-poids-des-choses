@@ -236,6 +236,24 @@ function Arbre6Pousse({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function Arrosage({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={80} height={80} viewBox="0 0 80 80" fill="none" {...svgProps}>
+      {children}
+      <g data-part="arrosoir"><g transform="rotate(72 30 36)"><path d="M14 30 C 8 30, 8 42, 16 42" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><path d="M20 22 C 22 14, 34 14, 36 22" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><rect x="16" y="22" width="22" height="24" rx="3" fill="#FFC93C" /><path d="M36 40 L50 26" stroke="#1F1A17" strokeWidth="4" strokeLinecap="round" /><ellipse cx="51.5" cy="24.5" rx="3" ry="6.5" transform="rotate(45 51.5 24.5)" fill="#1F1A17" /><rect x="16" y="22" width="22" height="24" rx="3" stroke="#1F1A17" strokeWidth="1.5" fill="none" /></g></g><g data-part="gouttes"><g data-part="goutte-1"><path d="M48 57 Q 51.5 62 48 65 Q 44.5 62 48 57 Z" fill="#8FB2FF" stroke="#1F1A17" strokeWidth="1" /></g><g data-part="goutte-2"><path d="M54 61 Q 57.5 66 54 69 Q 50.5 66 54 61 Z" fill="#8FB2FF" stroke="#1F1A17" strokeWidth="1" /></g><g data-part="goutte-3"><path d="M45 64 Q 48.5 69 45 72 Q 41.5 69 45 64 Z" fill="#8FB2FF" stroke="#1F1A17" strokeWidth="1" /></g><g data-part="goutte-4"><path d="M51 69 Q 54.5 74 51 77 Q 47.5 74 51 69 Z" fill="#8FB2FF" stroke="#1F1A17" strokeWidth="1" /></g><g data-part="goutte-5"><path d="M57 67 Q 60.5 72 57 75 Q 53.5 72 57 67 Z" fill="#8FB2FF" stroke="#1F1A17" strokeWidth="1" /></g></g>
+    </svg>
+  );
+}
+
+function BadgeArrosage({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="12" cy="12" r="11" fill="#2D4BFF" /></g><g data-part="objet"><g transform="translate(-0.5 -0.5) scale(0.39)"><path d="M14 30 C 8 30, 8 42, 16 42" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><path d="M20 22 C 22 14, 34 14, 36 22" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><rect x="16" y="22" width="22" height="24" rx="3" fill="#FFC93C" /><path d="M36 40 L50 26" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><ellipse cx="51.5" cy="24.5" rx="3" ry="6.5" transform="rotate(45 51.5 24.5)" fill="#FFF3DC" /></g><path d="M17.5 15.5 Q 19 17.5 17.5 19 Q 16 17.5 17.5 15.5 Z" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
 function Balance({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={280} height={170} viewBox="0 0 280 170" fill="none" {...svgProps}>
@@ -619,6 +637,15 @@ function PerceNeige({ svgProps, children }: GeneratedSvgProps) {
     <svg width={60} height={80} viewBox="0 0 60 80" fill="none" {...svgProps}>
       {children}
       <g data-part="feuilles"><path d="M28 78 C 22 60, 22 46, 24 36 C 28 48, 30 62, 30 78 Z" fill="#2FBF71" /><path d="M32 78 C 38 62, 38 50, 36 42 C 32 52, 30 64, 30 78 Z" fill="#1B6B45" /></g><g data-part="tige"><path d="M30 78 V30 Q 30 22 38 22" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" fill="none" /></g><g data-part="clochette"><path d="M38 22 C 30 24, 30 38, 34 42 L 38 38 L 42 42 C 46 38, 46 24, 38 22 Z" fill="#FFFFFF" stroke="#1F1A17" strokeWidth="1.5" /><circle cx="38" cy="24" r="2.5" fill="#2FBF71" /></g>
+    </svg>
+  );
+}
+
+function PictoArrosoir({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M14 30 C 8 30, 8 42, 16 42" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><path d="M20 22 C 22 14, 34 14, 36 22" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><rect x="16" y="22" width="22" height="24" rx="3" fill="#FFC93C" /><path d="M36 40 L50 26" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><ellipse cx="51.5" cy="24.5" rx="3" ry="6.5" transform="rotate(45 51.5 24.5)" fill="#FFF3DC" /></g>
     </svg>
   );
 }
@@ -1306,6 +1333,8 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "arbre-6-grand-epanoui": Arbre6GrandEpanoui,
   "arbre-6-jeune": Arbre6Jeune,
   "arbre-6-pousse": Arbre6Pousse,
+  "arrosage": Arrosage,
+  "badge-arrosage": BadgeArrosage,
   "balance": Balance,
   "brume": Brume,
   "champignons": Champignons,
@@ -1349,6 +1378,7 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "oiseau-vol": OiseauVol,
   "papillon": Papillon,
   "perce-neige": PerceNeige,
+  "picto-arrosoir": PictoArrosoir,
   "picto-avion": PictoAvion,
   "picto-biere": PictoBiere,
   "picto-boisson-soja": PictoBoissonSoja,

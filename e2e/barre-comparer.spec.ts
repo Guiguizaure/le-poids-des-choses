@@ -16,7 +16,8 @@ const settled = (locator: import("@playwright/test").Locator) =>
 /** Le focus n'est jamais pris par la barre. */
 const focusInBar = (page: Page) =>
   page.evaluate(
-    () => document.activeElement?.closest("[data-compare-bar]") !== null,
+    () =>
+      document.activeElement?.closest('[data-sticky-bar="compare"]') !== null,
   );
 
 test("deux gestes choisis : barre fixe « Voiture thermique vs Vélo », annoncée sans prendre le focus", async ({
@@ -134,7 +135,7 @@ test("un objet (parcours en étapes) n'a pas de barre", async ({ page }) => {
   await page.getByRole("button", { name: "S’habiller" }).click();
   await page.getByRole("button", { name: /^Jean/ }).click();
   await expect(page).toHaveURL(/\/comparer\?objet=jean/);
-  await expect(page.locator("[data-compare-bar]")).toHaveCount(0);
+  await expect(page.locator('[data-sticky-bar="compare"]')).toHaveCount(0);
 });
 
 test.describe("clavier", () => {

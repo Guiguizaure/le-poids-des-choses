@@ -7,6 +7,7 @@ import {
   seedJournal,
   tabTo,
   test,
+  waitForHydration,
 } from "./fixtures";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -15,6 +16,7 @@ type Stored = {
   kind?: string;
   gesture?: string;
   avoidedKg?: number;
+  plant?: string | null;
 }[];
 
 async function journal(page: Page): Promise<Stored> {
@@ -118,11 +120,11 @@ test("noter une habitude depuis /comparer : aucun kg, le jardin est arrosé", as
   await expect(page.getByLabel("Bilan")).toContainText("1 jour arrosé");
 });
 
-test("/jardin : déclarer mes habitudes, arroser d'un toucher, une plante avance", async ({
+test("/jardin : choisir mes habitudes, arroser d'un toucher, une plante avance", async ({
   page,
 }) => {
   const now = Date.now();
-  // Plantée il y a 4 jours, arrosée il y a 2 et 1 jours : le troisième jour fait un cran.
+  // Plantée il y a 4 jours, arrosée il y a 2 et 1 jours (anciennes habitudes, règle de base).
   await seedJournal(page, [
     choice("plante", now, 4),
     habit("arrose-1", now, 2),
@@ -133,38 +135,44 @@ test("/jardin : déclarer mes habitudes, arroser d'un toucher, une plante avance
   await expect(section).toBeVisible();
   expect(await progress(page)).toEqual([1]);
 
-  // Aucune habitude déclarée : la liste est ouverte.
+  // Premier passage : la liste à cases, confirmée par la barre fixe.
   await section.getByLabel("Je me déplace à vélo").check();
+  const bar = page.getByRole("region", { name: "Tes habitudes" });
+  await expect(bar).toContainText("1 habitude choisie");
+  await expectNoAxeViolations(page);
+  await bar.getByRole("button", { name: "Valider" }).click();
   expect(
     await page.evaluate(() => localStorage.getItem("lpdc:habitudes:v1")),
   ).toBe('{"version":1,"gestures":["velo"]}');
-  await expectNoAxeViolations(page);
+  await expect(bar).toHaveCount(0);
 
-  await section.getByRole("button", { name: "J’ai tenu : à vélo" }).click();
+  // Toucher l'icône : jour arrosé (toutes les plantes) + arrosage bonus (cette plante).
+  const velo = section.getByRole("button", {
+    name: "À vélo : arroser une plante",
+  });
+  await velo.click();
   await expect(
-    page
-      .locator("p[role=status]")
-      .filter({ hasText: "1 plante avance d’un cran" }),
+    page.locator("p[role=status]").filter({ hasText: /^Tu as arrosé / }),
   ).toBeAttached();
   await expect.poll(() => progress(page)).toEqual([2]);
   // Une habitude ne se compte pas comme un choix « retrouvé ».
   await expect(page.getByText(/Ton jardin est de retour/)).toHaveCount(0);
 
-  // Une deuxième habitude le même jour : déjà arrosé, rien ne change.
-  await section.getByRole("button", { name: "J’ai tenu : à vélo" }).click();
-  await expect(
-    page
-      .locator("p[role=status]")
-      .filter({ hasText: "déjà arrosé aujourd’hui" }),
-  ).toBeAttached();
+  // Arrosée aujourd'hui : grisée, désactivée jusqu'à minuit.
+  const done = section.getByRole("button", {
+    name: "À vélo : arrosée aujourd’hui",
+  });
+  await expect(done).toHaveAttribute("aria-disabled", "true");
+  // Toucher quand même : rien de plus n'est noté.
+  await done.click({ force: true });
+  const habits = (await journal(page)).filter((e) => e.kind === "habit");
+  expect(habits).toHaveLength(3);
+  expect(habits.at(-1)).toMatchObject({ gesture: "velo", plant: "plante" });
   expect(await progress(page)).toEqual([2]);
-  expect((await journal(page)).filter((e) => e.kind === "habit")).toHaveLength(
-    4,
-  );
 
   // Carnet : filtre « Habitudes tenues ».
   await page.goto("/jardin/carnet?choix=habitudes");
-  await expect(page.getByText("4 choix affichés")).toBeVisible();
+  await expect(page.getByText("3 choix affichés")).toBeVisible();
 });
 
 test("/comparer : une habitude déclarée se propose sans comparaison", async ({
@@ -208,6 +216,7 @@ test("au clavier : choisir une habitude et la noter", async ({
     "WebKit ne parcourt pas les liens avec Tab",
   );
   await page.goto("/comparer?habitude=");
+  await waitForHydration(page.getByRole("button", { name: "Eau du robinet" }));
   await tabTo(page, "Eau du robinet");
   await page.keyboard.press("Enter");
   await tabTo(page, "Je l’ai fait aujourd’hui");

@@ -7,6 +7,7 @@ import type {
   HabitEntry,
   JournalEntry,
 } from "@/lib/data/types";
+import { wateringTarget } from "@/lib/garden/model";
 import { afterEntryAdded } from "@/lib/sync/browser";
 import { getBrowserStore } from "./browser";
 import { createEntry, createHabitEntry, type NewEntry } from "./entry";
@@ -93,7 +94,12 @@ export function useJournal(): UseJournal {
   }, []);
 
   const addHabit = useCallback((gesture: string) => {
-    const entry = createHabitEntry(gesture);
+    // Plante arrosée en bonus, choisie maintenant d'après le carnet tel qu'il est.
+    const now = new Date();
+    const entry = createHabitEntry(gesture, {
+      now,
+      plant: wateringTarget(getBrowserStore().getEntries(), gesture, now),
+    });
     getBrowserStore().add(entry);
     afterEntryAdded(entry);
     return entry;

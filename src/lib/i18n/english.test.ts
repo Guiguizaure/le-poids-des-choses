@@ -241,9 +241,12 @@ describe("jardin en anglais", () => {
       featured: null,
       plantCount: 3,
       nextStepIn: 2,
-    } as WaterReveal;
+      target: null,
+      targetMoved: false,
+      targetToNext: null,
+    };
     expect(wateringMessage(reveal, "en")).toBe(
-      "Your garden’s been watered. 2 more watered days until the next step.",
+      "Your garden’s been watered. 2 more waterings until the next step.",
     );
   });
 });

@@ -43,7 +43,13 @@ export function HabitResult({
     entry.id,
     new Date(entry.date),
   );
-  const featured = reveal?.featured ?? null;
+  // La plante arrosée en bonus passe d'abord si elle avance.
+  const featured =
+    reveal?.target && reveal.targetMoved
+      ? reveal.target
+      : (reveal?.featured ?? null);
+  // Rien n'avance encore : l'arrosoir si le jardin est arrosé, sinon le picto de l'habitude.
+  const watered = reveal !== null && (reveal.target !== null || reveal.newDay);
 
   const reduceRef = useMotion(cardRef, () => {});
   useGSAP(
@@ -99,7 +105,7 @@ export function HabitResult({
               aria-hidden
             >
               <Illustration
-                name={pictoFor(entry.gesture)}
+                name={watered ? "picto-arrosoir" : pictoFor(entry.gesture)}
                 className="size-16"
               />
             </div>

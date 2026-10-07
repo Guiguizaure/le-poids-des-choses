@@ -192,3 +192,17 @@ export async function expectDidYouKnow(box: Locator) {
     await expect(link).toHaveCSS("color", "rgb(255, 255, 255)");
   }
 }
+
+/**
+ * Attend que React ait pris la main sur l'élément (gestionnaires d'événements branchés) :
+ * une touche pressée avant l'hydratation serait perdue, surtout sous charge.
+ */
+export async function waitForHydration(locator: Locator) {
+  await expect
+    .poll(() =>
+      locator.evaluate((element) =>
+        Object.keys(element).some((key) => key.startsWith("__reactProps")),
+      ),
+    )
+    .toBe(true);
+}
