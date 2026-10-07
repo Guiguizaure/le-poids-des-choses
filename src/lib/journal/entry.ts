@@ -66,9 +66,14 @@ export function createEntry(
 /** Crée une entrée « habitude » : un geste tenu, sans comparaison ni kg. */
 export function createHabitEntry(
   gesture: string,
-  { now = new Date(), id = newEntryId() }: { now?: Date; id?: string } = {},
+  {
+    now = new Date(),
+    id = newEntryId(),
+    plant = null,
+  }: { now?: Date; id?: string; plant?: string | null } = {},
 ): HabitEntry {
   if (!isHabitGesture(gesture))
     throw new Error(`Ce geste ne se note pas en habitude : ${gesture}`);
-  return { kind: "habit", id, date: now.toISOString(), gesture };
+  // `plant` toujours présent sur une nouvelle habitude (arrosage ciblé), même null.
+  return { kind: "habit", id, date: now.toISOString(), gesture, plant };
 }

@@ -11,6 +11,8 @@ suit les saisons et l'heure, et reçoit des visiteurs. En français (racine) et 
 
 - Gel des fonctionnalités : plus aucune nouvelle fonctionnalité jusqu'à la sortie de la
   version anglaise et de l'étude de cas ; seulement corrections, traduction et finitions.
+  Exceptions validées par l'utilisateur : le lot « Espèces », puis la refonte des habitudes
+  (arrosage ciblé, `feat/habitudes-arrosage`), dernier gros lot avant les testeurs.
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
   (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
@@ -290,14 +292,15 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
     pure : `toggleGesture`, `isSelectable`) ; dès le premier choix, les gestes d'une autre
     unité sont grisés ; retoucher un geste le retire ; un objet ouvre directement 03b.
-    Deux gestes choisis : barre fixe en bas (`CompareBar` : « Voiture thermique vs Vélo » et
+    Deux gestes choisis : barre fixe en bas (`CompareBar`, sur `StickyBar`, barre de
+    confirmation commune aussi utilisée par « Mes habitudes » : « Voiture thermique vs Vélo » et
     « Comparer », région `aria-live="polite"` toujours présente, jamais de focus pris), en
     plus du bouton de la page (qui reste le premier au clavier) ; elle part dès qu'un geste
     est retiré ; tant qu'elle est là, la marge du bas de `body` et `scroll-padding-bottom` gardent sa hauteur
     (zone sûre iOS comprise, `env(safe-area-inset-bottom)`) ; `animate-bar-in`, coupée en
     mouvement réduit. Pas de barre au duel objet (03b). Avec le bandeau de langue, la barre
     s'empile juste au-dessus (`--language-banner-space`, publiée par `LanguageBanner`) et la
-    marge du bas couvre les deux (`--compare-bar-space` + `--language-banner-space`,
+    marge du bas couvre les deux (`--sticky-bar-space` + `--language-banner-space`,
     `globals.css`).
   - `?a=tgv` : premier geste choisi ; `?a=tgv&b=avion&q=50` : duel ;
     `?objet=jean&option=occasion&colis=1` : duel objet. URL invalide → premier choix avec
@@ -343,7 +346,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - Carnet : `localStorage`, clé versionnée `lpdc:journal:v1` (`{ version: 1, entries }`).
   Deux sortes d'entrées (`JournalEntry = ComparisonEntry | HabitEntry`) : comparaison, SANS
   champ `kind` (les entrées existantes ne sont jamais réécrites : leur empreinte changerait
-  sur le compte) ; habitude `{ kind: "habit", id, date, gesture }`, refusée si elle porte
+  sur le compte) ; habitude `{ kind: "habit", id, date, gesture, plant? }` (`plant` : id de la
+  plante arrosée en bonus, ou null ; absent sur les habitudes d'avant l'arrosage ciblé, qui
+  restent lisibles ; une autre valeur rend l'entrée illisible), refusée si elle porte
   `avoidedKg`, `gestureA`, `gestureB`, `chosen`, `quantity`, `modeA` ou `modeB` ; autre
   `kind` → entrée illisible (mise de côté). Même format, même clé, synchro et D1 inchangées
   (payload JSON, aucune migration).
@@ -381,10 +386,21 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - assoupi après 21 jours sans entrée (habitude comprise) : brume, oiseau/escargot/hérisson
     endormis, autres animaux partis, ni balancement ni vent ; réveil à l'entrée suivante ;
   - arrosage (`watering.ts`) : un jour arrosé = un jour (heure de Paris) avec au moins une
-    habitude ; chaque plante avance d'un cran tous les `WATER_DAYS_PER_STEP` (3, provisoire)
-    jours arrosés depuis sa plantation : stade (pousse → jeune → grand / fleurie), puis
-    épanouissement 1 à 3 (`bloom`). Emplacement fixé au stade de départ. Jamais de
-    régression (test de propriété). Jardin sans plante : rien ne pousse, message ;
+    habitude ; règle de base, pour toutes les habitudes : chaque jour arrosé compte pour
+    toutes les plantes plantées avant lui. Arrosage ciblé, en BONUS : une nouvelle habitude
+    porte sa plante cible (`plant`), qui reçoit un arrosage de plus, au plus un par plante et
+    par jour. Compteur d'une plante (`waterCount`) = jours arrosés depuis sa plantation
+    (`wateredDays`) + arrosages bonus (`bonusDays`) ; un cran tous les `WATER_DAYS_PER_STEP`
+    (3, provisoire) : stade (pousse → jeune → grand / fleurie), puis épanouissement 1 à 3
+    (`bloom`). Cible (`wateringTarget`, choisie quand l'habitude est notée par
+    `useJournal().addHabit`, puis enregistrée : une entrée synchronisée plus tard ne la
+    change jamais) : parmi les plantes qui peuvent encore avancer et sans bonus aujourd'hui,
+    la moins avancée, puis la plus proche de son prochain cran, puis la plus ancienne ; null
+    si la même habitude est déjà notée aujourd'hui, jardin vide ou tout épanoui. Garanties
+    testées (`arrosage.test.ts`) : aucun recul, jamais moins qu'avec la règle de base seule,
+    empreinte de référence inchangée. Emplacement fixé au stade de départ. Jardin sans
+    plante : rien ne pousse, message ; message ciblé « Tu as arrosé le pommier : il grandira
+    au prochain arrosage. » (pronom de la fiche d'espèce, `pronoun`) ;
   - espèces (`species.ts`) : dessins, épanouissement (un seul groupe `epanoui-N` affiché),
     calques de feuillage, caduc / persistant, couleur par saison, `bloomRestsInWinter`
     (l'épanouissement dort de décembre à février, niveau gardé : caducs et les trois fleurs à
@@ -501,12 +517,25 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   plus légère que son alternative, testé). Où : /comparer (« Noter une habitude »,
   `?habitude=` puis `?habitude=velo`, « Je l’ai fait aujourd’hui » → `HabitResult` →
   `/jardin?arrose=<id>`), raccourci quand le premier geste touché est une habitude
-  déclarée ; /jardin section « Mes habitudes » (`#habitudes` : « J’ai tenu : … » d'un
-  toucher, déclaration) ; « Raconte ta journée » (choix « Comparer » / « Habitude tenue » par
+  déclarée ; /jardin section « Mes habitudes » (`#habitudes`, pastille `badge-arrosage` :
+  premier passage = liste à cases + « Valider » dans la page et dans la barre fixe
+  `StickyBar` ; ensuite une icône par habitude choisie, « Touche une habitude tenue
+  aujourd’hui pour arroser une plante. », bouton « À vélo : arroser une plante », puis
+  « À vélo : arrosée aujourd’hui » grisé, coché, `aria-disabled` jusqu'à minuit (heure de
+  Paris) ; toucher = `addHabit` + l'arrosoir `arrosage.svg` au-dessus de la plante visée
+  (gouttes animées, rien en mouvement réduit), jardin ramené à l'écran ; « Modifier mes
+  habitudes », « Annuler ») ; « Raconte ta journée » (choix « Comparer » / « Habitude tenue » par
   geste de la table, habitude par défaut si déclarée ; jamais décidé par l'IA). « Mes
   habitudes » : `lpdc:habitudes:v1` (`{ version: 1, gestures }`), sur l'appareil seulement ;
   déclarer ne note rien. Carnet : « arrosé », filtre `choix=habitudes`, tri par écart :
   habitudes à la fin ; « N jours arrosés cette semaine » sous le graphique.
+- Astuces de première utilisation (`FirstHint`, `src/lib/hints`) : une seule par situation,
+  la première fois : jardin vide (/jardin, sous « Faire pousser une plante »), première
+  plante (feuille des espèces, grille), premier arrosage (sous les icônes d'habitudes). Fond
+  soleil, « Astuce · … », croix « Fermer l’astuce » ; vue = fermée ou action faite (plante
+  plantée, feuille fermée, premier arrosage) ; mémorisée sous `lpdc:indices:v1`
+  (`{ version: 1, seen }`, repli en mémoire) ; région `polite` remplie après l'hydratation,
+  jamais de focus pris.
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile

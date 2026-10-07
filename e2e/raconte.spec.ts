@@ -526,7 +526,7 @@ test("plusieurs plantes : une place par plante, la même espèce deux fois, reti
   const picker = page.getByRole("dialog", { name: "Que veux-tu planter ?" });
   await expect(picker).toBeVisible();
   const counter = picker.locator("[data-plant-counter]");
-  const live = picker.locator('[aria-live="polite"]');
+  const live = picker.locator("[data-plant-counter-live]");
   const plantAll = picker.getByRole("button", { name: "Planter", exact: true });
   await expect(counter).toHaveText("0 / 2 plantes");
   await expect(plantAll).toHaveAttribute("aria-disabled", "true");
@@ -622,7 +622,7 @@ test("en anglais : several plants, one slot each", async ({
   const counter = picker.locator("[data-plant-counter]");
   await expect(counter).toHaveText("0 / 2 plants");
   await picker.getByRole("button", { name: "Add the apple tree" }).click();
-  await expect(picker.locator('[aria-live="polite"]')).toHaveText(
+  await expect(picker.locator("[data-plant-counter-live]")).toHaveText(
     "1 of 2 plants chosen",
   );
   await picker.getByRole("button", { name: "Add the tulip" }).click();

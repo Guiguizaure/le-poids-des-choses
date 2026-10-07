@@ -8,6 +8,8 @@ export type SpeciesSheet = {
   name: string;
   /** Avec l'article, en milieu de phrase (« l’olivier » ; anglais : « olive tree »). */
   inSentence: string;
+  /** Pronom sujet (« il », « elle », « elles » ; anglais : « it », « they »). */
+  pronoun: string;
   /** Feuillage et floraison (« Persistant · fleurit à la fin du printemps »). */
   type: string;
   /** Version courte, sur la carte (« Caduc · Fleurit au printemps »). */
@@ -21,6 +23,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-1": {
       name: "Pommier",
       inSentence: "le pommier",
+      pronoun: "il",
       type: "Caduc · fleurit au printemps",
       short: "Caduc · Fleurit au printemps",
       description:
@@ -31,6 +34,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-2": {
       name: "Citronnier",
       inSentence: "le citronnier",
+      pronoun: "il",
       type: "Persistant · fleurit plusieurs fois par an",
       short: "Persistant · Fleurit plusieurs fois",
       description:
@@ -41,6 +45,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-3": {
       name: "Cerisier",
       inSentence: "le cerisier",
+      pronoun: "il",
       type: "Caduc · fleurit au printemps",
       short: "Caduc · Fleurit au printemps",
       description:
@@ -51,6 +56,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-1": {
       name: "Églantine",
       inSentence: "l’églantine",
+      pronoun: "elle",
       type: "Rosier sauvage · fleurit de la fin du printemps à l’été",
       short: "Rosier sauvage · Fleurit en été",
       description:
@@ -61,6 +67,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-2": {
       name: "Tulipe",
       inSentence: "la tulipe",
+      pronoun: "elle",
       type: "Bulbe · fleurit au printemps",
       short: "Bulbe · Fleurit au printemps",
       description:
@@ -71,6 +78,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-3": {
       name: "Herbes folles",
       inSentence: "les herbes folles",
+      pronoun: "elles",
       type: "Vivaces · fleurissent au printemps et en été",
       short: "Vivaces · Printemps et été",
       description:
@@ -81,6 +89,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-4": {
       name: "Olivier",
       inSentence: "l’olivier",
+      pronoun: "il",
       type: "Persistant · fleurit à la fin du printemps",
       short: "Persistant · Fleurit au printemps",
       description:
@@ -91,6 +100,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-5": {
       name: "Sapin",
       inSentence: "le sapin",
+      pronoun: "il",
       type: "Persistant · conifère",
       short: "Persistant · Conifère",
       description:
@@ -101,6 +111,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-6": {
       name: "Figuier",
       inSentence: "le figuier",
+      pronoun: "il",
       type: "Caduc",
       short: "Caduc",
       description:
@@ -111,6 +122,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-4": {
       name: "Marguerite",
       inSentence: "la marguerite",
+      pronoun: "elle",
       type: "Vivace · fleurit de la fin du printemps à l’été",
       short: "Vivace · Fleurit en été",
       description:
@@ -121,6 +133,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-5": {
       name: "Lavande",
       inSentence: "la lavande",
+      pronoun: "elle",
       type: "Arbrisseau persistant · fleurit en été",
       short: "Arbrisseau · Fleurit en été",
       description:
@@ -131,6 +144,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-6": {
       name: "Pissenlit",
       inSentence: "le pissenlit",
+      pronoun: "il",
       type: "Vivace · fleurit surtout au printemps",
       short: "Vivace · Fleurit au printemps",
       description:
@@ -143,6 +157,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-1": {
       name: "Apple tree",
       inSentence: "apple tree",
+      pronoun: "it",
       type: "Deciduous · blossoms in spring",
       short: "Deciduous · Blooms in spring",
       description:
@@ -153,6 +168,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-2": {
       name: "Lemon tree",
       inSentence: "lemon tree",
+      pronoun: "it",
       type: "Evergreen · flowers several times a year",
       short: "Evergreen · Blooms several times",
       description:
@@ -163,6 +179,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-3": {
       name: "Cherry tree",
       inSentence: "cherry tree",
+      pronoun: "it",
       type: "Deciduous · blossoms in spring",
       short: "Deciduous · Blooms in spring",
       description:
@@ -173,6 +190,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-1": {
       name: "Dog rose",
       inSentence: "dog rose",
+      pronoun: "it",
       type: "Wild rose · flowers from late spring into summer",
       short: "Wild rose · Blooms in summer",
       description:
@@ -183,6 +201,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-2": {
       name: "Tulip",
       inSentence: "tulip",
+      pronoun: "it",
       type: "Bulb · flowers in spring",
       short: "Bulb · Blooms in spring",
       description: "A cup-shaped flower that rises from a bulb in spring.",
@@ -192,6 +211,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-3": {
       name: "Wild grasses",
       inSentence: "wild grasses",
+      pronoun: "they",
       type: "Perennials · flower in spring and summer",
       short: "Perennials · Spring and summer",
       description:
@@ -201,6 +221,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-4": {
       name: "Olive tree",
       inSentence: "olive tree",
+      pronoun: "it",
       type: "Evergreen · flowers in late spring",
       short: "Evergreen · Blooms in spring",
       description:
@@ -211,6 +232,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-5": {
       name: "Fir tree",
       inSentence: "fir tree",
+      pronoun: "it",
       type: "Evergreen · conifer",
       short: "Evergreen · Conifer",
       description:
@@ -221,6 +243,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "arbre-6": {
       name: "Fig tree",
       inSentence: "fig tree",
+      pronoun: "it",
       type: "Deciduous",
       short: "Deciduous",
       description:
@@ -231,6 +254,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-4": {
       name: "Oxeye daisy",
       inSentence: "oxeye daisy",
+      pronoun: "it",
       type: "Perennial · flowers from late spring into summer",
       short: "Perennial · Blooms in summer",
       description:
@@ -241,6 +265,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-5": {
       name: "Lavender",
       inSentence: "lavender",
+      pronoun: "it",
       type: "Evergreen shrub · flowers in summer",
       short: "Shrub · Blooms in summer",
       description:
@@ -251,6 +276,7 @@ export const SPECIES_SHEETS = defineMessages<Record<string, SpeciesSheet>>(
     "fleur-6": {
       name: "Dandelion",
       inSentence: "dandelion",
+      pronoun: "it",
       type: "Perennial · flowers mostly in spring",
       short: "Perennial · Blooms in spring",
       description:

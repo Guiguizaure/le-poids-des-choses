@@ -19,9 +19,12 @@ import {
   type PlantType,
   type PlantVariant,
 } from "./species";
+import { gardenDay } from "./seasons";
 import {
+  bonusDaysByPlant,
   daysToNextStep,
   MAX_BLOOM,
+  WATER_DAYS_PER_STEP,
   wateredDayCount,
   wateredDaysSince,
   waterings,
@@ -297,8 +300,12 @@ export type GardenPlant = {
   stage: PlantStage;
   /** Épanouissement atteint (0 à 3), une fois adulte ; l'affichage dépend de la saison. */
   bloom: BloomLevel;
-  /** Jours arrosés depuis qu'elle a été plantée. */
+  /** Jours arrosés depuis qu'elle a été plantée (règle de base, toutes les habitudes). */
   wateredDays: number;
+  /** Arrosages bonus reçus (habitudes qui l'ont visée, au plus un par jour). */
+  bonusDays: number;
+  /** Compteur d'arrosage : jours arrosés + arrosages bonus (un cran tous les 3). */
+  waterCount: number;
   slot: Slot;
   box: Box;
 };
@@ -394,14 +401,17 @@ export function buildGarden(
   const unlocked = unlockedAnimals(lightChoiceCount);
 
   const watered = waterings(sorted);
+  const bonus = bonusDaysByPlant(sorted);
 
   return {
     plants: plants
       .map(({ plantedAt, ...plant }) => {
-        // Arrosage : un cran tous les WATER_DAYS_PER_STEP jours arrosés depuis la plantation,
-        // d'abord vers l'âge adulte, puis vers l'épanouissement.
+        // Arrosage : un cran tous les WATER_DAYS_PER_STEP arrosages (jours arrosés depuis la
+        // plantation + arrosages bonus), d'abord vers l'âge adulte, puis vers l'épanouissement.
         const wateredDays = wateredDaysSince(watered, plantedAt);
-        const progress = plant.level + wateringSteps(wateredDays);
+        const bonusDays = bonus.get(plant.id)?.size ?? 0;
+        const waterCount = wateredDays + bonusDays;
+        const progress = plant.level + wateringSteps(waterCount);
         const max = maxLevel(plant.kind);
         const level = Math.min(progress, max) as GrowthLevel;
         const bloom = Math.min(
@@ -413,6 +423,8 @@ export function buildGarden(
           level,
           bloom,
           wateredDays,
+          bonusDays,
+          waterCount,
           stage: stageFor(plant.kind, level),
           box: boxAt(
             illustrationFor(plant.kind, level),
@@ -528,8 +540,14 @@ export function revealForEntry(
 // ---- Arrosage d'une habitude --------------------------------------------------------------
 
 export type WaterReveal = {
-  /** Premier arrosage de ce jour (sinon le jour était déjà arrosé : rien ne change). */
+  /** Premier arrosage de ce jour (sinon le jour était déjà arrosé : seul le bonus compte). */
   newDay: boolean;
+  /** Plante arrosée en bonus par cette habitude, à son nouvel état (null : aucune). */
+  target: GardenPlant | null;
+  /** Vrai si la plante cible avance d'un cran grâce à cette habitude. */
+  targetMoved: boolean;
+  /** Arrosages avant le prochain cran de la plante cible (null : aucune, ou tout épanouie). */
+  targetToNext: number | null;
   /** Plantes qui avancent d'un cran grâce à cette habitude, à leur nouvel état. */
   moved: GardenPlant[];
   /** Plante à montrer : la plus avancée de celles qui bougent (la plus ancienne à égalité). */
@@ -575,13 +593,66 @@ export function waterRevealForEntry(
     )[0] ?? null;
   const growing = after.plants.filter(canProgress);
   const nextStepIn = growing.length
-    ? Math.min(...growing.map((plant) => daysToNextStep(plant.wateredDays)))
+    ? Math.min(...growing.map((plant) => daysToNextStep(plant.waterCount)))
     : null;
+  const target =
+    typeof entry.plant === "string"
+      ? (after.plants.find((plant) => plant.id === entry.plant) ?? null)
+      : null;
   return {
     newDay,
+    target,
+    targetMoved:
+      target !== null && moved.some((plant) => plant.id === target.id),
+    targetToNext:
+      target && canProgress(target) ? daysToNextStep(target.waterCount) : null,
     moved,
     featured,
     plantCount: after.plants.length,
     nextStepIn,
   };
+}
+
+/**
+ * Plante à arroser en bonus quand l'habitude `gesture` est notée maintenant : parmi les
+ * plantes qui peuvent encore avancer et n'ont pas eu leur bonus aujourd'hui (heure de Paris),
+ * la moins avancée, puis la plus proche de son prochain cran, puis la plus ancienne. Null si
+ * cette habitude est déjà notée aujourd'hui (elle n'arrose qu'une fois par jour), ou si aucune
+ * plante ne peut en profiter. Choisie une fois, puis enregistrée dans l'habitude (`plant`) :
+ * une entrée arrivée plus tard par la synchro ne change jamais une cible passée.
+ */
+export function wateringTarget(
+  entries: readonly JournalEntry[],
+  gesture: string,
+  now: Date,
+): string | null {
+  const today = gardenDay(now);
+  if (!today) return null;
+  const sorted = sortEntries(entries);
+  if (
+    sorted.some(
+      (entry) =>
+        isHabit(entry) &&
+        entry.gesture === gesture &&
+        gardenDay(entry.date) === today,
+    )
+  )
+    return null;
+  const bonusToday = new Set(
+    [...bonusDaysByPlant(sorted)]
+      .filter(([, days]) => days.has(today))
+      .map(([plant]) => plant),
+  );
+  const planted = new Map(sorted.map((entry, index) => [entry.id, index]));
+  const candidates = buildGarden(sorted, now).plants.filter(
+    (plant) => canProgress(plant) && !bonusToday.has(plant.id),
+  );
+  candidates.sort(
+    (a, b) =>
+      plantProgress(a) - plantProgress(b) ||
+      (b.waterCount % WATER_DAYS_PER_STEP) -
+        (a.waterCount % WATER_DAYS_PER_STEP) ||
+      (planted.get(a.id) ?? 0) - (planted.get(b.id) ?? 0),
+  );
+  return candidates[0]?.id ?? null;
 }

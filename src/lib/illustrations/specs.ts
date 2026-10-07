@@ -269,6 +269,23 @@ export const ILLUSTRATION_SPECS = {
     parts: ["eclat-traits"],
   },
 
+  // Arrosage ciblé (« Mes habitudes ») : l'arrosoir penche au-dessus de la plante arrosée, les
+  // gouttes tombent l'une après l'autre ; pastille de la section ; picto de l'indice.
+  arrosage: {
+    width: 80,
+    height: 80,
+    parts: [
+      "arrosoir",
+      "gouttes",
+      "goutte-1",
+      "goutte-2",
+      "goutte-3",
+      "goutte-4",
+      "goutte-5",
+    ],
+  },
+  "badge-arrosage": { width: 24, height: 24, parts: ["fond", "objet"] },
+  "picto-arrosoir": picto,
   "picto-avion": picto,
   "picto-bus": picto,
   "picto-chaussures": picto,

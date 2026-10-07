@@ -228,7 +228,7 @@ describe("révélation d'un arrosage", () => {
     expect(reveal.nextStepIn).toBe(2);
     expect(wateringTitle(reveal)).toBe("Ton jardin est arrosé");
     expect(wateringMessage(reveal)).toBe(
-      "Ton jardin est arrosé. Encore 2 jours arrosés avant le prochain cran.",
+      "Ton jardin est arrosé. Encore 2 arrosages avant le prochain cran.",
     );
   });
   it("déjà arrosé aujourd'hui : rien ne change, c'est noté", () => {

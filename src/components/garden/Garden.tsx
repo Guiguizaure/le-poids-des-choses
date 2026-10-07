@@ -177,6 +177,81 @@ function Entering({
   );
 }
 
+/** Arrosoir : largeur (unités de scène) et point où tombent les gouttes (part du dessin). */
+const CAN_WIDTH = 46;
+const CAN_DROPS = { x: 0.64, y: 0.9 };
+
+/**
+ * Arrosage ciblé : l'arrosoir apparaît au-dessus de la plante arrosée, penche, et les gouttes
+ * tombent l'une après l'autre, puis tout s'efface (environ 2,4 s). Décoratif : le message dit
+ * quelle plante est arrosée. Jamais rendu en mouvement réduit.
+ */
+function WateringCan({ plant }: { plant: GardenPlant }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduceRef = useMotion(ref, () => {});
+  const centerX = plant.box.x + plant.box.width / 2;
+  const box: Box = {
+    ...plant.box,
+    x: Math.min(
+      SCENE.width - CAN_WIDTH,
+      Math.max(0, centerX - CAN_DROPS.x * CAN_WIDTH),
+    ),
+    y: Math.max(0, plant.box.y - CAN_DROPS.y * CAN_WIDTH),
+    width: CAN_WIDTH,
+  };
+  useGSAP(
+    () => {
+      const element = ref.current;
+      if (!element || reduceRef.current) return;
+      const can = element.querySelector('[data-part="arrosoir"]');
+      const drops = element.querySelectorAll('[data-part^="goutte-"]');
+      gsap
+        .timeline()
+        .fromTo(
+          element,
+          { autoAlpha: 0, y: -8 },
+          { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        )
+        .fromTo(
+          can,
+          { rotation: -16, svgOrigin: "30 36" },
+          {
+            rotation: 0,
+            svgOrigin: "30 36",
+            duration: 0.4,
+            ease: "back.out(2)",
+          },
+          "<",
+        )
+        .fromTo(
+          drops,
+          { y: -10, autoAlpha: 0 },
+          {
+            y: 6,
+            autoAlpha: 1,
+            duration: 0.42,
+            ease: "power1.in",
+            stagger: { each: 0.1, repeat: 2 },
+          },
+          "-=0.1",
+        )
+        .to(element, { autoAlpha: 0, duration: 0.4 }, "+=0.2");
+    },
+    { scope: ref },
+  );
+  return (
+    <div
+      ref={ref}
+      className="pointer-events-none absolute"
+      style={{ ...place(box), opacity: 0 }}
+      data-watering={plant.id}
+      aria-hidden
+    >
+      <Illustration name="arrosage" className="block h-auto w-full" />
+    </div>
+  );
+}
+
 const NONE: readonly string[] = [];
 
 /** Un visiteur à sa place (cadre en unités de scène). */
@@ -451,6 +526,9 @@ export function Garden({
             </div>
           ),
         )}
+        {revealed && watered?.target && !reduced ? (
+          <WateringCan key={revealed} plant={watered.target} />
+        ) : null}
         <SeasonFall season={season} still={garden.asleep} />
         <div
           className="pointer-events-none absolute inset-x-0 top-1/2 transition-opacity duration-1000"

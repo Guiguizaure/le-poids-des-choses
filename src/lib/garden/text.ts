@@ -3,7 +3,15 @@
 import type { Locale } from "@/lib/i18n/routes";
 import { GARDEN_TEXT } from "@/lib/i18n/messages/garden";
 import { ANIMAL_NAMES, IN_SEASON } from "@/lib/i18n/messages/names";
-import type { AnimalKind, GardenState, WaterReveal } from "./model";
+import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
+import {
+  maxLevel,
+  type AnimalKind,
+  type GardenPlant,
+  type GardenState,
+  type WaterReveal,
+} from "./model";
+import { speciesFor } from "./species";
 import type { Season } from "./seasons";
 
 /** « Encore 2 choix légers avant l’arrivée de la coccinelle » (vide quand tous sont là). */
@@ -109,10 +117,41 @@ export function wateringMessage(
 ): string {
   const t = GARDEN_TEXT[locale].watering;
   if (reveal.plantCount === 0) return t.noPlant;
+  if (reveal.target) return targetMessage(reveal, reveal.target, locale);
   if (!reveal.newDay) return t.already;
   if (reveal.moved.length > 0) return t.moved(reveal.moved.length);
   if (reveal.nextStepIn === null) return t.allBloomed;
   return t.next(reveal.nextStepIn);
+}
+
+/**
+ * Arrosage ciblé : « Tu as arrosé le pommier : il grandira au prochain arrosage. », suivi des
+ * autres plantes qui avancent grâce au jour arrosé (règle de base).
+ */
+function targetMessage(
+  reveal: WaterReveal,
+  target: GardenPlant,
+  locale: Locale,
+): string {
+  const t = GARDEN_TEXT[locale].watering;
+  const sheet = SPECIES_SHEETS[locale][speciesFor(target.kind).id];
+  const others = reveal.moved.filter((plant) => plant.id !== target.id).length;
+  const suffix = others > 0 ? t.othersMoved(others) : "";
+  if (reveal.targetMoved)
+    return (
+      t.targetMoved(sheet.inSentence, sheet.pronoun, target.bloom > 0) + suffix
+    );
+  if (reveal.targetToNext === null) return t.allBloomed + suffix;
+  // Prochain cran : l'âge adulte d'abord, puis l'épanouissement.
+  const bloomNext = target.level >= maxLevel(target.kind);
+  return (
+    t.targetNext(
+      sheet.inSentence,
+      sheet.pronoun,
+      bloomNext,
+      reveal.targetToNext,
+    ) + suffix
+  );
 }
 
 /** Titre de la carte après une habitude : « Une fleur s’épanouit », « Un arbre grandit »… */
@@ -121,7 +160,9 @@ export function wateringTitle(
   locale: Locale = "fr",
 ): string {
   const t = GARDEN_TEXT[locale].watering;
-  const plant = reveal.featured;
+  // La plante arrosée en bonus passe d'abord si elle avance.
+  const plant =
+    reveal.target && reveal.targetMoved ? reveal.target : reveal.featured;
   if (!plant) return reveal.newDay ? t.titleWatered : t.titleNoted;
   const tree = plant.kind.type === "tree";
   return plant.bloom > 0 ? t.bloom(tree) : t.grow(tree);

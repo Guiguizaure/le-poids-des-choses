@@ -52,9 +52,22 @@ describe("entrée habitude : format et validation", () => {
       id: "h",
       date: NOW.toISOString(),
       gesture: "repas-vegetarien",
+      plant: null,
     });
     expect(isJournalEntry(entry)).toBe(true);
     expect("avoidedKg" in entry).toBe(false);
+  });
+  it("arrosage ciblé : `plant` est l'id d'une plante ou null ; les anciennes habitudes, sans ce champ, restent lisibles", () => {
+    const base = habit("h", NOW.toISOString());
+    expect(isJournalEntry(base)).toBe(true);
+    expect("plant" in base).toBe(false);
+    expect(isJournalEntry({ ...base, plant: "e-1" })).toBe(true);
+    expect(isJournalEntry({ ...base, plant: null })).toBe(true);
+    expect(
+      createHabitEntry("velo", { now: NOW, id: "h2", plant: "e-1" }).plant,
+    ).toBe("e-1");
+    for (const bad of ["", 3, true, {}, []])
+      expect(isJournalEntry({ ...base, plant: bad })).toBe(false);
   });
   it("seuls les gestes de la table HABITS se notent en habitude", () => {
     expect(() => createHabitEntry("avion")).toThrow(/habitude/);
