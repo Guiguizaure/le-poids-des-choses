@@ -1729,3 +1729,19 @@ Relecture de la PR #30 (même jour) :
   tests ont échoué sur « ENOSPC: no space left on device » puis sont passés à la relance (le
   compte, en série). Les 15 Go de `/private/tmp/claude-501` viennent d'autres sessions et le
   magasin pnpm fait 9,3 Go (`pnpm store prune`) : laissés à Guillaume.
+
+### 2026-10-07 — Cache des navigateurs Playwright en CI (chore/ci-cache-playwright)
+
+Demande de Guillaume : l'installation des navigateurs Playwright avait pris 8 à 18 min sur le
+runner (environ 1 min avant), près de la limite de 20 min du job.
+
+- `actions/cache@v6` sur `~/.cache/ms-playwright`. Clé : `playwright-<système>-<image du
+runner>-<version exacte de @playwright/test installée>`, par exemple
+  `playwright-Linux-ubuntu24-1.63.0` (la version est lue dans `node_modules`, pas dans la plage
+  `^1.63.0` de package.json).
+- Cache trouvé : seulement `playwright install-deps chromium webkit` (paquets système, qui ne
+  se mettent pas en cache) ; sinon, installation complète `install --with-deps`.
+- Limite du job : 20 → 30 min, filet de sécurité.
+- **À savoir** : la clé change avec la version de Playwright (et avec l'image Ubuntu). La
+  première CI après une mise à jour de Playwright retélécharge les navigateurs et sera donc
+  plus lente : c'est normal, les suivantes reprennent le cache.

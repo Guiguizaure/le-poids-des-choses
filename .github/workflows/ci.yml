@@ -21,7 +21,8 @@ jobs:
   qualite:
     name: Lint, tests, build, bout en bout
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # 30 min : filet de sécurité (l'installation des navigateurs a déjà pris 18 min sans cache).
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
 
@@ -50,8 +51,30 @@ jobs:
         env:
           STRICT_DATA: "1"
 
-      - name: Navigateurs Playwright
+      # Navigateurs Playwright en cache : clé = système du runner (Linux, image ubuntu24) +
+      # version exacte de @playwright/test installée. Une mise à jour de Playwright change la
+      # clé : la première CI qui suit retélécharge tout (plus lente, c'est normal).
+      - name: Version de Playwright
+        id: playwright
+        run: |
+          echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "image=$ImageOS" >> "$GITHUB_OUTPUT"
+
+      - name: Cache des navigateurs Playwright
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.image }}-${{ steps.playwright.outputs.version }}
+
+      - name: Navigateurs Playwright (installation complète)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium webkit
+
+      # Navigateurs déjà là : seules les dépendances système (paquets apt) restent à poser.
+      - name: Navigateurs Playwright (dépendances système seulement)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium webkit
 
       - name: Tests de bout en bout (Chromium, WebKit)
         run: pnpm e2e
