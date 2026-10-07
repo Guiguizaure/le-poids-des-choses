@@ -287,6 +287,15 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
     pure : `toggleGesture`, `isSelectable`) ; dès le premier choix, les gestes d'une autre
     unité sont grisés ; retoucher un geste le retire ; un objet ouvre directement 03b.
+    Deux gestes choisis : barre fixe en bas (`CompareBar` : « Voiture thermique vs Vélo » et
+    « Comparer », région `aria-live="polite"` toujours présente, jamais de focus pris), en
+    plus du bouton de la page (qui reste le premier au clavier) ; elle part dès qu'un geste
+    est retiré ; tant qu'elle est là, la marge du bas de `body` et `scroll-padding-bottom` gardent sa hauteur
+    (zone sûre iOS comprise, `env(safe-area-inset-bottom)`) ; `animate-bar-in`, coupée en
+    mouvement réduit. Pas de barre au duel objet (03b). Avec le bandeau de langue, la barre
+    s'empile juste au-dessus (`--language-banner-space`, publiée par `LanguageBanner`) et la
+    marge du bas couvre les deux (`--compare-bar-space` + `--language-banner-space`,
+    `globals.css`).
   - `?a=tgv` : premier geste choisi ; `?a=tgv&b=avion&q=50` : duel ;
     `?objet=jean&option=occasion&colis=1` : duel objet. URL invalide → premier choix avec
     `?lien=invalide`. Navigation par `history.pushState` / `replaceState` (Next les
@@ -462,7 +471,7 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     d'ambiance démarrent deux images après l'affichage (`useMotion`) ;
   - micro-interactions (CSS, `globals.css`) : `press` (survol / toucher), `animate-enter`
     (apparition des pages et étapes, depuis une opacité de 0,35 pour ne pas retarder le
-    LCP), `animate-pop` (badges), `animate-select` (cartes choisies) — toujours avec
+    LCP), `animate-pop` (badges), `animate-select` (cartes choisies), `animate-bar-in` (barre « Comparer ») — toujours avec
     `motion-reduce:animate-none` ; compteur de l'écart cumulé (`CountUp`) ;
   - contraste : `src/lib/a11y/contrast.test.ts` vérifie chaque paire texte / fond du thème
     (à compléter si une nouvelle paire apparaît).

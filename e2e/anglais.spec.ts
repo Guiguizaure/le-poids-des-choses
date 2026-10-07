@@ -130,7 +130,7 @@ test("comparaison complète en anglais, jusqu'au jardin", async ({ page }) => {
   await expect(page).toHaveURL(/\/en\/compare$/);
   await page.getByRole("button", { name: /^TGV/ }).click();
   await page.getByRole("button", { name: /^Plane/ }).click();
-  await page.getByRole("button", { name: "Compare" }).click();
+  await page.getByRole("main").getByRole("button", { name: "Compare" }).click();
   await expect(page).toHaveURL(/\/en\/compare\?a=tgv&b=avion&q=/);
 
   await expect(

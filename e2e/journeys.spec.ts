@@ -14,7 +14,11 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   await page.getByRole("link", { name: "Commencer" }).first().click();
   await page.getByRole("button", { name: /^TGV/ }).click();
   await page.getByRole("button", { name: /^Avion/ }).click();
-  await page.getByRole("button", { name: "Comparer" }).click();
+  // Le bouton de la page (la barre fixe en porte un second).
+  await page
+    .getByRole("main")
+    .getByRole("button", { name: "Comparer" })
+    .click();
 
   await expect(
     page.getByRole("heading", { name: "Lequel pèse le moins ?" }),

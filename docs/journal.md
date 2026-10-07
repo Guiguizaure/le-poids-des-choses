@@ -1597,3 +1597,54 @@ style vert sapin de la fiche d'espèce ; un seul composant partagé pour tout le
 - Bout en bout : helper `expectDidYouKnow` (fond, couleur du texte, du titre et des liens) dans
   `e2e/facts.spec.ts` (duel, duel objet, jardin, en français et en anglais, avec axe),
   `e2e/accessibility.spec.ts` (jardin) et `e2e/especes.spec.ts` (fiche, FR et EN).
+
+### 2026-10-06 — Barre « Comparer » fixe (feat/barre-comparer)
+
+Demande de Guillaume : dans le choix de deux gestes (pas au duel objet), une barre fixe en bas
+de l'écran dès le second choix, qui rappelle les deux gestes et porte « Comparer ».
+
+- `CompareBar` (`src/components/compare`) : « Voiture thermique vs Vélo » et « Comparer »
+  (anglais : « Petrol or diesel car vs Bike », « Compare »), sous le nom de région « Ta
+  comparaison » / « Your comparison ». Elle part dès qu'un geste est retiré et se met à jour
+  si on change de choix.
+- Le bouton de la page reste en place et passe le premier au clavier : la barre est rendue
+  après `<main>`.
+- Lecteurs d'écran : la barre est dans une région `aria-live="polite"` toujours présente ;
+  elle annonce « Voiture thermique et Vélo choisis : tu peux comparer. » (la phrase
+  qu'annonçait déjà le choix des gestes, qui ne la répète plus) ; aucun focus pris.
+- Rien de masqué : tant qu'elle est affichée, sa hauteur mesurée (ResizeObserver) est
+  réservée en bas de `body` et en `scroll-padding-bottom` (le défilement au focus s'arrête
+  au-dessus d'elle) ; zone sûre d'iOS par `env(safe-area-inset-bottom)`. Le site n'a pas
+  `viewport-fit=cover` : Safari garde déjà la page hors de la zone de l'indicateur
+  d'accueil, et la barre suit sans changement si on l'active un jour.
+- Animation `animate-bar-in` (montée de 0,3 s), coupée en mouvement réduit.
+- Bout en bout : `e2e/barre-comparer.spec.ts` (apparition, région polite, focus jamais pris,
+  barre collée en bas, retrait et mise à jour, pied de page au-dessus de la barre, mouvement
+  réduit, pas de barre pour un objet, ordre du clavier, anglais, axe) ; les deux parcours qui
+  touchaient « Comparer » visent maintenant le bouton de la page.
+- Test du compte instable en local, à surveiller s'il revient en CI : « retrouver son jardin
+  depuis l'accueil, sur un appareil vide » (`e2e/compte.spec.ts`) a échoué une fois en local
+  sur les deux navigateurs : après le clic sur le lien d'en-tête (l'adresse connectée), la
+  page restait sur l'accueil au lieu d'aller à `/jardin#compte`. Il est passé à la relance ;
+  un autre test du compte a alors échoué sur une coupure du `wrangler pages dev` local
+  (« Network connection lost »). La CI de la PR #29 est passée. Cause non cherchée.
+
+Relecture de la PR #29 : bandeau de langue et barre empilés au lieu d'être superposés.
+
+- Choix : la barre se pose juste au-dessus du bandeau. Le bandeau est déjà là quand on
+  choisit le second geste ; il ne bouge pas, et la barre monte dans la place libre au lieu de
+  pousser vers le haut un élément qu'on était en train de lire. Le bandeau reste où il est sur
+  toutes les autres pages. La barre et son « Comparer » restent à portée du pouce, juste
+  au-dessus. Bandeau fermé, la barre redescend tout en bas (transition de 0,2 s, aucune en
+  mouvement réduit).
+- Mécanique : le bandeau publie la place qu'il occupe (hauteur + décalage du bas, 1 rem sur
+  grand écran) dans `--language-banner-space`, la barre la sienne dans
+  `--compare-bar-space` (ResizeObserver tous les deux). La barre se place à
+  `bottom: var(--language-banner-space)`. La marge du bas de page et le
+  `scroll-padding-bottom` additionnent les deux tant que la barre est là (`globals.css`,
+  `:has([data-compare-bar])`).
+- Bout en bout : navigateur en anglais sur /comparer, bandeau visible, deux gestes : les deux
+  sont visibles, la barre finit au-dessus du bandeau (aucun chevauchement), la marge couvre
+  les deux, le pied de page reste au-dessus de la barre, axe. Bandeau fermé : la barre reprend
+  le bas de l'écran et la marge ne garde que sa hauteur. En anglais (par le lien du bandeau) :
+  pas de bandeau, barre en bas, axe. Chromium et WebKit.
