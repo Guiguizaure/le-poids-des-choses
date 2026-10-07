@@ -472,7 +472,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - CI GitHub Actions (`.github/workflows/ci.yml`) : lint, tests, build strict
     (`STRICT_DATA=1`), bout en bout à chaque demande de fusion ; actions sur Node 24, Node du
     projet 24 (`.nvmrc`, `engines`), runner épinglé `ubuntu-24.04` (jamais `ubuntu-latest` ;
-    comment le remonter : docs/journal.md) ;
+    comment le remonter : docs/journal.md) ; navigateurs Playwright en cache (clé : système,
+    image du runner, version exacte de `@playwright/test` ; cache trouvé → `install-deps`
+    seulement) ; job limité à 30 min ;
   - `public/_headers` : CSP (scripts et styles en ligne autorisés, nécessaires à l'export
     Next ; Cloudflare Web Analytics autorisé), Referrer-Policy, Permissions-Policy,
     nosniff, cache immuable de `/_next/static/*` ;
