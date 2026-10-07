@@ -1745,3 +1745,21 @@ runner>-<version exacte de @playwright/test installée>`, par exemple
 - **À savoir** : la clé change avec la version de Playwright (et avec l'image Ubuntu). La
   première CI après une mise à jour de Playwright retélécharge les navigateurs et sera donc
   plus lente : c'est normal, les suivantes reprennent le cache.
+- Mesures (PR #31, run 37603246247, même runner `ubuntu-24.04`) :
+
+  | Passage    | Installation des navigateurs                                | Job complet |
+  | ---------- | ----------------------------------------------------------- | ----------- |
+  | Sans cache | 56 s (installation complète)                                | 9 min 38 s  |
+  | Avec cache | 73 s (restauration du cache 5 s + dépendances système 68 s) | 8 min 37 s  |
+
+  Cache enregistré : `playwright-Linux-ubuntu24-1.63.0`, 366 Mo.
+
+- **Constat** : le jour de ces mesures, le téléchargement des navigateurs était rapide ; le
+  cache ne fait donc rien gagner sur l'étape. Surtout, la lenteur de la veille (run 37533726382) venait des paquets système d'Ubuntu, pas des navigateurs : « Fetched 126 MB in
+  17min 42s (118 kB/s) » sur le miroir apt. Ces paquets passent toujours par
+  `install-deps`, cache ou non : le cache ne protège que du téléchargement des navigateurs
+  (CDN de Playwright). Contre un miroir apt lent, seul le filet des 30 min protège le job ;
+  mettre aussi les paquets `.deb` en cache serait l'étape suivante, si cela revient.
+- Portée du cache : un cache créé sur une demande de fusion ne sert qu'à elle ; celui de `main`
+  sert à toutes les branches. Le premier passage sur `main` après la fusion le recréera
+  (installation complète, une fois).
