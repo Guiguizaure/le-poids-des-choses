@@ -1,8 +1,11 @@
 import { useId, type ReactNode } from "react";
 
-/** Liens du pied d'un encadré : blancs, soulignés, contour de focus blanc (visible sur sapin). */
+/**
+ * Liens du pied d'un encadré : blancs, soulignés, contour de focus blanc (visible sur sapin) ;
+ * 24 px de haut au moins (cible tactile, WCAG 2.5.8), même quand ils passent à la ligne.
+ */
 export const DID_YOU_KNOW_LINK =
-  "focus-visible:outline-blanc underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2";
+  "focus-visible:outline-blanc inline-flex min-h-6 items-center underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /**
  * Encadré « Le savais-tu ? » / “Did you know?”, le seul du site : fond vert sapin, texte et
@@ -38,7 +41,7 @@ export function DidYouKnow({
       </Heading>
       <p className="text-corps-s leading-[1.4]">{children}</p>
       {footer ? (
-        <p className="text-legende flex flex-wrap gap-x-3 leading-[1.3]">
+        <p className="text-legende flex flex-wrap gap-x-3 gap-y-1 leading-[1.3]">
           {footer}
         </p>
       ) : null}

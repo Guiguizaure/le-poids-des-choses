@@ -42,6 +42,65 @@ test.describe("carte « Plus rapide : raconte ta journée » sur /comparer", () 
     await expect(page).toHaveURL(/\/raconte$/);
   });
 
+  for (const [path, label, barName, first, second] of [
+    [
+      "/comparer",
+      "Plus rapide : raconte ta journée",
+      "Ta comparaison",
+      /^TGV/,
+      /^Avion/,
+    ],
+    [
+      "/en/compare",
+      "Quicker: tell us about your day",
+      "Your comparison",
+      /^TGV/,
+      /^Plane/,
+    ],
+  ] as const) {
+    test(`avec la barre « Comparer » (${path}) : la carte reste visible au-dessus de la marge réservée`, async ({
+      page,
+    }) => {
+      await aiEnabled(page);
+      await page.goto(path);
+      const card = page.getByRole("link", { name: label });
+      await expect(card).toBeVisible();
+      await page.getByRole("button", { name: first }).click();
+      await page.getByRole("button", { name: second }).click();
+      const bar = page.getByRole("region", { name: barName });
+      await expect(bar).toBeVisible();
+      await bar.evaluate((el) =>
+        Promise.all(el.getAnimations().map((animation) => animation.finished)),
+      );
+      // Défilée jusqu'à elle, la carte est entière au-dessus de la barre, et c'est bien elle
+      // qu'on touche en son centre (rien ne la recouvre).
+      await card.scrollIntoViewIfNeeded();
+      const cardBox = (await card.boundingBox())!;
+      const barBox = (await bar.boundingBox())!;
+      expect(cardBox.y + cardBox.height).toBeLessThanOrEqual(barBox.y);
+      const onTop = await card.evaluate((el) => {
+        const box = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(
+          box.left + box.width / 2,
+          box.top + box.height / 2,
+        );
+        return hit !== null && el.contains(hit);
+      });
+      expect(onTop).toBe(true);
+      // Tout en bas de la page aussi : la marge de la barre la laisse au-dessus.
+      await page.evaluate(() =>
+        window.scrollTo(0, document.documentElement.scrollHeight),
+      );
+      const bottomBox = (await card.boundingBox())!;
+      expect(bottomBox.y + bottomBox.height).toBeLessThanOrEqual(
+        (await bar.boundingBox())!.y,
+      );
+      await expectNoAxeViolations(page);
+      await card.click();
+      await expect(page).toHaveURL(/\/(raconte|en\/your-day)$/);
+    });
+  }
+
   test("IA coupée : pas de carte", async ({ page }) => {
     await page.goto("/comparer");
     await hydrated(page, /^De saison en /);
@@ -135,4 +194,28 @@ test.describe("Mon jardin : accueil en haut à gauche, « Faire pousser une plan
     await expect(grow).toHaveCSS("color", "rgb(31, 26, 23)");
     await expectNoAxeViolations(page);
   });
+});
+
+test.describe("pages de texte et /saison : le nom du site vers l'accueil, plus de « ← Retour »", () => {
+  for (const [path, name, href, back] of [
+    ["/methode", "Le poids des choses – Accueil", "/", "Retour"],
+    ["/mentions-legales", "Le poids des choses – Accueil", "/", "Retour"],
+    ["/confidentialite", "Le poids des choses – Accueil", "/", "Retour"],
+    ["/saison", "Le poids des choses – Accueil", "/", "Retour"],
+    ["/en/method", "Le poids des choses – Home", "/en", "Back"],
+    ["/en/legal-notice", "Le poids des choses – Home", "/en", "Back"],
+    ["/en/privacy", "Le poids des choses – Home", "/en", "Back"],
+    ["/en/in-season", "Le poids des choses – Home", "/en", "Back"],
+  ] as const) {
+    test(path, async ({ page }) => {
+      await page.goto(path);
+      const home = page.getByRole("link", { name });
+      await expect(home).toHaveAttribute("href", href);
+      await expect(home).toHaveText("Le poids des choses");
+      await expect(
+        page.getByRole("link", { name: back, exact: true }),
+      ).toHaveCount(0);
+      await expectNoAxeViolations(page);
+    });
+  }
 });

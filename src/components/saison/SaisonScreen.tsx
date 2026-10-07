@@ -2,13 +2,13 @@
 
 import { AccountLink } from "@/components/account/AccountLink";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
-import { Icon } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import { DataCredit } from "@/components/ui/DataCredit";
 import { formatMass } from "@/lib/calc";
 import { useNow } from "@/lib/hooks/useNow";
 import { useSearchParam } from "@/lib/hooks/useSearchParam";
 import { format, localizeHref, type Locale } from "@/lib/i18n";
-import { NAV, SEASON } from "@/lib/i18n/messages/common";
+import { SEASON } from "@/lib/i18n/messages/common";
 import { MONTHS, PRODUCT_CATEGORIES } from "@/lib/i18n/messages/names";
 import { LocalLink as Link, useLocale } from "@/lib/i18n/LocaleProvider";
 import {
@@ -49,13 +49,7 @@ export function SaisonScreen() {
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[640px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
-        <Link
-          href="/"
-          className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
-        >
-          <Icon name="retour" />
-          {NAV[locale].back}
-        </Link>
+        <Logo />
         <div className="text-corps-s flex items-center gap-4">
           <LanguageSwitch className="font-normal" />
           <AccountLink />

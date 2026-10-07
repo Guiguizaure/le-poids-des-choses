@@ -32,7 +32,7 @@ function Field({ value }: { value: string }) {
 /** English version of /mentions-legales (same section anchors); the French version prevails. */
 export default function LegalNoticePage() {
   return (
-    <ContentPage locale="en" title={PAGES.en.mentions.title}>
+    <ContentPage title={PAGES.en.mentions.title}>
       <p className="text-corps-s text-texte-attenue leading-[1.4]">
         This is a translation provided for convenience. The{" "}
         <Link href="/mentions-legales" className={LINK} hrefLang="fr">

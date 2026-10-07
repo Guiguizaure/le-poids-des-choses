@@ -57,7 +57,6 @@ const hour = (h: number) => `${h % 12 || 12} ${h < 12 ? "am" : "pm"}`;
 export default function MethodPage() {
   return (
     <ContentPage
-      locale="en"
       title={PAGES.en.methode.title}
       decoration={<PaperCutout name="oiseau" tilt={-7} className={RIGHT} />}
     >

@@ -13,7 +13,7 @@ import { ShareSheet } from "@/components/garden/share/ShareSheet";
 import { useShareSupport } from "@/components/garden/share/useShareSupport";
 import { useSky } from "@/components/garden/useSky";
 import { WeekChart } from "@/components/garden/WeekChart";
-import { Logo } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
