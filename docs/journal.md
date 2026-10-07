@@ -1692,3 +1692,40 @@ jeans »), `e2e/raccourcis.spec.ts` (carte avec IA active ou coupée, en-tête e
 PR #29 (barre « Comparer ») n'était pas encore fusionnée : cette branche part de main sans
 elle. La carte est dans le flux de la page, sous le bouton : la marge réservée par la barre
 la garde visible. Conflit attendu dans `GestureChooser.tsx` à la fusion de la seconde PR.
+
+Relecture de la PR #30 (même jour) :
+
+- PR #29 fusionnée : main repris dans la branche (fusion, sans réécriture). Conflit de
+  `GestureChooser.tsx` résolu : version de main (fragment, `CompareBar`) avec la carte
+  `RaconteQuickLink` après l'habitude déclarée et sans l'ancien `RaconteLink`. Nouveau test :
+  barre et carte ensemble (FR et EN) ; défilée jusqu'à elle, puis tout en bas de la page, la
+  carte reste entière au-dessus de la barre, rien ne la recouvre en son centre, axe.
+- Validés par Guillaume : « Le poids des choses – Accueil » et « Quicker: tell us about your
+  day ».
+- Pages de texte (méthode, mentions légales, confidentialité, FR et EN) et /saison : `Logo`
+  remplace « ← Retour ». `Logo` passe dans son propre fichier client
+  (`src/components/ui/Logo.tsx`), utilisable depuis `ContentPage`, composant serveur ; la
+  prop `locale` de `ContentPage` disparaît (le `Logo` lit la langue lui-même). « Raconte ta
+  journée » (« ← Comparer ») et le carnet (« ← Mon jardin ») gardent leur retour : il mène à
+  une page nommée, pas à l'accueil.
+- Lighthouse : `pnpm serve:out` lance `e2e/static-server.mjs` sur le port 4322 (paquet
+  `serve` retiré). Premier passage : performance 76 sur /comparer et /jardin (LCP 7,5 s) : le
+  serveur de test ne compressait pas, alors que `serve` et Cloudflare compressent ; il
+  compresse maintenant en gzip. `LH_PATHS` choisit les adresses.
+- Lighthouse a aussi relevé une cible tactile trop petite sur /jardin : les liens « Source »
+  et « Méthode » de « Le savais-tu ? », collés l'un sous l'autre quand le libellé de la
+  source passe à la ligne (selon le fait du jour, d'où le 97 de main). Ils font maintenant
+  24 px de haut, avec un espacement vertical ; `Logo` a une cible de 28 px.
+- Scores (mobile, `SITE_LAUNCHED=1`, même serveur gzip, même machine, 3 passages ; main
+  mesuré juste avant dans les mêmes conditions) :
+
+  | Page       | Performance (main) | Accessibilité (main) | Bonnes pratiques | SEO |
+  | ---------- | ------------------ | -------------------- | ---------------- | --- |
+  | Accueil    | 94-99 (95-99)      | 100 (100)            | 100              | 100 |
+  | Comparer   | 90-91 (92)         | 100 (100)            | 100              | 100 |
+  | Mon jardin | 90-92 (92-93)      | 100 (97)             | 100              | 100 |
+
+- Disque du poste presque plein pendant la session (de 350 Mo à 5,6 Go libres) : quelques
+  tests ont échoué sur « ENOSPC: no space left on device » puis sont passés à la relance (le
+  compte, en série). Les 15 Go de `/private/tmp/claude-501` viennent d'autres sessions et le
+  magasin pnpm fait 9,3 Go (`pnpm store prune`) : laissés à Guillaume.
