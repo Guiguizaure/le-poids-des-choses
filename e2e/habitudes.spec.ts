@@ -7,6 +7,7 @@ import {
   seedJournal,
   tabTo,
   test,
+  waitForHydration,
 } from "./fixtures";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -215,6 +216,7 @@ test("au clavier : choisir une habitude et la noter", async ({
     "WebKit ne parcourt pas les liens avec Tab",
   );
   await page.goto("/comparer?habitude=");
+  await waitForHydration(page.getByRole("button", { name: "Eau du robinet" }));
   await tabTo(page, "Eau du robinet");
   await page.keyboard.press("Enter");
   await tabTo(page, "Je l’ai fait aujourd’hui");

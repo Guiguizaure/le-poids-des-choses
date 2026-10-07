@@ -71,7 +71,7 @@ const PAIRS: {
     background: "soleil",
     minimum: 4.5,
     where:
-      "bandeau « Garde ton jardin », étiquette du mois de l’encart de saison",
+      "bandeau « Garde ton jardin », étiquette du mois de l’encart de saison, bouton « Faire pousser une plante », astuces",
   },
   {
     text: "encre",
@@ -79,6 +79,20 @@ const PAIRS: {
     minimum: 4.5,
     where:
       "badges « 1 » et « 2 » du choix des gestes, bouton « Faire pousser une plante » de Mon jardin",
+  },
+  {
+    text: "outremer",
+    background: "soleil",
+    minimum: 3,
+    where:
+      "contour de focus sur le bouton « Faire pousser une plante » (élément non textuel)",
+  },
+  {
+    text: "outremer",
+    background: "creme",
+    minimum: 3,
+    where:
+      "contour de focus autour du bouton « Faire pousser une plante », sur le fond de page",
   },
   {
     text: "blanc",

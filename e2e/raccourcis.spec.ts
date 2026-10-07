@@ -126,7 +126,7 @@ test.describe("carte « Plus rapide : raconte ta journée » sur /comparer", () 
 });
 
 test.describe("Mon jardin : accueil en haut à gauche, « Faire pousser une plante » sous le jardin", () => {
-  test("nom du site vers l'accueil ; bouton tomate pleine largeur, encre, avant « Mes habitudes »", async ({
+  test("nom du site vers l'accueil ; bouton jaune soleil pleine largeur, encre, avant « Mes habitudes »", async ({
     page,
   }) => {
     await seedJournal(page, [entry("raccourci-1", 4.1)]);
@@ -144,8 +144,20 @@ test.describe("Mon jardin : accueil en haut à gauche, « Faire pousser une plan
     const grow = page.getByRole("link", { name: /^Faire pousser une plante/ });
     await expect(grow).toHaveAttribute("href", "/comparer");
     await expect(grow).toContainText("Compare deux gestes du quotidien");
-    await expect(grow).toHaveCSS("background-color", "rgb(255, 79, 46)");
+    // Papier découpé : jaune soleil, texte et contour encre 2 px, ombre décalée nette.
+    await expect(grow).toHaveCSS("background-color", "rgb(255, 201, 60)");
     await expect(grow).toHaveCSS("color", "rgb(31, 26, 23)");
+    await expect(grow).toHaveCSS("border-top-width", "2px");
+    await expect(grow).toHaveCSS("border-top-color", "rgb(31, 26, 23)");
+    await expect(grow).toHaveCSS(
+      "box-shadow",
+      /rgb\(31, 26, 23\) 4px 4px 0px 0px$/,
+    );
+    // La petite pousse, décorative, d'environ 32 px.
+    const sprout = grow.locator("[data-grow-sprout]");
+    await expect(sprout).toHaveAttribute("aria-hidden", "true");
+    const sproutBox = (await sprout.boundingBox())!;
+    expect(Math.round(sproutBox.width)).toBe(32);
     // Pleine largeur (aux marges près) et juste sous le jardin, avant « Mes habitudes ».
     const viewport = page.viewportSize()!;
     const growBox = (await grow.boundingBox())!;
@@ -218,4 +230,143 @@ test.describe("pages de texte et /saison : le nom du site vers l'accueil, plus d
       await expectNoAxeViolations(page);
     });
   }
+});
+
+test.describe("bouton « Faire pousser une plante » : focus et état appuyé", () => {
+  test("focus visible : contour outremer 2 px", async ({ page }) => {
+    await page.goto("/jardin");
+    const grow = page.getByRole("link", { name: /^Faire pousser une plante/ });
+    await expect(grow).toBeVisible();
+    // Modalité clavier, puis focus : :focus-visible s'applique.
+    await page.keyboard.press("Shift");
+    await grow.focus();
+    await expect(grow).toHaveCSS("outline-color", "rgb(45, 75, 255)");
+    await expect(grow).toHaveCSS("outline-width", "2px");
+    await expect(grow).toHaveCSS("outline-style", "solid");
+  });
+
+  test("appuyé : l'ombre se réduit, le bouton descend de 2 px", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/jardin");
+    const grow = page.getByRole("link", { name: /^Faire pousser une plante/ });
+    const box = (await grow.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    // Le bouton descend de 2 px (propriété CSS `translate`).
+    await expect
+      .poll(async () => Math.round((await grow.boundingBox())!.y - box.y))
+      .toBe(2);
+    await expect(grow).toHaveCSS(
+      "box-shadow",
+      /rgb\(31, 26, 23\) 2px 2px 0px 0px$/,
+    );
+    await page.mouse.up();
+  });
+
+  test("mouvement réduit : appuyé, rien ne bouge", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/jardin");
+    const grow = page.getByRole("link", { name: /^Faire pousser une plante/ });
+    const box = (await grow.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await expect(grow).toHaveCSS(
+      "box-shadow",
+      /rgb\(31, 26, 23\) 4px 4px 0px 0px$/,
+    );
+    expect(Math.round((await grow.boundingBox())!.y - box.y)).toBe(0);
+    await expect(grow).toHaveCSS(
+      "box-shadow",
+      /rgb\(31, 26, 23\) 4px 4px 0px 0px$/,
+    );
+    await page.mouse.up();
+  });
+});
+
+test.describe("carte « De saison » sous « Mes habitudes »", () => {
+  test("3 ou 4 produits dessinés, le plus léger au kilo, le lien vers /saison ; discrète", async ({
+    page,
+  }) => {
+    await page.clock.setFixedTime(new Date("2026-10-15T10:00:00Z"));
+    await page.goto("/jardin");
+    const card = page.getByRole("complementary", {
+      name: "De saison en octobre",
+    });
+    await expect(card).toBeVisible();
+    const products = card.getByRole("list", {
+      name: "Quelques produits du mois",
+    });
+    const count = await products.getByRole("listitem").count();
+    expect(count).toBeGreaterThanOrEqual(3);
+    expect(count).toBeLessThanOrEqual(4);
+    await expect(products.locator("svg").first()).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    await expect(card.locator("[data-season-lightest]")).toHaveText(
+      /^Le plus léger au kilo : .+ \(.+CO2e\/kg\)$/,
+    );
+    await expect(
+      card.getByRole("link", { name: "Voir tous les produits de saison" }),
+    ).toHaveAttribute("href", "/saison");
+    // Sous « Mes habitudes », et sans rivaliser avec le bouton principal : pas de fond coloré.
+    const habits = page.getByRole("region", { name: "Mes habitudes" });
+    expect((await card.boundingBox())!.y).toBeGreaterThan(
+      (await habits.boundingBox())!.y,
+    );
+    await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(card.locator("a, button").first()).toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)",
+    );
+    await expectNoAxeViolations(page);
+  });
+
+  test("le mois est celui de Paris, quel que soit le fuseau de l'appareil", async ({
+    browser,
+  }) => {
+    // 31 octobre, 19 h 30 à New York : déjà le 1er novembre à Paris.
+    const context = await browser.newContext({
+      timezoneId: "America/New_York",
+      locale: "fr-FR",
+    });
+    const page = await context.newPage();
+    await page.clock.setFixedTime(new Date("2026-10-31T23:30:00Z"));
+    await page.goto("/jardin");
+    await expect(
+      page.getByRole("complementary", { name: "De saison en novembre" }),
+    ).toBeVisible();
+    await context.close();
+  });
+
+  test("mouvement réduit : aucune animation dans la carte", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/jardin");
+    const card = page.locator("[data-garden-season]");
+    await expect(card.getByRole("listitem").first()).toBeVisible();
+    expect(
+      await card.evaluate((el) => el.getAnimations({ subtree: true }).length),
+    ).toBe(0);
+  });
+
+  test("en anglais : “In season in October”, lien vers /en/in-season", async ({
+    page,
+  }) => {
+    await page.clock.setFixedTime(new Date("2026-10-15T10:00:00Z"));
+    await page.goto("/en/garden");
+    const card = page.getByRole("complementary", {
+      name: "In season in October",
+    });
+    await expect(card.locator("[data-season-lightest]")).toHaveText(
+      /^Lightest per kilo: .+ \(.+CO2e\/kg\)$/,
+    );
+    await expect(
+      card.getByRole("link", { name: "See all the produce in season" }),
+    ).toHaveAttribute("href", "/en/in-season");
+    await expectNoAxeViolations(page);
+  });
 });

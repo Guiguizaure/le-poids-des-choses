@@ -1831,3 +1831,26 @@ Livré :
   plante visée, deux habitudes vers deux plantes, mouvement réduit, remise à minuit avec
   l'horloge de Playwright, « Modifier » et « Annuler », astuces une seule fois, anglais,
   axe) ; `e2e/habitudes.spec.ts` réécrit pour le nouveau parcours.
+
+Relecture de la PR #32 (même jour), deux retouches :
+
+1. « Faire pousser une plante » : papier découpé jaune soleil (#FFC93C) au lieu de tomate,
+   texte encre (paire encre / soleil du test du thème), contour encre 2 px, ombre décalée
+   nette de 4 px sans flou. À gauche, la petite pousse `fleur-1-pousse` (décorative, 32 px) :
+   son dessin n'occupe que 26 × 23 unités d'un cadre de 60 × 80 ; affichée telle quelle, elle
+   aurait fait une dizaine de pixels, elle est donc recadrée sur son emprise
+   (`PLANT_BOUNDS`, `viewBox`). Appuyé : ombre de 2 px et descente de 2 px ; rien en
+   mouvement réduit. Focus : contour outremer, 3,8:1 sur le soleil et 5,4:1 sur la crème
+   (deux paires ajoutées au test du thème, minimum 3:1 pour un élément non textuel).
+2. Carte « De saison en octobre » / “In season in October” sous « Mes habitudes »
+   (`GardenSeasonCard`) : 4 produits dessinés au plus (mêmes dessins et même choix que
+   l'encart de l'accueil, `drawnForMonth`), le plus léger au kilo en une ligne
+   (`seasonRange`), « Voir tous les produits de saison » vers /saison (/en/in-season) et le
+   crédit des données. Mois en heure de Paris (`gardenMonth`, testé avec un appareil à New
+   York le 31 octobre au soir : « novembre »). Fond blanc, titre en corps de texte, lien
+   texte : rien qui rivalise avec le bouton. Aucune animation (les dessins ne flottent pas
+   ici).
+
+Bout en bout : `e2e/raccourcis.spec.ts` (couleurs, contour, ombre, pousse de 32 px, focus,
+état appuyé, mouvement réduit ; carte : nombre de produits, ligne du plus léger, lien, place
+sous « Mes habitudes », fuseau, mouvement réduit, anglais, axe), Chromium et WebKit.

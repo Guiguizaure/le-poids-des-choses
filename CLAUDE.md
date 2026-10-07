@@ -542,8 +542,15 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   de 28 px ; plus de « ← Retour » vers l'accueil (ambigu avec la page précédente).
 - En-tête et action de /jardin : `Logo` en haut à gauche ; Partager en haut à droite. Juste sous le
   jardin, l'action principale « Faire pousser une plante » / « Compare deux gestes du
-  quotidien » (tomate, texte encre 5,3:1, pleine largeur) vers /comparer ; le jardin vide n'a
-  plus de second lien « Comparer deux gestes ».
+  quotidien » vers /comparer : papier découpé jaune soleil, texte encre, contour encre 2 px,
+  ombre décalée nette (4 px, sans flou), petite pousse `fleur-1-pousse` recadrée sur son
+  dessin (32 px, décorative) ; appuyé, ombre 2 px et descente de 2 px (rien en mouvement
+  réduit) ; focus outremer (3,8:1 sur soleil, 5,4:1 sur crème, testé). Le jardin vide n'a
+  plus de second lien « Comparer deux gestes ». Sous « Mes habitudes », carte discrète
+  `GardenSeasonCard` « De saison en octobre » : 4 produits dessinés au plus
+  (`drawnForMonth`), le plus léger au kilo en une ligne (`seasonRange`), « Voir tous les
+  produits de saison » vers /saison, `DataCredit` ; mois de Paris (`gardenMonth`), aucune
+  animation.
 - Carnet analysé : section Carnet de /jardin (graphique de la semaine, 5 derniers choix,
   « Tout voir » → /jardin/carnet). Sur /jardin/carnet : tri (date par défaut, écart,
   catégorie) et filtres (catégorie, choix légers ou notés) dans l'URL
