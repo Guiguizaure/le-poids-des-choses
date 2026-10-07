@@ -77,7 +77,8 @@ const PAIRS: {
     text: "encre",
     background: "tomate",
     minimum: 4.5,
-    where: "badges « 1 » et « 2 » du choix des gestes",
+    where:
+      "badges « 1 » et « 2 » du choix des gestes, bouton « Faire pousser une plante » de Mon jardin",
   },
   {
     text: "blanc",

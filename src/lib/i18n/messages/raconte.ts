@@ -86,6 +86,7 @@ export const RACONTE = defineMessages(
     link: {
       title: "Raconte ta journée",
       text: "Écris tes gestes en quelques phrases : Claude les repère, tu vérifies tout avant l’ajout au carnet.",
+      quick: "Plus rapide : raconte ta journée",
     },
   },
   {
@@ -164,6 +165,7 @@ export const RACONTE = defineMessages(
     link: {
       title: "Tell us about your day",
       text: "Write about your actions in a few sentences: Claude spots them, and you check everything before it goes into your journal.",
+      quick: "Quicker: tell us about your day",
     },
   },
 );

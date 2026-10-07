@@ -31,6 +31,7 @@ import { useJournal } from "@/lib/journal/useJournal";
 import { createEntry } from "@/lib/journal/entry";
 import { buildGarden, growthSteps, MAX_PLANTS } from "@/lib/garden/model";
 import { SpeciesPicker } from "@/components/garden/SpeciesPicker";
+import { useRaconteAvailability } from "@/lib/raconte/availability";
 import { SpeciesUnlocked } from "@/components/garden/SpeciesUnlocked";
 import { raconte, type RaconteError } from "@/lib/raconte/api";
 import { RACONTE_MAX_CHARS, RACONTE_KM_RANGE } from "@/lib/raconte/detections";
@@ -77,27 +78,6 @@ const FIELD =
 const SMALL_FIELD =
   "border-encre/30 bg-creme text-corps-s text-encre focus-visible:outline-outremer rounded-xl border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-1";
 
-/** Disponibilité lue une fois (GET /api/raconte) : sans fonctions, l'écran le dit tout de suite. */
-function useAvailability(): "checking" | "enabled" | "disabled" {
-  const [state, setState] = useState<"checking" | "enabled" | "disabled">(
-    "checking",
-  );
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/raconte", { credentials: "same-origin" })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((body: { enabled?: unknown } | null) => {
-        if (!cancelled)
-          setState(body?.enabled === true ? "enabled" : "disabled");
-      })
-      .catch(() => !cancelled && setState("disabled"));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  return state;
-}
-
 /**
  * Écran 08 · Raconte ta journée : la personne écrit, Claude repère les gestes du catalogue, la
  * personne coche ceux qu'elle garde. Rien n'est écrit dans le carnet sans « Ajouter au carnet ».
@@ -107,7 +87,7 @@ export function RaconteScreen() {
   const locale = useLocale();
   const t = RACONTE[locale];
   const [declaredHabits] = useDeclaredHabits();
-  const availability = useAvailability();
+  const availability = useRaconteAvailability();
   const [text, setText] = useState("");
   const [state, setState] = useState<State>({ step: "idle" });
   // Nouvelles plantes de cet ajout : un seul choix d'espèce pour toutes (ou le jardin choisit).
@@ -186,17 +166,26 @@ export function RaconteScreen() {
         : current,
     );
 
-  /** Ajoute les gestes cochés ; `species` : espèce de toutes les nouvelles plantes. */
-  const commit = (species: string | null) => {
+  /**
+   * Ajoute les gestes cochés ; `species` : espèce de chaque nouvelle plante, dans l'ordre des
+   * choix légers (au-delà, ou null : le jardin choisit).
+   */
+  const commit = (species: (string | null)[]) => {
     if (state.step !== "results") return;
     const entries: JournalEntry[] = [];
+    let next = 0;
     for (const row of state.rows) {
       if (!row.checked) continue;
       const habit = proposalHabit(row.proposal);
       const input = habit ? null : proposalEntry(row.proposal);
       if (habit) entries.push(journal.addHabit(habit));
-      else if (input)
-        entries.push(journal.add(species ? { ...input, species } : input));
+      else if (input) {
+        const chosen =
+          createEntry(input).avoidedKg > 0 ? (species[next++] ?? null) : null;
+        entries.push(
+          journal.add(chosen ? { ...input, species: chosen } : input),
+        );
+      }
     }
     setState({ step: "added", entries });
   };
@@ -216,7 +205,7 @@ export function RaconteScreen() {
     }).length;
     const fresh = Math.min(light, MAX_PLANTS - garden.plants.length);
     if (fresh > 0) setPlanting(fresh);
-    else commit(null);
+    else commit([]);
   };
 
   const restart = () => {

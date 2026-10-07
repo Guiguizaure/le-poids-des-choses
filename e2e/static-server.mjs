@@ -1,7 +1,10 @@
 // Serveur de test de l'export statique (out/), au plus près de Cloudflare Pages :
 // URL sans extension (/methode → methode.html), le 404.html le plus proche pour les pages
 // inconnues (/en/… → en/404.html, comme Cloudflare Pages), et en-têtes de public/_headers (CSP
-// comprise). Utilisé par Playwright.
+// comprise). Utilisé par Playwright. Seule fonction simulée : GET /api/raconte répond
+// { enabled: false }, comme la fonction de Cloudflare quand AI_ENABLED est coupée (les points
+// d'entrée de « Raconte ta journée » le demandent ; les tests qui veulent l'IA active le
+// remplacent par une route Playwright).
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
@@ -74,6 +77,11 @@ function nearest404(path) {
 
 createServer((request, response) => {
   const path = new URL(request.url, "http://localhost").pathname;
+  if (path === "/api/raconte" && request.method === "GET") {
+    response.writeHead(200, { "Content-Type": "application/json" });
+    response.end(JSON.stringify({ enabled: false }));
+    return;
+  }
   const file = resolve(path === "/" ? "/index.html" : path);
   const status = file ? 200 : 404;
   const served = file ?? nearest404(path);

@@ -41,6 +41,12 @@ const FAKE_GESTURES = [
     certainty: "explicit",
     mode: "occasion",
   },
+  {
+    pattern: /second-hand jeans/i,
+    gestureId: "jean",
+    certainty: "explicit",
+    mode: "occasion",
+  },
 ];
 
 function fakeClaude(body) {

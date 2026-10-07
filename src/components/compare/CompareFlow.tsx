@@ -125,7 +125,7 @@ export function CompareFlow() {
   const picker = planting ? (
     <SpeciesPicker
       steps={growthSteps(garden)}
-      onPick={(species) => {
+      onPick={([species]) => {
         setPlanting(null);
         record(
           species ? { ...planting.input, species } : planting.input,

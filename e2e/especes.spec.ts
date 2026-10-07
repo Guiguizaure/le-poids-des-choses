@@ -92,13 +92,33 @@ test("fiche : « En savoir plus », « Le savais-tu ? », retour avec le focus s
   await expect(
     picker.getByRole("button", { name: "Laisse le jardin choisir" }),
   ).toBeVisible();
+  // Fiche : la flèche en haut à gauche remplace la croix.
+  const arrow = picker.locator("[data-back-arrow]");
+  await expect(arrow).toHaveAccessibleName("Retour aux espèces");
+  await expect(arrow).toHaveAttribute("title", "Retour aux espèces");
+  await expect(picker.getByRole("button", { name: /^Fermer/ })).toHaveCount(0);
   await expectNoAxeViolations(page);
 
-  // Retour : la grille, focus sur la carte d'origine.
-  await picker.getByRole("button", { name: "Retour aux espèces" }).click();
+  // Flèche : la grille, focus sur la carte d'origine.
+  await arrow.click();
   await expect(
     picker.getByRole("button", { name: "Planter l’olivier", exact: true }),
   ).toBeFocused();
+  // Le lien du bas fait la même chose.
+  await picker
+    .getByRole("button", { name: "En savoir plus sur l’olivier" })
+    .click();
+  await picker
+    .getByRole("button", { name: "Retour aux espèces" })
+    .last()
+    .click();
+  await expect(
+    picker.getByRole("button", { name: "Planter l’olivier", exact: true }),
+  ).toBeFocused();
+  // Sur la grille, la croix dit ce qu'elle fait (nom et info-bulle).
+  await expect(
+    picker.getByRole("button", { name: "Fermer : le jardin choisira" }),
+  ).toHaveAttribute("title", "Fermer : le jardin choisira");
 
   // Planter depuis la fiche.
   await picker
@@ -166,8 +186,20 @@ test("« Laisse le jardin choisir », Échap ou la croix : rien n'est bloqué, a
   await expect(
     page.getByRole("heading", { name: /va (pousser|sortir)/ }),
   ).toBeVisible();
+
+  // La croix : même chose.
+  await page.goto("/comparer?a=velo&b=voiture&q=30");
+  await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+  await page
+    .locator("[data-species-picker]")
+    .getByRole("button", { name: "Fermer : le jardin choisira" })
+    .click();
+  await expect(page.locator("[data-species-picker]")).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: /va (pousser|sortir)/ }),
+  ).toBeVisible();
   const entries = await journal(page);
-  expect(entries).toHaveLength(2);
+  expect(entries).toHaveLength(3);
   expect(entries.every((e) => e.species === undefined)).toBe(true);
 });
 
@@ -232,11 +264,18 @@ test.describe("en anglais", () => {
     const fact = picker.getByRole("complementary", { name: "Did you know?" });
     await expectDidYouKnow(fact);
     await expect(fact).toContainText("black ones are simply picked riper");
+    await expect(picker.locator("[data-back-arrow]")).toHaveAccessibleName(
+      "Back to all species",
+    );
+    await expect(picker.getByRole("button", { name: /^Close/ })).toHaveCount(0);
     await expectNoAxeViolations(page);
-    await picker.getByRole("button", { name: "Back to all species" }).click();
+    await picker.locator("[data-back-arrow]").click();
     await expect(
       picker.getByRole("button", { name: "Plant the olive tree" }),
     ).toBeFocused();
+    await expect(
+      picker.getByRole("button", { name: "Close: the garden will choose" }),
+    ).toHaveAttribute("title", "Close: the garden will choose");
 
     await picker.getByRole("button", { name: "Plant the oxeye daisy" }).click();
     await expect(picker).toBeHidden();

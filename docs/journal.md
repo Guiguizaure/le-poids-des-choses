@@ -1597,3 +1597,47 @@ style vert sapin de la fiche d'espèce ; un seul composant partagé pour tout le
 - Bout en bout : helper `expectDidYouKnow` (fond, couleur du texte, du titre et des liens) dans
   `e2e/facts.spec.ts` (duel, duel objet, jardin, en français et en anglais, avec axe),
   `e2e/accessibility.spec.ts` (jardin) et `e2e/especes.spec.ts` (fiche, FR et EN).
+
+### 2026-10-07 — Corrections UX : espèces, « Raconte ta journée », Mon jardin (fix/especes-raconte)
+
+Demande de Guillaume, cinq points :
+
+1. Fiche d'espèce : la croix est remplacée par une flèche retour en haut à gauche (« Retour
+   aux espèces », aussi en info-bulle), qui fait la même chose que « Retour aux espèces »,
+   désormais en bas de la fiche. Sur la grille, la croix reste ; son nom et son info-bulle :
+   « Fermer : le jardin choisira » / “Close: the garden will choose”.
+2. « Raconte ta journée » avec plusieurs plantes : une seule feuille, compteur « 0 / N
+   plantes » (région polite : « 1 plante choisie sur 3 »), une place par plante. « Ajouter
+   … » remplit la première place vide, la même espèce peut revenir (« ×2 » sur la carte),
+   chaque place se retire (« Retirer le pommier (plante 1) »). « Planter » est `aria-disabled`
+   tant qu'une place est vide ; « Le jardin choisit le reste » plante tout de suite, les
+   places vides au tirage habituel (le tirage dépend de l'id de l'entrée : il ne peut pas
+   s'afficher dans une place avant). La croix et Échap font de même : les choix faits sont
+   gardés. Les espèces vont aux nouvelles plantes dans l'ordre des choix légers.
+3. /comparer : carte discrète « Plus rapide : raconte ta journée » / “Quicker: tell us about
+   your day” sous la sélection, après le bouton Comparer, seulement si l'IA est active (`GET
+/api/raconte`, question partagée avec l'écran : `useRaconteAvailability`). Elle remplace
+   l'ancien `RaconteLink` en bas de l'écran (un seul point d'entrée). En anglais, « us » et
+   non « me » : le nom validé de la fonction est “Tell us about your day”. Le serveur de test
+   statique répond `{ enabled: false }` à `GET /api/raconte`, comme une fonction coupée
+   (sinon chaque page /comparer écrirait un 404 en console).
+4. /jardin : « Faire pousser une plante » / « Compare deux gestes du quotidien » juste sous
+   le jardin (après le message du prochain animal), tomate, pleine largeur, vers /comparer.
+   Texte encre : le blanc sur tomate ne fait que 3,3:1, l'encre 5,3:1 (paire déjà vérifiée par
+   le test du thème, emplacement ajouté). « Mes habitudes » reste dessous, séparée. Le jardin
+   vide perd son second lien « Comparer deux gestes ».
+5. /jardin : le lien « Comparer » en haut à gauche devient le nom du site, avec le composant
+   `Logo` déjà utilisé sur le duel et les résultats, vers / ou /en. Nom accessible « Le poids
+   des choses – Accueil » / « – Home » (et non « Accueil » seul : le texte visible doit
+   figurer dans le nom, WCAG 2.5.3) ; changé pour tous les `Logo`. Les pages de texte et
+   /saison gardent leur « ← Retour » vers l'accueil : à harmoniser si besoin.
+
+Bout en bout : `e2e/especes.spec.ts` (flèche, croix, FR et EN), `e2e/raconte.spec.ts`
+(plusieurs plantes : même espèce deux fois, retirer, « Planter », « Le jardin choisit le
+reste », anglais ; carte sur /comparer ; le faux modèle reconnaît aussi « second-hand
+jeans »), `e2e/raccourcis.spec.ts` (carte avec IA active ou coupée, en-tête et bouton de
+/jardin, FR et EN, axe).
+
+PR #29 (barre « Comparer ») n'était pas encore fusionnée : cette branche part de main sans
+elle. La carte est dans le flux de la page, sous le bouton : la marge réservée par la barre
+la garde visible. Conflit attendu dans `GestureChooser.tsx` à la fusion de la seconde PR.

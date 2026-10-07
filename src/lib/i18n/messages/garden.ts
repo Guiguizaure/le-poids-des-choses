@@ -116,7 +116,8 @@ export const GARDEN_TEXT = defineMessages(
 /** Écran « Mon jardin ». */
 export const GARDEN_SCREEN = defineMessages(
   {
-    back: "Comparer",
+    grow: "Faire pousser une plante",
+    growSub: "Compare deux gestes du quotidien",
     export: "Exporter",
     share: "Partager",
     title: "Mon jardin",
@@ -133,7 +134,6 @@ export const GARDEN_SCREEN = defineMessages(
     emptyTitle: "Ton jardin t’attend",
     emptyText:
       "Chaque fois que tu choisis le geste le plus léger, une plante pousse ici. Un choix plus lourd est simplement noté : rien n’est retiré au jardin.",
-    compareTwo: "Comparer deux gestes",
     summary: "Bilan",
     differenceSince:
       "de CO2e d’écart avec les autres options, depuis ton premier choix",
@@ -154,7 +154,8 @@ export const GARDEN_SCREEN = defineMessages(
     flyBird: "Faire s’envoler l’oiseau",
   },
   {
-    back: "Compare",
+    grow: "Grow a plant",
+    growSub: "Compare two everyday choices",
     export: "Export",
     share: "Share",
     title: "My garden",
@@ -171,7 +172,6 @@ export const GARDEN_SCREEN = defineMessages(
     emptyTitle: "Your garden is waiting for you",
     emptyText:
       "Every time you choose the lighter action, a plant grows here. A heavier choice is simply noted: nothing is taken away from the garden.",
-    compareTwo: "Compare two actions",
     summary: "Summary",
     differenceSince:
       "of CO2e difference from the other options, since your first choice",
