@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { switchLocaleHref } from "@/lib/i18n";
 import {
   dismissLanguageBanner,
@@ -13,11 +13,12 @@ import { LANGUAGE_BANNER } from "@/lib/i18n/messages/common";
 /**
  * Pages françaises : si le navigateur est en anglais, un petit bandeau propose la version
  * anglaise de la même page, une fois (fermable, mémorisé). Posé en bas de l'écran, au-dessus
- * du contenu : il ne décale rien en arrivant. Écrit en anglais, pour qui lit l'anglais.
+ * du contenu : il ne décale rien en arrivant. La barre « Comparer » s'empile au-dessus. Écrit en anglais, pour qui lit l'anglais.
  */
 export function LanguageBanner() {
   const pathname = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
+  const bannerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const languages = navigator.languages?.length
@@ -28,6 +29,30 @@ export function LanguageBanner() {
       setOpen(true);
   }, []);
 
+  // Place occupée en bas de l'écran (hauteur + décalage du bas), pour la barre « Comparer »
+  // qui s'empile au-dessus (`--language-banner-space`).
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!open || !banner) return;
+    const root = document.documentElement;
+    const publish = () => {
+      const offset = parseFloat(getComputedStyle(banner).bottom) || 0;
+      root.style.setProperty(
+        "--language-banner-space",
+        `${Math.ceil(banner.getBoundingClientRect().height + offset)}px`,
+      );
+    };
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(banner);
+    window.addEventListener("resize", publish);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", publish);
+      root.style.removeProperty("--language-banner-space");
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const close = () => {
@@ -37,6 +62,7 @@ export function LanguageBanner() {
 
   return (
     <aside
+      ref={bannerRef}
       lang="en"
       aria-label="Language"
       data-language-banner
