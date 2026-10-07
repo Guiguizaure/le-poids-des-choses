@@ -13,7 +13,7 @@ import { ShareSheet } from "@/components/garden/share/ShareSheet";
 import { useShareSupport } from "@/components/garden/share/useShareSupport";
 import { useSky } from "@/components/garden/useSky";
 import { WeekChart } from "@/components/garden/WeekChart";
-import { Icon } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import { CountUp } from "@/components/ui/CountUp";
 import { formatMass } from "@/lib/calc";
 import { buildGarden, nextAnimal } from "@/lib/garden/model";
@@ -154,13 +154,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2">
-        <Link
-          href="/comparer"
-          className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
-        >
-          <Icon name="retour" />
-          {t.back}
-        </Link>
+        <Logo />
         {canShare ? (
           // Maquette 09a (mobile, appli installée) : « Exporter » puis « Partager ».
           <>
@@ -227,6 +221,20 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         </p>
       ) : null}
 
+      {/* Action principale de la page, juste sous le jardin : encre sur tomate (5,3:1). */}
+      <div className="px-5 pt-4">
+        <Link
+          href="/comparer"
+          data-grow-plant
+          className="press bg-tomate text-encre focus-visible:outline-outremer flex w-full flex-col items-center gap-0.5 rounded-[20px] px-6 py-4 text-center focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          <span className="text-corps-m leading-[1.3] font-semibold">
+            {t.grow}
+          </span>
+          <span className="text-corps-s leading-[1.35]">{t.growSub}</span>
+        </Link>
+      </div>
+
       <div className="flex flex-col gap-4 px-5 pt-4 pb-8">
         {!journal.persistent && journal.ready ? (
           <p className="bg-tomate-douce text-corps-s text-encre rounded-2xl p-4">
@@ -246,12 +254,6 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
               {t.emptyTitle}
             </h2>
             <p className="text-corps-s text-texte-attenue">{t.emptyText}</p>
-            <Link
-              href="/comparer"
-              className="bg-encre text-corps-m text-creme rounded-full px-6 py-4 leading-[1.3] font-semibold"
-            >
-              {t.compareTwo}
-            </Link>
           </section>
         ) : null}
 

@@ -266,7 +266,19 @@ export const SPECIES_PICKER = defineMessages(
   {
     title: "Que veux-tu planter ?",
     several: (n: number) =>
-      `${n} plantes vont pousser : elles seront toutes de l’espèce que tu choisis.`,
+      `${n} plantes vont pousser : choisis une espèce pour chacune.`,
+    counter: (n: number, total: number) => `${n} / ${total} plantes`,
+    counterLive: (n: number, total: number) =>
+      n > 1
+        ? `${n} plantes choisies sur ${total}`
+        : `${n} plante choisie sur ${total}`,
+    slots: "Tes plantes",
+    emptySlot: (i: number) => `${i}. à choisir`,
+    add: (inSentence: string) => `Ajouter ${inSentence}`,
+    remove: (inSentence: string, i: number) =>
+      `Retirer ${inSentence} (plante ${i})`,
+    plantAll: "Planter",
+    autoRest: "Le jardin choisit le reste",
     tree: "Arbre",
     flower: "Fleur",
     plant: (inSentence: string) => `Planter ${inSentence}`,
@@ -280,14 +292,23 @@ export const SPECIES_PICKER = defineMessages(
         ? `Encore ${n} pas de croissance : choix légers ou jours arrosés.`
         : "Encore 1 pas de croissance : un choix léger ou un jour arrosé.",
     auto: "Laisse le jardin choisir",
-    close: "Fermer : le jardin choisit",
+    close: "Fermer : le jardin choisira",
     unlocked: (name: string) => `Nouvelle espèce : ${name}`,
     unlockedHint: "Tu pourras la planter au prochain choix léger.",
   },
   {
     title: "What would you like to plant?",
     several: (n: number) =>
-      `${n} plants are about to grow: they’ll all be the species you choose.`,
+      `${n} plants are about to grow: choose a species for each one.`,
+    counter: (n: number, total: number) => `${n} / ${total} plants`,
+    counterLive: (n: number, total: number) => `${n} of ${total} plants chosen`,
+    slots: "Your plants",
+    emptySlot: (i: number) => `${i}. to choose`,
+    add: (inSentence: string) => `Add the ${inSentence}`,
+    remove: (inSentence: string, i: number) =>
+      `Remove the ${inSentence} (plant ${i})`,
+    plantAll: "Plant",
+    autoRest: "The garden chooses the rest",
     tree: "Tree",
     flower: "Flower",
     plant: (inSentence: string) => `Plant the ${inSentence}`,
@@ -301,7 +322,7 @@ export const SPECIES_PICKER = defineMessages(
         ? "1 more growth step: a lighter choice or a watered day."
         : `${n} more growth steps: lighter choices or watered days.`,
     auto: "Let the garden choose",
-    close: "Close: the garden chooses",
+    close: "Close: the garden will choose",
     unlocked: (name: string) => `New species: ${name}`,
     unlockedHint: "You can plant it with your next lighter choice.",
   },

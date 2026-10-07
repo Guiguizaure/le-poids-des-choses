@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { GardenPill } from "@/components/ui/GardenPill";
-import { Logo, PrimaryButton, TextButton } from "@/components/ui/buttons";
+import { PrimaryButton, TextButton } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import { formatMass } from "@/lib/calc";
 import {
   duelComparison,

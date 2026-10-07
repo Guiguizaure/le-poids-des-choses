@@ -23,7 +23,7 @@ import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { CompareBar } from "./CompareBar";
 import { useFocusTitle } from "./useFocusTitle";
-import { RaconteLink } from "@/components/raconte/RaconteLink";
+import { RaconteQuickLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
 import { useDeclaredHabits } from "@/lib/habits/useDeclaredHabits";
 
@@ -253,6 +253,7 @@ export function GestureChooser({
               {t.declaredHabit}
             </button>
           ) : null}
+          <RaconteQuickLink />
           <button
             type="button"
             onClick={() => onHabit(null)}
@@ -265,7 +266,6 @@ export function GestureChooser({
               {t.logHabitHelp}
             </span>
           </button>
-          <RaconteLink className="mt-2" />
           <SeasonTeaser className="mt-2" />
         </div>
       </main>

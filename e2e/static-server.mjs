@@ -1,10 +1,15 @@
 // Serveur de test de l'export statique (out/), au plus près de Cloudflare Pages :
 // URL sans extension (/methode → methode.html), le 404.html le plus proche pour les pages
-// inconnues (/en/… → en/404.html, comme Cloudflare Pages), et en-têtes de public/_headers (CSP
-// comprise). Utilisé par Playwright.
+// inconnues (/en/… → en/404.html, comme Cloudflare Pages), en-têtes de public/_headers (CSP
+// comprise) et compression gzip des textes (Cloudflare compresse aussi ; sans elle, Lighthouse
+// mesurerait un LCP de pages non compressées). Utilisé par Playwright. Seule fonction simulée : GET /api/raconte répond
+// { enabled: false }, comme la fonction de Cloudflare quand AI_ENABLED est coupée (les points
+// d'entrée de « Raconte ta journée » le demandent ; les tests qui veulent l'IA active le
+// remplacent par une route Playwright).
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
+import { createGzip } from "node:zlib";
 
 const ROOT = new URL("../out/", import.meta.url).pathname;
 const PORT = Number(process.env.PORT ?? 4323);
@@ -74,6 +79,11 @@ function nearest404(path) {
 
 createServer((request, response) => {
   const path = new URL(request.url, "http://localhost").pathname;
+  if (path === "/api/raconte" && request.method === "GET") {
+    response.writeHead(200, { "Content-Type": "application/json" });
+    response.end(JSON.stringify({ enabled: false }));
+    return;
+  }
   const file = resolve(path === "/" ? "/index.html" : path);
   const status = file ? 200 : 404;
   const served = file ?? nearest404(path);
@@ -82,6 +92,20 @@ createServer((request, response) => {
   };
   for (const rule of rules)
     if (matches(rule.pattern, path)) Object.assign(headers, rule.headers);
+  const compressible =
+    /^(text\/|application\/(json|manifest|xml)|image\/svg)/.test(
+      headers["Content-Type"],
+    );
+  if (
+    compressible &&
+    /\bgzip\b/.test(request.headers["accept-encoding"] ?? "")
+  ) {
+    headers["Content-Encoding"] = "gzip";
+    headers.Vary = "Accept-Encoding";
+    response.writeHead(status, headers);
+    createReadStream(served).pipe(createGzip()).pipe(response);
+    return;
+  }
   response.writeHead(status, headers);
   createReadStream(served).pipe(response);
 }).listen(PORT, () => console.log(`Export servi sur http://localhost:${PORT}`));

@@ -1,36 +1,25 @@
-import Link from "next/link";
 import { AccountLink } from "@/components/account/AccountLink";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import type { ReactNode } from "react";
-import { localizedPath, pick, type Locale } from "@/lib/i18n";
-import { NAV } from "@/lib/i18n/messages/common";
-import { Icon } from "./buttons";
+import { Logo } from "./Logo";
 
 /**
- * Page de texte (Méthode, Mentions légales) : barre « Retour », titre, sections.
+ * Page de texte (Méthode, Mentions légales) : nom du site vers l'accueil, titre, sections.
  * `decoration` : papier découpé posé à côté du titre (voir PaperCutout).
  */
 export function ContentPage({
   title,
   decoration,
-  locale = "fr",
   children,
 }: {
   title: string;
   decoration?: ReactNode;
-  locale?: Locale;
   children: ReactNode;
 }) {
   return (
     <main className="animate-enter mx-auto flex w-full max-w-[640px] flex-col motion-reduce:animate-none">
       <div className="flex items-center justify-between gap-3 px-5 pt-[22px] pb-2">
-        <Link
-          href={localizedPath("/", locale)}
-          className="text-corps-s text-encre flex items-center gap-1 leading-[1.3] font-semibold"
-        >
-          <Icon name="retour" />
-          {pick(NAV, locale).back}
-        </Link>
+        <Logo />
         <div className="text-corps-s flex items-center gap-4">
           <LanguageSwitch className="font-normal" />
           <AccountLink />

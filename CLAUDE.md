@@ -81,7 +81,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `pnpm check-data` — lance seulement le garde-fou ; `STRICT_DATA=1 pnpm check-data` pour le mode strict
 - `pnpm e2e` — tests de bout en bout et accessibilité (Playwright + axe, Chromium « Pixel 7 »
   et WebKit « iPhone 14 ») sur `out/`, servi par `e2e/static-server.mjs` avec les en-têtes
-  de `public/_headers` ; toute erreur de console (CSP comprise) fait échouer un test.
+  de `public/_headers` et la compression gzip des textes (seule fonction simulée :
+  `GET /api/raconte` → `{ enabled: false }` ; un test qui veut l'IA active la remplace par
+  une route Playwright) ; toute erreur de console (CSP comprise) fait échouer un test.
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
   les liens avec Tab). Le compte (`e2e/compte.spec.ts`, projets `compte-chromium` et
   `compte-webkit`, 2 workers chacun) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
@@ -96,8 +98,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   Aucun vrai e-mail, aucun appel à Claude, aucune connexion à Cloudflare.
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
   carnet, saison, méthode, en français puis en anglais ; `LH_LANG=fr|en` pour une seule
-  langue) sur `pnpm serve:out` (port 4322) ; construire avec `SITE_LAUNCHED=1` pour mesurer
-  le SEO sans le noindex.
+  langue ; `LH_PATHS=/,/comparer,/jardin` pour quelques adresses) sur `pnpm serve:out`
+  (port 4322 : le même serveur que les tests de bout en bout, donc aucun 404 en console) ;
+  construire avec `SITE_LAUNCHED=1` pour mesurer le SEO sans le noindex.
 - `pnpm captures` — captures du README (`docs/captures/`), dont le carnet et la feuille de
   partage (partage de fichiers simulé)
 - `pnpm db:migrate:local` — applique `migrations/` à la base D1 locale (`wrangler.local.toml`)
@@ -397,11 +400,18 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     grille de cartes (2 colonnes sur mobile, 4 sur grand écran : dessin, nom, type court
     `short`) ; toucher une carte plante l'espèce ; bouton « i » à côté (jamais dans) la carte,
     « En savoir plus sur … » : fiche dans la même feuille (grand dessin, type, description,
-    encadré « Le savais-tu ? » vert sapin texte blanc, « Planter … », « Retour aux espèces » qui
-    rend le focus à la carte ; Échap depuis une fiche = retour à la grille). Espèces à
-    débloquer grisées, cadenas, « Dans N pas » ; leur fiche se lit mais ne se plante pas.
-    « Laisse le jardin choisir », Échap (depuis la grille) ou la croix = tirage habituel. Un
-    seul choix pour plusieurs plantes (« Raconte ta journée »). L'espèce va dans l'entrée
+    encadré « Le savais-tu ? » vert sapin texte blanc, « Planter … », puis « Retour aux
+    espèces » en bas ; en haut à gauche, une flèche « Retour aux espèces » remplace la croix ;
+    les deux rendent le focus à la carte ; Échap depuis une fiche = retour à la grille).
+    Espèces à débloquer grisées, cadenas, « Dans N pas » ; leur fiche se lit mais ne se plante
+    pas. « Laisse le jardin choisir », Échap (depuis la grille) ou la croix de la grille
+    (« Fermer : le jardin choisira », aussi en info-bulle) = tirage habituel. Plusieurs
+    plantes (« Raconte ta journée ») : une place par plante, compteur « 0 / N plantes »
+    (annoncé par une région polite), « Ajouter … » remplit la première place vide (même
+    espèce possible plusieurs fois, « ×2 » sur la carte), chaque place se retire ; « Planter »
+    (`aria-disabled` tant qu'une place est vide), « Le jardin choisit le reste » (places
+    vides au tirage) ; `onPick` reçoit l'espèce de chaque plante, dans l'ordre des choix
+    légers. L'espèce va dans l'entrée
     (`species`, choix léger seulement) : synchro du compte et export sans migration ; une
     espèce inconnue retombe sur le tirage. Annonce « Nouvelle espèce : … »
     (`SpeciesUnlocked`) sur les cartes de résultat et après « Raconte ta journée ». Fiches
@@ -495,6 +505,14 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   habitudes » : `lpdc:habitudes:v1` (`{ version: 1, gestures }`), sur l'appareil seulement ;
   déclarer ne note rien. Carnet : « arrosé », filtre `choix=habitudes`, tri par écart :
   habitudes à la fin ; « N jours arrosés cette semaine » sous le graphique.
+- Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
+  résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
+  nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile
+  de 28 px ; plus de « ← Retour » vers l'accueil (ambigu avec la page précédente).
+- En-tête et action de /jardin : `Logo` en haut à gauche ; Partager en haut à droite. Juste sous le
+  jardin, l'action principale « Faire pousser une plante » / « Compare deux gestes du
+  quotidien » (tomate, texte encre 5,3:1, pleine largeur) vers /comparer ; le jardin vide n'a
+  plus de second lien « Comparer deux gestes ».
 - Carnet analysé : section Carnet de /jardin (graphique de la semaine, 5 derniers choix,
   « Tout voir » → /jardin/carnet). Sur /jardin/carnet : tri (date par défaut, écart,
   catégorie) et filtres (catégorie, choix légers ou notés) dans l'URL
@@ -619,7 +637,9 @@ variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet,
   - mention sous le champ (`PRIVACY_NOTICE`), note IA de la maquette, phrase sans chiffre sur
     l'énergie (aucune source publique pour l'empreinte d'une requête) ; /confidentialite#raconte
     cite la page officielle de conservation d'Anthropic ; /methode#raconte ;
-  - points d'entrée : `RaconteLink` sur /comparer (choix des gestes) et /jardin ;
+  - points d'entrée : sur /comparer, carte discrète `RaconteQuickLink` (« Plus rapide :
+    raconte ta journée ») sous la sélection, seulement si `GET /api/raconte` dit
+    `enabled` (`useRaconteAvailability`, une question par page) ; `RaconteLink` sur /jardin ;
   - secrets et variables Cloudflare : `ANTHROPIC_API_KEY` (secret), `AI_ENABLED`,
     `AI_DAILY_CAP` (facultative) ; en local `.dev.vars` (`AI_ENABLED=0` par défaut).
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous

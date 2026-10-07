@@ -21,7 +21,7 @@ const LINK = "font-semibold underline underline-offset-2";
 /** English version of /confidentialite (same section anchors). */
 export default function PrivacyPage() {
   return (
-    <ContentPage locale="en" title={PAGES.en.confidentialite.title}>
+    <ContentPage title={PAGES.en.confidentialite.title}>
       <Section id="en-bref" title="In short">
         <ul className="list-disc space-y-1 pl-5">
           <li>

@@ -1648,3 +1648,84 @@ Relecture de la PR #29 : bandeau de langue et barre empilés au lieu d'être sup
   les deux, le pied de page reste au-dessus de la barre, axe. Bandeau fermé : la barre reprend
   le bas de l'écran et la marge ne garde que sa hauteur. En anglais (par le lien du bandeau) :
   pas de bandeau, barre en bas, axe. Chromium et WebKit.
+
+### 2026-10-07 — Corrections UX : espèces, « Raconte ta journée », Mon jardin (fix/especes-raconte)
+
+Demande de Guillaume, cinq points :
+
+1. Fiche d'espèce : la croix est remplacée par une flèche retour en haut à gauche (« Retour
+   aux espèces », aussi en info-bulle), qui fait la même chose que « Retour aux espèces »,
+   désormais en bas de la fiche. Sur la grille, la croix reste ; son nom et son info-bulle :
+   « Fermer : le jardin choisira » / “Close: the garden will choose”.
+2. « Raconte ta journée » avec plusieurs plantes : une seule feuille, compteur « 0 / N
+   plantes » (région polite : « 1 plante choisie sur 3 »), une place par plante. « Ajouter
+   … » remplit la première place vide, la même espèce peut revenir (« ×2 » sur la carte),
+   chaque place se retire (« Retirer le pommier (plante 1) »). « Planter » est `aria-disabled`
+   tant qu'une place est vide ; « Le jardin choisit le reste » plante tout de suite, les
+   places vides au tirage habituel (le tirage dépend de l'id de l'entrée : il ne peut pas
+   s'afficher dans une place avant). La croix et Échap font de même : les choix faits sont
+   gardés. Les espèces vont aux nouvelles plantes dans l'ordre des choix légers.
+3. /comparer : carte discrète « Plus rapide : raconte ta journée » / “Quicker: tell us about
+   your day” sous la sélection, après le bouton Comparer, seulement si l'IA est active (`GET
+/api/raconte`, question partagée avec l'écran : `useRaconteAvailability`). Elle remplace
+   l'ancien `RaconteLink` en bas de l'écran (un seul point d'entrée). En anglais, « us » et
+   non « me » : le nom validé de la fonction est “Tell us about your day”. Le serveur de test
+   statique répond `{ enabled: false }` à `GET /api/raconte`, comme une fonction coupée
+   (sinon chaque page /comparer écrirait un 404 en console).
+4. /jardin : « Faire pousser une plante » / « Compare deux gestes du quotidien » juste sous
+   le jardin (après le message du prochain animal), tomate, pleine largeur, vers /comparer.
+   Texte encre : le blanc sur tomate ne fait que 3,3:1, l'encre 5,3:1 (paire déjà vérifiée par
+   le test du thème, emplacement ajouté). « Mes habitudes » reste dessous, séparée. Le jardin
+   vide perd son second lien « Comparer deux gestes ».
+5. /jardin : le lien « Comparer » en haut à gauche devient le nom du site, avec le composant
+   `Logo` déjà utilisé sur le duel et les résultats, vers / ou /en. Nom accessible « Le poids
+   des choses – Accueil » / « – Home » (et non « Accueil » seul : le texte visible doit
+   figurer dans le nom, WCAG 2.5.3) ; changé pour tous les `Logo`. Les pages de texte et
+   /saison gardent leur « ← Retour » vers l'accueil : à harmoniser si besoin.
+
+Bout en bout : `e2e/especes.spec.ts` (flèche, croix, FR et EN), `e2e/raconte.spec.ts`
+(plusieurs plantes : même espèce deux fois, retirer, « Planter », « Le jardin choisit le
+reste », anglais ; carte sur /comparer ; le faux modèle reconnaît aussi « second-hand
+jeans »), `e2e/raccourcis.spec.ts` (carte avec IA active ou coupée, en-tête et bouton de
+/jardin, FR et EN, axe).
+
+PR #29 (barre « Comparer ») n'était pas encore fusionnée : cette branche part de main sans
+elle. La carte est dans le flux de la page, sous le bouton : la marge réservée par la barre
+la garde visible. Conflit attendu dans `GestureChooser.tsx` à la fusion de la seconde PR.
+
+Relecture de la PR #30 (même jour) :
+
+- PR #29 fusionnée : main repris dans la branche (fusion, sans réécriture). Conflit de
+  `GestureChooser.tsx` résolu : version de main (fragment, `CompareBar`) avec la carte
+  `RaconteQuickLink` après l'habitude déclarée et sans l'ancien `RaconteLink`. Nouveau test :
+  barre et carte ensemble (FR et EN) ; défilée jusqu'à elle, puis tout en bas de la page, la
+  carte reste entière au-dessus de la barre, rien ne la recouvre en son centre, axe.
+- Validés par Guillaume : « Le poids des choses – Accueil » et « Quicker: tell us about your
+  day ».
+- Pages de texte (méthode, mentions légales, confidentialité, FR et EN) et /saison : `Logo`
+  remplace « ← Retour ». `Logo` passe dans son propre fichier client
+  (`src/components/ui/Logo.tsx`), utilisable depuis `ContentPage`, composant serveur ; la
+  prop `locale` de `ContentPage` disparaît (le `Logo` lit la langue lui-même). « Raconte ta
+  journée » (« ← Comparer ») et le carnet (« ← Mon jardin ») gardent leur retour : il mène à
+  une page nommée, pas à l'accueil.
+- Lighthouse : `pnpm serve:out` lance `e2e/static-server.mjs` sur le port 4322 (paquet
+  `serve` retiré). Premier passage : performance 76 sur /comparer et /jardin (LCP 7,5 s) : le
+  serveur de test ne compressait pas, alors que `serve` et Cloudflare compressent ; il
+  compresse maintenant en gzip. `LH_PATHS` choisit les adresses.
+- Lighthouse a aussi relevé une cible tactile trop petite sur /jardin : les liens « Source »
+  et « Méthode » de « Le savais-tu ? », collés l'un sous l'autre quand le libellé de la
+  source passe à la ligne (selon le fait du jour, d'où le 97 de main). Ils font maintenant
+  24 px de haut, avec un espacement vertical ; `Logo` a une cible de 28 px.
+- Scores (mobile, `SITE_LAUNCHED=1`, même serveur gzip, même machine, 3 passages ; main
+  mesuré juste avant dans les mêmes conditions) :
+
+  | Page       | Performance (main) | Accessibilité (main) | Bonnes pratiques | SEO |
+  | ---------- | ------------------ | -------------------- | ---------------- | --- |
+  | Accueil    | 94-99 (95-99)      | 100 (100)            | 100              | 100 |
+  | Comparer   | 90-91 (92)         | 100 (100)            | 100              | 100 |
+  | Mon jardin | 90-92 (92-93)      | 100 (97)             | 100              | 100 |
+
+- Disque du poste presque plein pendant la session (de 350 Mo à 5,6 Go libres) : quelques
+  tests ont échoué sur « ENOSPC: no space left on device » puis sont passés à la relance (le
+  compte, en série). Les 15 Go de `/private/tmp/claude-501` viennent d'autres sessions et le
+  magasin pnpm fait 9,3 Go (`pnpm store prune`) : laissés à Guillaume.

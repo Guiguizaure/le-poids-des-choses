@@ -4,7 +4,6 @@ import type { Page } from "@playwright/test";
 import {
   acceptCancelledPrefetch,
   acceptDocument404,
-  acceptStatus,
   entry,
   expect,
   expectNoAxeViolations,
@@ -71,14 +70,12 @@ const PAGES = [
 
 test.describe("pages anglaises : axe et aucun texte français", () => {
   for (const { path, heading } of PAGES) {
-    test(path, async ({ page, consoleErrors }) => {
+    test(path, async ({ page }) => {
       await page.goto(path);
       await expect(page.locator("html")).toHaveAttribute("lang", "en");
       await expect(
         page.getByRole("heading", { level: 1, name: heading }),
       ).toBeVisible();
-      // Sans les Pages Functions, « Tell us about your day » ne trouve pas son API.
-      if (path === "/en/your-day") acceptStatus(consoleErrors, 404);
       await expectNoFrench(page);
       await expectNoAxeViolations(page);
     });

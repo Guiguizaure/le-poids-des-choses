@@ -73,8 +73,22 @@ async function journal(page: Page) {
   );
 }
 
+/**
+ * Écrit dans le champ, une fois la page hydratée : un texte tapé avant serait perdu. Le
+ * compteur (« 42 / 280 ») ne suit que si React a pris la main ; sinon, on recommence.
+ */
+async function fillDay(page: Page, label: string, text: string) {
+  const field = page.getByLabel(label);
+  await expect(async () => {
+    await field.fill(text);
+    await expect(page.getByText(`${text.length} / 280`)).toBeVisible({
+      timeout: 1000,
+    });
+  }).toPass();
+}
+
 async function analyse(page: Page, text: string) {
-  await page.getByLabel("Ta journée, en quelques phrases").fill(text);
+  await fillDay(page, "Ta journée, en quelques phrases", text);
   await page.getByRole("button", { name: "Analyser mon texte" }).click();
 }
 
@@ -478,7 +492,10 @@ test("points d'entrée depuis /comparer et /jardin", async ({
 }, testInfo) => {
   await prepare(page.context(), testInfo);
   await page.goto("/comparer");
-  await page.getByRole("link", { name: /^Raconte ta journée/ }).click();
+  // Carte discrète sous la sélection (IA active sur ce serveur).
+  await page
+    .getByRole("link", { name: "Plus rapide : raconte ta journée" })
+    .click();
   await expect(page).toHaveURL(`${BASE}/raconte`);
   // Préchargements terminés (WebKit signale ceux qu'une navigation interrompt).
   await page.waitForLoadState("networkidle");
@@ -486,4 +503,138 @@ test("points d'entrée depuis /comparer et /jardin", async ({
   await expect(
     page.getByRole("link", { name: /^Raconte ta journée/ }),
   ).toHaveAttribute("href", "/raconte");
+});
+
+/** Espèce notée dans chaque entrée du carnet, par geste. */
+async function speciesByGesture(page: Page) {
+  const entries = (await journal(page)) as unknown as {
+    gestureA: string;
+    species?: string;
+  }[];
+  return Object.fromEntries(entries.map((e) => [e.gestureA, e.species]));
+}
+
+test("plusieurs plantes : une place par plante, la même espèce deux fois, retirer, « Planter »", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.goto("/raconte");
+  await analyse(page, "J'ai pris le TER et acheté un jean d'occasion.");
+  await row(page, "TER").getByLabel("Distance du trajet (km)").fill("65");
+  await page.getByRole("button", { name: "Ajouter au carnet" }).click();
+
+  const picker = page.getByRole("dialog", { name: "Que veux-tu planter ?" });
+  await expect(picker).toBeVisible();
+  const counter = picker.locator("[data-plant-counter]");
+  const live = picker.locator('[aria-live="polite"]');
+  const plantAll = picker.getByRole("button", { name: "Planter", exact: true });
+  await expect(counter).toHaveText("0 / 2 plantes");
+  await expect(plantAll).toHaveAttribute("aria-disabled", "true");
+  await expect(
+    picker.getByRole("button", { name: "Laisse le jardin choisir" }),
+  ).toBeVisible();
+  await expectNoAxeViolations(page);
+
+  // Deux fois le pommier : les deux places sont remplies, les cartes ne prennent plus rien.
+  const apple = picker.getByRole("button", { name: "Ajouter le pommier" });
+  await apple.click();
+  await expect(counter).toHaveText("1 / 2 plantes");
+  await expect(live).toHaveText("1 plante choisie sur 2");
+  await expect(
+    picker.getByRole("button", { name: "Le jardin choisit le reste" }),
+  ).toBeVisible();
+  await apple.click();
+  await expect(counter).toHaveText("2 / 2 plantes");
+  await expect(live).toHaveText("2 plantes choisies sur 2");
+  await expect(
+    picker.locator('[data-species="arbre-1"] [data-chosen]'),
+  ).toHaveText("×2");
+  await expect(apple).toHaveAttribute("aria-disabled", "true");
+  await expect(plantAll).not.toHaveAttribute("aria-disabled", "true");
+
+  // Retirer la première place, la remplir avec la tulipe (depuis sa fiche).
+  await picker
+    .getByRole("button", { name: "Retirer le pommier (plante 1)" })
+    .click();
+  await expect(counter).toHaveText("1 / 2 plantes");
+  await expect(plantAll).toHaveAttribute("aria-disabled", "true");
+  await picker
+    .getByRole("button", { name: "En savoir plus sur la tulipe" })
+    .click();
+  await picker.getByRole("button", { name: "Ajouter la tulipe" }).click();
+  await expect(counter).toHaveText("2 / 2 plantes");
+  await expect(picker.locator('[data-slot="1"]')).toContainText("Tulipe");
+  await expect(picker.locator('[data-slot="2"]')).toContainText("Pommier");
+  await expectNoAxeViolations(page);
+
+  await plantAll.click();
+  await expect(picker).toBeHidden();
+  await expect(page.getByText("2 gestes ajoutés à ton carnet.")).toBeVisible();
+  // Dans l'ordre des choix légers : le TER, puis le jean.
+  expect(await speciesByGesture(page)).toEqual({
+    ter: "fleur-2",
+    jean: "arbre-1",
+  });
+});
+
+test("plusieurs plantes : « Le jardin choisit le reste » complète les places vides", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.goto("/raconte");
+  await analyse(page, "J'ai pris le TER et acheté un jean d'occasion.");
+  await row(page, "TER").getByLabel("Distance du trajet (km)").fill("65");
+  await page.getByRole("button", { name: "Ajouter au carnet" }).click();
+  const picker = page.getByRole("dialog", { name: "Que veux-tu planter ?" });
+  await picker.getByRole("button", { name: "Ajouter le cerisier" }).click();
+  await picker
+    .getByRole("button", { name: "Le jardin choisit le reste" })
+    .click();
+  await expect(picker).toBeHidden();
+  expect(await speciesByGesture(page)).toEqual({
+    ter: "arbre-3",
+    jean: undefined,
+  });
+});
+
+test("en anglais : several plants, one slot each", async ({
+  page,
+}, testInfo) => {
+  await prepare(page.context(), testInfo);
+  await page.goto("/en/your-day");
+  await fillDay(
+    page,
+    "Your day, in a few sentences",
+    "I took the TER and bought second-hand jeans.",
+  );
+  await page.getByRole("button", { name: "Read my day" }).click();
+  await page
+    .getByRole("list", { name: "Here’s what I understood" })
+    .getByRole("listitem")
+    .filter({ has: page.getByText("TER", { exact: true }) })
+    .getByLabel("Trip distance (km)")
+    .fill("65");
+  await page.getByRole("button", { name: "Add to journal" }).click();
+
+  const picker = page.getByRole("dialog", {
+    name: "What would you like to plant?",
+  });
+  const counter = picker.locator("[data-plant-counter]");
+  await expect(counter).toHaveText("0 / 2 plants");
+  await picker.getByRole("button", { name: "Add the apple tree" }).click();
+  await expect(picker.locator('[aria-live="polite"]')).toHaveText(
+    "1 of 2 plants chosen",
+  );
+  await picker.getByRole("button", { name: "Add the tulip" }).click();
+  await expect(counter).toHaveText("2 / 2 plants");
+  await expect(
+    picker.getByRole("button", { name: "Remove the tulip (plant 2)" }),
+  ).toBeVisible();
+  await expectNoAxeViolations(page);
+  await picker.getByRole("button", { name: "Plant", exact: true }).click();
+  await expect(picker).toBeHidden();
+  expect(await speciesByGesture(page)).toEqual({
+    ter: "arbre-1",
+    jean: "fleur-2",
+  });
 });

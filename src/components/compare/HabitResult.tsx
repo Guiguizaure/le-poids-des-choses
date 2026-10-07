@@ -4,12 +4,8 @@ import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
 import { Illustration } from "@/components/illustrations/Illustration";
-import {
-  IconLink,
-  Logo,
-  PrimaryLink,
-  TextButton,
-} from "@/components/ui/buttons";
+import { IconLink, PrimaryLink, TextButton } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import type { HabitEntry } from "@/lib/data/types";
 import { waterRevealForEntry } from "@/lib/garden/model";
 import { seasonFor } from "@/lib/garden/seasons";

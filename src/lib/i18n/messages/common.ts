@@ -25,6 +25,7 @@ export const NAV = defineMessages(
     method: "Méthode",
     signIn: "Se connecter",
     back: "Retour",
+    home: "Accueil",
   },
   {
     label: "Main navigation",
@@ -33,6 +34,7 @@ export const NAV = defineMessages(
     method: "Method",
     signIn: "Sign in",
     back: "Back",
+    home: "Home",
   },
 );
 

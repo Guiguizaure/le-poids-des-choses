@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { LocalLink as Link } from "@/lib/i18n/LocaleProvider";
 
 const PRIMARY =
@@ -70,18 +70,6 @@ export function IconLink({
       className="focus-visible:outline-outremer -m-2 rounded-full p-2 focus-visible:outline-2"
     >
       <Icon name={icon} />
-    </Link>
-  );
-}
-
-export function Logo({
-  children = "Le poids des choses",
-}: {
-  children?: ReactNode;
-}) {
-  return (
-    <Link href="/" className="font-titre text-encre text-[17px] leading-[1.2]">
-      {children}
     </Link>
   );
 }

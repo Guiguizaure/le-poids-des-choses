@@ -12,12 +12,8 @@ import { Ladybug } from "@/components/scene/Ladybug";
 import { Scale } from "@/components/scene/Scale";
 import { Snail } from "@/components/scene/Snail";
 import { Tree } from "@/components/scene/Tree";
-import {
-  IconLink,
-  Logo,
-  PrimaryLink,
-  TextButton,
-} from "@/components/ui/buttons";
+import { IconLink, PrimaryLink, TextButton } from "@/components/ui/buttons";
+import { Logo } from "@/components/ui/Logo";
 import { formatMass } from "@/lib/calc";
 import type { ComparisonEntry } from "@/lib/data/types";
 import {

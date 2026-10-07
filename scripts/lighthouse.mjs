@@ -1,6 +1,8 @@
 // `pnpm lighthouse` (JavaScript pur : tsx injecte des aides que Lighthouse ne sait pas
 // exécuter dans la page) : scores Lighthouse (profil mobile) des pages principales, sur l'export
-// statique servi en local (`pnpm build` puis `pnpm serve:out`, ou BASE_URL=…).
+// statique servi en local (`pnpm build` puis `pnpm serve:out` : le serveur des tests de bout en
+// bout, en-têtes et CSP compris, qui répond `{ enabled: false }` à GET /api/raconte ; ou
+// BASE_URL=…). LH_PATHS=/,/comparer,/jardin : seulement ces adresses.
 // Construire avec SITE_LAUNCHED=1 pour mesurer le SEO tel qu'il sera au lancement ; sans elle,
 // le SEO est mesuré avec le noindex. LH_LANG=fr ou LH_LANG=en : une seule langue.
 import * as chromeLauncher from "chrome-launcher";
@@ -27,12 +29,15 @@ const ALL_PAGES = [
   ["Method (en)", "/en/method"],
 ];
 const LANG = process.env.LH_LANG;
+const PATHS = process.env.LH_PATHS?.split(",").map((path) => path.trim());
 const PAGES = ALL_PAGES.filter(([, path]) =>
-  LANG === "en"
-    ? path.startsWith("/en")
-    : LANG === "fr"
-      ? !path.startsWith("/en")
-      : true,
+  PATHS
+    ? PATHS.includes(path)
+    : LANG === "en"
+      ? path.startsWith("/en")
+      : LANG === "fr"
+        ? !path.startsWith("/en")
+        : true,
 );
 const CATEGORIES = ["performance", "accessibility", "best-practices", "seo"];
 
