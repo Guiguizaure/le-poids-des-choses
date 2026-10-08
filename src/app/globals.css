@@ -42,6 +42,7 @@
   --animate-pop: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
   --animate-select: select 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
   --animate-bar-in: bar-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-zzz: zzz 2.4s ease-in-out infinite;
 
   /* Part d'une opacité non nulle : le texte reste visible dès la première image (LCP). */
   @keyframes enter {
@@ -64,6 +65,20 @@
   @keyframes select {
     40% {
       transform: scale(0.95);
+    }
+  }
+  /* « Zzz » d'un animal endormi : monte un peu et s'efface, en boucle. */
+  @keyframes zzz {
+    0% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
     }
   }
 }

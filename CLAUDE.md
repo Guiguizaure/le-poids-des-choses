@@ -11,8 +11,9 @@ suit les saisons et l'heure, et reçoit des visiteurs. En français (racine) et 
 
 - Gel des fonctionnalités : plus aucune nouvelle fonctionnalité jusqu'à la sortie de la
   version anglaise et de l'étude de cas ; seulement corrections, traduction et finitions.
-  Exceptions validées par l'utilisateur : le lot « Espèces », puis la refonte des habitudes
-  (arrosage ciblé, `feat/habitudes-arrosage`), dernier gros lot avant les testeurs.
+  Exceptions validées par l'utilisateur : le lot « Espèces », la refonte des habitudes
+  (arrosage ciblé, `feat/habitudes-arrosage`), puis « Les animaux parlent »
+  (`feat/animaux-parlent`, demandé le 8 octobre 2026).
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
   (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
@@ -168,6 +169,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   saisons (`seasons.ts`), arrosage (`watering.ts`), jardin vivant : jour et nuit
   (`daytime.ts`), faune par saison et heure (`fauna.ts`), visiteurs (`visitors.ts`), scène
   du moment (`live.ts` : `liveScene`), garde-fou de contraste du ciel (`sky-contrast.ts`)
+- `src/content/animaux` — « Les animaux parlent » : contenu FR/EN par animal et garde-fou ;
+  `src/lib/friends` — amitié (`friendship.ts`, `useFriends`) ; `src/components/garden/talk` —
+  `AnimalTalk`, `TalkTargets`, `GardenFriends`, `Typewriter`, portrait et « Zzz »
 - `src/lib/habits` — table `HABITS`, « Mes habitudes » (`declared.ts`, `useDeclaredHabits`) ;
   `src/components/habits` — `HabitChooser` (/comparer?habitude), `MyHabits` (/jardin)
 - `src/components/garden` — `<Garden entries now highlightId sky />`, écran `/jardin`,
@@ -378,12 +382,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     hauts feuillages ; coccinelle, escargot, hérisson et oiseau au sol ;
   - oiseau posé sur la colline verte (sautille, picore, dort au sol). Envol (V1.1) :
     toutes les 40 à 90 s (`flightDelay`, graine tirée une fois par session dans
-    `sessionStorage`) ou quand on le touche (bouton « Faire s’envoler l’oiseau », posé sur
-    lui hors de la scène `role="img"`), il passe sur `oiseau-vol` (ailes en scaleY de 1 à
+    `sessionStorage`) et quand une conversation avec lui se ferme (le toucher ouvre la
+    conversation, voir « Les animaux parlent » ; jamais d'envol pendant), il passe sur `oiseau-vol` (ailes en scaleY de 1 à
     -0,6 autour de 28,30, en décalé), décolle sous le soleil, boucle dans la bande de ciel
     et revient se poser (`src/lib/geometry/flight.ts` : trajet testé, jamais devant le
     soleil ni hors scène ; `data-flight` donne la phase). Jamais quand le jardin dort ni en
-    mouvement réduit (pas de bouton) ;
+    mouvement réduit ;
   - petites bêtes cernées d'encre 1,5 px (`vector-effect="non-scaling-stroke"` : le trait
     reste fin quelle que soit la taille d'affichage) ;
   - assoupi après 21 jours sans entrée (habitude comprise) : brume, oiseau/escargot/hérisson
@@ -543,6 +547,50 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   plantée, feuille fermée, premier arrosage) ; mémorisée sous `lpdc:indices:v1`
   (`{ version: 1, seen }`, repli en mémoire) ; région `polite` remplie après l'hydratation,
   jamais de focus pris.
+- « Les animaux parlent » (papillon, coccinelle, oiseau, escargot, renard) :
+  - contenu typé FR/EN dans `src/content/animaux/` (un fichier par animal : `name`, `talk`,
+    répliques `{ id, chapter, kind, sourceId?, condition?, steps }`, `sleep`, `again`) ; une
+    réplique (comme chaque réplique de sommeil ou « déjà parlé ») est une séquence de 1 à 3
+    étapes `{ expr: "content" | "surpris" | "dort", fr, en }` ; sommeil : « dort » à chaque
+    étape (le contenu reçu en `chapitre` / `etapes` est converti : code en anglais) ;
+    `kind` : `presentation`, `fait`, `histoire`, `confidence`, `souvenir`, `humeur` ;
+    `sleepSourceId` quand les répliques de sommeil citent un fait ; sommeil vide permis pour
+    un animal jamais dessiné endormi (papillon, coccinelle : `drawnAsleep`, déduit des tables
+    du jardin) ; répliques conditionnelles rangées où l'on veut (ordre des chapitres vérifié
+    sur les autres) ;
+    chapitres 1 présentation, 2 anecdote, 3 petite histoire, 4 confidence, 5 souvenir ;
+    `kind: "fait"` exige un `sourceId` de `docs/animaux-sources.md` (colonne Id entre
+    accents graves ET citation de la source sur la ligne) ; garde-fou du build toujours
+    bloquant (`src/content/animaux/check.ts` : ids uniques et stables, chapitres dans l'ordre,
+    saison et espèce connues, 2 ou 3 « déjà parlé ») ; contenu réel reçu le 8 octobre 2026,
+    textes mot pour mot ;
+  - toucher un animal (zones `TalkTargets` d'au moins 44 px, hors de la scène `role="img"`,
+    recentrées à chaque image sur le dessin : elles suivent la marche, le vol, le vent) ouvre
+    `AnimalTalk` : `<dialog>` en bas d'écran, portrait décoratif à gauche
+    (`public/portraits/portrait-{animal}-{expression}.svg`, en `<img>`, sans aucun `id`
+    comme les illustrations, coins arrondis en CSS (rayon 32 sur 240) ;
+    les trois expressions superposées, fondu de 200 ms, aucun en mouvement réduit ;
+    96 / 140 px), nom en étiquette soleil, étape en cours lettre à lettre (`Typewriter`,
+    aria-hidden ; texte entier dans une région polie qui décrit aussi la fenêtre) ;
+    « Suite ▶ » / “Next ▶” passe à l'étape suivante, « Fermer » / “Close” à la dernière ;
+    toucher la boîte finit d'écrire, puis passe à l'étape suivante (jamais ne ferme) ; le
+    focus va et reste sur ce bouton, tourne avec la croix ; croix, Échap ou toucher en
+    dehors ferment ; le focus revient à l'animal (ou à sa ligne de liste) ;
+  - endormi (dessin endormi : oiseau la nuit, escargot l'hiver, renard le jour, jardin
+    assoupi) : « Zzz » sur la zone du jardin (CSS, décoratif), portrait « dort », réplique de
+    sommeil, l'amitié n'avance pas ; elle avance d'une réplique (séquence entière) par jour ;
+  - amitié `src/lib/friends` (pure, testée) dans `lpdc:amis:v1`
+    (`{ version: 1, animals: { <id>: { seen, day, talks, met } } }`, repli en mémoire) :
+    première conversation éveillée du jour (Paris) = réplique suivante non vue (présentation
+    d'abord, puis une conditionnelle vraie passe en priorité ; fausse, elle attend) ; même
+    jour = « déjà parlé » (2-3 qui tournent) ; tout vu = une anecdote déjà vue, la même toute
+    la journée ; aucune pénalité ; PAS de synchro du compte ; compteur « X répliques sur N »
+    = répliques sans condition seulement (les conditionnelles sont des bonus, N sur N sans
+    elles, testé) ;
+  - « Les habitants du jardin » (`GardenFriends`, /jardin sous « Mes habitudes ») : une ligne
+    par animal, rencontré (débloqué, ou vu pour le renard) : portrait, nom, « 3 répliques
+    sur 8 », « Parler » s'il est là, sinon pourquoi ; sinon silhouette « ? » ; aucun kg ;
+  - e2e : `e2e/animaux.spec.ts` (et `bird.spec.ts` pour l'envol après conversation).
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile

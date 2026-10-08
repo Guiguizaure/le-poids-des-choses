@@ -39,6 +39,18 @@ import { FirstHint } from "@/components/ui/FirstHint";
 import { HINTS } from "@/lib/i18n/messages/garden";
 import { markHintSeen } from "@/lib/hints/useHint";
 import { doneGesture, isComparison } from "@/lib/journal/kind";
+import type { TalkerId } from "@/content/animaux";
+import { AnimalTalk } from "@/components/garden/talk/AnimalTalk";
+import {
+  GardenFriends,
+  type TalkerPresence,
+} from "@/components/garden/talk/GardenFriends";
+import type { Reply } from "@/lib/friends/friendship";
+import { markMet, talkTo, useFriends } from "@/lib/friends/useFriends";
+import { isNightAt } from "@/lib/garden/daytime";
+import { liveScene } from "@/lib/garden/live";
+import { gardenDay, seasonAt } from "@/lib/garden/seasons";
+import { speciesFor } from "@/lib/garden/species";
 
 const RECENT_COUNT = 5;
 
@@ -163,6 +175,75 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const canShare = shareSupported && journal.ready && hasEntries;
   const today = new Date(now);
 
+  // « Les animaux parlent » : qui est là en ce moment (même scène que le jardin), l'amitié
+  // de chacun (sur l'appareil), la conversation ouverte.
+  const live = useMemo(
+    () =>
+      liveScene(
+        garden,
+        { season: seasonAt(now), night: isNightAt(now) },
+        sky,
+        new Date(now),
+      ),
+    [garden, now, sky],
+  );
+  const friends = useFriends();
+  const foxHere = live.visitors.some((visitor) => visitor.kind === "renard");
+  useEffect(() => {
+    if (foxHere) markMet("fox");
+  }, [foxHere]);
+  const met = (talker: TalkerId) =>
+    friends[talker].met ||
+    (talker !== "fox" && garden.unlocked.includes(talker));
+  const presence = (talker: TalkerId): TalkerPresence => {
+    if (talker === "fox") {
+      const fox = live.visitors.find((visitor) => visitor.kind === "renard");
+      return fox
+        ? { here: true, asleep: fox.asleep }
+        : { here: false, why: "ailleurs" };
+    }
+    const animal = live.animals.find((candidate) => candidate.kind === talker);
+    if (animal) return { here: true, asleep: animal.asleep };
+    const why = live.away.find((away) => away.kind === talker)?.why;
+    return {
+      here: false,
+      why: why === "saison" || why === "nuit" ? why : "ailleurs",
+    };
+  };
+  const [talk, setTalk] = useState<{
+    talker: TalkerId;
+    reply: Reply;
+    asleep: boolean;
+  } | null>(null);
+  const talkOpener = useRef<HTMLElement | null>(null);
+  const openTalk = (talker: TalkerId, opener: HTMLElement) => {
+    const here = presence(talker);
+    if (!here.here) return;
+    const date = new Date();
+    const reply = talkTo(talker, {
+      day: gardenDay(date) ?? "",
+      season: seasonAt(date.getTime()),
+      night: isNightAt(date.getTime()),
+      planted: new Set(garden.plants.map((plant) => speciesFor(plant.kind).id)),
+      asleep: here.asleep,
+    });
+    talkOpener.current = opener;
+    setTalk({ talker, reply, asleep: here.asleep });
+  };
+  const closeTalk = () => {
+    const talker = talk?.talker;
+    setTalk(null);
+    // Le focus revient à ce qui a ouvert la conversation (l'animal ou sa ligne de la liste).
+    requestAnimationFrame(() => {
+      const opener = talkOpener.current;
+      if (opener?.isConnected) opener.focus();
+      else
+        document
+          .querySelector<HTMLElement>(`[data-talk-row="${talker}"] button`)
+          ?.focus();
+    });
+  };
+
   const onImport = async (file: File | undefined) => {
     if (!file) return;
     setImporting(true);
@@ -237,6 +318,8 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           highlightId={revealId}
           arriving={arriving}
           sky={sky}
+          onTalk={openTalk}
+          talking={talk?.talker ?? null}
         />
       </div>
       <p
@@ -317,6 +400,13 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           {journal.ready ? (
             <MyHabits entries={journal.entries} now={now} onWater={water} />
           ) : null}
+
+          <GardenFriends
+            friends={friends}
+            met={met}
+            presence={presence}
+            onTalk={openTalk}
+          />
 
           <GardenSeasonCard />
 
@@ -440,6 +530,14 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
             </section>
           ) : null}
         </div>
+      ) : null}
+      {talk ? (
+        <AnimalTalk
+          talker={talk.talker}
+          reply={talk.reply}
+          asleep={talk.asleep}
+          onClose={closeTalk}
+        />
       ) : null}
     </main>
   );
