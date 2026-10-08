@@ -1,107 +1,123 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { ANIMAL_SCRIPTS, TALKERS, type AnimalScript, type TalkerId } from ".";
-import { animalScriptProblems, sourceIdsFrom } from "./check";
+import { converse, emptyFriends, progress } from "@/lib/friends/friendship";
+import {
+  ANIMAL_SCRIPTS,
+  TALKERS,
+  type AnimalScript,
+  type Line,
+  type TalkerId,
+} from ".";
+import { animalScriptProblems, drawnAsleep, sourceIdsFrom } from "./check";
 
 const SOURCES = readFileSync(
   new URL("../../../docs/animaux-sources.md", import.meta.url),
   "utf8",
 );
-/** Même règle que les dictionnaires : jamais « saved », « avoided »… */
-const DISHONEST = /\b(sav(e|ed|ing)|avoid(ed|ing)?|won|reduc(e|ed|ing))\b/i;
-const FORBIDDEN_FR = /\b(évité|économisé|sauvé|gagné)/i;
+const PORTRAITS = new URL("../../../public/portraits/", import.meta.url);
+const SLUG: Record<TalkerId, string> = {
+  butterfly: "papillon",
+  ladybug: "coccinelle",
+  bird: "oiseau",
+  snail: "escargot",
+  fox: "renard",
+};
 
-const withLine = (line: AnimalScript["lines"][number]) =>
+/**
+ * Les animaux ne parlent jamais de kg ni de CO2 (la règle d'honnêteté « jamais évité,
+ * économisé… » porte sur les kg : « I saved you a feather » est permis).
+ */
+const KG = /\b(kg|kilos?|CO2|CO₂|carbone|carbon)\b/i;
+
+const withLine = (line: Line) =>
   ({
     ...ANIMAL_SCRIPTS,
     fox: { ...ANIMAL_SCRIPTS.fox, lines: [...ANIMAL_SCRIPTS.fox.lines, line] },
   }) as Record<TalkerId, AnimalScript>;
 
 describe("contenu « Les animaux parlent »", () => {
-  it("valide : ids uniques, chapitres, conditions connues, faits sourcés", () => {
+  it("valide : ids uniques, chapitres, sortes, conditions, sources citées", () => {
     expect(
       animalScriptProblems(ANIMAL_SCRIPTS, sourceIdsFrom(SOURCES)),
     ).toEqual([]);
   });
 
-  it("toute réplique « fait » a un sourceId qui existe dans docs/animaux-sources.md", () => {
+  it("chaque réplique « fait » (et chaque source citée) a une citation dans docs/animaux-sources.md", () => {
+    const cited = sourceIdsFrom(SOURCES);
+    const used = TALKERS.flatMap((talker) => [
+      ...ANIMAL_SCRIPTS[talker].lines.map((line) => ({
+        id: line.id,
+        kind: line.kind,
+        sourceId: line.sourceId,
+      })),
+      {
+        id: `${talker}:sommeil`,
+        kind: "",
+        sourceId: ANIMAL_SCRIPTS[talker].sleepSourceId,
+      },
+    ]);
+    for (const line of used) {
+      if (line.kind === "fait") expect(line.sourceId, line.id).toBeTruthy();
+      if (line.sourceId) expect(cited.has(line.sourceId), line.id).toBe(true);
+    }
+    // Il y a bien des faits, et une source sans citation ne compte pas.
+    expect(used.filter((line) => line.kind === "fait").length).toBeGreaterThan(
+      10,
+    );
+    expect(
+      sourceIdsFrom("| `sans-citation` | Renard | … | lien | | | |").size,
+    ).toBe(0);
+    expect(
+      sourceIdsFrom("| `cite` | Renard | … | lien | « texte » | | |"),
+    ).toEqual(new Set(["cite"]));
+  });
+
+  it("garde-fou : fait sans source, source sans citation, id en double, condition inconnue", () => {
     const ids = sourceIdsFrom(SOURCES);
-    for (const talker of TALKERS)
-      for (const line of ANIMAL_SCRIPTS[talker].lines.filter(
-        (l) => l.kind === "fait",
-      )) {
-        expect(line.sourceId, line.id).toBeTruthy();
-        expect(ids.has(line.sourceId!), line.id).toBe(true);
-      }
-    // Le garde-fou les voit bien.
-    const fact = {
+    const step = { expr: "content", fr: "a", en: "a" } as const;
+    const fact: Line = {
       id: "renard-x",
       chapter: 5,
       kind: "fait",
-      steps: [{ expr: "content", fr: "a", en: "a" }],
-    } as const;
+      steps: [step],
+    };
     expect(animalScriptProblems(withLine(fact), ids)).toEqual([
       "fox : « renard-x » : fait sans sourceId",
     ]);
     expect(
       animalScriptProblems(withLine({ ...fact, sourceId: "inconnue" }), ids),
     ).toEqual([
-      "fox : « renard-x » : source « inconnue » absente de docs/animaux-sources.md",
+      "fox : « renard-x » : source « inconnue » sans citation dans docs/animaux-sources.md",
     ]);
     expect(
       animalScriptProblems(
-        withLine({ ...fact, sourceId: "renard-ouie" }),
-        sourceIdsFrom("| `renard-ouie` | Renard | … |"),
+        withLine({ ...ANIMAL_SCRIPTS.fox.lines[0], chapter: 5 }),
+        ids,
       ),
-    ).toEqual([]);
-  });
-
-  it("garde-fou : id en double, chapitres dans le désordre, condition inconnue", () => {
-    const ids = sourceIdsFrom(SOURCES);
-    const duplicate = withLine({
-      ...ANIMAL_SCRIPTS.fox.lines[0],
-      chapter: 5,
-    });
-    expect(animalScriptProblems(duplicate, ids)).toContain(
-      "fox : id en double « renard-1 »",
-    );
+    ).toContain(`fox : id en double « ${ANIMAL_SCRIPTS.fox.lines[0].id} »`);
     expect(
       animalScriptProblems(
         withLine({
           id: "renard-y",
           chapter: 1,
-          kind: "recit",
-          steps: [{ expr: "content", fr: "a", en: "a" }],
+          kind: "humeur",
+          steps: [step],
           condition: { planted: "arbre-99" },
         }),
         ids,
       ),
-    ).toEqual([
-      "fox : « renard-y » : chapitres dans le désordre",
-      "fox : « renard-y » : espèce inconnue",
-    ]);
+    ).toEqual(["fox : « renard-y » : espèce inconnue"]);
   });
 
-  it("séquences : 1 à 3 étapes, expression connue, « dort » en dormant", () => {
+  it("séquences : 1 à 3 étapes, « dort » en dormant", () => {
     const ids = sourceIdsFrom(SOURCES);
     const step = { expr: "content", fr: "a", en: "a" } as const;
     expect(
       animalScriptProblems(
-        withLine({ id: "renard-z", chapter: 5, kind: "recit", steps: [] }),
+        withLine({ id: "renard-z", chapter: 5, kind: "souvenir", steps: [] }),
         ids,
       ),
     ).toEqual(["fox : « renard-z » : 0 étape(s), 1 à 3 attendues"]);
-    expect(
-      animalScriptProblems(
-        withLine({
-          id: "renard-z",
-          chapter: 5,
-          kind: "recit",
-          steps: [step, step, step, step],
-        }),
-        ids,
-      ),
-    ).toEqual(["fox : « renard-z » : 4 étape(s), 1 à 3 attendues"]);
     const awakeSleep = {
       ...ANIMAL_SCRIPTS,
       fox: { ...ANIMAL_SCRIPTS.fox, sleep: [[step]] },
@@ -111,16 +127,9 @@ describe("contenu « Les animaux parlent »", () => {
     ]);
   });
 
-  it("chaque animal : 5 chapitres, du sommeil, 2 ou 3 « déjà parlé » ; aucun mot interdit", () => {
+  it("chaque étape a un texte FR et EN non vide, jamais de kg", () => {
     for (const talker of TALKERS) {
       const script = ANIMAL_SCRIPTS[talker];
-      expect(new Set(script.lines.map((l) => l.chapter))).toEqual(
-        new Set([1, 2, 3, 4, 5]),
-      );
-      expect(script.lines[0].condition, talker).toBeUndefined();
-      expect(script.sleep.length).toBeGreaterThan(0);
-      expect(script.again.length).toBeGreaterThanOrEqual(2);
-      expect(script.again.length).toBeLessThanOrEqual(3);
       for (const text of [
         script.name,
         script.talk,
@@ -128,11 +137,67 @@ describe("contenu « Les animaux parlent »", () => {
         ...script.sleep.flat(),
         ...script.again.flat(),
       ]) {
-        expect(text.fr.trim()).not.toBe("");
-        expect(text.en.trim()).not.toBe("");
-        expect(text.en).not.toMatch(DISHONEST);
-        expect(text.fr).not.toMatch(FORBIDDEN_FR);
+        expect(text.fr.trim(), talker).not.toBe("");
+        expect(text.en.trim(), talker).not.toBe("");
+        expect(text.en).not.toMatch(KG);
+        expect(text.fr).not.toMatch(KG);
       }
+      // Plus aucune réplique provisoire.
+      expect(JSON.stringify(script)).not.toMatch(/provisoire|placeholder/i);
+    }
+  });
+
+  it("chaque expression a son portrait, et les portraits n'ont aucun id", () => {
+    const files = new Set(readdirSync(PORTRAITS));
+    for (const talker of TALKERS) {
+      const script = ANIMAL_SCRIPTS[talker];
+      const exprs = new Set(
+        [
+          ...script.lines.flatMap((line) => line.steps),
+          ...script.sleep.flat(),
+          ...script.again.flat(),
+        ].map((step) => step.expr),
+      );
+      // Le portrait endormi sert aussi à la liste quand il dort.
+      if (drawnAsleep(talker)) exprs.add("dort");
+      for (const expr of exprs)
+        expect(
+          files.has(`portrait-${SLUG[talker]}-${expr}.svg`),
+          `${talker} ${expr}`,
+        ).toBe(true);
+    }
+    for (const file of files) {
+      const svg = readFileSync(new URL(file, PORTRAITS), "utf8");
+      expect(svg, file).not.toMatch(/\sid="|url\(#/);
+    }
+  });
+
+  it("sommeil : répliques pour ceux qui sont dessinés endormis (oiseau, escargot, renard)", () => {
+    expect(TALKERS.filter(drawnAsleep)).toEqual(["bird", "snail", "fox"]);
+    for (const talker of TALKERS.filter(drawnAsleep))
+      expect(ANIMAL_SCRIPTS[talker].sleep.length, talker).toBeGreaterThan(0);
+  });
+
+  it("le compteur atteint N sur N sans aucune réplique conditionnelle", () => {
+    for (const talker of TALKERS) {
+      const script = ANIMAL_SCRIPTS[talker];
+      // En été, de jour, rien de planté : aucune condition n'est vraie.
+      let record = emptyFriends()[talker];
+      const total = script.lines.filter((line) => !line.condition).length;
+      for (let day = 1; day <= total; day++)
+        record = converse(talker, script, record, {
+          day: `2026-07-${String(day).padStart(2, "0")}`,
+          season: "ete",
+          night: false,
+          planted: new Set(),
+          asleep: false,
+        }).record;
+      expect(progress(script, record), talker).toEqual({ seen: total, total });
+      expect(
+        record.seen.every(
+          (id) => !script.lines.find((l) => l.id === id)?.condition,
+        ),
+      ).toBe(true);
     }
   });
 });

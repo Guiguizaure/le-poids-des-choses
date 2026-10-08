@@ -30,7 +30,8 @@ export function Zzz({ className = "" }: { className?: string }) {
 }
 
 /**
- * Portrait de l'animal (décoratif : le nom est dans l'étiquette). Les trois expressions sont
+ * Portrait de l'animal (décoratif : le nom est dans l'étiquette). Coins arrondis en CSS
+ * (rayon 32 sur 240, comme le cadre dessiné : les fichiers n'ont pas de découpe). Les trois expressions sont
  * superposées et chargées d'avance : changer d'expression est un fondu court, sans rien en
  * mouvement réduit.
  */
@@ -58,7 +59,7 @@ export function Portrait({
           width={240}
           height={240}
           unoptimized
-          className={`absolute inset-0 size-full transition-opacity duration-200 motion-reduce:transition-none ${candidate === expr ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 size-full rounded-[13.333%] transition-opacity duration-200 motion-reduce:transition-none ${candidate === expr ? "opacity-100" : "opacity-0"}`}
         />
       ))}
     </div>

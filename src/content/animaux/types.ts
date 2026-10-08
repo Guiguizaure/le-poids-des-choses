@@ -19,10 +19,20 @@ export type Bilingual = { fr: string; en: string };
 export type Chapter = 1 | 2 | 3 | 4 | 5;
 
 /**
- * `fait` : une information sur le vrai animal, qui doit citer une source de
- * docs/animaux-sources.md (`sourceId`) ; `recit` : le personnage parle, sans fait à sourcer.
+ * Sorte de réplique. `fait` : une information sur le vrai animal, qui doit citer une source de
+ * docs/animaux-sources.md (`sourceId`) ; les autres (présentation, petite histoire,
+ * confidence, souvenir, humeur) font parler le personnage, avec une source si elles
+ * s'appuient quand même sur un fait.
  */
-export type LineKind = "fait" | "recit";
+export const LINE_KINDS = [
+  "presentation",
+  "fait",
+  "histoire",
+  "confidence",
+  "souvenir",
+  "humeur",
+] as const;
+export type LineKind = (typeof LINE_KINDS)[number];
 
 /** Réplique conditionnelle : prioritaire quand toutes ses conditions sont vraies. */
 export type LineCondition = {
@@ -59,8 +69,13 @@ export type AnimalScript = {
   talk: Bilingual;
   /** Répliques, dans l'ordre où elles se découvrent (chapitre par chapitre). */
   lines: readonly Line[];
-  /** Répliques quand il dort (dans son personnage), expression « dort » à chaque étape. */
+  /**
+   * Répliques quand il dort (dans son personnage), expression « dort » à chaque étape. Vide
+   * pour un animal jamais dessiné endormi (papillon, coccinelle : ils s'absentent).
+   */
   sleep: readonly Sequence[];
+  /** Source des faits cités par les répliques de sommeil (docs/animaux-sources.md). */
+  sleepSourceId?: string;
   /** « Déjà parlé aujourd'hui » : tirée parmi 2 ou 3. */
   again: readonly Sequence[];
 };

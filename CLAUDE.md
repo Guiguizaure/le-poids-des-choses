@@ -553,15 +553,22 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     réplique (comme chaque réplique de sommeil ou « déjà parlé ») est une séquence de 1 à 3
     étapes `{ expr: "content" | "surpris" | "dort", fr, en }` ; sommeil : « dort » à chaque
     étape (le contenu reçu en `chapitre` / `etapes` est converti : code en anglais) ;
+    `kind` : `presentation`, `fait`, `histoire`, `confidence`, `souvenir`, `humeur` ;
+    `sleepSourceId` quand les répliques de sommeil citent un fait ; sommeil vide permis pour
+    un animal jamais dessiné endormi (papillon, coccinelle : `drawnAsleep`, déduit des tables
+    du jardin) ; répliques conditionnelles rangées où l'on veut (ordre des chapitres vérifié
+    sur les autres) ;
     chapitres 1 présentation, 2 anecdote, 3 petite histoire, 4 confidence, 5 souvenir ;
     `kind: "fait"` exige un `sourceId` de `docs/animaux-sources.md` (colonne Id entre
-    accents graves) ; garde-fou du build toujours bloquant (`src/content/animaux/check.ts` :
-    ids uniques et stables, chapitres dans l'ordre, saison et espèce connues, 2 ou 3
-    « déjà parlé ») ; répliques et portraits PROVISOIRES pour l'instant (signalés au build) ;
+    accents graves ET citation de la source sur la ligne) ; garde-fou du build toujours
+    bloquant (`src/content/animaux/check.ts` : ids uniques et stables, chapitres dans l'ordre,
+    saison et espèce connues, 2 ou 3 « déjà parlé ») ; contenu réel reçu le 8 octobre 2026,
+    textes mot pour mot ;
   - toucher un animal (zones `TalkTargets` d'au moins 44 px, hors de la scène `role="img"`,
     recentrées à chaque image sur le dessin : elles suivent la marche, le vol, le vent) ouvre
     `AnimalTalk` : `<dialog>` en bas d'écran, portrait décoratif à gauche
-    (`public/portraits/portrait-{animal}-{expression}.svg`, en `<img>` : ils ont un `id` ;
+    (`public/portraits/portrait-{animal}-{expression}.svg`, en `<img>`, sans aucun `id`
+    comme les illustrations, coins arrondis en CSS (rayon 32 sur 240) ;
     les trois expressions superposées, fondu de 200 ms, aucun en mouvement réduit ;
     96 / 140 px), nom en étiquette soleil, étape en cours lettre à lettre (`Typewriter`,
     aria-hidden ; texte entier dans une région polie qui décrit aussi la fenêtre) ;
@@ -577,7 +584,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     première conversation éveillée du jour (Paris) = réplique suivante non vue (présentation
     d'abord, puis une conditionnelle vraie passe en priorité ; fausse, elle attend) ; même
     jour = « déjà parlé » (2-3 qui tournent) ; tout vu = une anecdote déjà vue, la même toute
-    la journée ; aucune pénalité ; PAS de synchro du compte ;
+    la journée ; aucune pénalité ; PAS de synchro du compte ; compteur « X répliques sur N »
+    = répliques sans condition seulement (les conditionnelles sont des bonus, N sur N sans
+    elles, testé) ;
   - « Les habitants du jardin » (`GardenFriends`, /jardin sous « Mes habitudes ») : une ligne
     par animal, rencontré (débloqué, ou vu pour le renard) : portrait, nom, « 3 répliques
     sur 8 », « Parler » s'il est là, sinon pourquoi ; sinon silhouette « ? » ; aucun kg ;

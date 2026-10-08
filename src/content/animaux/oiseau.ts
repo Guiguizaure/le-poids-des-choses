@@ -1,6 +1,6 @@
-// Répliques PROVISOIRES de l’oiseau : à remplacer par les vraies (même format). Une réplique est
-// une séquence de 1 à 3 étapes (expression du portrait : content, surpris, dort) ; une
-// réplique « fait » cite une source de docs/animaux-sources.md (`sourceId`).
+// Répliques de l’oiseau : contenu reçu le 8 octobre 2026 (animaux-dialogues.json),
+// textes repris mot pour mot. Personnalité : Bavard et curieux, enchaîne les questions.
+// Format : ./types.ts ; sources des faits : docs/animaux-sources.md.
 import type { AnimalScript } from "./types";
 
 export const OISEAU: AnimalScript = {
@@ -8,134 +8,137 @@ export const OISEAU: AnimalScript = {
   talk: { fr: "Parler à l’oiseau", en: "Talk to the bird" },
   lines: [
     {
-      id: "oiseau-1",
+      id: "ois-1",
       chapter: 1,
-      kind: "recit",
+      kind: "presentation",
       steps: [
         {
+          expr: "surpris",
+          fr: "Oh, quelqu'un ! Tu viens d'où ? Tu restes longtemps ? Tu aimes les graines ?",
+          en: "Oh, someone! Where are you from? Are you staying long? Do you like seeds?",
+        },
+        {
           expr: "content",
-          fr: "[Réplique provisoire 1 · chapitre 1]",
-          en: "[Placeholder line 1 · chapter 1]",
+          fr: "Pardon. Je suis l'oiseau du jardin : une mésange bleue, dessinée à la façon de ce jardin.",
+          en: "Sorry. I'm the garden bird: a blue tit, drawn the way this garden draws things.",
         },
       ],
     },
     {
-      id: "oiseau-2",
+      id: "ois-2",
       chapter: 2,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "mesange-vikidia",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 1/2]",
+          fr: "Devine combien je pèse.",
+          en: "Guess how much I weigh.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 2/2]",
+          fr: "Entre 9 et 12 grammes ! Un vrai poids plume.",
+          en: "Between 9 and 12 grams! A real featherweight.",
         },
       ],
     },
     {
-      id: "oiseau-3",
-      chapter: 2,
-      kind: "recit",
+      id: "ois-3",
+      chapter: 3,
+      kind: "fait",
+      sourceId: "mesange-vikidia",
+      steps: [
+        {
+          expr: "content",
+          fr: "Au printemps, une maman mésange peut pondre de 9 à 13 œufs.",
+          en: "In spring, a mother blue tit can lay 9 to 13 eggs.",
+        },
+        {
+          expr: "surpris",
+          fr: "Treize ! Tu imagines le bruit au nid ?",
+          en: "Thirteen! Can you imagine the noise in the nest?",
+        },
+      ],
+    },
+    {
+      id: "ois-4",
+      chapter: 3,
+      kind: "histoire",
+      steps: [
+        {
+          expr: "content",
+          fr: "J'ai vu le renard ce matin. Il dormait. Il dort tout le temps, celui-là.",
+          en: "I saw the fox this morning. Asleep. He's always asleep, that one.",
+        },
+        {
+          expr: "surpris",
+          fr: "Il paraît qu'il sort la nuit. Moi, la nuit, je dors. On ne se croise jamais !",
+          en: "Apparently he comes out at night. At night, I sleep. We never meet!",
+        },
+      ],
+    },
+    {
+      id: "ois-5",
+      chapter: 4,
+      kind: "confidence",
+      steps: [
+        {
+          expr: "content",
+          fr: "Tu sais pourquoi je m'envole quand on s'approche trop vite ?",
+          en: "Do you know why I fly off when someone comes too close too fast?",
+        },
+        {
+          expr: "content",
+          fr: "Ce n'est pas contre toi. C'est un vieux réflexe d'oiseau.",
+          en: "It's nothing personal. Just an old bird reflex.",
+        },
+      ],
+    },
+    {
+      id: "ois-6",
+      chapter: 5,
+      kind: "souvenir",
+      steps: [
+        {
+          expr: "content",
+          fr: "Je t'ai gardé une plume. Une toute petite. Pour te souvenir de moi.",
+          en: "I saved you a feather. A tiny one. So you'll remember me.",
+        },
+      ],
+    },
+    {
+      id: "ois-c1",
+      chapter: 3,
+      kind: "humeur",
       condition: { season: "hiver" },
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · en hiver · étape 1/3]",
-          en: "[Placeholder line 3 · chapter 2 · in winter · step 1/3]",
+          fr: "Brr, l'hiver ! Je gonfle mes plumes.",
+          en: "Brr, winter! I'm fluffing up my feathers.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 2/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 3/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 3/3]",
+          fr: "J'ai l'air d'une petite boule, non ?",
+          en: "I look like a little ball, don't I?",
         },
       ],
     },
     {
-      id: "oiseau-4",
+      id: "ois-c2",
       chapter: 3,
-      kind: "recit",
+      kind: "humeur",
+      condition: { planted: "arbre-1" /* pommier */ },
       steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 4 · chapitre 3]",
-          en: "[Placeholder line 4 · chapter 3]",
-        },
-      ],
-    },
-    {
-      id: "oiseau-5",
-      chapter: 3,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 1/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 1/2]",
-        },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 2/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 2/2]",
-        },
-      ],
-    },
-    {
-      id: "oiseau-6",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 1/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 1/3]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 2/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 2/3]",
+          fr: "Un pommier !",
+          en: "An apple tree!",
         },
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 3/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 3/3]",
-        },
-      ],
-    },
-    {
-      id: "oiseau-7",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 7 · chapitre 4]",
-          en: "[Placeholder line 7 · chapter 4]",
-        },
-      ],
-    },
-    {
-      id: "oiseau-8",
-      chapter: 5,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 1/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 1/2]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 2/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 2/2]",
+          fr: "Des feuilles pour me cacher, des fruits plus tard. Très bonne idée.",
+          en: "Leaves to hide in, fruit later on. Very good idea.",
         },
       ],
     },
@@ -144,20 +147,15 @@ export const OISEAU: AnimalScript = {
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 1]",
-        en: "[Placeholder sleep line 1]",
+        fr: "Zzz… (L'oiseau dort, la tête enfouie dans ses plumes. Reviens demain matin.)",
+        en: "Zzz… (The bird is asleep, head tucked into its feathers. Come back in the morning.)",
       },
     ],
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 1/2]",
-        en: "[Placeholder sleep line 2 · step 1/2]",
-      },
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 2/2]",
-        en: "[Placeholder sleep line 2 · step 2/2]",
+        fr: "Zzz… pio… zzz…",
+        en: "Zzz… tweet… zzz…",
       },
     ],
   ],
@@ -165,22 +163,15 @@ export const OISEAU: AnimalScript = {
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 1]",
-        en: "[Already talked today, placeholder 1]",
+        fr: "J'ai encore plein de choses à te raconter, mais une histoire par jour, c'est la règle. À demain !",
+        en: "I've still got loads to tell you, but one story a day is the rule. See you tomorrow!",
       },
     ],
     [
       {
         expr: "surpris",
-        fr: "[Déjà parlé aujourd’hui, provisoire 2]",
-        en: "[Already talked today, placeholder 2]",
-      },
-    ],
-    [
-      {
-        expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 3]",
-        en: "[Already talked today, placeholder 3]",
+        fr: "Déjà toi ? Tu m'as manqué ! Bon… on s'est vus il y a cinq minutes. Reviens demain !",
+        en: "You again? I missed you! Well… we saw each other five minutes ago. Come back tomorrow!",
       },
     ],
   ],

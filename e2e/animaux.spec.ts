@@ -8,7 +8,7 @@ function zone(page: Page, talker: string, name: string) {
 
 // « Les animaux parlent » : toucher un animal ouvre sa conversation ; une nouvelle réplique par
 // jour (minuit à Paris), « déjà parlé » ensuite ; endormi, « Zzz » et une réplique de sommeil ;
-// « Les habitants du jardin » en alternative accessible. Répliques provisoires pour l'instant.
+// « Les habitants du jardin » en alternative accessible. Textes : src/content/animaux.
 test.use({ timezoneId: "Europe/Paris" });
 
 /** Midi passé, le 8 octobre 2026 (automne) : papillon, coccinelle, oiseau éveillés ; renard endormi. */
@@ -59,20 +59,20 @@ test("toucher l'oiseau : la conversation s'ouvre, s'écrit lettre à lettre, se 
   await expect(dialog).toBeVisible();
   // Texte complet tout de suite pour les lecteurs d'écran ; la version animée est cachée.
   await expect(dialog).toHaveAccessibleDescription(
-    "[Réplique provisoire 1 · chapitre 1]",
+    "Oh, quelqu'un ! Tu viens d'où ? Tu restes longtemps ? Tu aimes les graines ?",
   );
   await expect(dialog.locator("[data-typed]")).toHaveAttribute(
     "aria-hidden",
     "true",
   );
-  // Une seule étape : le bouton dit « Fermer » et a le focus.
+  // Sa présentation a deux étapes : « Suite ▶ » a le focus.
   const next = dialog.locator("[data-next]");
-  await expect(next).toHaveAccessibleName("Fermer");
+  await expect(next).toHaveAccessibleName("Suite");
   await expect(next).toBeFocused();
   // Portrait décoratif à gauche, environ 96 px sur mobile ; nom en étiquette.
   const portrait = dialog.locator("[data-portrait]");
   await expect(portrait).toHaveAttribute("aria-hidden", "true");
-  await expect(portrait).toHaveAttribute("data-expr", "content");
+  await expect(portrait).toHaveAttribute("data-expr", "surpris");
   expect(Math.round((await portrait.boundingBox())!.width)).toBe(96);
   // Toucher la boîte affiche le texte en entier (sans fermer).
   await dialog.locator("[data-typed]").click();
@@ -82,7 +82,7 @@ test("toucher l'oiseau : la conversation s'ouvre, s'écrit lettre à lettre, se 
   );
   await expect(dialog).toBeVisible();
   await expect(dialog.locator("[data-typed]")).toHaveText(
-    "[Réplique provisoire 1 · chapitre 1]",
+    "Oh, quelqu'un ! Tu viens d'où ? Tu restes longtemps ? Tu aimes les graines ?",
   );
   await expectNoAxeViolations(page);
 
@@ -106,7 +106,10 @@ test("la croix et un toucher en dehors ferment aussi", async ({ page }) => {
   await expect(dialogOf(page)).toHaveCount(0);
 });
 
-/** L'oiseau a déjà dit sa présentation hier : aujourd'hui, la réplique 2 (deux étapes). */
+/**
+ * L'oiseau a déjà dit sa présentation hier : aujourd'hui, sa réplique 2 (deux étapes), ou
+ * celle du pommier si le jardin du test en a un (conditionnelle, prioritaire).
+ */
 async function knowsBird(page: Page) {
   await page.addInitScript(() =>
     localStorage.setItem(
@@ -114,38 +117,66 @@ async function knowsBird(page: Page) {
       JSON.stringify({
         version: 1,
         animals: {
-          bird: { seen: ["oiseau-1"], day: "2026-10-07", talks: 1, met: true },
+          bird: { seen: ["ois-1"], day: "2026-10-07", talks: 1, met: true },
         },
       }),
     ),
   );
 }
 
-for (const { path, name, label, next, finish, step1, step2 } of [
+/** Réplique attendue aujourd'hui : celle du pommier s'il est planté, sinon la n° 2. */
+const BIRD_TODAY = {
+  fr: {
+    "ois-2": [
+      ["content", "Devine combien je pèse."],
+      ["surpris", "Entre 9 et 12 grammes ! Un vrai poids plume."],
+    ],
+    "ois-c2": [
+      ["surpris", "Un pommier !"],
+      [
+        "content",
+        "Des feuilles pour me cacher, des fruits plus tard. Très bonne idée.",
+      ],
+    ],
+  },
+  en: {
+    "ois-2": [
+      ["content", "Guess how much I weigh."],
+      ["surpris", "Between 9 and 12 grams! A real featherweight."],
+    ],
+    "ois-c2": [
+      ["surpris", "An apple tree!"],
+      ["content", "Leaves to hide in, fruit later on. Very good idea."],
+    ],
+  },
+} as const;
+
+for (const { path, locale, name, label, next, finish } of [
   {
     path: "/jardin",
+    locale: "fr",
     name: "Oiseau",
     label: "Parler à l’oiseau",
     next: "Suite",
     finish: "Fermer",
-    step1: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-    step2: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
   },
   {
     path: "/en/garden",
+    locale: "en",
     name: "Bird",
     label: "Talk to the bird",
     next: "Next",
     finish: "Close",
-    step1: "[Placeholder line 2 · chapter 2 · step 1/2]",
-    step2: "[Placeholder line 2 · chapter 2 · step 2/2]",
   },
-]) {
+] as const) {
   test(`${path} : une réplique en deux étapes, « ${next} ▶ » puis « ${finish} », chaque étape annoncée`, async ({
     page,
   }) => {
     await knowsBird(page);
     await openGarden(page, 5, DAY, path);
+    const apple = (await page.locator('[data-species="arbre-1"]').count()) > 0;
+    const lineId = apple ? "ois-c2" : "ois-2";
+    const [[expr1, step1], [expr2, step2]] = BIRD_TODAY[locale][lineId];
     const bird = zone(page, "bird", label);
     await bird.click();
     const dialog = page.getByRole("dialog", { name });
@@ -156,7 +187,7 @@ for (const { path, name, label, next, finish, step1, step2 } of [
     await expect(status).toHaveAttribute("aria-live", "polite");
     await expect(dialog.locator("[data-portrait]")).toHaveAttribute(
       "data-expr",
-      "content",
+      expr1,
     );
     await expect(button).toHaveAccessibleName(next);
     await expect(button).toBeFocused();
@@ -166,7 +197,7 @@ for (const { path, name, label, next, finish, step1, step2 } of [
     await expect(status).toHaveText(step2);
     await expect(dialog.locator("[data-portrait]")).toHaveAttribute(
       "data-expr",
-      "surpris",
+      expr2,
     );
     // Même bouton, le focus y reste ; à la dernière étape, il ferme.
     await expect(button).toBeFocused();
@@ -179,7 +210,7 @@ for (const { path, name, label, next, finish, step1, step2 } of [
     const stored = await page.evaluate(() =>
       JSON.parse(localStorage.getItem("lpdc:amis:v1") ?? "null"),
     );
-    expect(stored.animals.bird.seen).toEqual(["oiseau-1", "oiseau-2"]);
+    expect(stored.animals.bird.seen).toEqual(["ois-1", lineId]);
   });
 }
 
@@ -188,9 +219,13 @@ test("toucher la boîte : finit d'écrire, puis passe à l'étape suivante, sans
 }) => {
   await knowsBird(page);
   await openGarden(page, 5, DAY);
+  // Horloge de la page figée (dix minutes plus tard, même jour) avant d'ouvrir : le texte
+  // ne peut pas avancer, il est encore en train de s'écrire au premier toucher.
+  await page.clock.pauseAt(new Date(Date.parse(DAY) + 10 * 60_000));
   await zone(page, "bird", "Parler à l’oiseau").click();
   const dialog = dialogOf(page);
   const typed = dialog.locator("[data-typed]");
+  await expect(typed).toHaveAttribute("data-typewriter", "typing");
   await typed.click();
   await expect(typed).toHaveAttribute("data-typewriter", "done");
   await expect(dialog).toHaveAttribute("data-step", "1/2");
@@ -248,33 +283,33 @@ test("une nouvelle réplique par jour (minuit à Paris), « déjà parlé » ens
 
   expect(await talk()).toEqual({
     reply: "new",
-    text: "[Réplique provisoire 1 · chapitre 1]",
+    text: "Halte-là ! Qui va là ?",
   });
   const again = await talk();
   expect(again.reply).toBe("again");
-  expect(again.text).toMatch(/^\[Déjà parlé aujourd’hui, provisoire [123]\]$/);
+  expect([
+    "Je suis en ronde ! Reviens demain pour le rapport.",
+    "Une seule audience par jour. C'est le règlement.",
+  ]).toContain(again.text);
 
   // 23 h 59 à Paris : toujours le même jour.
   await page.clock.setSystemTime(new Date("2026-10-08T23:59:00+02:00"));
   expect((await talk()).reply).toBe("again");
-  // Minuit passé : la réplique suivante. Si une églantine est plantée, la réplique
-  // conditionnelle (« si une églantine est plantée ») passe en priorité.
+  // Minuit passé : la réplique suivante (sa seule conditionnelle est de printemps).
   await page.clock.setSystemTime(new Date("2026-10-09T00:01:00+02:00"));
-  const rose = (await page.locator('[data-species="fleur-1"]').count()) > 0;
   expect(await talk()).toEqual({
     reply: "new",
-    text: rose
-      ? "[Réplique provisoire 3 · chapitre 2 · si une églantine est plantée · étape 1/3]"
-      : "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
+    text: "Les pucerons ? Mes pires ennemis. Enfin… mon goûter.",
   });
+  // Le compteur ne compte que les répliques sans condition : 6 pour la coccinelle.
   const row = page.locator('[data-talk-row="ladybug"]');
-  await expect(row.locator("[data-progress]")).toHaveText("2 répliques sur 8");
+  await expect(row.locator("[data-progress]")).toHaveText("2 répliques sur 6");
 
   // Sur l'appareil seulement, clé versionnée.
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("lpdc:amis:v1") ?? "null"),
   );
-  expect(stored.animals.ladybug.seen).toHaveLength(2);
+  expect(stored.animals.ladybug.seen).toEqual(["coc-1", "coc-2"]);
   expect(stored).toMatchObject({
     version: 1,
     animals: {
@@ -294,9 +329,10 @@ test("endormi : « Zzz », réplique de sommeil, l'amitié n'avance pas", async 
   await bird.click();
   const dialog = dialogOf(page);
   await expect(dialog).toHaveAttribute("data-reply", "sleep");
-  await expect(dialog).toHaveAccessibleDescription(
-    /^\[Sommeil provisoire (1\]|2 · étape 1\/2\])$/,
-  );
+  expect([
+    "Zzz… (L'oiseau dort, la tête enfouie dans ses plumes. Reviens demain matin.)",
+    "Zzz… pio… zzz…",
+  ]).toContain(await dialog.getByRole("status").textContent());
   await expect(dialog.locator("[data-portrait]")).toHaveAttribute(
     "data-expr",
     "dort",
@@ -308,7 +344,7 @@ test("endormi : « Zzz », réplique de sommeil, l'amitié n'avance pas", async 
   await page.keyboard.press("Escape");
   await expect(
     page.locator('[data-talk-row="bird"] [data-progress]'),
-  ).toHaveText("0 réplique sur 8 · En plein sommeil.");
+  ).toHaveText("0 réplique sur 6 · En plein sommeil.");
 });
 
 test("« Les habitants du jardin » : liste accessible, « ? » pour les inconnus, aucun kg", async ({
@@ -332,7 +368,7 @@ test("« Les habitants du jardin » : liste accessible, « ? » pour les inconnu
   await expect(talk).toBeFocused();
   await expect(
     list.locator('[data-talk-row="butterfly"] [data-progress]'),
-  ).toHaveText("1 réplique sur 8");
+  ).toHaveText("1 réplique sur 6");
   await expectNoAxeViolations(page);
 });
 
@@ -343,14 +379,14 @@ test("en anglais : “Talk to the bird”, étiquette, réplique et liste", asyn
   await zone(page, "bird", "Talk to the bird").click();
   const dialog = page.getByRole("dialog", { name: "Bird" });
   await expect(dialog).toHaveAccessibleDescription(
-    "[Placeholder line 1 · chapter 1]",
+    "Oh, someone! Where are you from? Are you staying long? Do you like seeds?",
   );
   await expectNoAxeViolations(page);
   await dialog.getByRole("button", { name: "Close the conversation" }).click();
   const list = page.getByRole("region", { name: "Who lives in the garden" });
   await expect(
     list.locator('[data-talk-row="bird"] [data-progress]'),
-  ).toHaveText("1 of 8 lines");
+  ).toHaveText("1 of 6 lines");
   await expect(list.getByText("Resident not met yet")).toHaveCount(1);
   await expectNoAxeViolations(page);
 });
@@ -371,7 +407,7 @@ test.describe("mouvement réduit", () => {
       "done",
     );
     await expect(dialog.locator("[data-typed]")).toHaveText(
-      "[Réplique provisoire 1 · chapitre 1]",
+      "Bonsoir. Tu as bien fait de venir à cette heure-ci : la nuit, je suis à mon meilleur.",
     );
     // Pas de fondu entre deux expressions.
     await expect(dialog.locator("[data-portrait] img").first()).toHaveCSS(

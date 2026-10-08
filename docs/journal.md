@@ -2058,3 +2058,40 @@ répliques en étapes.
 carnet, ni dans l'export, ni en D1). À prévoir si l'amitié doit suivre la personne.
 
 **À venir** : les vraies répliques (avec leurs sources pour les faits) et les portraits.
+
+### Vrai contenu (même jour, même branche)
+
+**Demandé** : intégrer `animaux-dialogues.json` (textes mot pour mot), vérifier chaque source
+avec une citation exacte et une deuxième source quand c'est possible, trouver une source plus
+solide pour la queue du renard, ne compter que les répliques sans condition, vérifier quand
+chaque animal est dessiné endormi, retirer l'`id` des portraits.
+
+**Fait** :
+
+- Conversion du JSON vers `src/content/animaux/*.ts` (`chapitre` → `chapter`, `etapes` →
+  `steps`, `condition.saison` / `nuit` / `espece` → `season` / `night` / `planted`,
+  `sommeilSource` → `sleepSourceId`, `dejaParle` → `again`). Textes inchangés. Espèces :
+  olivier → `arbre-4`, lavande → `fleur-5`, pommier → `arbre-1` ; aucune condition sans
+  correspondance. Les six `kind` du fichier sont gardés tels quels.
+- Sources : `docs/animaux-sources.md` réécrit, une citation exacte par fait et une deuxième
+  source pour la plupart (voir la colonne « Remarques »). Vikidia refuse les robots : lu par
+  son API (révisions notées). « renard-queue » : le dossier d'une ferme pédagogique est
+  remplacé par la National Wildlife Federation (_Ranger Rick_, 2013) et New Hampshire PBS ;
+  réplique gardée.
+- Doutes signalés, textes non modifiés : nombre d'œufs de la mésange (9 à 13 chez Vikidia, 6
+  à 12 chez Futura ; ois-3 dit « Treize ! ») ; dents de la radula (1 500 à 2 500 chez
+  Vikidia, 12 000 à 14 000 sur des sites de vulgarisation) ; vitesse de l'escargot (seule
+  source, dans une devinette) ; « goût âcre » (coc-3) quand les sources disent « âpre » ;
+  ouïe du renard « mieux que n'importe quel mammifère terrestre » (seule source).
+- Sommeil : l'oiseau la nuit, l'escargot l'hiver, et les deux quand le jardin s'assoupit ;
+  le renard le jour ; papillon et coccinelle jamais (ils s'absentent) : pas de répliques de
+  sommeil pour eux (les répliques de secours proposées ne servent pas).
+- Compteur : seulement les répliques sans condition (6 par animal) ; testé N sur N sans
+  aucune conditionnelle.
+- Portraits : le `clipPath` (seul `id`) retiré des 15 SVG, coins arrondis en CSS ; testé
+  (aucun `id`, chaque expression utilisée a son portrait).
+- Tests stabilisés : « toucher la boîte » (horloge de la page figée avant d'ouvrir, sinon une
+  première étape courte avait déjà fini de s'écrire) ; `e2e/delai.spec.ts` (instable sous
+  WebKit, environ une fois sur trois : l'horloge de la page continuait d'avancer en temps
+  réel et une page lente sautait les 15 s ; elle est maintenant figée, le temps n'avance que
+  par le test, et reprend avant axe). 32 sur 32 en répétition, suite complète 389 sur 389.

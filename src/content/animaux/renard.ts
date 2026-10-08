@@ -1,6 +1,6 @@
-// Répliques PROVISOIRES du renard : à remplacer par les vraies (même format). Une réplique est
-// une séquence de 1 à 3 étapes (expression du portrait : content, surpris, dort) ; une
-// réplique « fait » cite une source de docs/animaux-sources.md (`sourceId`).
+// Répliques du renard : contenu reçu le 8 octobre 2026 (animaux-dialogues.json),
+// textes repris mot pour mot. Personnalité : Beau parleur, charmeur, un peu vantard. Vit la nuit.
+// Format : ./types.ts ; sources des faits : docs/animaux-sources.md.
 import type { AnimalScript } from "./types";
 
 export const RENARD: AnimalScript = {
@@ -8,134 +8,131 @@ export const RENARD: AnimalScript = {
   talk: { fr: "Parler au renard", en: "Talk to the fox" },
   lines: [
     {
-      id: "renard-1",
+      id: "ren-1",
       chapter: 1,
-      kind: "recit",
+      kind: "presentation",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 1 · chapitre 1]",
-          en: "[Placeholder line 1 · chapter 1]",
+          fr: "Bonsoir. Tu as bien fait de venir à cette heure-ci : la nuit, je suis à mon meilleur.",
+          en: "Good evening. You were right to come at this hour: at night, I'm at my best.",
+        },
+        {
+          expr: "content",
+          fr: "Le renard. Enchanté. Je ne serre pas la patte, mais le cœur y est.",
+          en: "The fox. Delighted. I don't shake paws, but the thought is there.",
         },
       ],
     },
     {
-      id: "renard-2",
+      id: "ren-2",
       chapter: 2,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "renard-futura",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 1/2]",
+          fr: "Tu entends ce petit bruit, là ? Non ? Moi, oui.",
+          en: "Hear that little noise? No? I do.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 2/2]",
+          fr: "Pour les sons très graves, j'entends mieux que n'importe quel autre mammifère terrestre.",
+          en: "For very low sounds, I hear better than any other land mammal.",
+        },
+        {
+          expr: "content",
+          fr: "Je peux même repérer un mulot qui gratte sous la neige.",
+          en: "I can even find a vole scratching about under the snow.",
         },
       ],
     },
     {
-      id: "renard-3",
-      chapter: 2,
-      kind: "recit",
-      condition: { night: true },
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · la nuit · étape 1/3]",
-          en: "[Placeholder line 3 · chapter 2 · at night · step 1/3]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 2/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 3/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 3/3]",
-        },
-      ],
-    },
-    {
-      id: "renard-4",
+      id: "ren-3",
       chapter: 3,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "renard-futura",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 4 · chapitre 3]",
-          en: "[Placeholder line 4 · chapter 3]",
-        },
-      ],
-    },
-    {
-      id: "renard-5",
-      chapter: 3,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 1/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 1/2]",
+          fr: "Ensuite, je repère où il est… et hop !",
+          en: "Then I work out where it is… and hup!",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 2/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 2/2]",
+          fr: "Je bondis et je plonge la tête la première dans la neige. Ça s'appelle le mulotage.",
+          en: "I leap and dive head first into the snow. It's called mousing.",
         },
       ],
     },
     {
-      id: "renard-6",
+      id: "ren-4",
       chapter: 4,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "renard-futura",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 1/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 1/3]",
+          fr: "Un secret de renard ?",
+          en: "Want a fox's secret?",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 2/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 2/3]",
+          fr: "Des chercheurs ont remarqué que je réussis plus souvent mes sauts quand je bondis vers le nord.",
+          en: "Researchers noticed I catch more prey when I pounce towards the north.",
         },
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 3/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 3/3]",
+          fr: "Pourquoi ? Personne ne le sait encore. Moi, je dis que c'est le talent.",
+          en: "Why? Nobody knows yet. I say it's talent.",
         },
       ],
     },
     {
-      id: "renard-7",
+      id: "ren-5",
       chapter: 4,
-      kind: "recit",
+      kind: "confidence",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 7 · chapitre 4]",
-          en: "[Placeholder line 7 · chapter 4]",
+          fr: "L'oiseau croit que je dors tout le temps.",
+          en: "The bird thinks I sleep all the time.",
+        },
+        {
+          expr: "content",
+          fr: "En vérité, je vis en décalé. Chacun son horaire.",
+          en: "Truth is, I keep different hours. To each their own.",
         },
       ],
     },
     {
-      id: "renard-8",
+      id: "ren-6",
       chapter: 5,
-      kind: "recit",
+      kind: "souvenir",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 1/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 1/2]",
+          fr: "Tu es un visiteur du soir fidèle. Ça mérite un titre : « mon ami de la nuit ».",
+          en: 'You\'re a loyal evening visitor. That deserves a title: "my friend of the night".',
         },
+      ],
+    },
+    {
+      id: "ren-c1",
+      chapter: 3,
+      kind: "humeur",
+      sourceId: "renard-futura",
+      condition: { season: "hiver" },
+      steps: [
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 2/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 2/2]",
+          fr: "La neige ! Mon terrain de jeu préféré.",
+          en: "Snow! My favourite playground.",
+        },
+        {
+          expr: "content",
+          fr: "Tout ce qui bouge dessous, je l'entends.",
+          en: "Anything moving underneath, I can hear it.",
         },
       ],
     },
@@ -144,43 +141,39 @@ export const RENARD: AnimalScript = {
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 1]",
-        en: "[Placeholder sleep line 1]",
+        fr: "Zzz… (Le renard dort. Il a laissé un mot : « Repasser après 21 h. »)",
+        en: 'Zzz… (The fox is asleep. He\'s left a note: "Come back after 9 pm.")',
       },
     ],
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 1/2]",
-        en: "[Placeholder sleep line 2 · step 1/2]",
+        fr: "Zzz… (Il est roulé en boule, la queue posée sur le museau comme une couverture.)",
+        en: "Zzz… (He's curled up in a ball, his tail over his nose like a blanket.)",
       },
+    ],
+    [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 2/2]",
-        en: "[Placeholder sleep line 2 · step 2/2]",
+        fr: "Zzz… (Il sourit en dormant. Sûrement un rêve de mulots.)",
+        en: "Zzz… (He's smiling in his sleep. Dreaming of voles, no doubt.)",
       },
     ],
   ],
+  sleepSourceId: "renard-queue",
   again: [
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 1]",
-        en: "[Already talked today, placeholder 1]",
-      },
-    ],
-    [
-      {
-        expr: "surpris",
-        fr: "[Déjà parlé aujourd’hui, provisoire 2]",
-        en: "[Already talked today, placeholder 2]",
+        fr: "Je t'ai déjà accordé une conversation ce soir. Un renard doit garder un peu de mystère.",
+        en: "I've already granted you one conversation tonight. A fox must keep a little mystery.",
       },
     ],
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 3]",
-        en: "[Already talked today, placeholder 3]",
+        fr: "Demain soir, même heure ? Je ne promets rien… mais je serai là.",
+        en: "Tomorrow night, same time? I promise nothing… but I'll be there.",
       },
     ],
   ],

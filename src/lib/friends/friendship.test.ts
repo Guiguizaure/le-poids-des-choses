@@ -20,23 +20,23 @@ const SCRIPT: AnimalScript = {
   name: say("Renard"),
   talk: say("Parler au renard"),
   lines: [
-    { id: "r-1", chapter: 1, kind: "recit", steps: seq("présentation") },
-    { id: "r-2", chapter: 2, kind: "recit", steps: seq("anecdote") },
+    { id: "r-1", chapter: 1, kind: "histoire", steps: seq("présentation") },
+    { id: "r-2", chapter: 2, kind: "histoire", steps: seq("anecdote") },
     {
       id: "r-3",
       chapter: 2,
-      kind: "recit",
+      kind: "histoire",
       steps: seq("la nuit"),
       condition: { night: true },
     },
     {
       id: "r-4",
       chapter: 3,
-      kind: "recit",
+      kind: "histoire",
       steps: seq("pommier"),
       condition: { planted: "arbre-1", season: "automne" },
     },
-    { id: "r-5", chapter: 3, kind: "recit", steps: seq("histoire") },
+    { id: "r-5", chapter: 3, kind: "histoire", steps: seq("histoire") },
   ],
   sleep: [seq("zzz 1", "dort"), seq("zzz 2", "dort")],
   again: [seq("encore 1"), seq("encore 2"), seq("encore 3")],
@@ -125,7 +125,8 @@ describe("amitié : une nouvelle réplique par jour", () => {
       night: true,
       planted: new Set(["arbre-1"]),
     });
-    expect(progress(SCRIPT, record)).toEqual({ seen: 5, total: 5 });
+    // Les deux conditionnelles (vues ici) sont des bonus : 3 sur 3.
+    expect(progress(SCRIPT, record)).toEqual({ seen: 3, total: 3 });
     const first = converse("fox", SCRIPT, record, {
       ...DAY,
       day: "2026-10-20",

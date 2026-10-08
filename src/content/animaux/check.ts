@@ -2,10 +2,14 @@
 // bloquants, et par les tests) : identifiants uniques, chapitres, séquences de 1 à 3 étapes,
 // expressions connues (« dort » en dormant), conditions connues, et toute réplique « fait »
 // adossée à une source de docs/animaux-sources.md.
+import { FAUNA } from "@/lib/garden/fauna";
+import { SLEEPERS } from "@/lib/garden/model";
 import { SEASONS } from "@/lib/garden/seasons";
 import { speciesById } from "@/lib/garden/species";
+import { visitorRule } from "@/lib/garden/visitors";
 import {
   EXPRESSIONS,
+  LINE_KINDS,
   TALKERS,
   type AnimalScript,
   type Bilingual,
@@ -13,10 +17,34 @@ import {
   type TalkerId,
 } from "./types";
 
-/** Identifiants de sources : la première colonne du tableau, entre accents graves. */
+/**
+ * Identifiants de sources : la première colonne du tableau, entre accents graves, seulement
+ * si la ligne cite la source (une citation entre « », “ ” ou " ").
+ */
 export function sourceIdsFrom(markdown: string): Set<string> {
   return new Set(
-    [...markdown.matchAll(/^\|\s*`([a-z0-9-]+)`\s*\|/gm)].map((m) => m[1]),
+    [...markdown.matchAll(/^\|\s*`([a-z0-9-]+)`\s*\|(.*)$/gm)]
+      .filter((m) => /«[^»]+»|“[^”]+”|"[^"]+"/.test(m[2]))
+      .map((m) => m[1]),
+  );
+}
+
+/**
+ * Dessiné endormi à un moment ou un autre dans le jardin (d'après les tables du jardin) :
+ * l'oiseau la nuit, l'escargot l'hiver, les deux quand le jardin s'assoupit ; le renard le
+ * jour. Papillon et coccinelle ne dorment jamais à l'écran : ils s'absentent.
+ */
+export function drawnAsleep(talker: TalkerId): boolean {
+  if (talker === "fox") {
+    const fox = visitorRule("renard");
+    return fox.day === "asleep" || fox.night === "asleep";
+  }
+  const rule = FAUNA[talker];
+  return (
+    SLEEPERS.includes(talker) ||
+    [rule.day, rule.night].some((when) =>
+      Object.values(when).includes("asleep"),
+    )
   );
 }
 
@@ -50,8 +78,16 @@ export function animalScriptProblems(
     if (empty(script.name) || empty(script.talk))
       problems.push(where("nom ou libellé vide"));
     if (script.lines.length === 0) problems.push(where("aucune réplique"));
-    if (script.sleep.length === 0)
-      problems.push(where("aucune réplique de sommeil"));
+    if (script.sleep.length === 0 && drawnAsleep(talker))
+      problems.push(
+        where("aucune réplique de sommeil (il est dessiné endormi)"),
+      );
+    if (script.sleepSourceId && !sourceIds.has(script.sleepSourceId))
+      problems.push(
+        where(
+          `sommeil : source « ${script.sleepSourceId} » sans citation dans docs/animaux-sources.md`,
+        ),
+      );
     if (script.again.length < 2 || script.again.length > 3)
       problems.push(where("2 ou 3 répliques « déjà parlé » attendues"));
     script.sleep.forEach((steps, index) =>
@@ -64,21 +100,29 @@ export function animalScriptProblems(
         problems.push(where(`« déjà parlé » ${index + 1} : ${problem}`)),
       ),
     );
+    // Ordre des chapitres : celui des répliques sans condition (les conditionnelles, des
+    // bonus, peuvent être rangées à la fin).
     let chapter = 1;
     for (const line of script.lines) {
       if (ids.has(line.id)) problems.push(where(`id en double « ${line.id} »`));
       ids.add(line.id);
       for (const problem of sequenceProblems(line.steps, false))
         problems.push(where(`« ${line.id} » : ${problem}`));
-      if (line.chapter < chapter)
-        problems.push(where(`« ${line.id} » : chapitres dans le désordre`));
-      chapter = line.chapter;
+      if (!LINE_KINDS.includes(line.kind))
+        problems.push(
+          where(`« ${line.id} » : sorte inconnue « ${line.kind} »`),
+        );
+      if (!line.condition) {
+        if (line.chapter < chapter)
+          problems.push(where(`« ${line.id} » : chapitres dans le désordre`));
+        chapter = line.chapter;
+      }
       if (line.kind === "fait" && !line.sourceId)
         problems.push(where(`« ${line.id} » : fait sans sourceId`));
       if (line.sourceId && !sourceIds.has(line.sourceId))
         problems.push(
           where(
-            `« ${line.id} » : source « ${line.sourceId} » absente de docs/animaux-sources.md`,
+            `« ${line.id} » : source « ${line.sourceId} » sans citation dans docs/animaux-sources.md`,
           ),
         );
       const condition = line.condition;

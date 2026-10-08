@@ -19,6 +19,11 @@ const FAKE_TURNSTILE = `
   })();
 `;
 
+/** Fige l'horloge de la page (une minute plus tard) : seul le test fait ensuite passer le temps. */
+async function freeze(page: Page) {
+  await page.clock.pauseAt(new Date(Date.now() + 60_000));
+}
+
 /** Horloge pilotable, faux Turnstile, et `path` qui ne répond jamais (POST). */
 async function prepare(page: Page, path: string) {
   await page.clock.install();
@@ -63,10 +68,19 @@ for (const { path, region, label, send, sending, message } of [
     await page.goto(path);
     const section = page.getByRole("region", { name: region });
     await section.getByLabel(label).fill("delai@exemple.test");
+    // Horloge de la page figée : seul le test fait passer le temps (une page lente ne peut
+    // pas sauter les 15 s d'un coup).
+    await freeze(page);
     await section.getByRole("button", { name: send }).click();
     const busy = section.getByRole("button", { name: sending });
+    // Le temps du faux Turnstile (quelques ms), puis la requête part.
+    await expect
+      .poll(async () => {
+        await page.clock.runFor(50);
+        return requests();
+      })
+      .toBe(1);
     await expect(busy).toBeDisabled();
-    expect(requests()).toBe(1);
 
     // Juste avant le délai : toujours en attente.
     await page.clock.fastForward(14_000);
@@ -79,6 +93,8 @@ for (const { path, region, label, send, sending, message } of [
       section.getByRole("status").filter({ hasText: message }),
     ).toHaveAttribute("aria-live", "polite");
     await expect(section.getByLabel(label)).toHaveValue("delai@exemple.test");
+    // axe a besoin de ses minuteurs : l'horloge reprend.
+    await page.clock.resume();
     await expectNoAxeViolations(page);
   });
 }
@@ -123,10 +139,16 @@ for (const { path, label, analyse, reading, message } of [
         timeout: 1000,
       });
     }).toPass();
+    await freeze(page);
     await page.getByRole("button", { name: analyse }).click();
     const busy = page.getByRole("button", { name: reading });
     await expect(busy).toBeDisabled();
-    await expect.poll(requests).toBe(1);
+    await expect
+      .poll(async () => {
+        await page.clock.runFor(50);
+        return requests();
+      })
+      .toBe(1);
 
     // Le serveur attend Claude jusqu'à 15 s : toujours en attente à 15 s.
     await page.clock.fastForward(15_000);
@@ -142,6 +164,8 @@ for (const { path, label, analyse, reading, message } of [
       page.getByRole("status").filter({ hasText: message }),
     ).toHaveAttribute("aria-live", "polite");
     await expect(field).toHaveValue(text);
+    // axe a besoin de ses minuteurs : l'horloge reprend.
+    await page.clock.resume();
     await expectNoAxeViolations(page);
   });
 }

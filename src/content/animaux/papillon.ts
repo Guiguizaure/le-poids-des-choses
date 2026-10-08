@@ -1,6 +1,6 @@
-// Répliques PROVISOIRES du papillon : à remplacer par les vraies (même format). Une réplique est
-// une séquence de 1 à 3 étapes (expression du portrait : content, surpris, dort) ; une
-// réplique « fait » cite une source de docs/animaux-sources.md (`sourceId`).
+// Répliques du papillon : contenu reçu le 8 octobre 2026 (animaux-dialogues.json),
+// textes repris mot pour mot. Personnalité : Tête en l'air, rêveur, part dans tous les sens.
+// Format : ./types.ts ; sources des faits : docs/animaux-sources.md.
 import type { AnimalScript } from "./types";
 
 export const PAPILLON: AnimalScript = {
@@ -8,179 +8,150 @@ export const PAPILLON: AnimalScript = {
   talk: { fr: "Parler au papillon", en: "Talk to the butterfly" },
   lines: [
     {
-      id: "papillon-1",
+      id: "pap-1",
       chapter: 1,
-      kind: "recit",
+      kind: "presentation",
       steps: [
         {
+          expr: "surpris",
+          fr: "Oh ! Bonjour ! Pardon, je pensais à une fleur.",
+          en: "Oh! Hello! Sorry, I was thinking about a flower.",
+        },
+        {
           expr: "content",
-          fr: "[Réplique provisoire 1 · chapitre 1]",
-          en: "[Placeholder line 1 · chapter 1]",
+          fr: "Je suis le papillon. Je vole, je butine, je rêvasse. Surtout je rêvasse.",
+          en: "I'm the butterfly. I fly, I sip nectar, I daydream. Mostly I daydream.",
         },
       ],
     },
     {
-      id: "papillon-2",
+      id: "pap-2",
       chapter: 2,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "papillon-carleton",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 1/2]",
+          fr: "Tu sais comment je sais si une plante est bonne ?",
+          en: "Do you know how I tell if a plant is any good?",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 2/2]",
+          fr: "Je goûte avec mes pattes ! Elles sentent les saveurs dès que je me pose.",
+          en: "I taste with my feet! They pick up flavours as soon as I land.",
         },
       ],
     },
     {
-      id: "papillon-3",
+      id: "pap-3",
+      chapter: 3,
+      kind: "fait",
+      sourceId: "papillon-carleton",
+      steps: [
+        {
+          expr: "content",
+          fr: "Les mamans papillons tapotent les feuilles avec leurs pattes avant de pondre.",
+          en: "Mother butterflies drum on leaves with their feet before laying eggs.",
+        },
+        {
+          expr: "content",
+          fr: "Comme ça, elles vérifient que la plante conviendra à leurs chenilles.",
+          en: "That way they check the plant will suit their caterpillars.",
+        },
+      ],
+    },
+    {
+      id: "pap-4",
+      chapter: 3,
+      kind: "histoire",
+      steps: [
+        {
+          expr: "content",
+          fr: "J'ai été une chenille, tu sais. Je mangeais, je dormais, je mangeais.",
+          en: "I used to be a caterpillar, you know. I ate, I slept, I ate.",
+        },
+        {
+          expr: "surpris",
+          fr: "Et un jour : des ailes ! Personne ne m'avait prévenu.",
+          en: "And one day: wings! Nobody warned me.",
+        },
+      ],
+    },
+    {
+      id: "pap-5",
+      chapter: 4,
+      kind: "confidence",
+      steps: [
+        {
+          expr: "content",
+          fr: "L'escargot m'a conseillé de prendre mon temps.",
+          en: "The snail told me to take my time.",
+        },
+        {
+          expr: "surpris",
+          fr: "J'ai essayé. J'ai tenu quatre secondes.",
+          en: "I tried. I lasted four seconds.",
+        },
+      ],
+    },
+    {
+      id: "pap-6",
+      chapter: 5,
+      kind: "souvenir",
+      steps: [
+        {
+          expr: "content",
+          fr: "Tiens, un peu de pollen doré pour ton jardin. Ne le dis pas aux abeilles.",
+          en: "Here, a little golden pollen for your garden. Don't tell the bees.",
+        },
+      ],
+    },
+    {
+      id: "pap-c1",
       chapter: 2,
-      kind: "recit",
+      kind: "humeur",
       condition: { season: "printemps" },
       steps: [
         {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · au printemps · étape 1/3]",
-          en: "[Placeholder line 3 · chapter 2 · in spring · step 1/3]",
-        },
-        {
           expr: "surpris",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 2/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 3/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 3/3]",
+          fr: "Le printemps ! Tout fleurit en même temps, je ne sais plus où me poser.",
+          en: "Spring! Everything's blooming at once, I don't know where to land.",
         },
       ],
     },
     {
-      id: "papillon-4",
+      id: "pap-c2",
       chapter: 3,
-      kind: "recit",
+      kind: "humeur",
+      condition: { planted: "fleur-5" /* lavande */ },
       steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 4 · chapitre 3]",
-          en: "[Placeholder line 4 · chapter 3]",
-        },
-      ],
-    },
-    {
-      id: "papillon-5",
-      chapter: 3,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 1/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 1/2]",
-        },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 2/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 2/2]",
-        },
-      ],
-    },
-    {
-      id: "papillon-6",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 1/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 1/3]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 2/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 2/3]",
+          fr: "De la lavande !",
+          en: "Lavender!",
         },
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 3/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 3/3]",
-        },
-      ],
-    },
-    {
-      id: "papillon-7",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 7 · chapitre 4]",
-          en: "[Placeholder line 7 · chapter 4]",
-        },
-      ],
-    },
-    {
-      id: "papillon-8",
-      chapter: 5,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 1/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 1/2]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 2/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 2/2]",
+          fr: "Je crois que je vais rester ici pour toujours. Ou au moins dix minutes.",
+          en: "I think I'll stay here forever. Or at least ten minutes.",
         },
       ],
     },
   ],
-  sleep: [
-    [
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 1]",
-        en: "[Placeholder sleep line 1]",
-      },
-    ],
-    [
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 1/2]",
-        en: "[Placeholder sleep line 2 · step 1/2]",
-      },
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 2/2]",
-        en: "[Placeholder sleep line 2 · step 2/2]",
-      },
-    ],
-  ],
+  sleep: [],
   again: [
     [
       {
-        expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 1]",
-        en: "[Already talked today, placeholder 1]",
-      },
-    ],
-    [
-      {
         expr: "surpris",
-        fr: "[Déjà parlé aujourd’hui, provisoire 2]",
-        en: "[Already talked today, placeholder 2]",
+        fr: "Encore toi ? Pardon, j'avais la tête ailleurs. On se reparle demain, promis !",
+        en: "You again? Sorry, my mind was elsewhere. Let's talk tomorrow, promise!",
       },
     ],
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 3]",
-        en: "[Already talked today, placeholder 3]",
+        fr: "J'ai déjà oublié ce que je voulais te dire… Reviens demain, ça me reviendra.",
+        en: "I've already forgotten what I wanted to say… Come back tomorrow, it'll come back to me.",
       },
     ],
   ],

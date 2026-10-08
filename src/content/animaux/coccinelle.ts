@@ -1,6 +1,6 @@
-// Répliques PROVISOIRES de la coccinelle : à remplacer par les vraies (même format). Une réplique est
-// une séquence de 1 à 3 étapes (expression du portrait : content, surpris, dort) ; une
-// réplique « fait » cite une source de docs/animaux-sources.md (`sourceId`).
+// Répliques de la coccinelle : contenu reçu le 8 octobre 2026 (animaux-dialogues.json),
+// textes repris mot pour mot. Personnalité : Petite teigne énergique, se prend pour la garde du jardin.
+// Format : ./types.ts ; sources des faits : docs/animaux-sources.md.
 import type { AnimalScript } from "./types";
 
 export const COCCINELLE: AnimalScript = {
@@ -8,179 +8,139 @@ export const COCCINELLE: AnimalScript = {
   talk: { fr: "Parler à la coccinelle", en: "Talk to the ladybird" },
   lines: [
     {
-      id: "coccinelle-1",
+      id: "coc-1",
       chapter: 1,
-      kind: "recit",
+      kind: "presentation",
       steps: [
         {
+          expr: "surpris",
+          fr: "Halte-là ! Qui va là ?",
+          en: "Halt! Who goes there?",
+        },
+        {
           expr: "content",
-          fr: "[Réplique provisoire 1 · chapitre 1]",
-          en: "[Placeholder line 1 · chapter 1]",
+          fr: "Ah, c'est toi. Repos. Coccinelle, en service : je surveille ton jardin.",
+          en: "Oh, it's you. At ease. Ladybird, on duty: I'm guarding your garden.",
         },
       ],
     },
     {
-      id: "coccinelle-2",
+      id: "coc-2",
       chapter: 2,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "coccinelle-vigienature",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 1/2]",
+          fr: "Les pucerons ? Mes pires ennemis. Enfin… mon goûter.",
+          en: "Aphids? My sworn enemies. Well… my snack.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 2/2]",
+          fr: "Une larve de coccinelle peut en manger jusqu'à 600 en quatre semaines !",
+          en: "A ladybird larva can eat up to 600 of them in four weeks!",
         },
       ],
     },
     {
-      id: "coccinelle-3",
-      chapter: 2,
-      kind: "recit",
-      condition: { planted: "fleur-1" },
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · si une églantine est plantée · étape 1/3]",
-          en: "[Placeholder line 3 · chapter 2 · if a dog rose is planted · step 1/3]",
-        },
-        {
-          expr: "surpris",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 2/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 3/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 3/3]",
-        },
-      ],
-    },
-    {
-      id: "coccinelle-4",
+      id: "coc-3",
       chapter: 3,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "coccinelle-vigienature",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 4 · chapitre 3]",
-          en: "[Placeholder line 4 · chapter 3]",
+          fr: "Un oiseau veut me croquer ? Je ne me laisse pas faire.",
+          en: "A bird wants to gobble me up? Not without a fight.",
+        },
+        {
+          expr: "surpris",
+          fr: "Je libère un liquide jaune qui sent mauvais et a un goût âcre. Bon appétit !",
+          en: "I release a yellow liquid that smells bad and tastes bitter. Enjoy your meal!",
         },
       ],
     },
     {
-      id: "coccinelle-5",
+      id: "coc-4",
       chapter: 3,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "coccinelle-vigienature",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 1/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 1/2]",
+          fr: "L'hiver, je fais une pause. Parfois, je me glisse même dans les maisons pour hiberner.",
+          en: "In winter I take a break. Sometimes I even slip into houses to hibernate.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 2/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 2/2]",
+          fr: "Si tu me trouves derrière un rideau, ne me dérange pas : c'est ma chambre.",
+          en: "If you find me behind a curtain, don't disturb me: that's my bedroom.",
         },
       ],
     },
     {
-      id: "coccinelle-6",
+      id: "coc-5",
       chapter: 4,
-      kind: "recit",
+      kind: "confidence",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 1/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 1/3]",
+          fr: "Je compte mes points tous les matins.",
+          en: "I count my spots every morning.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 2/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 3/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 3/3]",
+          fr: "Sept. Toujours sept. Ça me rassure.",
+          en: "Seven. Always seven. I find it reassuring.",
         },
       ],
     },
     {
-      id: "coccinelle-7",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 7 · chapitre 4]",
-          en: "[Placeholder line 7 · chapter 4]",
-        },
-      ],
-    },
-    {
-      id: "coccinelle-8",
+      id: "coc-6",
       chapter: 5,
-      kind: "recit",
+      kind: "souvenir",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 1/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 1/2]",
+          fr: "Pour ta fidélité, je te nomme garde-jardin d'honneur. Ne me remercie pas, c'est mérité.",
+          en: "For your loyalty, I hereby name you honorary garden guard. No need to thank me, you've earned it.",
         },
+      ],
+    },
+    {
+      id: "coc-c1",
+      chapter: 2,
+      kind: "fait",
+      sourceId: "coccinelle-vigienature",
+      condition: { season: "printemps" },
+      steps: [
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 2/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 2/2]",
+          fr: "Le printemps ! Les coccinelles adultes ressortent dès le mois de mars.",
+          en: "Spring! Adult ladybirds come back out from March.",
+        },
+        {
+          expr: "content",
+          fr: "Au travail : les pucerons n'ont qu'à bien se tenir.",
+          en: "Back to work: the aphids had better watch out.",
         },
       ],
     },
   ],
-  sleep: [
-    [
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 1]",
-        en: "[Placeholder sleep line 1]",
-      },
-    ],
-    [
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 1/2]",
-        en: "[Placeholder sleep line 2 · step 1/2]",
-      },
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 2/2]",
-        en: "[Placeholder sleep line 2 · step 2/2]",
-      },
-    ],
-  ],
+  sleep: [],
   again: [
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 1]",
-        en: "[Already talked today, placeholder 1]",
-      },
-    ],
-    [
-      {
-        expr: "surpris",
-        fr: "[Déjà parlé aujourd’hui, provisoire 2]",
-        en: "[Already talked today, placeholder 2]",
+        fr: "Je suis en ronde ! Reviens demain pour le rapport.",
+        en: "I'm on patrol! Come back tomorrow for the report.",
       },
     ],
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 3]",
-        en: "[Already talked today, placeholder 3]",
+        fr: "Une seule audience par jour. C'est le règlement.",
+        en: "One audience per day. Those are the rules.",
       },
     ],
   ],

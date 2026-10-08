@@ -1,6 +1,6 @@
-// Répliques PROVISOIRES de l’escargot : à remplacer par les vraies (même format). Une réplique est
-// une séquence de 1 à 3 étapes (expression du portrait : content, surpris, dort) ; une
-// réplique « fait » cite une source de docs/animaux-sources.md (`sourceId`).
+// Répliques de l’escargot : contenu reçu le 8 octobre 2026 (animaux-dialogues.json),
+// textes repris mot pour mot. Personnalité : Philosophe, jamais pressé, pince-sans-rire.
+// Format : ./types.ts ; sources des faits : docs/animaux-sources.md.
 import type { AnimalScript } from "./types";
 
 export const ESCARGOT: AnimalScript = {
@@ -8,134 +8,168 @@ export const ESCARGOT: AnimalScript = {
   talk: { fr: "Parler à l’escargot", en: "Talk to the snail" },
   lines: [
     {
-      id: "escargot-1",
+      id: "esc-1",
       chapter: 1,
-      kind: "recit",
+      kind: "presentation",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 1 · chapitre 1]",
-          en: "[Placeholder line 1 · chapter 1]",
+          fr: "Ah, te voilà. Je t'attendais… enfin, sans me presser.",
+          en: "Ah, there you are. I was waiting for you… in no particular hurry.",
+        },
+        {
+          expr: "content",
+          fr: "Moi, c'est l'escargot. Je réfléchis beaucoup et j'avance peu. Les deux vont ensemble.",
+          en: "I'm the snail. I think a lot and move very little. The two go together.",
         },
       ],
     },
     {
-      id: "escargot-2",
+      id: "esc-2",
       chapter: 2,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "escargot-vikidia",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 1/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 1/2]",
+          fr: "Tu vois mes deux grandes antennes ?",
+          en: "See my two long tentacles?",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 2 · chapitre 2 · étape 2/2]",
-          en: "[Placeholder line 2 · chapter 2 · step 2/2]",
+          fr: "Mes yeux sont tout au bout ! Pratique pour regarder par-dessus une feuille.",
+          en: "My eyes are right at the tips! Handy for peeking over a leaf.",
         },
       ],
     },
     {
-      id: "escargot-3",
+      id: "esc-3",
       chapter: 2,
-      kind: "recit",
-      condition: { season: "automne" },
+      kind: "fait",
+      sourceId: "escargot-vikidia",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · en automne · étape 1/3]",
-          en: "[Placeholder line 3 · chapter 2 · in autumn · step 1/3]",
+          fr: "J'avance d'environ 6 centimètres par minute.",
+          en: "I travel about 6 centimetres a minute.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 2/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 2/3]",
+          fr: "À ce rythme, traverser ton jardin, c'est une expédition.",
+          en: "At that pace, crossing your garden is an expedition.",
         },
         {
           expr: "content",
-          fr: "[Réplique provisoire 3 · chapitre 2 · étape 3/3]",
-          en: "[Placeholder line 3 · chapter 2 · step 3/3]",
+          fr: "Ma bave m'aide à glisser. Moi, je préfère dire « mon tapis roulant ».",
+          en: "My slime helps me glide. I prefer to call it my travelator.",
         },
       ],
     },
     {
-      id: "escargot-4",
+      id: "esc-4",
       chapter: 3,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "escargot-vikidia",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 4 · chapitre 3]",
-          en: "[Placeholder line 4 · chapter 3]",
-        },
-      ],
-    },
-    {
-      id: "escargot-5",
-      chapter: 3,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 1/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 1/2]",
+          fr: "Je vais te confier un secret.",
+          en: "Let me tell you a secret.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 5 · chapitre 3 · étape 2/2]",
-          en: "[Placeholder line 5 · chapter 3 · step 2/2]",
+          fr: "Les escargots ont une langue couverte de minuscules dents : entre 1 500 et 2 500 !",
+          en: "Snails have a tongue covered in tiny teeth: between 1,500 and 2,500 of them!",
+        },
+        {
+          expr: "content",
+          fr: "Ça s'appelle une radula. Idéal pour râper les feuilles.",
+          en: "It's called a radula. Perfect for grating leaves.",
         },
       ],
     },
     {
-      id: "escargot-6",
+      id: "esc-5",
       chapter: 4,
-      kind: "recit",
+      kind: "fait",
+      sourceId: "escargot-vikidia",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 1/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 1/3]",
+          fr: "Chez nous, chaque escargot est à la fois mâle et femelle.",
+          en: "In our family, every snail is both male and female.",
         },
         {
           expr: "surpris",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 2/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 2/3]",
-        },
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 6 · chapitre 4 · étape 3/3]",
-          en: "[Placeholder line 6 · chapter 4 · step 3/3]",
+          fr: "Mais il faut quand même être deux pour avoir des petits. La nature aime la compagnie.",
+          en: "But it still takes two to have babies. Nature likes company.",
         },
       ],
     },
     {
-      id: "escargot-7",
-      chapter: 4,
-      kind: "recit",
-      steps: [
-        {
-          expr: "content",
-          fr: "[Réplique provisoire 7 · chapitre 4]",
-          en: "[Placeholder line 7 · chapter 4]",
-        },
-      ],
-    },
-    {
-      id: "escargot-8",
+      id: "esc-6",
       chapter: 5,
-      kind: "recit",
+      kind: "souvenir",
       steps: [
         {
           expr: "content",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 1/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 1/2]",
+          fr: "Tu reviens souvent. J'aime ça : pas de précipitation, juste de la régularité.",
+          en: "You come back often. I like that: no rush, just steadiness.",
         },
         {
+          expr: "content",
+          fr: "Garde ce souvenir : une feuille de laitue à peine grignotée. C'est mon plus beau cadeau.",
+          en: "Keep this as a memento: a barely nibbled lettuce leaf. It's my finest gift.",
+        },
+      ],
+    },
+    {
+      id: "esc-c1",
+      chapter: 2,
+      kind: "fait",
+      sourceId: "escargot-futura",
+      condition: { season: "printemps" },
+      steps: [
+        {
           expr: "surpris",
-          fr: "[Réplique provisoire 8 · chapitre 5 · étape 2/2]",
-          en: "[Placeholder line 8 · chapter 5 · step 2/2]",
+          fr: "Le printemps ! J'ai dormi tout l'hiver, bien à l'abri dans ma coquille.",
+          en: "Spring! I slept all winter, tucked up in my shell.",
+        },
+        {
+          expr: "content",
+          fr: "Je l'avais fermée avec un bouchon de bave séchée. Ça s'appelle un épiphragme.",
+          en: "I'd sealed it with a plug of dried slime. It's called an epiphragm.",
+        },
+      ],
+    },
+    {
+      id: "esc-c2",
+      chapter: 3,
+      kind: "humeur",
+      condition: { night: true },
+      steps: [
+        {
+          expr: "content",
+          fr: "La nuit, il fait plus frais et plus humide. Moi, j'adore.",
+          en: "At night it's cooler and damper. I love it.",
+        },
+      ],
+    },
+    {
+      id: "esc-c3",
+      chapter: 3,
+      kind: "humeur",
+      condition: { planted: "arbre-4" /* olivier */ },
+      steps: [
+        {
+          expr: "surpris",
+          fr: "Un olivier ? Excellent choix.",
+          en: "An olive tree? Excellent choice.",
+        },
+        {
+          expr: "content",
+          fr: "Un arbre qui prend son temps. On va bien s'entendre.",
+          en: "A tree that takes its time. We'll get on well.",
         },
       ],
     },
@@ -144,43 +178,39 @@ export const ESCARGOT: AnimalScript = {
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 1]",
-        en: "[Placeholder sleep line 1]",
+        fr: "Zzz… (L'escargot hiberne, bien fermé dans sa coquille. Il se réveillera au printemps.)",
+        en: "Zzz… (The snail is hibernating, sealed in its shell. It'll wake up in spring.)",
       },
     ],
     [
       {
         expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 1/2]",
-        en: "[Placeholder sleep line 2 · step 1/2]",
-      },
-      {
-        expr: "dort",
-        fr: "[Sommeil provisoire 2 · étape 2/2]",
-        en: "[Placeholder sleep line 2 · step 2/2]",
+        fr: "Zzz… On raconte qu'un escargot peut dormir trois ans. C'est très exagéré : dans la nature, c'est plutôt quelques semaines ou quelques mois.",
+        en: "Zzz… They say a snail can sleep for three years. That's a big exaggeration: in the wild it's more like a few weeks or months.",
       },
     ],
   ],
+  sleepSourceId: "escargot-futura",
   again: [
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 1]",
-        en: "[Already talked today, placeholder 1]",
-      },
-    ],
-    [
-      {
-        expr: "surpris",
-        fr: "[Déjà parlé aujourd’hui, provisoire 2]",
-        en: "[Already talked today, placeholder 2]",
+        fr: "Une conversation par jour, c'est déjà un marathon pour moi. Reviens demain.",
+        en: "One conversation a day is already a marathon for me. Come back tomorrow.",
       },
     ],
     [
       {
         expr: "content",
-        fr: "[Déjà parlé aujourd’hui, provisoire 3]",
-        en: "[Already talked today, placeholder 3]",
+        fr: "On s'est déjà parlé aujourd'hui. Laisse-moi digérer… cette conversation.",
+        en: "We've already talked today. Let me digest… that conversation.",
+      },
+    ],
+    [
+      {
+        expr: "content",
+        fr: "Demain, peut-être. Ou après-demain. On verra.",
+        en: "Tomorrow, maybe. Or the day after. We'll see.",
       },
     ],
   ],

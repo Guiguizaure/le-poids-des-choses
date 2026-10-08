@@ -147,7 +147,8 @@ export function converse(
   context: TalkContext,
 ): { reply: Reply; record: FriendRecord } {
   const met = { ...record, met: true };
-  if (context.asleep) {
+  // Endormi (et des répliques de sommeil : un animal jamais dessiné endormi n'en a pas).
+  if (context.asleep && script.sleep.length > 0) {
     const index = pickIndex(
       `${talker}:${context.day}:sommeil`,
       script.sleep.length,
@@ -194,14 +195,20 @@ export function converse(
   };
 }
 
-/** Progression : répliques vues (qui existent encore) sur le total. */
+/**
+ * Progression (« 3 répliques sur 8 ») : seulement les répliques sans condition, vues et qui
+ * existent encore. Les conditionnelles (saison, nuit, espèce plantée) sont des bonus : on
+ * atteint N sur N sans elles.
+ */
 export function progress(
   script: AnimalScript,
   record: FriendRecord,
 ): { seen: number; total: number } {
-  const ids = new Set(script.lines.map((line) => line.id));
+  const ids = new Set(
+    script.lines.filter((line) => !line.condition).map((line) => line.id),
+  );
   return {
     seen: record.seen.filter((id) => ids.has(id)).length,
-    total: script.lines.length,
+    total: ids.size,
   };
 }
