@@ -265,56 +265,75 @@ test("les zones suivent les animaux qui bougent (coccinelle qui marche)", async 
   expect(Math.abs(later.zone - later.drawn)).toBeLessThan(6);
 });
 
-test("une nouvelle réplique par jour (minuit à Paris), « déjà parlé » ensuite", async ({
+/** Une conversation avec la coccinelle (là jour et nuit en automne) : sorte et texte. */
+async function talkToLadybird(page: Page) {
+  await zone(page, "ladybug", "Parler à la coccinelle").click();
+  const dialog = dialogOf(page);
+  await expect(dialog).toBeVisible();
+  const reply = await dialog.getAttribute("data-reply");
+  const text = await dialog.locator("p[role=status]").textContent();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  return { reply, text };
+}
+
+test("une nouvelle réplique par jour, puis « déjà parlé » le même jour", async ({
   page,
 }) => {
-  // Coccinelle : là jour et nuit en automne.
   await openGarden(page, 3, "2026-10-08T20:00:00+02:00");
-  const talk = async () => {
-    await zone(page, "ladybug", "Parler à la coccinelle").click();
-    const dialog = dialogOf(page);
-    await expect(dialog).toBeVisible();
-    const reply = await dialog.getAttribute("data-reply");
-    const text = await dialog.locator("p[role=status]").textContent();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toHaveCount(0);
-    return { reply, text };
-  };
-
-  expect(await talk()).toEqual({
+  expect(await talkToLadybird(page)).toEqual({
     reply: "new",
     text: "Halte-là ! Qui va là ?",
   });
-  const again = await talk();
+  const again = await talkToLadybird(page);
   expect(again.reply).toBe("again");
   expect([
     "Je suis en ronde ! Reviens demain pour le rapport.",
     "Une seule audience par jour. C'est le règlement.",
   ]).toContain(again.text);
-
-  // 23 h 59 à Paris : toujours le même jour.
-  await page.clock.setSystemTime(new Date("2026-10-08T23:59:00+02:00"));
-  expect((await talk()).reply).toBe("again");
-  // Minuit passé : la réplique suivante (sa seule conditionnelle est de printemps).
-  await page.clock.setSystemTime(new Date("2026-10-09T00:01:00+02:00"));
-  expect(await talk()).toEqual({
-    reply: "new",
-    text: "Les pucerons ? Mes pires ennemis. Enfin… mon goûter.",
-  });
-  // Le compteur ne compte que les répliques sans condition : 6 pour la coccinelle.
-  const row = page.locator('[data-talk-row="ladybug"]');
-  await expect(row.locator("[data-progress]")).toHaveText("2 répliques sur 6");
-
   // Sur l'appareil seulement, clé versionnée.
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("lpdc:amis:v1") ?? "null"),
   );
-  expect(stored.animals.ladybug.seen).toEqual(["coc-1", "coc-2"]);
   expect(stored).toMatchObject({
     version: 1,
-    animals: {
-      ladybug: { day: "2026-10-09" },
-    },
+    animals: { ladybug: { seen: ["coc-1"], day: "2026-10-08", talks: 2 } },
+  });
+});
+
+test("minuit à Paris : 23 h 59, encore « déjà parlé » ; 0 h 01, la réplique suivante", async ({
+  page,
+}) => {
+  // La coccinelle s'est présentée ce soir (le 8 octobre).
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "lpdc:amis:v1",
+      JSON.stringify({
+        version: 1,
+        animals: {
+          ladybug: { seen: ["coc-1"], day: "2026-10-08", talks: 1, met: true },
+        },
+      }),
+    ),
+  );
+  await openGarden(page, 3, "2026-10-08T23:59:00+02:00");
+  expect((await talkToLadybird(page)).reply).toBe("again");
+  await page.clock.setSystemTime(new Date("2026-10-09T00:01:00+02:00"));
+  // Sa seule conditionnelle est de printemps : la n° 2.
+  expect(await talkToLadybird(page)).toEqual({
+    reply: "new",
+    text: "Les pucerons ? Mes pires ennemis. Enfin… mon goûter.",
+  });
+  // Le compteur ne compte que les répliques sans condition : 6 pour la coccinelle.
+  await expect(
+    page.locator('[data-talk-row="ladybug"] [data-progress]'),
+  ).toHaveText("2 répliques sur 6");
+  const stored = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("lpdc:amis:v1") ?? "null"),
+  );
+  expect(stored.animals.ladybug).toMatchObject({
+    seen: ["coc-1", "coc-2"],
+    day: "2026-10-09",
   });
 });
 

@@ -2095,3 +2095,6 @@ chaque animal est dessiné endormi, retirer l'`id` des portraits.
   WebKit, environ une fois sur trois : l'horloge de la page continuait d'avancer en temps
   réel et une page lente sautait les 15 s ; elle est maintenant figée, le temps n'avance que
   par le test, et reprend avant axe). 32 sur 32 en répétition, suite complète 389 sur 389.
+- CI : « une nouvelle réplique par jour » (quatre conversations d'affilée) dépassait 30 s sous
+  le WebKit de la CI ; coupé en deux scénarios indépendants (le même jour ; le passage de
+  minuit, à partir d'une amitié commencée la veille), délais inchangés.
