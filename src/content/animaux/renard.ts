@@ -37,8 +37,8 @@ export const RENARD: AnimalScript = {
         },
         {
           expr: "surpris",
-          fr: "Pour les sons très graves, j'entends mieux que n'importe quel autre mammifère terrestre.",
-          en: "For very low sounds, I hear better than any other land mammal.",
+          fr: "J'ai une ouïe incroyable, surtout pour les sons très graves.",
+          en: "My hearing is incredible, especially for very low sounds.",
         },
         {
           expr: "content",

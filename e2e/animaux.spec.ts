@@ -53,6 +53,9 @@ test("toucher l'oiseau : la conversation s'ouvre, s'écrit lettre à lettre, se 
     expect(box.height).toBeGreaterThanOrEqual(44);
   }
   const bird = zone(page, "bird", "Parler à l’oiseau");
+  // Horloge de la page figée (dix minutes plus tard, même jour) : la réplique est encore en
+  // train de s'écrire quand on touche la boîte.
+  await page.clock.pauseAt(new Date(Date.parse(DAY) + 10 * 60_000));
   await bird.click();
 
   const dialog = page.getByRole("dialog", { name: "Oiseau" });
@@ -75,6 +78,10 @@ test("toucher l'oiseau : la conversation s'ouvre, s'écrit lettre à lettre, se 
   await expect(portrait).toHaveAttribute("data-expr", "surpris");
   expect(Math.round((await portrait.boundingBox())!.width)).toBe(96);
   // Toucher la boîte affiche le texte en entier (sans fermer).
+  await expect(dialog.locator("[data-typed]")).toHaveAttribute(
+    "data-typewriter",
+    "typing",
+  );
   await dialog.locator("[data-typed]").click();
   await expect(dialog.locator("[data-typed]")).toHaveAttribute(
     "data-typewriter",
@@ -84,6 +91,9 @@ test("toucher l'oiseau : la conversation s'ouvre, s'écrit lettre à lettre, se 
   await expect(dialog.locator("[data-typed]")).toHaveText(
     "Oh, quelqu'un ! Tu viens d'où ? Tu restes longtemps ? Tu aimes les graines ?",
   );
+  await expect(dialog).toHaveAttribute("data-step", "1/2");
+  // axe a besoin de ses minuteurs : l'horloge reprend.
+  await page.clock.resume();
   await expectNoAxeViolations(page);
 
   // Échap : fermée, le focus revient sur l'oiseau.

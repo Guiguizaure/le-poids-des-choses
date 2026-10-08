@@ -50,13 +50,13 @@ export const OISEAU: AnimalScript = {
       steps: [
         {
           expr: "content",
-          fr: "Au printemps, une maman mésange peut pondre de 9 à 13 œufs.",
-          en: "In spring, a mother blue tit can lay 9 to 13 eggs.",
+          fr: "Au printemps, une maman mésange pond souvent une dizaine d'œufs.",
+          en: "In spring, a mother blue tit often lays around ten eggs.",
         },
         {
           expr: "surpris",
-          fr: "Treize ! Tu imagines le bruit au nid ?",
-          en: "Thirteen! Can you imagine the noise in the nest?",
+          fr: "Une dizaine ! Tu imagines le bruit au nid ?",
+          en: "Around ten! Can you imagine the noise in the nest?",
         },
       ],
     },

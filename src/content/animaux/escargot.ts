@@ -50,8 +50,8 @@ export const ESCARGOT: AnimalScript = {
       steps: [
         {
           expr: "content",
-          fr: "J'avance d'environ 6 centimètres par minute.",
-          en: "I travel about 6 centimetres a minute.",
+          fr: "Je n'avance que de quelques centimètres par minute.",
+          en: "I only cover a few centimetres a minute.",
         },
         {
           expr: "surpris",
@@ -78,8 +78,8 @@ export const ESCARGOT: AnimalScript = {
         },
         {
           expr: "surpris",
-          fr: "Les escargots ont une langue couverte de minuscules dents : entre 1 500 et 2 500 !",
-          en: "Snails have a tongue covered in tiny teeth: between 1,500 and 2,500 of them!",
+          fr: "Les escargots ont une langue couverte de milliers de minuscules dents !",
+          en: "Snails have a tongue covered in thousands of tiny teeth!",
         },
         {
           expr: "content",

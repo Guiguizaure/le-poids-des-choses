@@ -2098,3 +2098,17 @@ chaque animal est dessiné endormi, retirer l'`id` des portraits.
 - CI : « une nouvelle réplique par jour » (quatre conversations d'affilée) dépassait 30 s sous
   le WebKit de la CI ; coupé en deux scénarios indépendants (le même jour ; le passage de
   minuit, à partir d'une amitié commencée la veille), délais inchangés.
+
+### Arbitrage des doutes (même jour, même branche)
+
+Règle de l'utilisateur : ne garder que ce que toutes les sources confirment. Textes remplacés
+par les formulations fournies : ois-3 (« souvent une dizaine d'œufs », « Une dizaine ! »),
+esc-4 étape 2 (« des milliers de minuscules dents »), esc-3 étape 1 (« quelques centimètres
+par minute »), coc-3 (« goût âpre », “tastes harsh”), ren-2 étape 2 (« une ouïe incroyable,
+surtout pour les sons très graves ») ; queue du renard gardée (NWF, New Hampshire PBS).
+`docs/animaux-sources.md` : citations qui appuient les nouvelles formulations ; « des milliers
+de dents » confirmé par le Muséum d'histoire naturelle de Los Angeles. Vitesse de l'escargot :
+aucune source fiable ne confirme seule « quelques centimètres par minute » (1,7 cm/min au plus
+pour l'université d'Exeter, 6 cm pour Vikidia, 10 à 15 cm en course, jusqu'à 80 cm dans le
+Physics Factbook ; Wikipédia semble se tromper d'un facteur 10 sur sa propre source) : signalé.
+- Test « toucher l'oiseau » : horloge figée avant l'ouverture, comme « toucher la boîte » (même course sous WebKit).

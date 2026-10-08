@@ -55,8 +55,8 @@ export const COCCINELLE: AnimalScript = {
         },
         {
           expr: "surpris",
-          fr: "Je libère un liquide jaune qui sent mauvais et a un goût âcre. Bon appétit !",
-          en: "I release a yellow liquid that smells bad and tastes bitter. Enjoy your meal!",
+          fr: "Je libère un liquide jaune qui sent mauvais et a un goût âpre. Bon appétit !",
+          en: "I release a yellow liquid that smells bad and tastes harsh. Enjoy your meal!",
         },
       ],
     },
