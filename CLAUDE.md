@@ -254,7 +254,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
   réservée aux feuilles, et au fond des encadrés « Le savais-tu ? » (`DidYouKnow`), texte
   blanc 6,49:1) ; polices
-  `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
+  `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600), fichiers dans
+  `assets/fonts` (`next/font/local`, `src/app/fonts.ts` ; variables et polices de repli dans
+  `globals.css` ; aucun appel à Google Fonts, ni au build ni dans les pages) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
 - Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.

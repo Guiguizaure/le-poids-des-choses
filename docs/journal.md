@@ -2129,3 +2129,25 @@ paramètres et l'ancre » (`e2e/anglais.spec.ts`) ne passent parfois qu'au secon
   n'ont plus la place sur une ligne (412 px), le nom passe sur deux lignes et tout le haut de
   /jardin descend de 20 px (CLS 0,053). `e2e/decalage.spec.ts` ne le voit qu'une fois sur
   huit (selon le chargement des polices). Choix de mise en page à faire.
+
+## 2026-10-09 — Lot de stabilité avant les testeurs (branche fix/stabilite)
+
+Production : le déploiement Cloudflare du commit de fusion de #35 (`8db5f44`) a réussi.
+
+### 1. Polices locales
+
+**Demandé** : ne plus dépendre de Google Fonts au build (le build Cloudflare de #35 avait
+échoué en téléchargeant DM Sans), sans rien changer au rendu ni au poids.
+
+**Fait** : `src/app/fonts.ts` passe à `next/font/local`. Les cinq fichiers woff2 (Bricolage
+Grotesque 800 : latin, latin étendu, vietnamien ; DM Sans 400/600 variable : latin, latin
+étendu) sont ceux que Google Fonts sert, téléchargés sur `fonts.gstatic.com` et vérifiés
+octet pour octet contre ceux que le site servait. Un appel `localFont` par sous-ensemble, même
+nom de famille déclaré, même plage unicode, même `font-stretch`, `display: swap`, latin seul
+préchargé. Deux écarts de `next/font/local` contournés : la variable CSS prendrait le nom de
+la constante et le repli serait recalculé depuis le fichier (Bricolage 82,39 % au lieu de
+88,21 %) ; variables `--font-bricolage` / `--font-dm-sans` et polices de repli déclarées dans
+`globals.css` aux valeurs exactes d'avant. Licences OFL (dépôt google/fonts) et README dans
+`assets/fonts` ; les TTF qui servaient à l'ancienne image de partage (plus utilisés) sont
+retirés. Vérifié : aucune requête vers Google, ni au build ni dans `out/` ; mêmes deux
+fichiers chargés par page (58,8 ko), captures identiques à `main` au pixel près.
