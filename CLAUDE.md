@@ -90,7 +90,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   une route Playwright) ; toute erreur de console (CSP comprise) fait échouer un test.
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
   les liens avec Tab). Le compte (`e2e/compte.spec.ts`, projets `compte-chromium` et
-  `compte-webkit`, 2 workers chacun) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
+  `compte-webkit`, 1 worker chacun : à quatre tests à la fois, le serveur local devenait trop
+  lent) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
   en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
   Resend, faux siteverify et faux Anthropic, port 4330) ; Turnstile est simulé par une route
   Playwright. « Raconte ta journée » (`e2e/raconte.spec.ts`, projets `raconte-chromium` et
@@ -496,6 +497,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - `public/_headers` : CSP (scripts et styles en ligne autorisés, nécessaires à l'export
     Next ; Cloudflare Web Analytics autorisé), Referrer-Policy, Permissions-Policy,
     nosniff, cache immuable de `/_next/static/*` ;
+  - stabilité de /jardin (CLS) : le carnet n'est lu qu'après l'hydratation, donc tout le bas
+    de page qui en dépend est monté d'un bloc à sa lecture, sous ce qui est déjà affiché ;
+    ligne du prochain animal réservée dès le rendu serveur ; boutons de partage sans effet
+    sur la hauteur de la barre. `e2e/decalage.spec.ts` (Chromium) échoue au-delà de 0,1 ;
   - performance : la 404 racine est embarquée dans toutes les pages, elle doit rester sans
     composant client ; l'écran de résultat est chargé à la demande ; les animations
     d'ambiance démarrent deux images après l'affichage (`useMotion`) ;

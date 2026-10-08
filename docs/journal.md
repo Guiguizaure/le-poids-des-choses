@@ -1900,3 +1900,55 @@ instable avant ce lot. Lighthouse mobile : / 99 · 100 · 100, /en 94 · 100 · 
 de catégorie PWA : installabilité vérifiée par Chrome (aucune erreur sur / et /en).
 Repéré en passant, déjà sur `main` : /jardin a un décalage de mise en page de 0,50 (tout le
 bloc sous l'en-tête), performance 69 ; à corriger dans une branche `fix/`.
+
+## 2026-10-08 — Décalage de Mon jardin et test du compte (branche fix/jardin-cls)
+
+**Demandé** : supprimer le décalage de mise en page de /jardin au chargement (CLS 0,50 ;
+objectif < 0,05, performance mobile ≥ 90 sur /jardin et /en/garden), avec un test qui échoue
+au-delà de 0,1 ; rendre fiable le « parcours complet » du compte, instable aussi sur `main`,
+en disant si c'était le test ou l'appli.
+
+**Trouvé (CLS)** : le carnet n'est lu qu'après l'hydratation. Trois blocs arrivaient alors au
+milieu de ce qui était déjà affiché : la phrase « Encore N choix… » au-dessus du bouton
+(+25 px), l'astuce du jardin vide sous le bouton (+88 px), et tout le bas de page (« Retrouve
+ton jardin », habitudes…) inséré avant la carte de saison, seule rendue côté serveur. Le bloc
+du bas descendait de 118 px : 0,51. Quatrième décalage, invisible pour Lighthouse (jardin
+vide) : sur un téléphone qui partage, « Exporter » et « Partager » (30 px) agrandissaient la
+barre du haut (0,007).
+
+**Fait** :
+
+- Ligne du prochain animal réservée dès le rendu serveur (espace insécable tant que le carnet
+  n'est pas lu, ou s'il n'y a plus d'animal à attendre).
+- Bas de page monté d'un bloc à la lecture du carnet, sous ce qui est déjà affiché : plus rien
+  ne bouge (la carte de saison n'est plus rendue côté serveur ; elle arrive avec le reste).
+- Boutons de partage en marge négative : la barre garde sa hauteur.
+- `e2e/decalage.spec.ts` (Chromium : l'API « layout-shift » n'existe pas dans WebKit) :
+  /jardin et /en/garden vides, /jardin avec un carnet, téléphone qui partage. Vérifié sur un
+  build sans la correction : 0,51 (0,96 avec les boutons de partage), les 4 tests échouent ;
+  le seuil de 0,1 ne voit pas les 0,007 de la barre, d'où un seuil de 0,001 pour ce cas.
+- Résultat : CLS 0 partout, y compris à 320 px. Lighthouse mobile, 5 passages : /jardin 90 à
+  92, /en/garden 90 à 92 (médiane 91 ; avant : 69). Le LCP reste vers 3,4 s : c'est le texte
+  du bas de page, qui n'existe qu'après l'hydratation. Essayé sans gain mesurable (352 →
+  349 ko de JS), puis retiré : charger à la demande la feuille de partage et « Le savais-tu ? ».
+  Pour aller nettement au-delà, il faudrait rendre côté serveur l'état « jardin vide » (avec un
+  script en ligne qui le masque si le carnet a des choix) : `AccountSection`, l'astuce, les
+  habitudes et le fait du jour dépendent tous d'un état lu sur l'appareil ; pas fait.
+
+**Trouvé (compte)** : c'était le **test**, pas l'appli. Les traces montrent que le bouton
+restait sur « Envoi… » (Turnstile avait répondu) parce que `POST /api/auth/link` mettait
+jusqu'à 5,7 s à répondre ; il revenait ensuite à son état normal (le client remet toujours le
+bouton à zéro après une réponse ou une erreur). Les échecs tombaient à cinq étapes
+différentes, toutes en attente du serveur local (pages à 7-8 s, synchro), avec une fois un 500
+de miniflare (« Network connection lost »). Cause : quatre tests à la fois (2 workers × 2
+navigateurs) sur l'unique `wrangler pages dev`. Mesuré : 3 réussites sur 8 à quatre à la fois,
+16 sur 16 à deux. La CI relance une fois chaque échec (`retries: 1`), ce qui le masquait.
+
+**Fait** : un worker par navigateur pour les projets du compte (deux tests à la fois), sans
+toucher aux délais. Les 18 tests du compte passent en 1,2 min ; suite complète : 349
+réussis, 0 échec, 6,3 min (9,3 min avant).
+
+**Remarqué** : l'appel au serveur (`call`, `src/lib/sync/api.ts`) n'a pas de délai maximal :
+si une requête ne répond jamais (réseau qui se fige), le bouton resterait sur « Envoi… ».
+Pas observé ici, non corrigé. `server/journal.test.ts` (pagination) a dépassé une fois les
+5 s de Vitest pendant la suite complète, puis a passé en 1,6 s à chaque relance.

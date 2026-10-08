@@ -49,12 +49,15 @@ export default defineConfig({
     },
     // Compte : un seul serveur workerd local pour tous ces tests, donc peu à la fois, et après
     // les autres (moins de charge simultanée). Seuls : `--project=compte-chromium --no-deps`.
+    // Un worker par navigateur, deux tests à la fois : à quatre, le serveur local répondait
+    // en plus de 5 s (lien, pages) et miniflare perdait des connexions (500), et le « parcours
+    // complet » échouait une fois sur deux (3 réussites sur 8, contre 16 sur 16 à deux).
     {
       name: "compte-chromium",
       use: { ...devices["Pixel 7"] },
       testMatch: /compte\.spec\.ts/,
       dependencies: ["chromium", "webkit"],
-      workers: 2,
+      workers: 1,
       timeout: 60_000,
     },
     {
@@ -62,7 +65,7 @@ export default defineConfig({
       use: { ...devices["iPhone 14"] },
       testMatch: /compte\.spec\.ts/,
       dependencies: ["chromium", "webkit"],
-      workers: 2,
+      workers: 1,
       timeout: 60_000,
     },
     // « Raconte ta journée » : même serveur local, après le compte (sa charge reste la même).
