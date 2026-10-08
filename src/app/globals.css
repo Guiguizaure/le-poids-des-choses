@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/* Polices : les @font-face sont déclarés par src/app/fonts.ts (next/font/local). Familles et
+   polices de repli ajustées sur Arial, aux valeurs exactes que next/font/google produisait. */
+@font-face {
+  font-family: "Bricolage Grotesque Fallback";
+  src: local("Arial");
+  ascent-override: 88.21%;
+  descent-override: 25.61%;
+  line-gap-override: 0%;
+  size-adjust: 105.43%;
+}
+@font-face {
+  font-family: "DM Sans Fallback";
+  src: local("Arial");
+  ascent-override: 94.9%;
+  descent-override: 29.66%;
+  line-gap-override: 0%;
+  size-adjust: 104.53%;
+}
+:root {
+  --font-bricolage: "Bricolage Grotesque", "Bricolage Grotesque Fallback";
+  --font-dm-sans: "DM Sans", "DM Sans Fallback";
+}
+
 @theme {
   --color-creme: #fff3dc;
   --color-encre: #1f1a17;

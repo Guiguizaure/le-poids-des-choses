@@ -24,6 +24,8 @@ test.afterEach(({ consoleErrors }) => acceptCancelledPrefetch(consoleErrors));
  * « Plus Five Five, Inc. » (la société de Resend).
  */
 const ALLOWED = [
+  // Le nom du site, aussi coupé sur deux lignes (en-tête de Mon jardin sur téléphone).
+  "Le poids\ndes choses",
   "Le poids des choses",
   "Le poids",
   "Données : Impact CO2 – ADEME",
@@ -196,24 +198,37 @@ test("objet d'occasion et habitude tenue, en anglais", async ({ page }) => {
 test("le sélecteur de langue garde la page, les paramètres et l'ancre", async ({
   page,
 }) => {
+  // Le sélecteur recharge toute la page : on ne part que d'une page chargée dont les
+  // préchargements de Next sont finis (réseau au repos). Sinon WebKit signale en console les
+  // requêtes qu'il interrompt, ou refuse la navigation suivante (« internal error »).
+  const settle = () => page.waitForLoadState("networkidle");
   await page.goto("/en/compare?a=tgv&b=avion&q=120");
   await expect(
     page.getByRole("heading", { name: "Which one weighs less?" }),
   ).toBeVisible();
+  await settle();
   await page.getByRole("link", { name: "Français" }).click();
-  await expect(page).toHaveURL(/\/comparer\?a=tgv&b=avion&q=120$/);
+  await page.waitForURL(/\/comparer\?a=tgv&b=avion&q=120$/, {
+    waitUntil: "load",
+  });
   await expect(
     page.getByRole("heading", { name: "Lequel pèse le moins ?" }),
   ).toBeVisible();
+  await settle();
   await page.getByRole("link", { name: "English" }).click();
-  await expect(page).toHaveURL(/\/en\/compare\?a=tgv&b=avion&q=120$/);
+  await page.waitForURL(/\/en\/compare\?a=tgv&b=avion&q=120$/, {
+    waitUntil: "load",
+  });
+  await settle();
 
   await page.goto("/methode#habitudes");
+  await settle();
   await page.getByRole("link", { name: "English" }).first().click();
-  await expect(page).toHaveURL(/\/en\/method#habitudes$/);
+  await page.waitForURL(/\/en\/method#habitudes$/, { waitUntil: "load" });
   await expect(
     page.getByRole("heading", { name: "Comparing or keeping up a habit" }),
   ).toBeVisible();
+  await settle();
 });
 
 test("hreflang, canonical et image de partage par langue", async ({ page }) => {

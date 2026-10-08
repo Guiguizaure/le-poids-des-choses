@@ -254,7 +254,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `tomate-douce`, `pomme`, `pomme-douce`, `outremer`, `soleil`, `rose`, `sapin` (#1B6B45,
   réservée aux feuilles, et au fond des encadrés « Le savais-tu ? » (`DidYouKnow`), texte
   blanc 6,49:1) ; polices
-  `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600) ; tailles
+  `font-titre` (Bricolage Grotesque 800) et `font-texte` (DM Sans 400/600), fichiers dans
+  `assets/fonts` (`next/font/local`, `src/app/fonts.ts` ; variables et polices de repli dans
+  `globals.css` ; aucun appel à Google Fonts, ni au build ni dans les pages) ; tailles
   `text-display`, `text-titre-xl`, `text-titre-l`, `text-titre-m`, `text-chiffre-xl`,
   `text-corps-l`, `text-corps-m`, `text-corps-s`, `text-legende`.
 - Formulation honnête : jamais « évité », « économisé », « sauvé » ni « gagné » pour les kg.
@@ -596,7 +598,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile
   de 28 px ; emblème à gauche du nom, décoratif (`alt=""`, aria-hidden), 28 px donc
   `embleme-petit.svg` (`emblemSrc` : `embleme.svg` dès 48 px), sans grandir l'en-tête ; plus de « ← Retour » vers l'accueil (ambigu avec la page précédente).
-- En-tête et action de /jardin : `Logo` en haut à gauche ; Partager en haut à droite. Juste sous le
+- En-tête et action de /jardin : `Logo stacked` en haut à gauche, toujours sur deux lignes sous
+  `lg` (« Le poids / des choses »), une ligne au-delà ; hauteur fixe quel que soit le contenu.
+  Exporter et Partager (téléphone qui partage, avec un carnet) arrivent après l'hydratation à
+  droite, dans la place libre, débordant dans la marge intérieure ; sous 340 px utiles (requête
+  de conteneur) et sur ordinateur, en icônes (rond de 30 px, zone de toucher de 44 px en
+  pseudo-élément, nom accessible gardé). Testé par géométrie (`e2e/decalage.spec.ts`). Juste sous le
   jardin, l'action principale « Faire pousser une plante » / « Compare deux gestes du
   quotidien » vers /comparer : papier découpé jaune soleil, texte encre, contour encre 2 px,
   ombre décalée nette (4 px, sans flou), petite pousse `fleur-1-pousse` recadrée sur son

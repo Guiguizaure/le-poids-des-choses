@@ -304,10 +304,28 @@ test.describe("bouton « Faire pousser une plante » : focus et état appuyé", 
 
   test("appuyé : l'ombre se réduit, le bouton descend de 2 px", async ({
     page,
+    browserName,
   }) => {
+    // WebKit en émulation iPhone ne tient pas :active pendant un appui prolongé à la souris
+    // (seulement un instant : mesuré 12 fois sur 12) ; sur un vrai iPhone, c'est le toucher
+    // qui le déclenche. L'état appuyé se vérifie donc sous Chromium.
+    test.skip(
+      browserName === "webkit",
+      "WebKit mobile émulé : pas de :active tenu à la souris",
+    );
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/jardin");
     const grow = page.getByRole("link", { name: /^Faire pousser une plante/ });
+    await expect(grow).toBeVisible();
+    // Position de départ une fois la page posée : son animation d'arrivée (animate-enter,
+    // glissement de 8 px) fausserait la mesure si on la prenait pendant.
+    await page
+      .locator("main")
+      .evaluate((main) =>
+        Promise.all(
+          main.getAnimations().map((animation) => animation.finished),
+        ),
+      );
     const box = (await grow.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();

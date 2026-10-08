@@ -25,7 +25,8 @@ Ce dépôt contient deux sortes de contenus, sous deux régimes différents.
 
    - Données : Impact CO2 (ADEME), Base Carbone et Agribalyse, sous les conditions de leurs
      producteurs (voir la page /methode du site).
-   - Polices : Bricolage Grotesque et DM Sans, SIL Open Font License 1.1 (assets/fonts/).
+   - Polices : Bricolage Grotesque et DM Sans, SIL Open Font License 1.1 (assets/fonts/,
+     textes de licence OFL-BricolageGrotesque.txt et OFL-DMSans.txt).
    - Dépendances : sous leurs propres licences (voir node_modules après installation).
 
 -------------------------------------------------------------------------------------------

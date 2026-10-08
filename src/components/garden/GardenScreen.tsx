@@ -75,6 +75,41 @@ function PillButton({
   );
 }
 
+/**
+ * Bouton de l'en-tête (Exporter, Partager) : pastille de 30 px avec son libellé ; en icône
+ * (libellé gardé pour les lecteurs d'écran), un rond de 30 px dont la zone de toucher
+ * (pseudo-élément) fait 44 px sans prendre de place. Jamais plus haut que l'en-tête : son
+ * conteneur déborde dans la marge intérieure.
+ */
+const HEADER_ACTION =
+  "press relative focus-visible:outline-outremer flex h-[30px] shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-[14px] leading-none font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 @max-[340px]:w-[30px] @max-[340px]:px-0 @max-[340px]:before:absolute @max-[340px]:before:-inset-[7px] @max-[340px]:before:content-[''] lg:w-[30px] lg:px-0 lg:before:absolute lg:before:-inset-[7px] lg:before:content-['']";
+const HEADER_LABEL = "@max-[340px]:sr-only lg:sr-only";
+
+/**
+ * Icône « Exporter » : flèche vers le bas dans un plateau (pendant de partager.svg), seulement
+ * en mode icône (la pastille avec son libellé reste celle de la maquette).
+ */
+function ExportIcon() {
+  return (
+    <svg
+      viewBox="0 0 15 15"
+      width={15}
+      height={15}
+      fill="none"
+      aria-hidden
+      className="hidden shrink-0 lg:block @max-[340px]:block"
+    >
+      <path
+        d="M7.5 1.66667V9.16667M10.4167 6.25L7.5 9.16667L4.58333 6.25M2.5 7.91667V12.5H12.5V7.91667"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 /** Petite pousse du bouton principal, recadrée sur son dessin (lisible à 32 px). */
 const SPROUT = PLANT_BOUNDS["fleur-1-pousse"];
 const SPROUT_VIEWBOX = [
@@ -262,31 +297,44 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
-      {/* Les boutons de partage (30 px) arrivent après l'hydratation : ils débordent dans la
-          marge intérieure pour ne pas agrandir la barre, donc ne rien décaler. */}
-      <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2 [&>button]:-my-1.5">
-        <Logo />
+      {/* En-tête de hauteur fixe, quel que soit son contenu : sous `lg`, le nom est toujours
+          sur deux lignes ; Exporter et Partager (téléphone qui partage, avec un carnet)
+          arrivent après l'hydratation dans la place libre à droite, sans rien pousser, et
+          débordent dans la marge intérieure. Faute de place (moins de 340 px utiles), ou sur
+          ordinateur (le nom y reste sur une ligne), ils passent en icônes : nom accessible
+          gardé, zone de toucher de 44 px, espacées pour ne pas se chevaucher. */}
+      <div className="@container flex min-h-[41px] items-center justify-between gap-2 px-5 pt-[22px] pb-2 lg:min-h-0">
+        <Logo stacked />
         {canShare ? (
           // Maquette 09a (mobile, appli installée) : « Exporter » puis « Partager ».
-          <>
-            <PillButton onClick={journal.exportFile}>{t.export}</PillButton>
+          <div className="-my-2 flex shrink-0 items-center gap-2 lg:gap-[14px] @max-[340px]:gap-[14px]">
+            <button
+              type="button"
+              onClick={journal.exportFile}
+              data-header-action="export"
+              className={`${HEADER_ACTION} border-encre text-encre hover:bg-blanc border transition-colors`}
+            >
+              <ExportIcon />
+              <span className={HEADER_LABEL}>{t.export}</span>
+            </button>
             <button
               ref={shareButton}
               type="button"
               onClick={() => setShareOpen((count) => count + 1)}
-              className="press bg-encre text-creme focus-visible:outline-outremer flex h-[30px] shrink-0 items-center gap-1.5 rounded-full py-1.5 pr-3.5 pl-3 text-[14px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+              data-header-action="share"
+              className={`${HEADER_ACTION} bg-encre text-creme`}
             >
               <Image
                 src="/icons/partager.svg"
                 alt=""
                 width={15}
                 height={15}
-                className="block"
+                className="block shrink-0"
                 unoptimized
               />
-              {t.share}
+              <span className={HEADER_LABEL}>{t.share}</span>
             </button>
-          </>
+          </div>
         ) : null}
       </div>
       {shareOpen > 0 ? (

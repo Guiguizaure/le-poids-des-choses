@@ -2129,3 +2129,86 @@ paramètres et l'ancre » (`e2e/anglais.spec.ts`) ne passent parfois qu'au secon
   n'ont plus la place sur une ligne (412 px), le nom passe sur deux lignes et tout le haut de
   /jardin descend de 20 px (CLS 0,053). `e2e/decalage.spec.ts` ne le voit qu'une fois sur
   huit (selon le chargement des polices). Choix de mise en page à faire.
+
+## 2026-10-09 — Lot de stabilité avant les testeurs (branche fix/stabilite)
+
+Production : le déploiement Cloudflare du commit de fusion de #35 (`8db5f44`) a réussi.
+
+### 1. Polices locales
+
+**Demandé** : ne plus dépendre de Google Fonts au build (le build Cloudflare de #35 avait
+échoué en téléchargeant DM Sans), sans rien changer au rendu ni au poids.
+
+**Fait** : `src/app/fonts.ts` passe à `next/font/local`. Les cinq fichiers woff2 (Bricolage
+Grotesque 800 : latin, latin étendu, vietnamien ; DM Sans 400/600 variable : latin, latin
+étendu) sont ceux que Google Fonts sert, téléchargés sur `fonts.gstatic.com` et vérifiés
+octet pour octet contre ceux que le site servait. Un appel `localFont` par sous-ensemble, même
+nom de famille déclaré, même plage unicode, même `font-stretch`, `display: swap`, latin seul
+préchargé. Deux écarts de `next/font/local` contournés : la variable CSS prendrait le nom de
+la constante et le repli serait recalculé depuis le fichier (Bricolage 82,39 % au lieu de
+88,21 %) ; variables `--font-bricolage` / `--font-dm-sans` et polices de repli déclarées dans
+`globals.css` aux valeurs exactes d'avant. Licences OFL (dépôt google/fonts) et README dans
+`assets/fonts` ; les TTF qui servaient à l'ancienne image de partage (plus utilisés) sont
+retirés. Vérifié : aucune requête vers Google, ni au build ni dans `out/` ; mêmes deux
+fichiers chargés par page (58,8 ko), captures identiques à `main` au pixel près.
+
+### 2. Décalage de l'en-tête de /jardin
+
+**Demandé** : la hauteur de l'en-tête ne dépend jamais de son contenu ; sur téléphone, nom
+toujours sur deux lignes ; Exporter et Partager sans rien pousser, en icônes s'il manque de la
+place ; ordinateur inchangé ; test qui reproduit le défaut à chaque fois.
+
+**Fait** : `Logo stacked` (deuxième moitié du nom en bloc sous `lg`) ; ligne d'en-tête de
+hauteur fixe ; boutons regroupés à droite, conteneur en marge négative ; libellés masqués
+visuellement (gardés pour les lecteurs d'écran) sous 340 px utiles et sur ordinateur, où les
+boutons deviennent des ronds de 30 px avec une zone de toucher de 44 px (pseudo-élément) ;
+icône « Exporter » dessinée en pendant de `partager.svg`, seulement en mode icône. Mesuré de
+320 à 430 px : titre à 78,8 px dans tous les cas (avant : 58,4 puis 78,8 quand les boutons
+arrivaient) ; à 390 px, les pastilles avec libellé tiennent ; ordinateur : nom sur une ligne,
+captures identiques à `main` au pixel près (y compris /jardin). Choix signalé : sur ordinateur
+avec écran tactile ou appli installée, Exporter et Partager s'affichent en icônes (sinon le
+nom ne tiendrait pas sur une ligne).
+
+**Test** : `e2e/decalage.spec.ts` compare la position de mise en page du titre (offsetTop,
+sans l'animation d'arrivée) et le nombre de lignes du nom entre « sans carnet » et
+« téléphone qui partage, avec un carnet », à 320 et 412 px, Chromium et WebKit, plus CLS = 0
+(Chromium), noms accessibles et zone de toucher. Sur `main`, l'écart de 20 px apparaît à
+chaque mesure ; sur la branche, 80 passages sur 80. `e2e/anglais.spec.ts` : le nom coupé
+sur deux lignes est accepté comme nom du site.
+
+### 3. Tests instables
+
+**« petit choix… vitrine »** (`e2e/journeys.spec.ts`) — cause : le test lisait l'épaisseur de
+référence du trait dans la vitrine dès qu'elle passait sous 3 px, pendant que la pousse
+grandissait encore (avec dépassement, `back.out`) ; sous charge la valeur lue était fausse et
+la comparaison avec le jardin ne convergeait pas (échec de la CI). Second risque : l'éclat du
+jardin, visible environ 1 s peu après l'arrivée, n'était guetté qu'après plusieurs
+vérifications. Correctif (test) : épaisseur lue une fois immobile (deux lectures égales à deux
+images d'écart), éclat guetté dès avant de cliquer « Aller la planter » (navigation dans la
+même page) et noté s'il a brillé. 40 sur 40 (Chromium et WebKit, 20 fois chacun).
+
+**« le sélecteur de langue garde la page »** (`e2e/anglais.spec.ts`) — cause : le sélecteur
+recharge toute la page, et le test naviguait de nouveau dès que l'adresse avait changé, page
+encore en chargement et préchargements de Next en cours ; WebKit signalait en console les
+requêtes interrompues (« due to access control checks ») ou refusait la navigation suivante
+(« WebKit encountered an internal error », vu en CI). Correctif (test) : attendre le chargement
+de la page puis le réseau au repos avant chaque navigation. 40 sur 40. Pas un bug de l'appli ;
+à noter tout de même : un clic sur le sélecteur avant l'hydratation suivrait le lien brut, sans
+les paramètres ni l'ancre (l'export statique ne les connaît pas) ; jamais observé en 40 essais.
+
+**En plus : « appuyé : le bouton descend de 2 px »** (`e2e/raccourcis.spec.ts`, instable aussi) —
+deux causes : la position de départ était prise pendant l'animation d'arrivée de la page
+(glissement de 8 px), corrigé en attendant sa fin réelle (`getAnimations().finished`) ; sous
+WebKit en émulation iPhone, `:active` ne tient pas pendant un appui prolongé à la souris (12 fois
+sur 12), limite de l'outil (un vrai iPhone le déclenche au toucher) : test limité à Chromium,
+raison écrite dans le test. 20 sur 20 sous Chromium.
+
+**En plus : « carnet : graphique de la semaine »** (`e2e/carnet.spec.ts`) — échoue chaque nuit
+entre minuit et 2 h (Paris) : les entrées étaient datées « à midi, heure de la machine », encore
+à venir pour le navigateur des tests (fuseau où il est midi). Datées maintenant « il y a N
+jours » à partir de l'instant présent. Vu en lançant la suite à 0 h 05 ; 40 sur 40 ensuite.
+
+**En plus : « bandeau d'installation en mode iPhone »** (`e2e/journeys.spec.ts`, WebKit) — même
+cause que le sélecteur de langue : rechargement pendant les préchargements du pied de page.
+Attente du réseau au repos avant de recharger.
+
