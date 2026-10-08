@@ -237,7 +237,15 @@ test("hreflang, canonical et image de partage par langue", async ({ page }) => {
   );
   await expect(head.locator('meta[property="og:image"]')).toHaveAttribute(
     "content",
-    /\/og-en\.png$/,
+    /\/partage-1200x630\.png$/,
+  );
+  await expect(head.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    "content",
+    /^Le poids des choses: a horizon that tilts like the scales/,
+  );
+  await expect(head.locator('meta[name="twitter:image:alt"]')).toHaveAttribute(
+    "content",
+    /^Le poids des choses: a horizon/,
   );
   await expect(head.locator('meta[property="og:locale"]')).toHaveAttribute(
     "content",
@@ -246,7 +254,11 @@ test("hreflang, canonical et image de partage par langue", async ({ page }) => {
   await page.goto("/jardin");
   await expect(head.locator('meta[property="og:image"]')).toHaveAttribute(
     "content",
-    /\/og\.png$/,
+    /\/partage-1200x630\.png$/,
+  );
+  await expect(head.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    "content",
+    /^Le poids des choses : un horizon qui penche comme une balance/,
   );
 });
 

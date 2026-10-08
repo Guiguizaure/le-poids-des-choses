@@ -6,13 +6,15 @@ export const SITE = defineMessages(
   {
     description:
       "Compare deux gestes du quotidien sur une balance et regarde ton jardin grandir à chaque choix plus léger.",
-    ogAlt: "Le poids des choses : une balance et un jardin",
+    ogAlt:
+      "Le poids des choses : un horizon qui penche comme une balance, entre une pousse et un caillou, sous le soleil",
     shortName: "Le poids",
   },
   {
     description:
       "The weight of things. Compare two everyday actions on the scales and watch your garden grow with every lighter choice.",
-    ogAlt: "Le poids des choses: a pair of scales and a garden",
+    ogAlt:
+      "Le poids des choses: a horizon that tilts like the scales, between a sprout and a pebble, under the sun",
     shortName: "Le poids",
   },
 );
@@ -267,23 +269,5 @@ export const PAGES = defineMessages(
       title: "Sign in",
       description: "Sign in to your account: find your garden on this device.",
     },
-  },
-);
-
-/** Image de partage 1200×630 de chaque langue (scripts/build-images.ts). */
-export const OG_IMAGE_TEXT = defineMessages(
-  {
-    eyebrow: "COMPARATEUR CARBONE ILLUSTRÉ",
-    subtitle: "",
-    line1: "Compare deux gestes du quotidien",
-    line2: "et regarde ton jardin grandir.",
-    footer: "Données publiques de l’ADEME · Projet indépendant",
-  },
-  {
-    eyebrow: "ILLUSTRATED CARBON COMPARISON",
-    subtitle: "The weight of things",
-    line1: "Compare two everyday actions",
-    line2: "and watch your garden grow.",
-    footer: "Public data from ADEME · Independent project",
   },
 );

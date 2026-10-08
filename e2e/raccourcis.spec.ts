@@ -232,6 +232,63 @@ test.describe("pages de texte et /saison : le nom du site vers l'accueil, plus d
   }
 });
 
+test.describe("logo « Horizon-balance » : emblème à gauche du nom, décoratif", () => {
+  for (const [path, name] of [
+    ["/jardin", "Le poids des choses – Accueil"],
+    ["/methode", "Le poids des choses – Accueil"],
+    ["/comparer?a=tgv&b=avion&q=300", "Le poids des choses – Accueil"],
+    ["/en/garden", "Le poids des choses – Home"],
+    ["/en/in-season", "Le poids des choses – Home"],
+  ] as const) {
+    test(`${path} : aligné, cible tactile, en-tête sur une ligne à 320 px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 320, height: 640 });
+      await page.goto(path);
+      const home = page.getByRole("link", { name });
+      await expect(home).toHaveText("Le poids des choses");
+      const emblem = home.locator("img");
+      await expect(emblem).toHaveAttribute("src", "/icons/embleme-petit.svg");
+      await expect(emblem).toHaveAttribute("alt", "");
+      await expect(emblem).toHaveAttribute("aria-hidden", "true");
+      await expect
+        .poll(() =>
+          emblem.evaluate((img: HTMLImageElement) => img.naturalWidth),
+        )
+        .toBeGreaterThan(0);
+
+      const link = (await home.boundingBox())!;
+      const img = (await emblem.boundingBox())!;
+      // À gauche du nom, centré verticalement sur le lien, 28 px.
+      expect(Math.round(img.width)).toBe(28);
+      expect(img.x).toBeLessThanOrEqual(link.x + 1);
+      expect(
+        Math.abs(img.y + img.height / 2 - (link.y + link.height / 2)),
+      ).toBeLessThanOrEqual(1);
+      // Cible tactile : au moins 24 px de haut, toute la largeur (emblème compris).
+      expect(link.height).toBeGreaterThanOrEqual(24);
+      expect(img.x + img.width).toBeLessThanOrEqual(link.x + link.width);
+      // Sur une ligne, ou sur deux coupées au milieu comme le logo empilé (« Le poids /
+      // des choses ») ; rien ne déborde de l'écran.
+      const lines = await home.evaluate((a) =>
+        [...a.querySelectorAll("span > span")].map((span) => ({
+          text: span.textContent,
+          top: Math.round(span.getBoundingClientRect().top),
+          rects: span.getClientRects().length,
+        })),
+      );
+      expect(lines.map(({ text }) => text)).toEqual(["Le poids", "des choses"]);
+      expect(lines.every(({ rects }) => rects === 1)).toBe(true);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      ).toBe(true);
+      await expectNoAxeViolations(page);
+    });
+  }
+});
+
 test.describe("bouton « Faire pousser une plante » : focus et état appuyé", () => {
   test("focus visible : contour outremer 2 px", async ({ page }) => {
     await page.goto("/jardin");

@@ -13,8 +13,8 @@ Ce dépôt contient deux sortes de contenus, sous deux régimes différents.
    tous droits réservés :
    - les illustrations : public/illustrations/ (et leur conversion,
      src/components/illustrations/generated.tsx) ;
-   - l'icône et les images dérivées : assets/icon/, public/icons/, public/og.png,
-     src/app/favicon.ico ;
+   - le logo « Horizon-balance », l'icône et les images dérivées : assets/logo/,
+     public/icons/, public/partage-1200x630.png, public/favicon.ico ;
    - l'identité visuelle du site : nom « Le poids des choses », direction artistique,
      maquettes, palette et mise en page.
    Toute reproduction, modification ou réutilisation, totale ou partielle, demande l'accord
