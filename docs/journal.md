@@ -2112,3 +2112,20 @@ aucune source fiable ne confirme seule « quelques centimètres par minute » (1
 pour l'université d'Exeter, 6 cm pour Vikidia, 10 à 15 cm en course, jusqu'à 80 cm dans le
 Physics Factbook ; Wikipédia semble se tromper d'un facteur 10 sur sa propre source) : signalé.
 - Test « toucher l'oiseau » : horloge figée avant l'ouverture, comme « toucher la boîte » (même course sous WebKit).
+
+### Vitesse de l'escargot (même jour, même branche)
+
+esc-3, étape 1 : « Je fais à peu près un mètre par heure, au mieux. » / “I manage about a
+metre an hour, at best.” (étapes 2 et 3 inchangées). Nouvelle source `escargot-exeter` : le
+communiqué de l'université d'Exeter du 23 août 2013 (« reaching a top speed of one metre per
+hour », et la bave des autres escargots qui les aide à avancer), avec Vikidia (mucus) et la
+dépêche AAP en deuxième source ; la note de doute est retirée.
+
+**Pour plus tard (non traité)** : en CI, les tests « petit choix : une petite pousse, agrandie
+dans la vitrine… » (`e2e/journeys.spec.ts`) et « le sélecteur de langue garde la page, les
+paramètres et l'ancre » (`e2e/anglais.spec.ts`) ne passent parfois qu'au second essai.
+- Point ouvert, déjà sur `main` (logo #33 + CLS #34) : sur un téléphone qui partage, avec un
+  carnet, « Exporter » et « Partager » arrivent après l'hydratation ; le nom et son emblème
+  n'ont plus la place sur une ligne (412 px), le nom passe sur deux lignes et tout le haut de
+  /jardin descend de 20 px (CLS 0,053). `e2e/decalage.spec.ts` ne le voit qu'une fois sur
+  huit (selon le chargement des polices). Choix de mise en page à faire.

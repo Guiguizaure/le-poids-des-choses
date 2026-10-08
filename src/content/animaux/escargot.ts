@@ -46,12 +46,12 @@ export const ESCARGOT: AnimalScript = {
       id: "esc-3",
       chapter: 2,
       kind: "fait",
-      sourceId: "escargot-vikidia",
+      sourceId: "escargot-exeter",
       steps: [
         {
           expr: "content",
-          fr: "Je n'avance que de quelques centimètres par minute.",
-          en: "I only cover a few centimetres a minute.",
+          fr: "Je fais à peu près un mètre par heure, au mieux.",
+          en: "I manage about a metre an hour, at best.",
         },
         {
           expr: "surpris",
