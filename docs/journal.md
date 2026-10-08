@@ -2151,3 +2151,27 @@ la constante et le repli serait recalculé depuis le fichier (Bricolage 82,39 % 
 `assets/fonts` ; les TTF qui servaient à l'ancienne image de partage (plus utilisés) sont
 retirés. Vérifié : aucune requête vers Google, ni au build ni dans `out/` ; mêmes deux
 fichiers chargés par page (58,8 ko), captures identiques à `main` au pixel près.
+
+### 2. Décalage de l'en-tête de /jardin
+
+**Demandé** : la hauteur de l'en-tête ne dépend jamais de son contenu ; sur téléphone, nom
+toujours sur deux lignes ; Exporter et Partager sans rien pousser, en icônes s'il manque de la
+place ; ordinateur inchangé ; test qui reproduit le défaut à chaque fois.
+
+**Fait** : `Logo stacked` (deuxième moitié du nom en bloc sous `lg`) ; ligne d'en-tête de
+hauteur fixe ; boutons regroupés à droite, conteneur en marge négative ; libellés masqués
+visuellement (gardés pour les lecteurs d'écran) sous 340 px utiles et sur ordinateur, où les
+boutons deviennent des ronds de 30 px avec une zone de toucher de 44 px (pseudo-élément) ;
+icône « Exporter » dessinée en pendant de `partager.svg`, seulement en mode icône. Mesuré de
+320 à 430 px : titre à 78,8 px dans tous les cas (avant : 58,4 puis 78,8 quand les boutons
+arrivaient) ; à 390 px, les pastilles avec libellé tiennent ; ordinateur : nom sur une ligne,
+captures identiques à `main` au pixel près (y compris /jardin). Choix signalé : sur ordinateur
+avec écran tactile ou appli installée, Exporter et Partager s'affichent en icônes (sinon le
+nom ne tiendrait pas sur une ligne).
+
+**Test** : `e2e/decalage.spec.ts` compare la position de mise en page du titre (offsetTop,
+sans l'animation d'arrivée) et le nombre de lignes du nom entre « sans carnet » et
+« téléphone qui partage, avec un carnet », à 320 et 412 px, Chromium et WebKit, plus CLS = 0
+(Chromium), noms accessibles et zone de toucher. Sur `main`, l'écart de 20 px apparaît à
+chaque mesure ; sur la branche, 80 passages sur 80. `e2e/anglais.spec.ts` : le nom coupé
+sur deux lignes est accepté comme nom du site.

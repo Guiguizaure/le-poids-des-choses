@@ -24,6 +24,8 @@ test.afterEach(({ consoleErrors }) => acceptCancelledPrefetch(consoleErrors));
  * « Plus Five Five, Inc. » (la société de Resend).
  */
 const ALLOWED = [
+  // Le nom du site, aussi coupé sur deux lignes (en-tête de Mon jardin sur téléphone).
+  "Le poids\ndes choses",
   "Le poids des choses",
   "Le poids",
   "Données : Impact CO2 – ADEME",

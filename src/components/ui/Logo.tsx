@@ -21,8 +21,14 @@ export function emblemSrc(size: number): string {
  */
 export function Logo({
   children = "Le poids des choses",
+  stacked = false,
 }: {
   children?: string;
+  /**
+   * Toujours sur deux lignes sous `lg` (« Le poids / des choses »), quelle que soit la place :
+   * la hauteur de l'en-tête ne dépend jamais de ce qu'il contient (/jardin).
+   */
+  stacked?: boolean;
 }) {
   const nav = useMessages(NAV);
   // Sur un écran étroit, le nom passe sur deux lignes, coupé au milieu comme le logo empilé
@@ -48,7 +54,9 @@ export function Logo({
         <span className="whitespace-nowrap">
           {words.slice(0, half).join(" ")}
         </span>{" "}
-        <span className="whitespace-nowrap">{words.slice(half).join(" ")}</span>
+        <span className={`whitespace-nowrap ${stacked ? "max-lg:block" : ""}`}>
+          {words.slice(half).join(" ")}
+        </span>
       </span>
     </Link>
   );
