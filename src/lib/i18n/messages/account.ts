@@ -69,6 +69,8 @@ export const ACCOUNT = defineMessages(
     // Messages de la synchro (src/lib/sync/messages.ts)
     errors: {
       offline: "Pas de connexion pour l’instant. Réessaie dans un moment.",
+      timeout:
+        "Le serveur met trop de temps à répondre, réessaie dans un instant.",
       unavailable:
         "La connexion n’est pas disponible pour le moment. Ton jardin reste sur cet appareil.",
       "rate-limited":
@@ -155,6 +157,8 @@ export const ACCOUNT = defineMessages(
     requestLink: "Get a sign-in link",
     errors: {
       offline: "No connection right now. Try again in a moment.",
+      timeout:
+        "The server is taking too long to respond, please try again in a moment.",
       unavailable:
         "Signing in isn’t available at the moment. Your garden stays on this device.",
       "rate-limited": "Lots of requests at once: try again in a few minutes.",

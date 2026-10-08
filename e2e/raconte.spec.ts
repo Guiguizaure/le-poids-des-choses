@@ -452,9 +452,14 @@ test("rien de reconnu ou panne : message doux et lien vers /comparer", async ({
   ).toHaveAttribute("href", "/comparer");
 
   await analyse(page, "panne-e2e : j'ai pris le TER");
+  const failed = /^Claude n’a pas pu lire ta journée cette fois/;
   await expect(
-    page.getByText(/^Claude n’a pas pu lire ta journée cette fois/),
+    page.getByRole("paragraph").filter({ hasText: failed }),
   ).toBeVisible();
+  // Annoncé par la région d'état du formulaire, toujours présente.
+  await expect(
+    page.getByRole("status").filter({ hasText: failed }),
+  ).toHaveCount(1);
   acceptStatus(consoleErrors, 502);
   expect(await journal(page)).toEqual([]);
   await expectNoAxeViolations(page);

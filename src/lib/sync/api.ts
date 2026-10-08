@@ -2,9 +2,11 @@
 // appel renvoie un résultat ou un code d'erreur que l'interface sait formuler.
 import type { JournalEntry } from "@/lib/data/types";
 import type { Locale } from "@/lib/i18n/routes";
+import { deadline } from "@/lib/net/deadline";
 
 export type ApiError =
   | "offline"
+  | "timeout"
   | "unauthorized"
   | "rate-limited"
   | "unavailable"
@@ -40,18 +42,34 @@ async function call<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<ApiResult<T>> {
-  let response: Response;
+  // Délai maximal : l'appel et la lecture de la réponse (REQUEST_TIMEOUT_MS).
+  const timer = deadline();
   try {
-    response = await fetch(path, { credentials: "same-origin", ...init });
+    return await read<T>(
+      await fetch(path, {
+        credentials: "same-origin",
+        ...init,
+        signal: timer.signal,
+      }),
+    );
   } catch {
-    return { ok: false, error: "offline" };
+    return { ok: false, error: timer.expired() ? "timeout" : "offline" };
+  } finally {
+    timer.clear();
   }
+}
+
+/** Réponse de l'API → résultat ; lève seulement si la lecture du corps est coupée. */
+async function read<T>(response: Response): Promise<ApiResult<T>> {
   if (response.ok) {
+    let data: T;
     try {
-      return { ok: true, data: (await response.json()) as T };
-    } catch {
+      data = (await response.json()) as T;
+    } catch (error) {
+      if ((error as Error)?.name === "AbortError") throw error;
       return { ok: false, error: "error" };
     }
+    return { ok: true, data };
   }
   if (response.status === 401) return { ok: false, error: "unauthorized" };
   if (response.status === 429) return { ok: false, error: "rate-limited" };
@@ -61,7 +79,8 @@ async function call<T>(
   let code: unknown;
   try {
     code = ((await response.json()) as { error?: unknown }).error;
-  } catch {
+  } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error;
     // Corps illisible.
   }
   return {
@@ -97,21 +116,24 @@ export const accountApi = {
     send<{ ok: true }>("/api/account", "DELETE", { confirm: "supprimer" }),
   /** Export du compte : le fichier JSON, ou un code d'erreur. */
   async exportFile(): Promise<ApiResult<{ blob: Blob; fileName: string }>> {
-    let response: Response;
+    const timer = deadline();
     try {
-      response = await fetch("/api/account/export", {
+      const response = await fetch("/api/account/export", {
         credentials: "same-origin",
+        signal: timer.signal,
       });
+      if (response.status === 401) return { ok: false, error: "unauthorized" };
+      if (!response.ok) return { ok: false, error: "error" };
+      const disposition = response.headers.get("Content-Disposition") ?? "";
+      const fileName =
+        disposition.match(/filename="([^"]+)"/)?.[1] ??
+        "le-poids-des-choses-compte.json";
+      return { ok: true, data: { blob: await response.blob(), fileName } };
     } catch {
-      return { ok: false, error: "offline" };
+      return { ok: false, error: timer.expired() ? "timeout" : "offline" };
+    } finally {
+      timer.clear();
     }
-    if (response.status === 401) return { ok: false, error: "unauthorized" };
-    if (!response.ok) return { ok: false, error: "error" };
-    const disposition = response.headers.get("Content-Disposition") ?? "";
-    const fileName =
-      disposition.match(/filename="([^"]+)"/)?.[1] ??
-      "le-poids-des-choses-compte.json";
-    return { ok: true, data: { blob: await response.blob(), fileName } };
   },
 };
 

@@ -1952,3 +1952,41 @@ réussis, 0 échec, 6,3 min (9,3 min avant).
 si une requête ne répond jamais (réseau qui se fige), le bouton resterait sur « Envoi… ».
 Pas observé ici, non corrigé. `server/journal.test.ts` (pagination) a dépassé une fois les
 5 s de Vitest pendant la suite complète, puis a passé en 1,6 s à chaque relance.
+
+### Suite (même jour, même branche) : délai maximal des appels, test de pagination
+
+**Demandé** : rebaser sur `main` (logo fusionné, les deux entrées du journal gardées) ; délai
+maximal d'environ 15 s sur les appels réseau des formulaires, avec bouton rendu et message
+annoncé ; limite de temps dédiée pour le test de pagination de la synchro.
+
+**Fait** :
+
+- `src/lib/net/deadline.ts` : un `AbortController` par appel, minuteur levé une fois le corps
+  de la réponse lu (une réponse dont le corps n'arrive jamais est aussi coupée). setTimeout
+  plutôt que `AbortSignal.timeout`, pour que l'horloge des tests puisse l'avancer.
+- Compte (`src/lib/sync/api.ts`) : lien de connexion, vérification, session, déconnexion,
+  synchro, export, suppression : 15 s, nouvelle erreur `timeout`. FR « Le serveur met trop
+  de temps à répondre, réessaie dans un instant. », EN “The server is taking too long to
+  respond, please try again in a moment.”, dans les régions d'état `polite` déjà présentes.
+  Une synchro coupée garde sa file d'attente et repart à la synchro suivante.
+- « Raconte ta journée » (`src/lib/raconte/api.ts`) : 20 s et non 15 : le serveur attend déjà
+  Claude jusqu'à 15 s, après Turnstile et les compteurs ; couper à 15 s perdrait des réponses
+  arrivées à temps. Message terminé comme tous ceux de l'écran (règle testée : toujours une
+  autre voie) : « …, réessaie dans un instant, ou choisis tes gestes toi-même. » / “…,
+  please try again in a moment, or choose your actions yourself.” L'erreur est maintenant
+  annoncée par la région d'état du formulaire, toujours présente ; l'encadré visible perd son
+  rôle `status` (inséré avec son texte, il n'était pas annoncé à coup sûr ; plus de double
+  annonce).
+- Partage : aucun appel au serveur (l'image est dessinée sur l'appareil), rien à faire. La
+  question « Raconte est-il actif ? » (`GET /api/raconte`) n'est pas un formulaire : inchangée.
+- Tests : `src/lib/sync/api.test.ts` (requête sans réponse : `timeout` à 15 s et pas avant ;
+  synchro et export ; corps qui n'arrive jamais ; panne réseau toujours `offline` ; réponse à
+  temps jamais coupée ensuite), `src/lib/raconte/api.test.ts` (20 s, pas coupée à 15 s) ;
+  `e2e/delai.spec.ts` (Chromium et WebKit, horloge de Playwright, requête jamais servie) :
+  /jardin et /en/garden (lien), /raconte et /en/your-day, bouton rendu, texte gardé, message
+  dans une région `polite`, axe.
+- `server/journal.test.ts` : 30 s pour le seul test de pagination (1,6 s seul, plus de 5 s
+  quand toute la suite tourne).
+
+**Pour plus tard** : rendu serveur de l'état jardin vide pour améliorer le LCP de /jardin
+(~3,4 s).
