@@ -3,8 +3,16 @@
 // et mentions légales remplies (plus d'emplacements [NOM], [SIRET], [ADRESSE], [EMAIL]).
 // Toujours bloquant : un gabarit « Le savais-tu ? » ou une équivalence de palier qui
 // référence un geste disparu ; un geste ou un produit sans nom anglais ; un animal volant, le soleil ou un nuage qui ne se voit pas sur un
-// ciel. Simple avertissement : clé publique Turnstile absente.
+// ciel ; une réplique d'animal mal formée ou un fait sans source de docs/animaux-sources.md.
+// Simples avertissements : clé publique Turnstile absente, répliques d'animaux provisoires.
 import { readFileSync } from "node:fs";
+import { ANIMAL_SCRIPTS } from "../src/content/animaux";
+import {
+  animalScriptProblems,
+  checkAnimalScripts,
+  provisionalLineCount,
+  sourceIdsFrom,
+} from "../src/content/animaux/check";
 import { checkData } from "../src/lib/data/check";
 import { getGestures } from "../src/lib/data";
 import { checkFacts } from "../src/lib/facts/check";
@@ -37,6 +45,18 @@ const results = [
   checkEnglishNames(),
   checkSkyContrast(skyContrastFailures(flyerSources)),
   checkTurnstileKey(),
+  checkAnimalScripts(
+    animalScriptProblems(
+      ANIMAL_SCRIPTS,
+      sourceIdsFrom(
+        readFileSync(
+          new URL("../docs/animaux-sources.md", import.meta.url),
+          "utf8",
+        ),
+      ),
+    ),
+    provisionalLineCount(ANIMAL_SCRIPTS),
+  ),
 ];
 for (const result of results) console.log(result.message);
 process.exit(results.every((result) => result.ok) ? 0 : 1);

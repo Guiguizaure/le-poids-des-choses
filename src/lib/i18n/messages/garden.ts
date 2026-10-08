@@ -187,7 +187,6 @@ export const GARDEN_SCREEN = defineMessages(
     import: "Importer",
     setAside: (n: number) =>
       ` ${pluralFr(n, "entrée illisible a été mise", "entrées illisibles ont été mises")} de côté.`,
-    flyBird: "Faire s’envoler l’oiseau",
   },
   {
     grow: "Grow a plant",
@@ -227,7 +226,6 @@ export const GARDEN_SCREEN = defineMessages(
       n === 1
         ? " 1 unreadable entry has been set aside."
         : ` ${n} unreadable entries have been set aside.`,
-    flyBird: "Make the bird fly",
   },
 );
 
@@ -617,4 +615,3 @@ export const HINTS = defineMessages(
       "Every habit you keep waters the whole garden, plus one plant extra. Three waterings and it grows a step.",
   },
 );
-

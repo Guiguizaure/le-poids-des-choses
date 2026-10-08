@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { gsap, useGSAP } from "@/components/motion/gsap";
 import {
   BIRD_HOME,
@@ -9,9 +9,6 @@ import {
   flightDelay,
   flightPose,
 } from "@/lib/geometry/flight";
-import { SCENE } from "@/lib/garden/scene";
-import { GARDEN_SCREEN } from "@/lib/i18n/messages/garden";
-import { useMessages } from "@/lib/i18n/LocaleProvider";
 
 /**
  * Trajet de l'oiseau en vol : son cadre suit le trajet (décollage sous le soleil, boucle dans
@@ -115,41 +112,4 @@ export function useAutoFlights(enabled: boolean, start: () => void): void {
     schedule();
     return () => window.clearTimeout(timer);
   }, [enabled]);
-}
-
-/** Zone touchable autour de l'oiseau (unités de scène) : au moins 44 de côté. */
-const TOUCH = 44;
-
-/**
- * Bouton « Faire s'envoler l'oiseau », posé sur l'oiseau à sa place (hors de la scène, qui est
- * une image pour les lecteurs d'écran). Pendant le vol, il reste en place, sans effet.
- */
-export function FlyButton({
-  flying,
-  onFly,
-}: {
-  flying: boolean;
-  onFly: () => void;
-}) {
-  const t = useMessages(GARDEN_SCREEN);
-  const left = Math.min(SCENE.width - TOUCH, BIRD_HOME[0] - TOUCH / 2);
-  const top = BIRD_HOME[1] - TOUCH / 2;
-  const style: CSSProperties = {
-    left: `${(left / SCENE.width) * 100}%`,
-    top: `${(top / SCENE.height) * 100}%`,
-    width: `${(TOUCH / SCENE.width) * 100}%`,
-    height: `${(TOUCH / SCENE.height) * 100}%`,
-  };
-  return (
-    <button
-      type="button"
-      aria-label={t.flyBird}
-      aria-disabled={flying}
-      onClick={() => {
-        if (!flying) onFly();
-      }}
-      className="focus-visible:outline-outremer pointer-events-auto absolute cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-default"
-      style={style}
-    />
-  );
 }

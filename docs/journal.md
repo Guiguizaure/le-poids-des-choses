@@ -1990,3 +1990,71 @@ annoncé ; limite de temps dédiée pour le test de pagination de la synchro.
 
 **Pour plus tard** : rendu serveur de l'état jardin vide pour améliorer le LCP de /jardin
 (~3,4 s).
+
+## 2026-10-08 — « Les animaux parlent » (branche feat/animaux-parlent)
+
+**Demandé** : toucher un animal du jardin (papillon, coccinelle, oiseau, escargot, renard)
+ouvre une conversation façon jeu vidéo ; amitié par chapitres, une nouvelle réplique par
+jour ; sommeil ; liste accessible « Les habitants du jardin » ; contenu typé FR/EN avec
+répliques et portraits provisoires (les vrais arriveront plus tard). Exception au gel des
+fonctionnalités, validée par l'utilisateur (notée dans CLAUDE.md).
+
+**Fait** :
+
+- Contenu : `src/content/animaux/` (types, un fichier par animal, 8 répliques provisoires
+  « [Réplique provisoire N · chapitre C] » / “[Placeholder line N · chapter C]”, dont une
+  conditionnelle chacun : papillon au printemps, coccinelle si une églantine est plantée,
+  oiseau en hiver, escargot en automne, renard la nuit ; 2 répliques de sommeil, 3 « déjà
+  parlé »). Une langue oubliée fait échouer les types, donc le build ; garde-fou bloquant
+  dans `scripts/check-data.ts` (ids, chapitres, conditions, faits sourcés) ; les répliques
+  provisoires sont seulement signalées (la CI construit en mode strict). Sources :
+  `docs/animaux-sources.md`, vide pour l'instant (aucun fait dans les répliques provisoires).
+- Amitié (`src/lib/friends`, pure et testée) dans `lpdc:amis:v1`, sur l'appareil seulement.
+  Écart à la demande : la présentation (chapitre 1) passe toujours en premier, même si une
+  conditionnelle est vraie (sinon un escargot rencontré en automne commencerait par sa
+  réplique d'automne, avant de se présenter).
+- Conversation (`AnimalTalk`) : feuille en bas, portrait provisoire (illustration du jardin
+  agrandie, 96 px / 140 px), étiquette du nom, texte lettre à lettre (28 ms par lettre).
+- Zones de toucher (`TalkTargets`) : vrais boutons hors de l'image, au moins 44 px
+  (en pixels, quelle que soit la largeur de l'écran), recentrés à chaque image sur le dessin
+  de l'animal, transformations comprises (marche de la coccinelle, vol de l'oiseau, rafales).
+- Oiseau : choix fait, le toucher ouvre la conversation (plus d'envol au toucher) ; pas
+  d'envol spontané pendant une conversation ; à sa fermeture, il reprend son envol (s'il
+  peut voler : réveillé, pas sur Nuit encre, mouvement normal). Le bouton « Faire s'envoler
+  l'oiseau » et son texte sont retirés ; le labo explique le nouveau comportement.
+- Endormi = dessiné endormi : « Zzz » (pseudo-élément CSS, décoratif, axe ne le mesure pas),
+  réplique de sommeil, rien n'avance. Le renard d'un jardin assoupi la nuit reste dessiné
+  éveillé (visiteurs immobiles « tels quels ») : il parle normalement.
+- « Les habitants du jardin » sous « Mes habitudes » : portrait, nom, progression, « Parler »
+  (même nom accessible que la zone de la scène) ou la raison de son absence ; inconnus :
+  « ? ». Le renard est « rencontré » dès qu'il a été dans la scène.
+- Tests : unitaires (amitié, contenu, sources) ; `e2e/animaux.spec.ts` (Chromium et WebKit :
+  ouverture, focus, Échap / croix / toucher en dehors, zones de 44 px qui suivent, une
+  réplique par jour avec l'horloge de Playwright et minuit à Paris, conditionnelle
+  « églantine », sommeil, liste, anglais, mouvement réduit, axe) ; `bird.spec.ts` réécrit.
+
+**Complément (même jour)** : portraits livrés (`le-poids-des-choses-portraits.zip`) et
+répliques en étapes.
+
+- Portraits : 15 fichiers `portrait-{animal}-{content|surpris|dort}.svg` dans
+  `public/portraits/`, affichés en `<img>` décoratif (ils ont un `id` de clipPath, interdit
+  dans `public/illustrations/`, et dessinent eux-mêmes leur cadre et leur « Zzz ») ; les
+  trois expressions sont superposées, fondu de 200 ms, rien en mouvement réduit ; LICENSE.
+- Format : `steps: [{ expr, fr, en }]`, 1 à 3 étapes, pour les répliques, le sommeil
+  (« dort » obligatoire, vérifié au build) et « déjà parlé ». Noms de champs en anglais
+  (`chapter`, `steps`) selon la règle du code ; le vrai contenu reçu en `chapitre` / `etapes`
+  sera converti. Répliques provisoires gardées, de 1 à 3 étapes pour tester.
+- Conversation : « Suite ▶ » / “Next ▶”, puis « Fermer » / “Close” à la dernière étape ;
+  toucher la boîte finit d'écrire, puis passe à l'étape suivante, sans jamais fermer (choix :
+  un toucher ne doit pas faire perdre une étape à moitié lue). Focus sur ce bouton dès
+  l'ouverture, remis dessus à chaque étape (Safari ne donne pas le focus à un bouton
+  touché). Chaque étape est annoncée par une région polie, qui décrit aussi la fenêtre.
+- Amitié : une réplique entière par jour, pas une étape (testé).
+- Zones de toucher : la boucle de suivi lit d'abord, écrit ensuite, une image sur trois, et
+  s'arrête hors écran ; mesuré sous WebKit, sans effet sur la durée des tests (5,5 s avec,
+  6,0 s sans).
+
+**Pas de synchro du compte pour ce lot** : `lpdc:amis:v1` reste sur l'appareil (pas dans le
+carnet, ni dans l'export, ni en D1). À prévoir si l'amitié doit suivre la personne.
+
+**À venir** : les vraies répliques (avec leurs sources pour les faits) et les portraits.

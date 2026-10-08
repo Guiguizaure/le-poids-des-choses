@@ -44,11 +44,12 @@ export function BirdFlightLab() {
   return (
     <Panel title="Envol de l’oiseau">
       <p className="text-corps-s text-texte-attenue">
-        Touche l’oiseau (ou Tab jusqu’à « Faire s’envoler l’oiseau », puis
-        Entrée) : il décolle sous le soleil, fait une boucle dans la bande de
-        ciel et revient se poser ({FLIGHT.duration} s). Il s’envole aussi seul,
-        toutes les {FLIGHT.interval[0]} à {FLIGHT.interval[1]} s. Jamais quand
-        le jardin dort ni en animations réduites.
+        L’oiseau s’envole seul toutes les {FLIGHT.interval[0]} à{" "}
+        {FLIGHT.interval[1]} s : il décolle sous le soleil, fait une boucle dans
+        la bande de ciel et revient se poser ({FLIGHT.duration} s). Sur Mon
+        jardin, il s’envole aussi à la fin d’une conversation avec lui (le
+        toucher ouvre la conversation). Jamais quand le jardin dort ni en
+        animations réduites.
       </p>
       <Garden
         entries={entries}

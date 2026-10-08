@@ -51,7 +51,10 @@ import {
   wateringMessage,
 } from "@/lib/garden/text";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { FlightPath, FlyButton, useAutoFlights } from "./BirdFlight";
+import { ANIMAL_SCRIPTS, type TalkerId } from "@/content/animaux";
+import { ANIMAL_TALK } from "@/lib/i18n/messages/animals";
+import { FlightPath, useAutoFlights } from "./BirdFlight";
+import { TalkTargets, type TalkTarget } from "./talk/TalkTargets";
 
 type GardenProps = {
   entries: readonly JournalEntry[];
@@ -70,8 +73,23 @@ type GardenProps = {
   season?: Season | null;
   /** Nuit imposée (labo) ; par défaut, de 21 h à 6 h à l'heure de l'appareil. */
   night?: boolean;
+  /**
+   * « Les animaux parlent » : toucher un animal qui parle (zones de toucher posées sur la
+   * scène). Sans elle, pas de zone (labo, partage).
+   */
+  onTalk?: (talker: TalkerId, opener: HTMLElement) => void;
+  /** Animal en conversation : pas d'envol spontané pendant ce temps. */
+  talking?: TalkerId | null;
   className?: string;
 };
+
+/** Animaux débloqués qui parlent (le renard, visiteur, à part). */
+const TALKING_ANIMALS: readonly string[] = [
+  "butterfly",
+  "ladybug",
+  "bird",
+  "snail",
+];
 
 /** Position d'un cadre de la scène (unités 390×300) en pourcentages. */
 function place(box: Box): CSSProperties {
@@ -289,7 +307,8 @@ const REVEAL_DELAY_MS = 700;
  * `highlightId` (choix qu'on vient de faire) : la scène s'affiche d'abord sans ce choix, puis sa
  * plante pousse à sa place (éclat), une rafale passe et l'animal éventuel entre par le bord,
  * avec le message d'arrivée. Assoupi : brume, animaux endormis ou partis, plus de vent.
- * L'oiseau s'envole de temps en temps, ou quand on le touche (bouton posé sur lui).
+ * L'oiseau s'envole de temps en temps, et après une conversation. Avec `onTalk`, toucher un
+ * animal qui parle ouvre sa conversation (zones de toucher, voir TalkTargets).
  */
 export function Garden({
   entries,
@@ -299,6 +318,8 @@ export function Garden({
   sky = DEFAULT_SKY,
   season: forcedSeason,
   night: forcedNight,
+  onTalk,
+  talking = null,
   className = "",
 }: GardenProps) {
   const locale = useLocale();
@@ -375,7 +396,40 @@ export function Garden({
   if (flying && !canFly) setFlying(false);
   const startFlight = useCallback(() => setFlying(true), []);
   const land = useCallback(() => setFlying(false), []);
-  useAutoFlights(canFly && !flying, startFlight);
+  // Pas d'envol spontané pendant une conversation ; toucher l'oiseau ouvre la conversation
+  // (plus d'envol au toucher) et, quand elle se ferme, il reprend son envol.
+  useAutoFlights(canFly && !flying && talking === null, startFlight);
+  const [talkedTo, setTalkedTo] = useState<TalkerId | null>(null);
+  if (talking !== talkedTo) {
+    setTalkedTo(talking);
+    if (talkedTo === "bird" && talking === null && canFly) setFlying(true);
+  }
+
+  const talkLabels = ANIMAL_TALK[locale];
+  const talkTargets: TalkTarget[] = onTalk
+    ? [
+        ...live.animals
+          .filter((animal) => TALKING_ANIMALS.includes(animal.kind))
+          .map((animal) => ({
+            talker: animal.kind as TalkerId,
+            selector: `[data-animal="${animal.kind}"]`,
+            asleep: animal.asleep,
+          })),
+        ...live.visitors
+          .filter((visitor) => visitor.kind === "renard")
+          .map((visitor) => ({
+            talker: "fox" as const,
+            selector: '[data-visitor="renard"]',
+            asleep: visitor.asleep,
+          })),
+      ].map((target) => {
+        const talk = ANIMAL_SCRIPTS[target.talker].talk[locale];
+        return {
+          ...target,
+          label: target.asleep ? talkLabels.asleep(talk) : talk,
+        };
+      })
+    : [];
 
   const gusty = !watered || watered.moved.length > 0;
   useEffect(() => {
@@ -545,10 +599,12 @@ export function Garden({
           {message}
         </p>
       </div>
-      {canFly ? (
-        <div className="pointer-events-none absolute inset-x-0 top-0 aspect-[390/300]">
-          <FlyButton flying={flying} onFly={startFlight} />
-        </div>
+      {onTalk && talkTargets.length > 0 ? (
+        <TalkTargets
+          sceneRef={sceneRef}
+          targets={talkTargets}
+          onTalk={onTalk}
+        />
       ) : null}
       {/* Annonce pour les lecteurs d'écran (toujours présente) ; la bulle visible est décorative. */}
       <p role="status" aria-live="polite" className="sr-only">

@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import {
   acceptDocument404,
   entry,
@@ -9,6 +10,11 @@ import {
   test,
   letGardenChoose,
 } from "./fixtures";
+
+/** Zone de toucher d'un animal dans la scène (la liste a un bouton du même nom). */
+function zone(page: Page, talker: string, name: string) {
+  return page.locator(`[data-talk="${talker}"][aria-label="${name}"]`);
+}
 
 const PAGES = [
   { name: "accueil", path: "/", heading: "Le poids des choses" },
@@ -83,7 +89,7 @@ test.describe("axe (WCAG 2.1 AA)", () => {
     await expectNoAxeViolations(page);
   });
 
-  test("jardin avec l'oiseau (bouton d'envol) et « Le savais-tu ? »", async ({
+  test("jardin avec l'oiseau (zone pour lui parler) et « Le savais-tu ? »", async ({
     page,
   }) => {
     await seedJournal(
@@ -93,9 +99,7 @@ test.describe("axe (WCAG 2.1 AA)", () => {
       ),
     );
     await page.goto("/jardin");
-    await expect(
-      page.getByRole("button", { name: "Faire s’envoler l’oiseau" }),
-    ).toBeVisible();
+    await expect(zone(page, "bird", "Parler à l’oiseau")).toBeVisible();
     await expectDidYouKnow(
       page.getByRole("complementary", { name: "Le savais-tu ?" }),
     );
