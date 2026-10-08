@@ -69,6 +69,8 @@ export const RACONTE = defineMessages(
     errors: {
       offline:
         "Pas de connexion pour l’instant. Réessaie dans un moment, ou choisis tes gestes toi-même.",
+      timeout:
+        "Le serveur met trop de temps à répondre, réessaie dans un instant, ou choisis tes gestes toi-même.",
       turnstile:
         "La vérification anti-robot n’a pas abouti. Réessaie, ou choisis tes gestes toi-même.",
       "text-length": "Écris entre 1 et 280 caractères, puis relance l’analyse.",
@@ -148,6 +150,8 @@ export const RACONTE = defineMessages(
     errors: {
       offline:
         "No connection right now. Try again in a moment, or choose your actions yourself.",
+      timeout:
+        "The server is taking too long to respond, please try again in a moment, or choose your actions yourself.",
       turnstile:
         "The anti-robot check didn’t go through. Try again, or choose your actions yourself.",
       "text-length": "Write between 1 and 280 characters, then try again.",

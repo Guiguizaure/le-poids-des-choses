@@ -144,19 +144,25 @@ describe("syncJournal", () => {
     expect((await sync(0, [], other)).entries.map((e) => e.id)).toEqual(["b"]);
   });
 
-  it("réponse paginée au-delà de SYNC_PAGE_SIZE", async () => {
-    const all = Array.from({ length: SYNC_PAGE_SIZE + 5 }, (_, i) =>
-      entry(`e${String(i).padStart(5, "0")}`),
-    );
-    for (let i = 0; i < all.length; i += SYNC_MAX_ENTRIES)
-      await sync(0, all.slice(i, i + SYNC_MAX_ENTRIES));
-    const first = await sync(0, []);
-    expect(first.entries).toHaveLength(SYNC_PAGE_SIZE);
-    expect(first.hasMore).toBe(true);
-    const rest = await sync(first.cursor, []);
-    expect(rest.entries).toHaveLength(5);
-    expect(rest.hasMore).toBe(false);
-  });
+  // Des centaines d'écritures sur la D1 locale : 1,6 s seul, mais plus de 5 s (limite par
+  // défaut de Vitest) quand toute la suite tourne en parallèle. Limite dédiée, ce test seul.
+  it(
+    "réponse paginée au-delà de SYNC_PAGE_SIZE",
+    { timeout: 30_000 },
+    async () => {
+      const all = Array.from({ length: SYNC_PAGE_SIZE + 5 }, (_, i) =>
+        entry(`e${String(i).padStart(5, "0")}`),
+      );
+      for (let i = 0; i < all.length; i += SYNC_MAX_ENTRIES)
+        await sync(0, all.slice(i, i + SYNC_MAX_ENTRIES));
+      const first = await sync(0, []);
+      expect(first.entries).toHaveLength(SYNC_PAGE_SIZE);
+      expect(first.hasMore).toBe(true);
+      const rest = await sync(first.cursor, []);
+      expect(rest.entries).toHaveLength(5);
+      expect(rest.hasMore).toBe(false);
+    },
+  );
 });
 
 describe("parseSyncRequest", () => {

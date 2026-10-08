@@ -90,7 +90,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   une route Playwright) ; toute erreur de console (CSP comprise) fait échouer un test.
   Lancer `pnpm build` avant. Clavier et focus : Chromium seulement (WebKit ne parcourt pas
   les liens avec Tab). Le compte (`e2e/compte.spec.ts`, projets `compte-chromium` et
-  `compte-webkit`, 2 workers chacun) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
+  `compte-webkit`, 1 worker chacun : à quatre tests à la fois, le serveur local devenait trop
+  lent) passe par `e2e/pages-server.mjs` (`wrangler pages dev`
   en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
   Resend, faux siteverify et faux Anthropic, port 4330) ; Turnstile est simulé par une route
   Playwright. « Raconte ta journée » (`e2e/raconte.spec.ts`, projets `raconte-chromium` et
@@ -496,6 +497,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - `public/_headers` : CSP (scripts et styles en ligne autorisés, nécessaires à l'export
     Next ; Cloudflare Web Analytics autorisé), Referrer-Policy, Permissions-Policy,
     nosniff, cache immuable de `/_next/static/*` ;
+  - stabilité de /jardin (CLS) : le carnet n'est lu qu'après l'hydratation, donc tout le bas
+    de page qui en dépend est monté d'un bloc à sa lecture, sous ce qui est déjà affiché ;
+    ligne du prochain animal réservée dès le rendu serveur ; boutons de partage sans effet
+    sur la hauteur de la barre. `e2e/decalage.spec.ts` (Chromium) échoue au-delà de 0,1 ;
   - performance : la 404 racine est embarquée dans toutes les pages, elle doit rester sans
     composant client ; l'écran de résultat est chargé à la demande ; les animations
     d'ambiance démarrent deux images après l'affichage (`useMotion`) ;
@@ -626,6 +631,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     va dans `conflicts` (jamais affichée, dans l'export du compte) ;
   - synchro à la connexion (tout le carnet), après chaque choix si connecté, à l'ouverture
     de /jardin et au retour en ligne ; file d'attente dans `lpdc:compte:v1` ;
+  - délai maximal des appels (`src/lib/net/deadline.ts`, `REQUEST_TIMEOUT_MS` 15 s, lecture
+    de la réponse comprise) : au-delà, erreur `timeout`, le bouton revient et « Le serveur met
+    trop de temps à répondre, réessaie dans un instant. » est annoncé (région `polite`) ; une
+    synchro coupée garde sa file ; « Raconte ta journée » : 20 s (`RACONTE_TIMEOUT_MS`, le
+    serveur attend déjà Claude 15 s) ; testé par `e2e/delai.spec.ts` (requête sans réponse,
+    horloge de Playwright) ;
   - retrouver son jardin : « J’ai déjà un jardin ? Le retrouver » (accueil) et
     `AccountLink` dans les en-têtes (accueil, pages de texte, /saison, carnet) vers
     /connexion, ou l'adresse connectée (tronquée sur mobile) vers `/jardin#compte` ;

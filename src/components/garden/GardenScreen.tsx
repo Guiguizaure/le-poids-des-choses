@@ -181,7 +181,9 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
   return (
     <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
-      <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2">
+      {/* Les boutons de partage (30 px) arrivent après l'hydratation : ils débordent dans la
+          marge intérieure pour ne pas agrandir la barre, donc ne rien décaler. */}
+      <div className="flex items-center justify-between gap-2 px-5 pt-[22px] pb-2 [&>button]:-my-1.5">
         <Logo />
         {canShare ? (
           // Maquette 09a (mobile, appli installée) : « Exporter » puis « Partager ».
@@ -244,12 +246,14 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
       >
         {foundMessage}
       </p>
-      {upcoming && journal.ready ? (
-        // Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
-        <p className="text-legende text-texte-attenue px-5 pt-2">
-          {nextAnimalMessage(upcoming, locale)}
-        </p>
-      ) : null}
+      {/* Seul endroit où l'on annonce le prochain animal (pas sur les écrans de validation).
+          Sa ligne est réservée dès le rendu serveur (carnet pas encore lu) : le bouton
+          ne descend pas quand la phrase arrive. */}
+      <p className="text-legende text-texte-attenue px-5 pt-2">
+        {upcoming && journal.ready
+          ? nextAnimalMessage(upcoming, locale)
+          : "\u00a0"}
+      </p>
 
       {/* Action principale de la page, juste sous le jardin : papier découpé jaune soleil,
           texte encre (paire vérifiée par le test du thème), contour et ombre nette encre ;
@@ -282,152 +286,161 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         </FirstHint>
       </div>
 
-      <div className="flex flex-col gap-4 px-5 pt-4 pb-8">
-        {!journal.persistent && journal.ready ? (
-          <p className="bg-tomate-douce text-corps-s text-encre rounded-2xl p-4">
-            {t.noStorage}
-          </p>
-        ) : null}
-
-        {journal.ready && !hasEntries ? (
-          // Jardin vide : peut-être commencé sur un autre appareil. Le formulaire passe avant
-          // l'invitation à comparer.
-          <AccountSection variant="retrouver" />
-        ) : null}
-
-        {journal.ready && !hasEntries ? (
-          <section className="bg-blanc flex flex-col items-start gap-3 rounded-[20px] p-5">
-            <h2 className="font-titre text-titre-m text-encre leading-[1.1]">
-              {t.emptyTitle}
-            </h2>
-            <p className="text-corps-s text-texte-attenue">{t.emptyText}</p>
-          </section>
-        ) : null}
-
-        {journal.ready && !hasEntries ? <RaconteLink /> : null}
-
-        {journal.ready ? (
-          <MyHabits entries={journal.entries} now={now} onWater={water} />
-        ) : null}
-
-        <GardenSeasonCard />
-
-        {hasEntries ? (
-          <>
-            <section
-              className="bg-blanc flex flex-col gap-1.5 rounded-[20px] p-5"
-              aria-label={t.summary}
-            >
-              <p className="font-titre text-chiffre-xl text-encre">
-                <CountUp
-                  value={garden.totalAvoidedKg}
-                  format={(kg) => formatMass(kg, locale)}
-                />
-              </p>
-              <p className="text-corps-s text-texte-attenue leading-[1.4]">
-                {t.differenceSince}
-              </p>
-              <p className="text-corps-s text-encre flex flex-wrap gap-x-4 gap-y-1 pt-2 leading-[1.3] font-semibold">
-                <span>{t.choices(garden.choiceCount)}</span>
-                {garden.wateredDayCount > 0 ? (
-                  <span>{t.wateredDays(garden.wateredDayCount)}</span>
-                ) : null}
-                <span>{t.plants(garden.plants.length)}</span>
-                <span>{t.animals(garden.unlocked.length)}</span>
-              </p>
-            </section>
-
-            <MilestoneCard entries={journal.entries} />
-
-            <section
-              className="flex flex-col gap-4"
-              aria-labelledby="carnet-titre"
-            >
-              <div className="text-encre flex items-center justify-between">
-                <h2
-                  id="carnet-titre"
-                  className="font-titre text-titre-m leading-[1.1]"
-                >
-                  {t.journal}
-                </h2>
-                <Link
-                  href={CARNET_PATH}
-                  className="text-corps-s leading-[1.3] font-semibold underline"
-                >
-                  {t.seeAll}
-                </Link>
-              </div>
-              {now ? <WeekChart entries={journal.entries} now={today} /> : null}
-              <ul id="carnet-entrees" className="flex flex-col gap-2">
-                {visible.map((entry) => (
-                  <EntryRow key={entry.id} entry={entry} now={today} />
-                ))}
-              </ul>
-              <p className="text-legende text-texte-attenue">{t.heavyNote}</p>
-              <RaconteLink />
-            </section>
-          </>
-        ) : null}
-
-        {hasEntries ? (
-          <SkyPicker
-            value={sky}
-            lightChoiceCount={garden.lightChoiceCount}
-            onChange={setSky}
-          />
-        ) : null}
-
-        {journal.ready ? (
-          // Graine : le dernier choix noté (en lien avec ses gestes), sinon le jour.
-          <FactCard
-            seed={newestFirst[0]?.id}
-            related={
-              newestFirst[0] && isComparison(newestFirst[0])
-                ? [newestFirst[0].gestureA, newestFirst[0].gestureB]
-                : newestFirst[0]
-                  ? [doneGesture(newestFirst[0])]
-                  : []
-            }
-          />
-        ) : null}
-
-        <InstallBanner />
-
-        {journal.ready && hasEntries ? <AccountSection /> : null}
-
-        {journal.ready ? (
-          <section className="flex flex-col gap-2 pt-2" aria-label={t.backup}>
-            <p className="text-legende text-texte-attenue">{t.backupText}</p>
-            <div className="flex flex-wrap gap-2">
-              <PillButton onClick={journal.exportFile} disabled={!hasEntries}>
-                {t.export}
-              </PillButton>
-              <PillButton onClick={() => fileInput.current?.click()}>
-                {t.import}
-              </PillButton>
-              <input
-                ref={fileInput}
-                type="file"
-                accept="application/json,.json"
-                className="sr-only"
-                tabIndex={-1}
-                aria-hidden
-                onChange={(event) => onImport(event.target.files?.[0])}
-              />
-              {/* Toujours là, même bandeau « Garde ton jardin » fermé. */}
-              <InstallButton look="pill" />
-            </div>
-            <p
-              role="status"
-              aria-live="polite"
-              className="text-legende text-encre"
-            >
-              {importMessage}
-              {journal.invalidCount > 0 ? t.setAside(journal.invalidCount) : ""}
+      {/* Tout ce qui suit dépend du carnet (lu sur l'appareil après l'hydratation) : monté
+          d'un bloc une fois le carnet lu, sous ce qui est déjà affiché, pour que rien ne se
+          décale (CLS). */}
+      {journal.ready ? (
+        <div className="flex flex-col gap-4 px-5 pt-4 pb-8">
+          {!journal.persistent && journal.ready ? (
+            <p className="bg-tomate-douce text-corps-s text-encre rounded-2xl p-4">
+              {t.noStorage}
             </p>
-          </section>
-        ) : null}
-      </div>
+          ) : null}
+
+          {journal.ready && !hasEntries ? (
+            // Jardin vide : peut-être commencé sur un autre appareil. Le formulaire passe avant
+            // l'invitation à comparer.
+            <AccountSection variant="retrouver" />
+          ) : null}
+
+          {journal.ready && !hasEntries ? (
+            <section className="bg-blanc flex flex-col items-start gap-3 rounded-[20px] p-5">
+              <h2 className="font-titre text-titre-m text-encre leading-[1.1]">
+                {t.emptyTitle}
+              </h2>
+              <p className="text-corps-s text-texte-attenue">{t.emptyText}</p>
+            </section>
+          ) : null}
+
+          {journal.ready && !hasEntries ? <RaconteLink /> : null}
+
+          {journal.ready ? (
+            <MyHabits entries={journal.entries} now={now} onWater={water} />
+          ) : null}
+
+          <GardenSeasonCard />
+
+          {hasEntries ? (
+            <>
+              <section
+                className="bg-blanc flex flex-col gap-1.5 rounded-[20px] p-5"
+                aria-label={t.summary}
+              >
+                <p className="font-titre text-chiffre-xl text-encre">
+                  <CountUp
+                    value={garden.totalAvoidedKg}
+                    format={(kg) => formatMass(kg, locale)}
+                  />
+                </p>
+                <p className="text-corps-s text-texte-attenue leading-[1.4]">
+                  {t.differenceSince}
+                </p>
+                <p className="text-corps-s text-encre flex flex-wrap gap-x-4 gap-y-1 pt-2 leading-[1.3] font-semibold">
+                  <span>{t.choices(garden.choiceCount)}</span>
+                  {garden.wateredDayCount > 0 ? (
+                    <span>{t.wateredDays(garden.wateredDayCount)}</span>
+                  ) : null}
+                  <span>{t.plants(garden.plants.length)}</span>
+                  <span>{t.animals(garden.unlocked.length)}</span>
+                </p>
+              </section>
+
+              <MilestoneCard entries={journal.entries} />
+
+              <section
+                className="flex flex-col gap-4"
+                aria-labelledby="carnet-titre"
+              >
+                <div className="text-encre flex items-center justify-between">
+                  <h2
+                    id="carnet-titre"
+                    className="font-titre text-titre-m leading-[1.1]"
+                  >
+                    {t.journal}
+                  </h2>
+                  <Link
+                    href={CARNET_PATH}
+                    className="text-corps-s leading-[1.3] font-semibold underline"
+                  >
+                    {t.seeAll}
+                  </Link>
+                </div>
+                {now ? (
+                  <WeekChart entries={journal.entries} now={today} />
+                ) : null}
+                <ul id="carnet-entrees" className="flex flex-col gap-2">
+                  {visible.map((entry) => (
+                    <EntryRow key={entry.id} entry={entry} now={today} />
+                  ))}
+                </ul>
+                <p className="text-legende text-texte-attenue">{t.heavyNote}</p>
+                <RaconteLink />
+              </section>
+            </>
+          ) : null}
+
+          {hasEntries ? (
+            <SkyPicker
+              value={sky}
+              lightChoiceCount={garden.lightChoiceCount}
+              onChange={setSky}
+            />
+          ) : null}
+
+          {journal.ready ? (
+            // Graine : le dernier choix noté (en lien avec ses gestes), sinon le jour.
+            <FactCard
+              seed={newestFirst[0]?.id}
+              related={
+                newestFirst[0] && isComparison(newestFirst[0])
+                  ? [newestFirst[0].gestureA, newestFirst[0].gestureB]
+                  : newestFirst[0]
+                    ? [doneGesture(newestFirst[0])]
+                    : []
+              }
+            />
+          ) : null}
+
+          <InstallBanner />
+
+          {journal.ready && hasEntries ? <AccountSection /> : null}
+
+          {journal.ready ? (
+            <section className="flex flex-col gap-2 pt-2" aria-label={t.backup}>
+              <p className="text-legende text-texte-attenue">{t.backupText}</p>
+              <div className="flex flex-wrap gap-2">
+                <PillButton onClick={journal.exportFile} disabled={!hasEntries}>
+                  {t.export}
+                </PillButton>
+                <PillButton onClick={() => fileInput.current?.click()}>
+                  {t.import}
+                </PillButton>
+                <input
+                  ref={fileInput}
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  tabIndex={-1}
+                  aria-hidden
+                  onChange={(event) => onImport(event.target.files?.[0])}
+                />
+                {/* Toujours là, même bandeau « Garde ton jardin » fermé. */}
+                <InstallButton look="pill" />
+              </div>
+              <p
+                role="status"
+                aria-live="polite"
+                className="text-legende text-encre"
+              >
+                {importMessage}
+                {journal.invalidCount > 0
+                  ? t.setAside(journal.invalidCount)
+                  : ""}
+              </p>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
     </main>
   );
 }

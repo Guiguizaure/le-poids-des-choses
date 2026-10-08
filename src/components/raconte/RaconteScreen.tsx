@@ -295,8 +295,14 @@ export function RaconteScreen() {
         {t.aiNote}
       </p>
 
+      {/* Région toujours présente : « lecture en cours », puis l'erreur éventuelle (délai
+          dépassé compris), annoncées sans prendre le focus. */}
       <p role="status" aria-live="polite" className="sr-only">
-        {reading ? t.reading : ""}
+        {reading
+          ? t.reading
+          : state.step === "error"
+            ? errorMessage(state.error, locale)
+            : ""}
       </p>
 
       {disabled ? <Gentle message={errorMessage("disabled", locale)} /> : null}
@@ -425,14 +431,15 @@ function goTo(id: string) {
   element.focus({ preventScroll: true });
 }
 
-/** Message doux, toujours avec une autre voie : choisir ses gestes soi-même. */
+/**
+ * Message doux, toujours avec une autre voie : choisir ses gestes soi-même. Annoncé par la
+ * région d'état du formulaire (une région insérée avec son texte ne l'est pas toujours).
+ */
 function Gentle({ message }: { message: string }) {
   const t = RACONTE[useLocale()];
   return (
     <div className="bg-blanc flex flex-col items-start gap-2 rounded-2xl p-4">
-      <p role="status" className="text-corps-s text-encre leading-[1.4]">
-        {message}
-      </p>
+      <p className="text-corps-s text-encre leading-[1.4]">{message}</p>
       <TextLink href="/comparer">{t.chooseMine}</TextLink>
     </div>
   );
