@@ -2175,3 +2175,40 @@ sans l'animation d'arrivée) et le nombre de lignes du nom entre « sans carnet 
 (Chromium), noms accessibles et zone de toucher. Sur `main`, l'écart de 20 px apparaît à
 chaque mesure ; sur la branche, 80 passages sur 80. `e2e/anglais.spec.ts` : le nom coupé
 sur deux lignes est accepté comme nom du site.
+
+### 3. Tests instables
+
+**« petit choix… vitrine »** (`e2e/journeys.spec.ts`) — cause : le test lisait l'épaisseur de
+référence du trait dans la vitrine dès qu'elle passait sous 3 px, pendant que la pousse
+grandissait encore (avec dépassement, `back.out`) ; sous charge la valeur lue était fausse et
+la comparaison avec le jardin ne convergeait pas (échec de la CI). Second risque : l'éclat du
+jardin, visible environ 1 s peu après l'arrivée, n'était guetté qu'après plusieurs
+vérifications. Correctif (test) : épaisseur lue une fois immobile (deux lectures égales à deux
+images d'écart), éclat guetté dès avant de cliquer « Aller la planter » (navigation dans la
+même page) et noté s'il a brillé. 40 sur 40 (Chromium et WebKit, 20 fois chacun).
+
+**« le sélecteur de langue garde la page »** (`e2e/anglais.spec.ts`) — cause : le sélecteur
+recharge toute la page, et le test naviguait de nouveau dès que l'adresse avait changé, page
+encore en chargement et préchargements de Next en cours ; WebKit signalait en console les
+requêtes interrompues (« due to access control checks ») ou refusait la navigation suivante
+(« WebKit encountered an internal error », vu en CI). Correctif (test) : attendre le chargement
+de la page puis le réseau au repos avant chaque navigation. 40 sur 40. Pas un bug de l'appli ;
+à noter tout de même : un clic sur le sélecteur avant l'hydratation suivrait le lien brut, sans
+les paramètres ni l'ancre (l'export statique ne les connaît pas) ; jamais observé en 40 essais.
+
+**En plus : « appuyé : le bouton descend de 2 px »** (`e2e/raccourcis.spec.ts`, instable aussi) —
+deux causes : la position de départ était prise pendant l'animation d'arrivée de la page
+(glissement de 8 px), corrigé en attendant sa fin réelle (`getAnimations().finished`) ; sous
+WebKit en émulation iPhone, `:active` ne tient pas pendant un appui prolongé à la souris (12 fois
+sur 12), limite de l'outil (un vrai iPhone le déclenche au toucher) : test limité à Chromium,
+raison écrite dans le test. 20 sur 20 sous Chromium.
+
+**En plus : « carnet : graphique de la semaine »** (`e2e/carnet.spec.ts`) — échoue chaque nuit
+entre minuit et 2 h (Paris) : les entrées étaient datées « à midi, heure de la machine », encore
+à venir pour le navigateur des tests (fuseau où il est midi). Datées maintenant « il y a N
+jours » à partir de l'instant présent. Vu en lançant la suite à 0 h 05 ; 40 sur 40 ensuite.
+
+**En plus : « bandeau d'installation en mode iPhone »** (`e2e/journeys.spec.ts`, WebKit) — même
+cause que le sélecteur de langue : rechargement pendant les préchargements du pied de page.
+Attente du réseau au repos avant de recharger.
+

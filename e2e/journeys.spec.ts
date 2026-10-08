@@ -53,18 +53,41 @@ test("comparaison complète jusqu'au jardin", async ({ page }) => {
   await expect(page.getByText("1 choix noté")).toBeVisible();
 });
 
-/** Épaisseur à l'écran (px) du trait de la pousse affichée, une fois sa croissance finie. */
+/**
+ * Épaisseur à l'écran (px) du trait de la pousse affichée, une fois immobile : la pousse
+ * grandit avec un dépassement (`back.out`), une lecture pendant la croissance serait fausse.
+ * Lue deux fois à deux images d'écart ; `null` tant qu'elle change encore.
+ */
 function stemStroke(page: import("@playwright/test").Page) {
   return page
     .locator("[data-stage='pousse'] [stroke-width]")
     .first()
-    .evaluate((element) => {
-      const matrix = (element as SVGGraphicsElement).getScreenCTM()!;
-      return (
-        parseFloat(getComputedStyle(element).strokeWidth) *
-        Math.hypot(matrix.a, matrix.b)
-      );
+    .evaluate(async (element) => {
+      const read = () => {
+        const matrix = (element as SVGGraphicsElement).getScreenCTM()!;
+        return (
+          parseFloat(getComputedStyle(element).strokeWidth) *
+          Math.hypot(matrix.a, matrix.b)
+        );
+      };
+      const frame = () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        );
+      const before = read();
+      await frame();
+      const after = read();
+      return Math.abs(after - before) < 0.001 ? after : null;
     });
+}
+
+/** Épaisseur du trait, une fois la pousse immobile (attend l'état réel, pas un délai). */
+async function settledStroke(page: import("@playwright/test").Page) {
+  let value: number | null = null;
+  await expect
+    .poll(async () => (value = await stemStroke(page)))
+    .not.toBeNull();
+  return value!;
 }
 
 test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au trait du jardin", async ({
@@ -98,8 +121,25 @@ test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au 
 
   // Le trait n'est pas agrandi : même épaisseur que dans le jardin (à l'écran, à la mise en
   // page près : la vitrine et la scène n'ont pas tout à fait la même échelle).
-  await expect.poll(() => stemStroke(page)).toBeLessThan(3);
-  const inVitrine = await stemStroke(page);
+  const inVitrine = await settledStroke(page);
+  expect(inVitrine).toBeLessThan(3);
+  // L'éclat du jardin ne dure qu'un instant, peu après l'arrivée : on le guette dès avant de
+  // partir (la navigation reste dans la page), à chaque image, et on note s'il a brillé.
+  await page.evaluate(() => {
+    const w = window as unknown as { __sparkleSeen: boolean };
+    w.__sparkleSeen = false;
+    const watch = () => {
+      const sparkle = document.querySelector("[data-sparkle]");
+      if (
+        sparkle &&
+        getComputedStyle(sparkle).visibility === "visible" &&
+        Number(getComputedStyle(sparkle).opacity) > 0
+      )
+        w.__sparkleSeen = true;
+      else requestAnimationFrame(watch);
+    };
+    watch();
+  });
   await page.getByRole("link", { name: "Aller la planter" }).click();
   await expect(page).toHaveURL(/\/jardin/);
   await expect(
@@ -107,22 +147,14 @@ test("petit choix : une petite pousse, agrandie dans la vitrine sans éclat, au 
   ).toBeVisible();
   // Dans le jardin, la plante pousse à sa place avec l'éclat.
   await expect(page.locator("[data-sparkle]")).toHaveCount(1);
-  // L'éclat ne dure qu'un instant : on le guette à chaque image (rien ne le rate sous charge).
-  await page.waitForFunction(
-    () => {
-      const sparkle = document.querySelector("[data-sparkle]");
-      return (
-        sparkle !== null &&
-        getComputedStyle(sparkle).visibility === "visible" &&
-        Number(getComputedStyle(sparkle).opacity) > 0
-      );
-    },
-    undefined,
-    { polling: "raf", timeout: 10_000 },
-  );
   await expect
-    .poll(async () => Math.abs((await stemStroke(page)) - inVitrine))
-    .toBeLessThan(0.5);
+    .poll(() =>
+      page.evaluate(
+        () => (window as unknown as { __sparkleSeen: boolean }).__sparkleSeen,
+      ),
+    )
+    .toBe(true);
+  expect(Math.abs((await settledStroke(page)) - inVitrine)).toBeLessThan(0.5);
 });
 
 test("choix plus lourd : la balance se pose, c'est noté, rien ne pousse", async ({
@@ -274,6 +306,9 @@ test.describe("bandeau d'installation en mode iPhone", () => {
 
     await banner.getByRole("button", { name: "Fermer ce bandeau" }).click();
     await expect(banner).toHaveCount(0);
+    // Recharger une fois les préchargements de Next finis (réseau au repos) : sinon WebKit
+    // signale en console les requêtes qu'il interrompt (« due to access control checks »).
+    await page.waitForLoadState("networkidle");
     await page.reload();
     await expect(
       page.getByRole("heading", { name: "Mon jardin" }),

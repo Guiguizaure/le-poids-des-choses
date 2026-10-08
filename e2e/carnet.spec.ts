@@ -1,11 +1,12 @@
 import { expect, seedJournal, test } from "./fixtures";
 
-const daysAgo = (days: number, hour = 12) => {
-  const date = new Date();
-  date.setDate(date.getDate() - days);
-  date.setHours(hour, 0, 0, 0);
-  return date.toISOString();
-};
+/**
+ * Il y a `days` jours, à une minute près de l'heure qu'il est. Pas « à midi, heure de la
+ * machine » : entre minuit et 2 h à Paris, ce midi-là était encore à venir pour le navigateur
+ * des tests (réglé sur un fuseau où il est midi), et l'entrée du jour n'était pas comptée.
+ */
+const daysAgo = (days: number) =>
+  new Date(Date.now() - days * 24 * 60 * 60 * 1000 - 60_000).toISOString();
 const entry = (
   id: string,
   days: number,
