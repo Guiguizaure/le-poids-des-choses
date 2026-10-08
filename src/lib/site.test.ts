@@ -84,8 +84,21 @@ describe("métadonnées de partage", () => {
       url: "/jardin",
     });
     expect(meta.openGraph?.images).toEqual([
-      expect.objectContaining({ url: "/og.png", width: 1200, height: 630 }),
+      expect.objectContaining({
+        url: "/partage-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: expect.stringMatching(/^Le poids des choses : un horizon/),
+      }),
     ]);
+    expect(meta.twitter).toMatchObject({
+      images: [
+        {
+          url: "/partage-1200x630.png",
+          alt: expect.stringMatching(/^Le poids des choses : /),
+        },
+      ],
+    });
     expect(meta.twitter).toMatchObject({ card: "summary_large_image" });
   });
   it("accueil : le nom du site seul", () => {
@@ -105,12 +118,22 @@ describe("métadonnées de partage", () => {
       "/jardin",
     );
   });
-  it("anglais : Open Graph en_GB, image de partage anglaise, sous-titre dans la description", () => {
+  it("anglais : Open Graph en_GB, même image de partage, texte alternatif anglais, sous-titre dans la description", () => {
     const meta = pageMetadata({ path: "/", locale: "en" });
     expect(meta.openGraph).toMatchObject({ locale: "en_GB", url: "/en" });
     expect(meta.openGraph?.images).toEqual([
-      expect.objectContaining({ url: "/og-en.png", width: 1200, height: 630 }),
+      expect.objectContaining({
+        url: "/partage-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: expect.stringMatching(/^Le poids des choses: a horizon/),
+      }),
     ]);
+    expect(meta.twitter).toMatchObject({
+      images: [
+        { alt: expect.stringMatching(/^Le poids des choses: a horizon/) },
+      ],
+    });
     expect(meta.description).toMatch(/^The weight of things\./);
   });
   it("sitemap : chaque adresse annonce ses deux langues", () => {

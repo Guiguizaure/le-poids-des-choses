@@ -1854,3 +1854,49 @@ Relecture de la PR #32 (même jour), deux retouches :
 Bout en bout : `e2e/raccourcis.spec.ts` (couleurs, contour, ombre, pousse de 32 px, focus,
 état appuyé, mouvement réduit ; carte : nombre de produits, ligne du plus léger, lien, place
 sous « Mes habitudes », fuseau, mouvement réduit, anglais, axe), Chromium et WebKit.
+
+## 2026-10-08 — Nouveau logo « Horizon-balance » (branche feat/logo)
+
+**Demandé** : intégrer le logo livré (`le-poids-des-choses-logo-final.zip`) : favicon SVG et
+PNG de secours, icône Apple, icônes de l'appli installable (dont « maskable »), emblème à
+gauche du nom dans l'en-tête, image de partage du site avec texte alternatif FR/EN ; ne pas
+toucher à l'image de partage du jardin ; vérifier Méthode et mentions légales.
+
+**Fait** :
+
+- Favicon : `embleme-petit.svg` (lien SVG `sizes="any"`, que Chrome préfère aux PNG),
+  `favicon-32.png` et `favicon-16.png` en secours, `apple-touch-icon-180.png`. Les anciens
+  liens envoyaient deux fois `/favicon.ico`, dont un `sizes="any"` qui faisait choisir le .ico
+  à Chrome : `src/app/favicon.ico` (lien automatique de Next) devient `public/favicon.ico`
+  (16, 32, 48 px, généré par `pnpm images` depuis les PNG livrés), servi sans lien.
+- Manifestes FR et EN : `icone-192.png`, `icone-512.png` (aussi en `maskable` : l'emblème
+  occupe un cercle de 29 % du côté, la zone sûre en tolère 40 %). Couleur de thème inchangée
+  (#FFF3DC). Chrome : aucune erreur de manifeste ni d'installabilité, sur / et /en.
+- En-tête (`Logo`) : emblème 28 px à gauche du nom, `embleme-petit.svg` (moins de 48 px ;
+  `emblemSrc` prendrait `embleme.svg` au-delà), `alt=""` et aria-hidden, nom accessible
+  inchangé. Il déborde dans la marge intérieure du lien : un en-tête d'une ligne garde sa
+  hauteur, cible tactile de 28 px. Mesuré : en ligne, le nom et son emblème demandent 409 px
+  sur les pages de texte françaises (373 sans emblème) ; le nom y passait déjà sur deux
+  lignes à 320 et 360 px, il y passe aussi à 390 px (et sur le duel à 320 px). La coupure est
+  désormais imposée au milieu, comme le logo empilé : « Le poids / des choses », jamais
+  « Le poids des / choses ».
+- Image de partage du site : `public/partage-1200x630.png`, la même dans les deux langues
+  (nouvelle adresse : les aperçus en cache se renouvellent), `og:image:alt` et désormais
+  `twitter:image:alt` dans la langue de la page (`SITE.ogAlt`). `og.png`, `og-en.png`, leur
+  rendu (`ogSvg`, `OG_IMAGE_TEXT`) et `@resvg/resvg-js` retirés. Image de partage du jardin
+  inchangée.
+- Sources livrées gardées dans `assets/logo/` (`icone-appli.svg`, `partage-1200x630.svg`,
+  `favicon-48.png`) ; `assets/icon/` retiré ; LICENSE à jour.
+- Méthode et mentions légales : aucun ancien logo, rien changé.
+- Bout en bout (`e2e/raccourcis.spec.ts`) : emblème décoratif, 28 px, centré sur le lien, à
+  320 px sur /jardin, /methode, le duel, /en/garden, /en/in-season (coupure au milieu, pas
+  de débordement, axe) ; `e2e/anglais.spec.ts` : image et textes alternatifs FR/EN.
+
+**Vérifié** : lint, 1169 tests, build strict. Bout en bout : 330 réussis ; seul échec, le
+« parcours complet » du compte (bouton resté sur « Envoi… » plus de 5 s derrière
+`wrangler pages dev`), une fois sur deux dans les deux navigateurs, et autant sur `main` :
+instable avant ce lot. Lighthouse mobile : / 99 · 100 · 100, /en 94 · 100 · 100
+(performance, accessibilité, bonnes pratiques ; SEO 66 = noindex). Lighthouse 13 n'a plus
+de catégorie PWA : installabilité vérifiée par Chrome (aucune erreur sur / et /en).
+Repéré en passant, déjà sur `main` : /jardin a un décalage de mise en page de 0,50 (tout le
+bloc sous l'en-tête), performance 69 ; à corriger dans une branche `fix/`.

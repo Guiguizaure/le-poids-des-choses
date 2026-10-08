@@ -59,10 +59,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - `pnpm dev` — développement (lancé par l'utilisateur uniquement)
 - `pnpm build` — convertit les illustrations, génère les images (`images`), lance les
   garde-fous (`check-data`) puis l'export statique dans `out/`
-- `pnpm images` — icônes PNG (192, 512, maskable, apple-touch-icon), favicon et images de
-  partage 1200×630 (`public/og.png`, `public/og-en.png`, textes `OG_IMAGE_TEXT`) depuis
-  `assets/icon/icon.svg` et les illustrations, rendues par resvg avec les polices
-  d'`assets/fonts` ; fichiers commités
+- `pnpm images` — `public/favicon.ico` (16, 32, 48 px) depuis les PNG du logo. Logo
+  « Horizon-balance » livré tel quel et commité : `public/icons/` (`embleme.svg`,
+  `embleme-petit.svg` aussi favicon SVG, `favicon-16/32.png`, `apple-touch-icon-180.png`,
+  `icone-192.png`, `icone-512.png` aussi « maskable »), image de partage du site
+  `public/partage-1200x630.png` (les deux langues, texte alternatif `SITE.ogAlt`), sources
+  dans `assets/logo/`
 - `pnpm illustrations` — convertit `public/illustrations/*.svg` en composants
   (`src/components/illustrations/generated.tsx`) et extrait de `scene-paysage.svg` le
   contour des collines et le haut du sol (`src/lib/garden/scene.generated.ts`), et
@@ -539,7 +541,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile
-  de 28 px ; plus de « ← Retour » vers l'accueil (ambigu avec la page précédente).
+  de 28 px ; emblème à gauche du nom, décoratif (`alt=""`, aria-hidden), 28 px donc
+  `embleme-petit.svg` (`emblemSrc` : `embleme.svg` dès 48 px), sans grandir l'en-tête ; plus de « ← Retour » vers l'accueil (ambigu avec la page précédente).
 - En-tête et action de /jardin : `Logo` en haut à gauche ; Partager en haut à droite. Juste sous le
   jardin, l'action principale « Faire pousser une plante » / « Compare deux gestes du
   quotidien » vers /comparer : papier découpé jaune soleil, texte encre, contour encre 2 px,

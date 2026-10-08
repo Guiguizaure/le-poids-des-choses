@@ -92,13 +92,26 @@ export function sitemapEntries(
   });
 }
 
-/** Image de partage de chaque langue (pnpm images : public/og.png et public/og-en.png). */
+/**
+ * Image de partage du site (logo « Horizon-balance », public/partage-1200x630.png) : la même
+ * dans les deux langues (le nom ne se traduit pas), texte alternatif dans la langue de la page.
+ */
 export const OG_IMAGES: Record<
   Locale,
   { url: string; width: number; height: number; alt: string }
 > = {
-  fr: { url: "/og.png", width: 1200, height: 630, alt: SITE.fr.ogAlt },
-  en: { url: "/og-en.png", width: 1200, height: 630, alt: SITE.en.ogAlt },
+  fr: {
+    url: "/partage-1200x630.png",
+    width: 1200,
+    height: 630,
+    alt: SITE.fr.ogAlt,
+  },
+  en: {
+    url: "/partage-1200x630.png",
+    width: 1200,
+    height: 630,
+    alt: SITE.en.ogAlt,
+  },
 };
 
 export const OG_IMAGE = OG_IMAGES.fr;
@@ -146,7 +159,7 @@ export function pageMetadata({
       card: "summary_large_image",
       title: fullTitle,
       description: text,
-      images: [image.url],
+      images: [{ url: image.url, alt: image.alt }],
     },
   };
 }

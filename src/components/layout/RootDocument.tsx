@@ -24,12 +24,19 @@ export function rootMetadata(locale: Locale): Metadata {
     robots: robotsMeta(isLaunched()),
     manifest:
       locale === "en" ? "/en/manifest.webmanifest" : "/manifest.webmanifest",
+    // Logo « Horizon-balance » : emblème simplifié en SVG (sizes « any » : Chrome le préfère
+    // aux PNG), PNG 32 et 16 px en secours (Safari) ; /favicon.ico reste servi sans lien.
     icons: {
       icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/icons/icon.svg", type: "image/svg+xml" },
+        { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+        { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+        {
+          url: "/icons/embleme-petit.svg",
+          sizes: "any",
+          type: "image/svg+xml",
+        },
       ],
-      apple: "/icons/apple-touch-icon.png",
+      apple: { url: "/icons/apple-touch-icon-180.png", sizes: "180x180" },
     },
     appleWebApp: {
       capable: true,
