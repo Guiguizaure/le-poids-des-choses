@@ -1,3 +1,4 @@
+import { BUD_COLOR } from "@/lib/garden/foliage";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { JournalEntry } from "@/lib/data/types";
@@ -211,7 +212,7 @@ describe("carte de partage : saisons et épanouissement", () => {
   const later = new Date(NOW.getTime() + 20 * DAYS);
   const watered = buildGarden([...journal(6), ...habits(9)], later);
 
-  it("hiver : neige sous les plantes, flocons figés, feuillage des caducs sous la neige", () => {
+  it("hiver : neige sous les plantes, flocons figés, caducs endormis (branches nues, bourgeons)", () => {
     const names = gardenIllustrations(watered, "hiver");
     expect(names).toContain("saison-hiver-neige");
     expect(names).toContain("saison-hiver-flocons");
@@ -229,10 +230,27 @@ describe("carte de partage : saisons et épanouissement", () => {
         plant.level > 0,
     );
     expect(deciduous).toBe(true);
-    expect(svg).toContain(
-      `fill="${PALETTE.blanc}" stroke="${PALETTE.encre}" stroke-width="2.4"`,
-    );
+    expect(svg).toContain('visibility="hidden"');
+    expect(svg).toContain(`fill="${BUD_COLOR}"`);
     expect(svg).not.toMatch(/\sid="/);
+  });
+  it("automne : un dégradé par forme du feuillage des caducs, dans le repère de l'arbre", () => {
+    const names = gardenIllustrations(watered, "automne");
+    const svg = composeGardenSvg(
+      watered,
+      "jour",
+      sourcesFor(names),
+      SCENE,
+      "automne",
+    );
+    const ids = [...svg.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+    expect(ids.length).toBeGreaterThan(0);
+    // Seuls les dégradés gardent un id, tous différents, et chacun est utilisé.
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) {
+      expect(id).toMatch(/^saison-/);
+      expect(svg).toContain(`fill="url(#${id})"`);
+    }
   });
   it("épanouissement : un seul groupe par plante, aucun l'hiver pour un caduc", () => {
     const bloomed = watered.plants.filter((plant) => plant.bloom > 0);

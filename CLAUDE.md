@@ -444,7 +444,14 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     anecdote non confirmée n'entre pas). Les jardins existants ne changent pas (test
     d'empreinte figée) ;
   - saisons (`seasons.ts`, hémisphère nord, mois à Paris ; aucune au rendu serveur) :
-    feuillage des caducs (tomate en automne, blanc cerné d'encre en hiver), ciel « Jour » de
+    caducs (pommier, cerisier, figuier ; `foliage.ts`, planche « Saisons · feuillage ») :
+    dégradé vertical d'automne par espèce à tous les stades (dégradé créé par le code, un par
+    forme, inverse de sa transformation : aucun `id` dans les SVG publiés), endormis l'hiver
+    (feuillage caché, branches nues et bourgeons verts, `<Bare>` ; `isDormant`) ; toucher un
+    arbre endormi sur /jardin (`touchableTrees`, une zone de 44 px au moins, un arrêt du
+    clavier par espèce) : « Le pommier dort jusqu’au printemps. » ; persistants et fleurs
+    inchangés ; fiche d'un arbre : bloc « Au fil des saisons » (`SeasonsStrip`, mini-arbres
+    décoratifs, phrase) ; sources : `docs/especes-sources.md` ; ciel « Jour » de
     saison (`SEASONAL_DAY_SKY` ; un ciel débloqué choisi ne change pas), neige sous les
     plantes, flocons qui glissent, pétales / feuilles qui tombent (`src/lib/geometry/fall.ts`,
     pause onglet caché ou hors écran ; rien ne tombe en mouvement réduit ni jardin
@@ -544,7 +551,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   habitudes à la fin ; « N jours arrosés cette semaine » sous le graphique.
 - Astuces de première utilisation (`FirstHint`, `src/lib/hints`) : une seule par situation,
   la première fois : jardin vide (/jardin, sous « Faire pousser une plante »), première
-  plante (feuille des espèces, grille), premier arrosage (sous les icônes d'habitudes). Fond
+  plante et saisons des espèces (feuille des espèces, grille), premier arrosage (sous les
+  icônes d'habitudes) ; plus une astuce par saison sur /jardin (`saison-automne-2026` :
+  année de la saison), construite avec les arbres du jardin, seulement s'il a un caduc. Fond
   soleil, « Astuce · … », croix « Fermer l’astuce » ; vue = fermée ou action faite (plante
   plantée, feuille fermée, premier arrosage) ; mémorisée sous `lpdc:indices:v1`
   (`{ version: 1, seen }`, repli en mémoire) ; région `polite` remplie après l'hydratation,

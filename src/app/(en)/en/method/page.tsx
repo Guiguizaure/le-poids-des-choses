@@ -211,6 +211,9 @@ export default function MethodPage() {
         <p>
           The garden also follows the seasons of the northern hemisphere
           (leaves, sky, snow): simple scenery, which doesn’t change any figure.
+          Like real ones, the apple, cherry and fig trees turn colour in autumn
+          and sleep through winter, leafless, until spring; the lemon, olive and
+          fir trees keep their foliage. The garden never dies: it falls asleep.
         </p>
         <p id="visiteurs" className="scroll-mt-6">
           Seasonal visitors (robin, swallow, cicada, squirrel, wild flowers) and

@@ -214,7 +214,11 @@ export default function MethodePage() {
         </p>
         <p>
           Le jardin suit aussi les saisons de l’hémisphère nord (feuillage,
-          ciel, neige) : un simple décor, qui ne change aucun chiffre.
+          ciel, neige) : un simple décor, qui ne change aucun chiffre. Comme les
+          vrais, le pommier, le cerisier et le figuier se colorent en automne et
+          dorment l’hiver, sans feuilles, jusqu’au printemps ; le citronnier,
+          l’olivier et le sapin gardent leur feuillage. Le jardin ne meurt
+          jamais : il s’endort.
         </p>
         <p id="visiteurs" className="scroll-mt-6">
           Des visiteurs de saison (rouge-gorge, hirondelle, cigale, écureuil,

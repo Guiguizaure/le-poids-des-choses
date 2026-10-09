@@ -11,3 +11,4 @@ export * as names from "./names";
 export * as nouns from "./nouns";
 export * as raconte from "./raconte";
 export * as species from "./species";
+export * as seasons from "./seasons";

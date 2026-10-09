@@ -50,7 +50,11 @@ import { markMet, talkTo, useFriends } from "@/lib/friends/useFriends";
 import { isNightAt } from "@/lib/garden/daytime";
 import { liveScene } from "@/lib/garden/live";
 import { gardenDay, seasonAt } from "@/lib/garden/seasons";
-import { speciesFor } from "@/lib/garden/species";
+import { speciesFor, treesBySeasonHabit } from "@/lib/garden/species";
+import { seasonYear } from "@/lib/garden/visitors";
+import { seasonHintId } from "@/lib/hints/hints";
+import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
+import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
 
 const RECENT_COUNT = 5;
 
@@ -178,6 +182,25 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const revealId = wateredHere ?? fromUrl;
   const gardenRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // Astuce du changement de saison (une fois par saison), d'après les arbres du jardin :
+  // seulement s'il y a au moins un arbre caduc (celui qui change).
+  const season = seasonAt(now);
+  const seasonHint = useMemo(() => {
+    if (!season) return null;
+    const sheets = SPECIES_SHEETS[locale];
+    const trees = treesBySeasonHabit(garden.plants);
+    const text = SEASONS_UI[locale].seasonHint(
+      season,
+      trees.deciduous.map((tree) => ({
+        name: sheets[tree.id].name.toLowerCase(),
+        count: tree.count,
+      })),
+      trees.evergreen.map((id) => sheets[id].inSentence),
+    );
+    return text
+      ? { id: seasonHintId(season, seasonYear(new Date(now), season)), text }
+      : null;
+  }, [season, garden.plants, locale, now]);
   // Une plante a poussé : l'astuce du jardin vide ne reviendra plus.
   useEffect(() => {
     if (garden.plants.length > 0) markHintSeen("jardin-vide");
@@ -368,6 +391,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           sky={sky}
           onTalk={openTalk}
           talking={talk?.talker ?? null}
+          touchableTrees
         />
       </div>
       <p
@@ -415,6 +439,11 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         >
           {HINTS[locale].emptyGarden}
         </FirstHint>
+        {seasonHint ? (
+          <FirstHint id={seasonHint.id} active={journal.ready} className="pt-3">
+            {seasonHint.text}
+          </FirstHint>
+        ) : null}
       </div>
 
       {/* Tout ce qui suit dépend du carnet (lu sur l'appareil après l'hydratation) : monté

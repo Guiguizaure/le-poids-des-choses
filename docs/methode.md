@@ -72,7 +72,10 @@ l'occasion et ne dit rien de la durée de vie réelle. À mentionner honnêtemen
   grand (arbres), pousse → fleurie (fleurs), puis épanouissement 1, 2 et 3. C'est une règle
   de jeu, pas une mesure.
 - Saisons (hémisphère nord, d'après le mois) : un décor seulement. L'hiver, l'épanouissement
-  des arbres caducs dort (niveau gardé, rien d'affiché) jusqu'au printemps.
+  des arbres caducs dort (niveau gardé, rien d'affiché) jusqu'au printemps. Les caducs
+  (pommier, cerisier, figuier) prennent leur dégradé d'automne, puis dorment l'hiver, sans
+  feuilles, avec des bourgeons ; les persistants ne changent pas (sources :
+  `docs/especes-sources.md`, « Au fil des saisons »).
 
 ## Jardin vivant : visiteurs et nuit
 

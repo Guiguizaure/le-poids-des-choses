@@ -176,6 +176,48 @@ export function GardenSeasonsLab() {
           );
         })}
       </ul>
+      <p className="text-corps-s text-texte-attenue">
+        Caducs à chaque stade et à chaque saison (planche « Saisons · feuillage
+        ») : dégradé d’automne, endormis l’hiver.
+      </p>
+      <table data-foliage-grid className="bg-creme w-full rounded-2xl">
+        <thead>
+          <tr>
+            <th />
+            {SEASONS.map((s) => (
+              <th key={s} className="text-legende text-texte-attenue p-1">
+                {SEASON_LABELS[s]}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {SPECIES.filter((species) => species.leaves === "caduc").flatMap(
+            (species) =>
+              (["pousse", "jeune", "grand"] as const).map((stage) => (
+                <tr key={`${species.id}-${stage}`}>
+                  <th className="text-legende text-texte-attenue p-1 text-left font-normal">
+                    {species.id} · {stage}
+                  </th>
+                  {SEASONS.map((s) => (
+                    <td key={s} className="p-1">
+                      <Tree
+                        variant={species.kind.variant}
+                        stage={stage}
+                        sparkle={false}
+                        still
+                        className="mx-auto w-full max-w-[90px]"
+                        paint={
+                          plantLook({ kind: species.kind, bloom: 0 }, s).paint
+                        }
+                      />
+                    </td>
+                  ))}
+                </tr>
+              )),
+          )}
+        </tbody>
+      </table>
       <Slider
         label="Jours arrosés (jardin)"
         value={days}
