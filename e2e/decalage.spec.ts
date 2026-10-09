@@ -3,6 +3,7 @@ import {
   entry,
   expect,
   expectNoAxeViolations,
+  letGardenChoose,
   seedJournal,
   test,
 } from "./fixtures";
@@ -210,6 +211,60 @@ for (const { width, icons } of [
 test.describe("accueil, avec et sans jardin", () => {
   const actions = (page: Page) =>
     page.locator("[data-home-actions]").locator("..");
+
+  /** Décalages sans geste depuis le dernier remise à zéro (`window.__shifts`). */
+  const shiftsSince = (page: Page) =>
+    page.evaluate(() =>
+      (window as unknown as { __shifts: { value: number }[] }).__shifts.reduce(
+        (sum, shift) => sum + shift.value,
+        0,
+      ),
+    );
+
+  test("premier choix, puis retour à l'accueil par le logo : « Retrouver mon jardin » ; rechargé aussi ; CLS = 0", async ({
+    page,
+    browserName,
+  }) => {
+    const chromium = browserName === "chromium";
+    if (chromium) await measureShifts(page);
+    // Premier passage : aucun carnet, la page s'ouvre sur /comparer (pas sur l'accueil).
+    await page.goto("/comparer?a=voiture&b=velo&q=10");
+    await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+    await letGardenChoose(page);
+    await expect(
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
+    ).toBeVisible();
+    // Retour à l'accueil sans rechargement : le script en ligne ne s'exécute pas.
+    if (chromium)
+      await page.evaluate(() => {
+        (window as unknown as { __shifts: unknown[] }).__shifts = [];
+      });
+    await page
+      .getByRole("link", { name: /Le poids des choses – Accueil/ })
+      .first()
+      .click();
+    await page.waitForURL((url) => url.pathname === "/");
+    await expect(
+      page.getByRole("link", { name: "Retrouver mon jardin" }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Commencer" })).toHaveCount(0);
+    if (chromium) {
+      await page.waitForTimeout(1000);
+      expect(await shiftsSince(page)).toBe(0);
+    }
+    // Rechargé : le script en ligne, avant le premier affichage.
+    await page.waitForLoadState("networkidle");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-garden", "");
+    await expect(
+      page.getByRole("link", { name: "Retrouver mon jardin" }),
+    ).toBeVisible();
+    if (chromium) {
+      await page.locator("main h1").waitFor();
+      await page.waitForTimeout(1000);
+      expect(await shiftsSince(page)).toBe(0);
+    }
+  });
 
   for (const withGarden of [false, true])
     test(`CLS = 0 ${withGarden ? "avec" : "sans"} jardin (Chromium)`, async ({

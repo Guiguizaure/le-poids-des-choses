@@ -7,6 +7,7 @@ import { HOME, NAV } from "@/lib/i18n/messages/common";
 import { LocalLink as Link } from "@/lib/i18n/LocaleProvider";
 import { HomeScene } from "./HomeScene";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
+import { GardenFlag } from "./GardenFlag";
 import { RETURNING_SCRIPT } from "./returning";
 
 /** Accueil : écran 01 sur mobile, 07 sur ordinateur (navigation + héros sur deux colonnes). */
@@ -76,6 +77,8 @@ export function HomeScreen({ locale }: { locale: Locale }) {
               cachée en `invisible` : hors du clavier et des lecteurs d'écran), donc la même
               hauteur, sans bascule visible ni décalage. Sans script : la version de départ. */}
           <script dangerouslySetInnerHTML={{ __html: RETURNING_SCRIPT }} />
+          {/* Arrivée sans rechargement (logo, retour) : même état, relu côté client. */}
+          <GardenFlag />
           <div className="grid">
             <div
               data-home-actions="new"

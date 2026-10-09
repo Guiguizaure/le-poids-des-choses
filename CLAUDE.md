@@ -610,7 +610,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   action principale, « Faire pousser une plante » (/comparer, comme le bouton jaune de
   /jardin) en secondaire, « Comment ça marche ? » ; sans jardin : « Commencer », « Comment
   ça marche ? », « J’ai déjà un jardin ? Le retrouver ». Les deux versions dans la même case
-  de grille (la cachée en `invisible`) : même hauteur, CLS 0 (`e2e/decalage.spec.ts`).
+  de grille (la cachée en `invisible`) : même hauteur, CLS 0 (`e2e/decalage.spec.ts`). Le script
+  ne s'exécute qu'au chargement complet : l'état est aussi tenu à jour côté client
+  (`setGardenFlag`, `src/lib/journal/garden-flag.ts`) par `GardenFlag` (accueil atteint sans
+  rechargement, `useLayoutEffect`) et par le carnet du navigateur (premier choix enregistré).
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile
