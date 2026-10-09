@@ -172,6 +172,27 @@ describe("contenu « Les animaux parlent »", () => {
     }
   });
 
+  it("les 21 portraits livrés : 7 animaux × 3 expressions, rien d'autre", () => {
+    const animals = [
+      "papillon",
+      "coccinelle",
+      "oiseau",
+      "escargot",
+      "renard",
+      "ecureuil",
+      "abeille",
+    ];
+    expect(readdirSync(PORTRAITS).sort()).toEqual(
+      animals
+        .flatMap((animal) =>
+          ["content", "surpris", "dort"].map(
+            (expr) => `portrait-${animal}-${expr}.svg`,
+          ),
+        )
+        .sort(),
+    );
+  });
+
   it("sommeil : répliques pour ceux qui sont dessinés endormis (oiseau, escargot, renard)", () => {
     expect(TALKERS.filter(drawnAsleep)).toEqual(["bird", "snail", "fox"]);
     for (const talker of TALKERS.filter(drawnAsleep))
