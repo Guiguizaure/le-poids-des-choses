@@ -298,6 +298,50 @@ test.describe("partage du jardin (mobile)", () => {
       .toMatchObject({ width: 1080, height: 1350 });
   });
 
+  // Une lavande épanouie (groupes imbriqués dans son dessin) cassait l'image : le SVG du jardin
+  // devenait invalide et la carte ne se préparait jamais (corrigé le 9 octobre 2026).
+  for (const [season, at] of [
+    ["printemps", Date.UTC(2027, 3, 20, 10)],
+    ["automne", Date.UTC(2026, 9, 20, 10)],
+  ] as const)
+    test(`lavande épanouie, ${season} : le PNG est produit`, async ({
+      page,
+    }) => {
+      const DAY = 24 * 60 * 60 * 1000;
+      await page.clock.setFixedTime(new Date(at));
+      await fakeShare(page);
+      await seedJournal(page, [
+        ...[0, 1, 2].map((i) => ({
+          ...entry(`lavande-${i}`, 4.3, 0),
+          date: new Date(at - 14 * DAY + i * 60_000).toISOString(),
+          species: "fleur-5",
+        })),
+        ...Array.from({ length: 12 }, (_, day) => ({
+          kind: "habit",
+          id: `arrose-${day}`,
+          date: new Date(at - (13 - day) * DAY).toISOString(),
+          gesture: "velo",
+        })),
+      ]);
+      await page.goto("/jardin");
+      await expect(
+        page.locator('[data-species="fleur-5"][data-bloom-level="3"]'),
+      ).toHaveCount(3);
+      await page.getByRole("button", { name: "Partager", exact: true }).click();
+      const sheet = page.getByRole("dialog", { name: "Partager mon jardin" });
+      await expect(sheet.locator("[data-share-preview]")).toBeVisible({
+        timeout: 10_000,
+      });
+      await sheet.getByRole("button", { name: "Partager l’image" }).click();
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => (window as unknown as { __shared: unknown }).__shared,
+          ),
+        )
+        .toMatchObject({ type: "image/png", width: 1080, height: 1350 });
+    });
+
   test("jardin endormi : l'image se prépare aussi", async ({ page }) => {
     await fakeShare(page);
     const old = TWELVE.map((e, i) =>
