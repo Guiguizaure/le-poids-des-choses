@@ -2349,3 +2349,62 @@ même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts
 `AI_DAILY_CAP=100` (plafond de 100 analyses par jour UTC, au lieu de 300 par défaut) dans les
 variables Cloudflare, réglées par Guillaume ; `GET /api/raconte` → `{"enabled":true}`, vérifié le
 même jour. `STRICT_DATA=1` est aussi confirmé chez Cloudflare.
+
+## 2026-10-10 — Partage avec une lavande, accueil sans rechargement, tests instables (branche fix/partage-lavande)
+
+**Demandé** : corriger le partage avec une lavande épanouie ; afficher « Retrouver mon jardin »
+quand on revient à l'accueil sans recharger ; rendre fiables quatre tests instables en cherchant
+leur cause (sans allonger les délais), chacun 20 fois sous Chromium et WebKit.
+
+**Partage avec une lavande épanouie** — cause : `keepBloomGroup` retirait les groupes
+d'épanouissement non affichés avec une expression non gourmande (`<g id="epanoui-N"…>…?</g>`),
+qui s'arrête au premier `</g>` ; les groupes de `fleur-5-fleurie-epanoui.svg` (redessiné le
+6 octobre) contiennent des groupes imbriqués, il restait des `</g>` orphelins, l'image du jardin
+ne se chargeait pas. Même défaut possible dans `paintFoliage`. Correctif : `replaceGroups`
+(`src/lib/share/svg-groups.ts`), qui délimite un groupe en comptant les balises ouvrantes et
+fermantes. Tests : SVG bien formé pour chaque espèce, stade, saison et niveau d'épanouissement
+(quatre échouaient avant), lavande épanouie à chaque saison, PNG produit au printemps et en
+automne (bout en bout).
+
+**Accueil atteint sans rechargement** — cause : le script en ligne qui pose `data-garden` ne
+s'exécute qu'au chargement complet ; en revenant par le logo (navigation de Next), l'accueil
+gardait « Commencer ». Correctif : `GardenFlag` (accueil) et le magasin du carnet posent ou
+retirent l'attribut (`setGardenFlag`), le script reste pour le premier affichage. Test : premier
+choix, retour par le logo, « Retrouver mon jardin », puis rechargé ; CLS = 0 dans les deux cas.
+
+**Tests instables** (traces relues, échecs passés retrouvés dans les journaux de session) :
+
+- « en-tête de /jardin à 320 px » (WebKit) — deux causes. 1) Le test rechargeait la page
+  aussitôt ouverte, pendant les préchargements de Next ; WebKit rejette ceux qu'il interrompt
+  (« due to access control checks ») et la page lève l'erreur, comme vu le 9 octobre sur le
+  test voisin. Reproduit : 4 échecs sur 40 en rechargeant pendant un préchargement, 0 sur 40
+  après le réseau au repos ; le test attend maintenant le réseau au repos (même règle que le
+  sélecteur de langue et le bandeau d'installation). 2) Trouvé pendant la vérification, dans
+  l'appli : une fois sur 20, WebKit a rendu `null` à `canvas.toBlob` sur la carte de partage
+  (« L'image n'a pas pu être préparée »). Non reproductible sur commande (0 sur 185, même sous
+  charge) ; la carte fait maintenant un second essai, puis passe par `toDataURL`. Deux tests
+  simulent `toBlob` qui ne rend rien une fois, puis jamais (ils échouaient avant le correctif).
+- « Les habitants du jardin » (WebKit) — un seul échec connu, le 9 octobre : dépassement des
+  30 s, sans autre erreur, pendant une suite lancée en même temps que trois passages Lighthouse
+  sur la même machine (suite en 9,3 min au lieu d'environ 5). Aucun défaut trouvé dans le test
+  ni dans l'appli : 0 échec en trois suites complètes (1 152 tests), 80 passages sous six cœurs
+  occupés, 40 aujourd'hui. Rien changé ; ne plus lancer de mesure lourde pendant la suite.
+- « premier passage » de « Mes habitudes » (Chromium) — un seul échec connu, le 9 octobre ; son
+  message n'a pas été gardé (sortie tronquée). Jamais reproduit : 60 passages sous charge,
+  40 aujourd'hui, trois suites complètes. Cause non trouvée, rien changé.
+- « parcours complet » du compte — tous les échecs datent d'avant le 8 octobre (cause trouvée
+  alors : quatre tests à la fois sur l'unique `wrangler pages dev`, corrigé par un worker par
+  navigateur). Depuis : aucun échec en CI (10 lancements, 12 à 20 s) ni en local ; 40 sur 40
+  aujourd'hui (20 par navigateur).
+- En plus, « la barre s'empile au-dessus du bandeau » (`e2e/barre-comparer.spec.ts`) a échoué
+  pendant la suite complète (contraste de `.bg-soleil`) — cause : en défilant en bas de
+  /comparer, l'étiquette du mois de l'encart de saison arrive en fondu par GSAP, que
+  `getAnimations` ne voit pas, et axe la mesurait en plein fondu. 1 échec sur 40 ; le test
+  attend l'opacité 1, comme les tests de /saison ; 80 sur 80.
+
+Vérifiés 20 fois sous Chromium et WebKit : les quatre tests demandés (160 sur 160, et 40 sur 40
+pour le compte). Mesuré en passant : /jardin occupe environ 19 % du fil principal en continu
+(une mise en page par image), 2 % en mouvement réduit ; non modifié.
+
+**Vérifié** : lint, types, 1 239 tests unitaires, build strict, bout en bout complet (429
+réussis, 23 sautés, aucun échec).
