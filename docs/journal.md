@@ -2342,3 +2342,10 @@ même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts
 - Coquelicot : `docs/animaux-sources.md` précise que l'étude de _Plants_ porte sur les
   coquelicots d'Europe centrale, de la même espèce (_Papaver rhoeas_) que ceux de France, et
   non sur ceux de la Méditerranée orientale.
+
+## 2026-10-09 (soir) — « Raconte ta journée » ouverte en production (branche fix/partage-lavande)
+
+« Raconte ta journée » est ouverte en production depuis le 9 octobre 2026 : `AI_ENABLED=1` et
+`AI_DAILY_CAP=100` (plafond de 100 analyses par jour UTC, au lieu de 300 par défaut) dans les
+variables Cloudflare, réglées par Guillaume ; `GET /api/raconte` → `{"enabled":true}`, vérifié le
+même jour. `STRICT_DATA=1` est aussi confirmé chez Cloudflare.
