@@ -2333,3 +2333,12 @@ le dessin) et la conversation s'ouvre depuis la ligne de « Les habitants du jar
 relance pendant ce lot, à rendre fiables : « premier passage : liste à cases, barre
 « Valider » fixe… » (`e2e/arrosage.spec.ts`, Chromium) et « en-tête de /jardin à 320 px :
 même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts`, WebKit).
+
+### Retouches (même jour)
+
+- abe-c1, étape 1 : « En été, une ouvrière comme moi ne vit que quelques semaines. » / “In
+  summer, a worker like me only lives a few weeks.” (étape 2 inchangée) ; appuyée sur
+  Larousse (38 jours en été) et Vikidia (six à sept semaines) ; le doute est retiré.
+- Coquelicot : `docs/animaux-sources.md` précise que l'étude de _Plants_ porte sur les
+  coquelicots d'Europe centrale, de la même espèce (_Papaver rhoeas_) que ceux de France, et
+  non sur ceux de la Méditerranée orientale.

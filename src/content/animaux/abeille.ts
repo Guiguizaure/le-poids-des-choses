@@ -140,8 +140,8 @@ export const ABEILLE: AnimalScript = {
       steps: [
         {
           expr: "content",
-          fr: "En été, une ouvrière comme moi vit environ 38 jours.",
-          en: "In summer, a worker like me lives about 38 days.",
+          fr: "En été, une ouvrière comme moi ne vit que quelques semaines.",
+          en: "In summer, a worker like me only lives a few weeks.",
         },
         {
           expr: "surpris",
