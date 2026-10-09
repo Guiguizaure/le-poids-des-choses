@@ -1,6 +1,8 @@
 // « Les animaux parlent » : le contenu de chaque animal (répliques FR/EN, sommeil, « déjà
 // parlé aujourd'hui »). Format : ./types.ts ; vérifications : ./check.ts (build et tests).
+import { ABEILLE } from "./abeille";
 import { COCCINELLE } from "./coccinelle";
+import { ECUREUIL } from "./ecureuil";
 import { ESCARGOT } from "./escargot";
 import { OISEAU } from "./oiseau";
 import { PAPILLON } from "./papillon";
@@ -14,5 +16,7 @@ export const ANIMAL_SCRIPTS: Record<TalkerId, AnimalScript> = {
   ladybug: COCCINELLE,
   bird: OISEAU,
   snail: ESCARGOT,
+  bee: ABEILLE,
   fox: RENARD,
+  squirrel: ECUREUIL,
 };

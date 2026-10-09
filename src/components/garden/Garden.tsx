@@ -52,7 +52,11 @@ import {
   wateringMessage,
 } from "@/lib/garden/text";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { ANIMAL_SCRIPTS, type TalkerId } from "@/content/animaux";
+import {
+  ANIMAL_SCRIPTS,
+  TALKING_VISITORS,
+  type TalkerId,
+} from "@/content/animaux";
 import { ANIMAL_TALK } from "@/lib/i18n/messages/animals";
 import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
 import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
@@ -91,12 +95,13 @@ type GardenProps = {
   className?: string;
 };
 
-/** Animaux débloqués qui parlent (le renard, visiteur, à part). */
+/** Animaux débloqués qui parlent (le renard et l'écureuil, visiteurs, à part). */
 const TALKING_ANIMALS: readonly string[] = [
   "butterfly",
   "ladybug",
   "bird",
   "snail",
+  "bee",
 ];
 
 /** Position d'un cadre de la scène (unités 390×300) en pourcentages. */
@@ -424,13 +429,15 @@ export function Garden({
             selector: `[data-animal="${animal.kind}"]`,
             asleep: animal.asleep,
           })),
-        ...live.visitors
-          .filter((visitor) => visitor.kind === "renard")
-          .map((visitor) => ({
-            talker: "fox" as const,
-            selector: '[data-visitor="renard"]',
-            asleep: visitor.asleep,
-          })),
+        ...Object.entries(TALKING_VISITORS).flatMap(([talker, kind]) =>
+          live.visitors
+            .filter((visitor) => visitor.kind === kind)
+            .map((visitor) => ({
+              talker: talker as TalkerId,
+              selector: `[data-visitor="${kind}"]`,
+              asleep: visitor.asleep,
+            })),
+        ),
       ].map((target) => {
         const talk = ANIMAL_SCRIPTS[target.talker].talk[locale];
         return {

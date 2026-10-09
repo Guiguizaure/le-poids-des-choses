@@ -7,7 +7,9 @@ const SLUG: Record<TalkerId, string> = {
   ladybug: "coccinelle",
   bird: "oiseau",
   snail: "escargot",
+  bee: "abeille",
   fox: "renard",
+  squirrel: "ecureuil",
 };
 
 export function portraitSrc(talker: TalkerId, expr: Expression): string {

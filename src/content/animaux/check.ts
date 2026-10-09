@@ -9,8 +9,10 @@ import { speciesById } from "@/lib/garden/species";
 import { visitorRule } from "@/lib/garden/visitors";
 import {
   EXPRESSIONS,
+  isTalkingVisitor,
   LINE_KINDS,
   TALKERS,
+  TALKING_VISITORS,
   type AnimalScript,
   type Bilingual,
   type Sequence,
@@ -32,12 +34,13 @@ export function sourceIdsFrom(markdown: string): Set<string> {
 /**
  * Dessiné endormi à un moment ou un autre dans le jardin (d'après les tables du jardin) :
  * l'oiseau la nuit, l'escargot l'hiver, les deux quand le jardin s'assoupit ; le renard le
- * jour. Papillon et coccinelle ne dorment jamais à l'écran : ils s'absentent.
+ * jour. Papillon, coccinelle et abeille ne dorment jamais à l'écran : ils s'absentent ;
+ * l'écureuil, visiteur d'automne, n'a pas de dessin endormi.
  */
 export function drawnAsleep(talker: TalkerId): boolean {
-  if (talker === "fox") {
-    const fox = visitorRule("renard");
-    return fox.day === "asleep" || fox.night === "asleep";
+  if (isTalkingVisitor(talker)) {
+    const visitor = visitorRule(TALKING_VISITORS[talker]);
+    return visitor.day === "asleep" || visitor.night === "asleep";
   }
   const rule = FAUNA[talker];
   return (
