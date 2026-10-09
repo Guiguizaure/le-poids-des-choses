@@ -1,5 +1,11 @@
 import type { Page } from "@playwright/test";
-import { entry, expect, seedJournal, test } from "./fixtures";
+import {
+  entry,
+  expect,
+  expectNoAxeViolations,
+  seedJournal,
+  test,
+} from "./fixtures";
 
 // Décalage de mise en page au chargement de Mon jardin (CLS) : le carnet n'est lu qu'après
 // l'hydratation, rien de ce qui est déjà affiché ne doit bouger quand il arrive. API
@@ -14,7 +20,7 @@ const chromiumOnly = () =>
 const MAX_CLS = 0.1;
 
 /** Somme des décalages sans geste de la personne (borne haute du CLS), et leurs sources. */
-async function measureShifts(page: Page) {
+async function measureShifts(page: Page, ready = "[data-garden-season]") {
   await page.addInitScript(() => {
     const w = window as unknown as { __shifts: object[] };
     w.__shifts = [];
@@ -36,7 +42,7 @@ async function measureShifts(page: Page) {
   });
   return async () => {
     // Bloc dépendant du carnet monté, puis le temps que tout se pose.
-    await expect(page.locator("[data-garden-season]")).toBeVisible();
+    await expect(page.locator(ready).first()).toBeVisible();
     await page.waitForTimeout(1000);
     const shifts = await page.evaluate(
       () =>
@@ -197,3 +203,110 @@ for (const { width, icons } of [
     }
   });
 }
+
+// Accueil : quelqu'un qui revient (un carnet sur l'appareil) voit « Retrouver mon jardin » en
+// action principale dès le premier affichage. Un script en ligne pose `data-garden` sur <html>
+// avant les boutons : aucune bascule, aucun décalage, même hauteur dans les deux cas.
+test.describe("accueil, avec et sans jardin", () => {
+  const actions = (page: Page) =>
+    page.locator("[data-home-actions]").locator("..");
+
+  for (const withGarden of [false, true])
+    test(`CLS = 0 ${withGarden ? "avec" : "sans"} jardin (Chromium)`, async ({
+      page,
+      browserName,
+    }) => {
+      test.skip(
+        browserName !== "chromium",
+        "layout-shift : Chromium seulement",
+      );
+      if (withGarden) await seedJournal(page, [entry("accueil-1", 4.1, 60)]);
+      const done = await measureShifts(page, "main h1");
+      await page.goto("/");
+      const { cls, shifts } = await done();
+      expect(cls, JSON.stringify(shifts)).toBe(0);
+    });
+
+  test("sans jardin : « Commencer », « Comment ça marche ? » et « Le retrouver »", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).not.toHaveAttribute("data-garden");
+    await expect(page.getByRole("link", { name: "Commencer" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "J’ai déjà un jardin ? Le retrouver" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Retrouver mon jardin" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "Faire pousser une plante" }),
+    ).toHaveCount(0);
+  });
+
+  test("avec un jardin : « Retrouver mon jardin » d'abord, dès le premier affichage, même hauteur", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const before = await actions(page).boundingBox();
+    // WebKit : laisser finir les préchargements de Next avant de naviguer de nouveau.
+    await page.waitForLoadState("networkidle");
+    // Attribut posé avant même la fin de l'analyse de la page (aucune bascule).
+    await page.addInitScript(() =>
+      document.addEventListener("DOMContentLoaded", () => {
+        (window as unknown as { __early: boolean }).__early =
+          document.documentElement.hasAttribute("data-garden");
+      }),
+    );
+    await seedJournal(page, [entry("accueil-1", 4.1, 60)]);
+    await page.goto("/");
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { __early: boolean }).__early,
+      ),
+    ).toBe(true);
+    await expect(page.locator("html")).toHaveAttribute("data-garden", "");
+
+    const back = page.getByRole("link", { name: "Retrouver mon jardin" });
+    await expect(back).toBeVisible();
+    await expect(back).toHaveAttribute("href", "/jardin");
+    const grow = page.getByRole("link", { name: "Faire pousser une plante" });
+    await expect(grow).toHaveAttribute("href", "/comparer");
+    await expect(page.getByRole("link", { name: "Commencer" })).toHaveCount(0);
+    // Le petit lien « Le retrouver » ferait doublon : parti.
+    await expect(
+      page.getByRole("link", { name: /J’ai déjà un jardin/ }),
+    ).toHaveCount(0);
+    // L'action principale vient en premier, au clavier aussi.
+    const order = await page
+      .locator("main a:visible")
+      .evaluateAll((links) => links.map((link) => link.textContent));
+    expect(order.indexOf("Retrouver mon jardin")).toBeLessThan(
+      order.indexOf("Faire pousser une plante"),
+    );
+    expect(await actions(page).boundingBox()).toEqual(before);
+    await expectNoAxeViolations(page);
+
+    // « Faire pousser une plante » mène au même endroit que le bouton jaune de /jardin.
+    await page.waitForLoadState("networkidle");
+    await page.goto("/jardin");
+    await expect(page.locator("[data-grow-plant]")).toHaveAttribute(
+      "href",
+      "/comparer",
+    );
+  });
+
+  test("en anglais, avec un jardin", async ({ page }) => {
+    await seedJournal(page, [entry("accueil-1", 4.1, 60)]);
+    await page.goto("/en");
+    await expect(
+      page.getByRole("link", { name: "Back to my garden" }),
+    ).toHaveAttribute("href", "/en/garden");
+    await expect(
+      page.getByRole("link", { name: "Grow a plant" }),
+    ).toHaveAttribute("href", "/en/compare");
+    await expect(
+      page.getByRole("link", { name: "Start comparing" }),
+    ).toHaveCount(0);
+  });
+});

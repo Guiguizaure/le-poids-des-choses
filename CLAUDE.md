@@ -602,6 +602,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     par animal, rencontré (débloqué, ou vu pour le renard) : portrait, nom, « 3 répliques
     sur 8 », « Parler » s'il est là, sinon pourquoi ; sinon silhouette « ? » ; aucun kg ;
   - e2e : `e2e/animaux.spec.ts` (et `bird.spec.ts` pour l'envol après conversation).
+- Accueil pour quelqu'un qui revient (carnet d'au moins une entrée sur l'appareil) : script
+  en ligne (`src/components/home/returning.ts`) qui pose `data-garden` sur <html> avant les
+  boutons (`suppressHydrationWarning` sur <html>) ; « Retrouver mon jardin » (/jardin) en
+  action principale, « Faire pousser une plante » (/comparer, comme le bouton jaune de
+  /jardin) en secondaire, « Comment ça marche ? » ; sans jardin : « Commencer », « Comment
+  ça marche ? », « J’ai déjà un jardin ? Le retrouver ». Les deux versions dans la même case
+  de grille (la cachée en `invisible`) : même hauteur, CLS 0 (`e2e/decalage.spec.ts`).
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile

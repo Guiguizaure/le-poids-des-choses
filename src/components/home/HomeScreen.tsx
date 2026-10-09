@@ -1,12 +1,13 @@
 import { AccountLink } from "@/components/account/AccountLink";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
-import { PrimaryLink, TextLink } from "@/components/ui/buttons";
+import { PrimaryLink, SecondaryLink, TextLink } from "@/components/ui/buttons";
 import { COMPARE_PATH } from "@/lib/compare/url";
 import { pick, type Locale } from "@/lib/i18n";
 import { HOME, NAV } from "@/lib/i18n/messages/common";
 import { LocalLink as Link } from "@/lib/i18n/LocaleProvider";
 import { HomeScene } from "./HomeScene";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
+import { RETURNING_SCRIPT } from "./returning";
 
 /** Accueil : écran 01 sur mobile, 07 sur ordinateur (navigation + héros sur deux colonnes). */
 export function HomeScreen({ locale }: { locale: Locale }) {
@@ -69,23 +70,50 @@ export function HomeScreen({ locale }: { locale: Locale }) {
           <p className="text-corps-l text-encre max-w-[480px] leading-[1.45]">
             {t.intro}
           </p>
-          <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:gap-6">
-            <PrimaryLink href={COMPARE_PATH} className="lg:w-auto">
-              {t.start}
-            </PrimaryLink>
-            <TextLink href="/methode" className="lg:text-corps-m">
-              {t.howItWorks}
-            </TextLink>
+          {/* Quelqu'un qui revient (un carnet sur l'appareil) : « Retrouver mon jardin » devient
+              l'action principale. Le script en ligne pose `data-garden` sur <html> avant le
+              premier affichage ; les deux versions occupent la même case de la grille (la
+              cachée en `invisible` : hors du clavier et des lecteurs d'écran), donc la même
+              hauteur, sans bascule visible ni décalage. Sans script : la version de départ. */}
+          <script dangerouslySetInnerHTML={{ __html: RETURNING_SCRIPT }} />
+          <div className="grid">
+            <div
+              data-home-actions="new"
+              className="col-start-1 row-start-1 flex flex-col gap-3.5 [html[data-garden]_&]:invisible"
+            >
+              <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:gap-6">
+                <PrimaryLink href={COMPARE_PATH} className="lg:w-auto">
+                  {t.start}
+                </PrimaryLink>
+                <TextLink href="/methode" className="lg:text-corps-m">
+                  {t.howItWorks}
+                </TextLink>
+              </div>
+              <Link
+                href="/connexion"
+                className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
+              >
+                {t.findGardenQuestion}{" "}
+                <span className="font-semibold underline underline-offset-2">
+                  {t.findGardenAction}
+                </span>
+              </Link>
+            </div>
+            <div
+              data-home-actions="returning"
+              className="invisible col-start-1 row-start-1 flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3.5 [html[data-garden]_&]:visible"
+            >
+              <PrimaryLink href="/jardin" className="lg:w-auto">
+                {t.backToGarden}
+              </PrimaryLink>
+              <SecondaryLink href={COMPARE_PATH} className="lg:w-auto">
+                {t.grow}
+              </SecondaryLink>
+              <TextLink href="/methode" className="lg:text-corps-m">
+                {t.howItWorks}
+              </TextLink>
+            </div>
           </div>
-          <Link
-            href="/connexion"
-            className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
-          >
-            {t.findGardenQuestion}{" "}
-            <span className="font-semibold underline underline-offset-2">
-              {t.findGardenAction}
-            </span>
-          </Link>
           <SeasonTeaser className="mt-2" />
           <p className="text-legende text-texte-attenue text-center lg:text-left">
             {t.sources}

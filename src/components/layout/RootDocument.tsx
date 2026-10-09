@@ -61,7 +61,9 @@ export function RootDocument({
   children: ReactNode;
 }) {
   return (
-    <html lang={locale} className={FONT_CLASSES}>
+    // `data-garden` : posé avant le premier affichage par le script en ligne de l'accueil
+    // (HomeScreen), donc absent du rendu serveur.
+    <html lang={locale} className={FONT_CLASSES} suppressHydrationWarning>
       <body className="bg-creme text-encre font-texte flex min-h-screen flex-col antialiased">
         <LocaleProvider locale={locale}>
           {children}

@@ -86,6 +86,8 @@ export const HOME = defineMessages(
     howItWorks: "Comment ça marche ?",
     findGardenQuestion: "J’ai déjà un jardin ?",
     findGardenAction: "Le retrouver",
+    backToGarden: "Retrouver mon jardin",
+    grow: "Faire pousser une plante",
     sources: "Données publiques de l’ADEME · Projet indépendant",
   },
   {
@@ -97,6 +99,8 @@ export const HOME = defineMessages(
     howItWorks: "How does it work?",
     findGardenQuestion: "Already have a garden?",
     findGardenAction: "Find it here",
+    backToGarden: "Back to my garden",
+    grow: "Grow a plant",
     sources: "Public data from ADEME · Independent project",
   },
 );
