@@ -169,6 +169,9 @@ for (const { width, icons } of [
     const done = browserName === "chromium" ? await measureShifts(page) : null;
     await canShareFiles(page);
     await seedJournal(page, [entry("entete-1", 4.1)]);
+    // Recharger une fois les préchargements de Next finis (réseau au repos) : WebKit rejette
+    // ceux qu'il interrompt (« due to access control checks »), et la page lève l'erreur.
+    await page.waitForLoadState("networkidle");
     await page.reload();
     const share = page.getByRole("button", { name: "Partager", exact: true });
     const exportButton = page.locator('[data-header-action="export"]');
