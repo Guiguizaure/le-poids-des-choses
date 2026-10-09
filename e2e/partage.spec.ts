@@ -226,6 +226,41 @@ test.describe("partage du jardin (mobile)", () => {
     consoleErrors.length = 0;
   });
 
+  // WebKit rend parfois `null` à toBlob (vu une fois en 20 dans l'en-tête de /jardin) : un
+  // second essai, puis toDataURL. Simulé ici : toBlob ne rend rien une fois, puis toujours.
+  for (const failures of [1, Infinity])
+    test(`toBlob qui ne rend rien ${failures === 1 ? "une fois : second essai" : "jamais : toDataURL"}, le PNG est produit`, async ({
+      page,
+    }) => {
+      await page.addInitScript(
+        (count) => {
+          const toBlob = HTMLCanvasElement.prototype.toBlob;
+          let left = count ?? Infinity;
+          HTMLCanvasElement.prototype.toBlob = function (callback, ...args) {
+            if (left-- > 0) return void setTimeout(() => callback(null));
+            return toBlob.call(this, callback, ...args);
+          };
+        },
+        Number.isFinite(failures) ? failures : null,
+      );
+      await fakeShare(page);
+      await seedJournal(page, TWELVE);
+      await page.goto("/jardin");
+      await page.getByRole("button", { name: "Partager", exact: true }).click();
+      const sheet = page.getByRole("dialog", { name: "Partager mon jardin" });
+      await expect(sheet.locator("[data-share-preview]")).toBeVisible({
+        timeout: 10_000,
+      });
+      await sheet.getByRole("button", { name: "Partager l’image" }).click();
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => (window as unknown as { __shared: unknown }).__shared,
+          ),
+        )
+        .toMatchObject({ type: "image/png", width: 1080, height: 1350 });
+    });
+
   test("axe : barre du haut et feuille de partage ouverte", async ({
     page,
   }) => {

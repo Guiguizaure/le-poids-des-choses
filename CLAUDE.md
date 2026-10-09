@@ -687,7 +687,10 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   inchangé (l'export reste en bas). PNG 1080×1350 dessiné sur un canvas : même jardin
   (`composeGardenSvg`), même ciel, polices attendues (`document.fonts`), titre réduit s'il
   déborde, domaine dérivé de `SITE_URL` (passé par la page). Aucun kg ni choix lourd sur
-  l'image. Feuille modale (`<dialog>`) : focus piégé, Échap, retour du focus ; AbortError
+  l'image. Groupes du SVG (feuillage, épanouissement) délimités en comptant les balises
+  (`replaceGroups`, `svg-groups.ts`), jamais par une expression non gourmande (groupes
+  imbriqués de la lavande). PNG : `toBlob`, second essai s'il rend `null` (WebKit), puis
+  `toDataURL`. Feuille modale (`<dialog>`) : focus piégé, Échap, retour du focus ; AbortError
   sans effet, autre erreur : message discret.
 - Compte (lot V2-2, facultatif ; le carnet local reste la source principale) :
   - routes : `POST /api/auth/link` (e-mail + Turnstile, `locale` facultative : « en » pour un

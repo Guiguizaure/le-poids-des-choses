@@ -251,17 +251,25 @@ export async function renderShareCard({
     release();
   }
 
-  return step(
-    "PNG",
-    () =>
-      new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob(
-          (blob) =>
-            blob
-              ? resolve(blob)
-              : reject(new Error("toBlob n'a rien produit.")),
-          "image/png",
-        ),
-      ),
+  return step("PNG", () => canvasPng(canvas));
+}
+
+/**
+ * PNG du canvas. Safari (WebKit) rend parfois `null` à `toBlob` sur un canvas bien dessiné
+ * (mémoire des canvas, machine chargée ; vu une fois en 20 sous WebKit) : un second essai,
+ * puis `toDataURL`, décodé sur place (un `fetch` de l'adresse data: serait refusé par la CSP).
+ */
+async function canvasPng(canvas: HTMLCanvasElement): Promise<Blob> {
+  const toBlob = () =>
+    new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+  const blob = (await toBlob()) ?? (await toBlob());
+  if (blob) return blob;
+  const prefix = "data:image/png;base64,";
+  const url = canvas.toDataURL("image/png");
+  if (!url.startsWith(prefix))
+    throw new Error("toBlob et toDataURL n'ont rien produit.");
+  const bytes = Uint8Array.from(atob(url.slice(prefix.length)), (char) =>
+    char.charCodeAt(0),
   );
+  return new Blob([bytes], { type: "image/png" });
 }
