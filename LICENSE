@@ -12,8 +12,9 @@ Ce dépôt contient deux sortes de contenus, sous deux régimes différents.
    Ne sont PAS couverts par la licence MIT et restent la propriété exclusive de leur auteur,
    tous droits réservés :
    - les illustrations : public/illustrations/ (et leur conversion,
-     src/components/illustrations/generated.tsx) et les portraits des animaux :
-     public/portraits/ ;
+     src/components/illustrations/generated.tsx) et les 21 portraits des animaux
+     (papillon, coccinelle, oiseau, escargot, renard, écureuil, abeille ; trois expressions
+     chacun) : public/portraits/ ;
    - le logo « Horizon-balance », l'icône et les images dérivées : assets/logo/,
      public/icons/, public/partage-1200x630.png, public/favicon.ico ;
    - l'identité visuelle du site : nom « Le poids des choses », direction artistique,

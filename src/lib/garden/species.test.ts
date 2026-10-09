@@ -12,8 +12,10 @@ import {
   skyColors,
   skyStyle,
 } from "./skies";
+import type { AutumnFoliage } from "./foliage";
 import {
   foliageFor,
+  isDormant,
   plantLook,
   SPECIES,
   speciesFor,
@@ -41,7 +43,9 @@ describe("table des espèces", () => {
       const adult =
         `${species.id}-${species.stages.at(-1)}` as IllustrationName;
       const parts = ILLUSTRATION_SPECS[adult].parts as readonly string[];
-      for (const layer of species.foliageLayers) expect(parts).toContain(layer);
+      expect(parts).toContain(
+        species.kind.type === "tree" ? "feuillage" : species.foliageLayers[0],
+      );
       const bloom = ILLUSTRATION_SPECS[species.bloom.illustration];
       expect(bloom.parts).toEqual(species.bloom.groups);
       // Même cadre et même pied que la plante adulte.
@@ -55,14 +59,17 @@ describe("table des espèces", () => {
     },
   );
   it.each(SPECIES)(
-    "$id : couleurs de feuillage de la palette seulement",
+    "$id : calques du feuillage présents dans au moins un stade",
     (species) => {
-      for (const season of SEASONS) {
-        const paint = species.foliage[season];
-        if (!paint) continue;
-        expect(COLORS).toContain(paint.fill);
-        if (paint.stroke) expect(COLORS).toContain(paint.stroke);
-      }
+      for (const layer of species.foliageLayers)
+        expect(
+          species.stages.some((stage) =>
+            (
+              ILLUSTRATION_SPECS[`${species.id}-${stage}` as IllustrationName]
+                .parts as readonly string[]
+            ).includes(layer),
+          ),
+        ).toBe(true);
     },
   );
   it("caducs : arbres 1, 3 et 6 (figuier) ; persistants : arbres 2, 4 (olivier), 5 (sapin) et les fleurs", () => {
@@ -82,18 +89,71 @@ describe("table des espèces", () => {
       "fleur-6",
     ]);
   });
-  it("feuillage : dessin au printemps et en été, tomate en automne, neige en hiver (caducs)", () => {
-    const kind = { type: "tree", variant: 1 } as const;
-    expect(foliageFor(kind, "printemps")).toBeNull();
-    expect(foliageFor(kind, "ete")).toBeNull();
-    expect(foliageFor(kind, "automne")).toEqual({ fill: PALETTE.tomate });
-    expect(foliageFor(kind, "hiver")).toEqual({
-      fill: PALETTE.blanc,
-      stroke: PALETTE.encre,
-      strokeWidth: 2.4,
-    });
-    expect(foliageFor({ type: "tree", variant: 2 }, "hiver")).toBeNull();
-    expect(foliageFor(kind, null)).toBeNull();
+  it("feuillage des caducs : dessin au printemps et en été, dégradé de la planche en automne, endormi l'hiver", () => {
+    const planche = {
+      1: ["#F2B73A", "#9A5B2B"],
+      3: ["#FF4F2E", "#9E1F3D"],
+      6: ["#FFD84A", "#D99A1E"],
+    } as const;
+    for (const variant of [1, 3, 6] as const) {
+      const kind = { type: "tree", variant } as const;
+      expect(foliageFor(kind, "printemps")).toBeNull();
+      expect(foliageFor(kind, "ete")).toBeNull();
+      const autumn = foliageFor(kind, "automne");
+      expect(autumn?.mode).toBe("autumn");
+      if (autumn?.mode !== "autumn") continue;
+      expect([autumn.top, autumn.bottom]).toEqual(planche[variant]);
+      for (const [start, end] of Object.values(autumn.y)) {
+        expect(start).toBeLessThan(end);
+        expect(start).toBeGreaterThanOrEqual(0);
+        expect(end).toBeLessThanOrEqual(160);
+      }
+      expect(foliageFor(kind, "hiver")?.mode).toBe("asleep");
+      expect(isDormant(kind, "hiver")).toBe(true);
+      expect(isDormant(kind, "automne")).toBe(false);
+      expect(foliageFor(kind, null)).toBeNull();
+    }
+    // Hauteurs de la planche pour l'adulte (figuier : dessin réduit à 0,85 autour du pied).
+    expect(
+      (foliageFor({ type: "tree", variant: 1 }, "automne") as AutumnFoliage).y
+        .grand,
+    ).toEqual([10, 98]);
+    expect(
+      (foliageFor({ type: "tree", variant: 3 }, "automne") as AutumnFoliage).y
+        .grand,
+    ).toEqual([16, 104]);
+    const fig = foliageFor(
+      { type: "tree", variant: 6 },
+      "automne",
+    ) as AutumnFoliage;
+    expect(fig.y.grand[0]).toBeCloseTo(23.4 + 0.85 * 50, 5);
+    expect(fig.y.grand[1]).toBeCloseTo(23.4 + 0.85 * 112, 5);
+  });
+  it("citronnier, olivier, sapin et toutes les fleurs : jamais de changement de feuillage", () => {
+    for (const species of SPECIES.filter((s) => s.leaves === "persistant"))
+      for (const season of SEASONS) {
+        expect(species.foliage[season], `${species.id} ${season}`).toBeNull();
+        expect(isDormant(species.kind, season)).toBe(false);
+      }
+  });
+  it("hiver : branches nues de la planche pour le pommier et le cerisier adultes, bourgeons verts partout", () => {
+    for (const variant of [1, 3, 6] as const) {
+      const winter = foliageFor({ type: "tree", variant }, "hiver");
+      if (winter?.mode !== "asleep") throw new Error("endormi attendu");
+      for (const stage of ["pousse", "jeune", "grand"] as const)
+        expect(winter.bare[stage].buds.length).toBeGreaterThan(0);
+    }
+    const apple = foliageFor({ type: "tree", variant: 1 }, "hiver");
+    if (apple?.mode !== "asleep") throw new Error("endormi attendu");
+    expect(apple.bare.grand.branches[0].d).toBe(
+      "M60 104 L 26 60 M60 94 L 96 50 M60 84 L 60 16",
+    );
+    expect(apple.bare.grand.buds).toHaveLength(9);
+    // Le figuier adulte a déjà ses branches : seulement les bourgeons, au bout.
+    const fig = foliageFor({ type: "tree", variant: 6 }, "hiver");
+    if (fig?.mode !== "asleep") throw new Error("endormi attendu");
+    expect(fig.bare.grand.branches).toEqual([]);
+    expect(fig.bare.grand.transform).toBe("translate(9 23.4) scale(0.85)");
   });
   it("l'épanouissement des caducs dort l'hiver et revient au printemps ; niveau gardé", () => {
     const deciduous = { type: "tree", variant: 3 } as const;
@@ -105,7 +165,8 @@ describe("table des espèces", () => {
     expect(visibleBloom({ type: "flower", variant: 1 }, 3, "hiver")).toBe(3);
     const look = plantLook({ kind: deciduous, bloom: 3 }, "hiver");
     expect(look.bloom.level).toBe(0);
-    expect(look.paint?.layers).toEqual(["feuillage"]);
+    expect(look.paint?.layers).toEqual(["feuilles", "feuillage"]);
+    expect(look.paint?.mode).toBe("asleep");
   });
   it("espèce inconnue : erreur claire", () => {
     expect(() => speciesFor({ type: "tree", variant: 9 as 1 })).toThrow(

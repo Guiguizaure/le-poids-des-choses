@@ -44,15 +44,22 @@ import {
 import { SCENE } from "@/lib/garden/scene";
 import { seasonAt, type Season } from "@/lib/garden/seasons";
 import { DEFAULT_SKY, skyStyle, type SkyId } from "@/lib/garden/skies";
-import { plantLook } from "@/lib/garden/species";
+import { isDormant, plantLook } from "@/lib/garden/species";
+import { drawnBox } from "@/lib/garden/visitors";
 import {
   arrivalMessage,
   gardenDescription,
   wateringMessage,
 } from "@/lib/garden/text";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { ANIMAL_SCRIPTS, type TalkerId } from "@/content/animaux";
+import {
+  ANIMAL_SCRIPTS,
+  TALKING_VISITORS,
+  type TalkerId,
+} from "@/content/animaux";
 import { ANIMAL_TALK } from "@/lib/i18n/messages/animals";
+import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
+import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
 import { FlightPath, useAutoFlights } from "./BirdFlight";
 import { TalkTargets, type TalkTarget } from "./talk/TalkTargets";
 
@@ -80,15 +87,21 @@ type GardenProps = {
   onTalk?: (talker: TalkerId, opener: HTMLElement) => void;
   /** Animal en conversation : pas d'envol spontané pendant ce temps. */
   talking?: TalkerId | null;
+  /**
+   * Toucher un arbre endormi (caduc, l'hiver) dit qu'il dort jusqu'au printemps (zones de
+   * toucher sur la scène). Sans elle, pas de zone (labo, partage, vitrine).
+   */
+  touchableTrees?: boolean;
   className?: string;
 };
 
-/** Animaux débloqués qui parlent (le renard, visiteur, à part). */
+/** Animaux débloqués qui parlent (le renard et l'écureuil, visiteurs, à part). */
 const TALKING_ANIMALS: readonly string[] = [
   "butterfly",
   "ladybug",
   "bird",
   "snail",
+  "bee",
 ];
 
 /** Position d'un cadre de la scène (unités 390×300) en pourcentages. */
@@ -320,6 +333,7 @@ export function Garden({
   night: forcedNight,
   onTalk,
   talking = null,
+  touchableTrees = false,
   className = "",
 }: GardenProps) {
   const locale = useLocale();
@@ -415,13 +429,15 @@ export function Garden({
             selector: `[data-animal="${animal.kind}"]`,
             asleep: animal.asleep,
           })),
-        ...live.visitors
-          .filter((visitor) => visitor.kind === "renard")
-          .map((visitor) => ({
-            talker: "fox" as const,
-            selector: '[data-visitor="renard"]',
-            asleep: visitor.asleep,
-          })),
+        ...Object.entries(TALKING_VISITORS).flatMap(([talker, kind]) =>
+          live.visitors
+            .filter((visitor) => visitor.kind === kind)
+            .map((visitor) => ({
+              talker: talker as TalkerId,
+              selector: `[data-visitor="${kind}"]`,
+              asleep: visitor.asleep,
+            })),
+        ),
       ].map((target) => {
         const talk = ANIMAL_SCRIPTS[target.talker].talk[locale];
         return {
@@ -430,6 +446,21 @@ export function Garden({
         };
       })
     : [];
+
+  // Arbres endormis (caducs, l'hiver) : les toucher dit qu'ils dorment jusqu'au printemps.
+  const sheets = SPECIES_SHEETS[locale];
+  const seasonsText = SEASONS_UI[locale];
+  const sleepingTrees = touchableTrees
+    ? garden.plants.filter(
+        (plant) => plant.kind.type === "tree" && isDormant(plant.kind, season),
+      )
+    : [];
+  const [note, setNote] = useState<{ text: string; key: number } | null>(null);
+  useEffect(() => {
+    if (!note) return;
+    const timer = window.setTimeout(() => setNote(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [note]);
 
   const gusty = !watered || watered.moved.length > 0;
   useEffect(() => {
@@ -590,6 +621,16 @@ export function Garden({
         >
           <Illustration name="brume" className="block h-auto w-full" />
         </div>
+        {note ? (
+          <p
+            key={note.key}
+            aria-hidden
+            data-tree-note
+            className="bg-encre text-creme text-corps-s animate-pop absolute top-3 left-1/2 w-max max-w-[90%] -translate-x-1/2 rounded-full px-4 py-2 text-center font-semibold motion-reduce:animate-none"
+          >
+            {note.text}
+          </p>
+        ) : null}
         <p
           ref={messageRef}
           aria-hidden
@@ -599,6 +640,43 @@ export function Garden({
           {message}
         </p>
       </div>
+      {sleepingTrees.length > 0 ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 aspect-[390/300]">
+          {sleepingTrees.map((plant, index) => {
+            const id = `arbre-${plant.kind.variant}`;
+            const box = drawnBox(plant);
+            // Un seul arrêt du clavier par espèce : les autres arbres de la même espèce
+            // disent la même chose (toujours touchables).
+            const first =
+              sleepingTrees.findIndex(
+                (other) => other.kind.variant === plant.kind.variant,
+              ) === index;
+            return (
+              <button
+                key={plant.id}
+                type="button"
+                data-sleeping-tree={plant.id}
+                aria-label={seasonsText.asleepTree(sheets[id].name)}
+                tabIndex={first ? undefined : -1}
+                aria-hidden={first ? undefined : true}
+                onClick={() =>
+                  setNote({
+                    text: seasonsText.asleepUntilSpring(sheets[id].inSentence),
+                    key: Date.now(),
+                  })
+                }
+                className="focus-visible:outline-outremer pointer-events-auto absolute min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{
+                  left: `${((box.x + box.width / 2) / SCENE.width) * 100}%`,
+                  top: `${((box.y + box.height / 2) / SCENE.height) * 100}%`,
+                  width: `${(box.width / SCENE.width) * 100}%`,
+                  height: `${(box.height / SCENE.height) * 100}%`,
+                }}
+              />
+            );
+          })}
+        </div>
+      ) : null}
       {onTalk && talkTargets.length > 0 ? (
         <TalkTargets
           sceneRef={sceneRef}
@@ -608,7 +686,7 @@ export function Garden({
       ) : null}
       {/* Annonce pour les lecteurs d'écran (toujours présente) ; la bulle visible est décorative. */}
       <p role="status" aria-live="polite" className="sr-only">
-        {message}
+        {note?.text ?? message}
       </p>
     </div>
   );

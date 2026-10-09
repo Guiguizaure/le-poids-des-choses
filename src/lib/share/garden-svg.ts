@@ -13,6 +13,7 @@ import { liveScene, type LiveScene } from "@/lib/garden/live";
 import { SCENE } from "@/lib/garden/scene";
 import type { Season } from "@/lib/garden/seasons";
 import { skyColors, type SkyId } from "@/lib/garden/skies";
+import { bareBranchesSvg, gradientTransformFor } from "@/lib/garden/foliage";
 import { plantLook, type PlantLook } from "@/lib/garden/species";
 import { getSpec, type IllustrationName } from "@/lib/illustrations/specs";
 
@@ -70,31 +71,60 @@ export function gardenIllustrations(
   ];
 }
 
-/** Couleur de saison du feuillage : remplissage (et trait) des formes des calques donnés. */
-function paintFoliage(svg: string, paint: PlantLook["paint"]): string {
+/** Préfixe des id des dégradés d'automne (seuls id gardés dans l'image, voir `placed`). */
+const GRADIENT_ID = "saison-";
+
+/**
+ * Feuillage de saison des formes des calques donnés : dégradé d'automne (un par forme, dans le
+ * repère de l'arbre, ids uniques dans l'image grâce à `prefix`), ou arbre endormi l'hiver
+ * (feuillage caché, branches nues et bourgeons par-dessus). Même rendu que StagedPlant.
+ */
+export function paintFoliage(
+  svg: string,
+  paint: PlantLook["paint"],
+  stage: string,
+  prefix: string,
+): string {
   if (!paint) return svg;
-  return paint.layers.reduce(
-    (acc, layer) =>
-      acc.replace(
-        new RegExp(`(<g id="${layer}"[^>]*>)([\\s\\S]*?)(</g>)`, "g"),
+  const layer = new RegExp(
+    `(<g id="(?:${paint.layers.join("|")})"[^>]*)>([\\s\\S]*?)(</g>)`,
+    "g",
+  );
+  if (paint.mode === "asleep") {
+    const bare = paint.bare[stage as keyof typeof paint.bare];
+    if (!bare) return svg;
+    return svg
+      .replace(
+        layer,
         (_, open: string, body: string, close: string) =>
-          open +
-          body.replace(
-            /<(circle|ellipse|rect|path)\b([^>]*?)\s*(\/?)>/g,
-            (__, tag: string, attributes: string, selfClosing: string) => {
-              const kept = attributes.replace(
-                /\s(fill|stroke|stroke-width)="[^"]*"/g,
-                "",
-              );
-              const stroke = paint.stroke
-                ? ` stroke="${paint.stroke}" stroke-width="${paint.strokeWidth ?? 1}"`
-                : "";
-              return `<${tag}${kept} fill="${paint.fill}"${stroke}${selfClosing ? " /" : ""}>`;
-            },
-          ) +
-          close,
-      ),
-    svg,
+          `${open} visibility="hidden">${body}${close}`,
+      )
+      .replace(/<\/svg>\s*$/, `${bareBranchesSvg(bare)}</svg>`);
+  }
+  const range = paint.y[stage as keyof typeof paint.y];
+  if (!range) return svg;
+  const gradients: string[] = [];
+  const painted = svg.replace(
+    layer,
+    (_, open: string, body: string, close: string) =>
+      `${open}>${body.replace(
+        /<(circle|ellipse|rect|path)\b([^>]*?)\s*(\/?)>/g,
+        (__, tag: string, attributes: string, selfClosing: string) => {
+          const id = `${GRADIENT_ID}${prefix}-${gradients.length}`;
+          const inverse = gradientTransformFor(
+            attributes.match(/\stransform="([^"]+)"/)?.[1],
+          );
+          gradients.push(
+            `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="60" y1="${range[0]}" x2="60" y2="${range[1]}"${inverse ? ` gradientTransform="${inverse}"` : ""}><stop offset="0" stop-color="${paint.top}"/><stop offset="1" stop-color="${paint.bottom}"/></linearGradient>`,
+          );
+          const kept = attributes.replace(/\sfill="[^"]*"/g, "");
+          return `<${tag}${kept} fill="url(#${id})"${selfClosing ? " /" : ""}>`;
+        },
+      )}${close}`,
+  );
+  return painted.replace(
+    /(<svg\b[^>]*>)/,
+    `$1<defs>${gradients.join("")}</defs>`,
   );
 }
 
@@ -174,8 +204,9 @@ function placed(
   const height = (spec.height * box.width) / spec.width;
   const localPerScene = spec.width / box.width;
   const body = fixedStrokes(transform(source), localPerScene)
-    // Les id (calques) ne servent plus : on les retire pour éviter les doublons.
-    .replace(/\s+id="[^"]*"/g, "");
+    // Les id des calques ne servent plus : on les retire pour éviter les doublons (seuls
+    // restent ceux des dégradés d'automne, uniques dans l'image).
+    .replace(new RegExp(`\\s+id="(?!${GRADIENT_ID})[^"]*"`, "g"), "");
   return `<svg x="${round(box.x)}" y="${round(box.y)}" width="${round(box.width)}" height="${round(height)}" viewBox="0 0 ${spec.width} ${spec.height}" overflow="visible">${inner(body)}</svg>`;
 }
 
@@ -219,13 +250,13 @@ export function composeGardenSvg(
       .map((visitor) => placed(visitor.illustration, visitor.box, sources));
   const snow =
     season === "hiver" ? [placed("saison-hiver-neige", full, sources)] : [];
-  const plants = garden.plants.flatMap((plant) => {
+  const plants = garden.plants.flatMap((plant, index) => {
     const look = plantLook(plant, season);
     const drawn = placed(
       illustrationFor(plant.kind, plant.level),
       plant.box,
       sources,
-      (svg) => paintFoliage(svg, look.paint),
+      (svg) => paintFoliage(svg, look.paint, plant.stage, String(index)),
     );
     if (look.bloom.level === 0) return [drawn];
     return [

@@ -7,8 +7,8 @@ const listeners = new Set<() => void>();
 /** Repli quand le stockage est indisponible (navigation privée) : la liste vit en mémoire. */
 let memory: string | null = null;
 let cached: { raw: string | null; value: HintId[] } = { raw: null, value: [] };
-/** Au rendu serveur, aucun indice : il n'apparaît qu'une fois la page hydratée (annoncé). */
-const ALL_SEEN: HintId[] = ["jardin-vide", "premiere-plante", "premier-arrosage"];
+/** Au rendu serveur, aucun indice (tous « vus ») : il n'apparaît qu'une fois la page hydratée (annoncé). */
+const ALL_SEEN = null;
 
 function read(): HintId[] {
   let raw = memory;
@@ -45,6 +45,10 @@ export function markHintSeen(id: HintId) {
 
 /** Vrai si l'indice `id` doit s'afficher (`active` : la situation qu'il décrit est là). */
 export function useHint(id: HintId, active: boolean): boolean {
-  const seen = useSyncExternalStore(subscribe, read, () => ALL_SEEN);
-  return active && !seen.includes(id);
+  const seen = useSyncExternalStore<HintId[] | null>(
+    subscribe,
+    read,
+    () => ALL_SEEN,
+  );
+  return active && seen !== null && !seen.includes(id);
 }

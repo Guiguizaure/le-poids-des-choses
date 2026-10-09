@@ -3,15 +3,32 @@
 // Une réplique est une séquence de 1 à 3 étapes, chacune avec l'expression du portrait.
 import type { Season } from "@/lib/garden/seasons";
 
-/** Animaux qui parlent (lot « Les animaux parlent ») : quatre débloqués et le renard. */
+/**
+ * Animaux qui parlent : cinq débloqués (papillon, coccinelle, oiseau, escargot, abeille) et
+ * deux visiteurs (le renard, l'écureuil d'automne). Ordre de la liste « Les habitants du
+ * jardin ».
+ */
 export const TALKERS = [
   "butterfly",
   "ladybug",
   "bird",
   "snail",
+  "bee",
   "fox",
+  "squirrel",
 ] as const;
 export type TalkerId = (typeof TALKERS)[number];
+
+/** Visiteurs qui parlent (non débloqués) : leur sorte dans src/lib/garden/visitors.ts. */
+export const TALKING_VISITORS = {
+  fox: "renard",
+  squirrel: "ecureuil",
+} as const satisfies Partial<Record<TalkerId, string>>;
+export type TalkingVisitor = keyof typeof TALKING_VISITORS;
+
+export function isTalkingVisitor(talker: TalkerId): talker is TalkingVisitor {
+  return talker in TALKING_VISITORS;
+}
 
 export type Bilingual = { fr: string; en: string };
 

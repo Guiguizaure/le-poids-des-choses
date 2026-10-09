@@ -43,7 +43,9 @@ export function emptyFriends(): FriendsState {
     ladybug: record(),
     bird: record(),
     snail: record(),
+    bee: record(),
     fox: record(),
+    squirrel: record(),
   };
 }
 

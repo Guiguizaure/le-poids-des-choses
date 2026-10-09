@@ -5,6 +5,11 @@
 // est appliqué à ses points ; une ellipse garde l'approximation du plus grand rayon autour de
 // son centre transformé. Le trait est compté à part (`stroke`, plus grande demi-épaisseur) :
 // dans la vitrine il garde son épaisseur au lieu de grossir avec la plante.
+import {
+  applyMatrix,
+  IDENTITY,
+  transformMatrix,
+} from "../src/lib/geometry/matrix";
 import { pathToPoints } from "./scene-geometry";
 
 export type Bounds = {
@@ -21,59 +26,9 @@ const number = (tag: string, name: string) => {
   return value === undefined ? 0 : Number(value);
 };
 
-/** Matrice affine [a, b, c, d, e, f] : x' = a·x + c·y + e, y' = b·x + d·y + f. */
-type Matrix = readonly [number, number, number, number, number, number];
-const IDENTITY: Matrix = [1, 0, 0, 1, 0, 0];
+export { transformMatrix };
 
-function multiply(m: Matrix, n: Matrix): Matrix {
-  return [
-    m[0] * n[0] + m[2] * n[1],
-    m[1] * n[0] + m[3] * n[1],
-    m[0] * n[2] + m[2] * n[3],
-    m[1] * n[2] + m[3] * n[3],
-    m[0] * n[4] + m[2] * n[5] + m[4],
-    m[1] * n[4] + m[3] * n[5] + m[5],
-  ];
-}
-
-/** Attribut `transform` d'une forme : translate, rotate (avec ou sans centre) et scale. */
-export function transformMatrix(tag: string): Matrix {
-  const attribute = tag.match(/\stransform="([^"]+)"/)?.[1];
-  if (!attribute) return IDENTITY;
-  let matrix = IDENTITY;
-  for (const [, name, args] of attribute.matchAll(/(\w+)\s*\(([^)]*)\)/g)) {
-    const [p = 0, q, r] = args
-      .trim()
-      .split(/[\s,]+/)
-      .map(Number);
-    let step: Matrix;
-    if (name === "translate") step = [1, 0, 0, 1, p, q ?? 0];
-    else if (name === "scale") step = [p, 0, 0, q ?? p, 0, 0];
-    else if (name === "rotate") {
-      const angle = (p * Math.PI) / 180;
-      const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
-      const rotation: Matrix = [cos, sin, -sin, cos, 0, 0];
-      step =
-        q === undefined
-          ? rotation
-          : multiply(multiply([1, 0, 0, 1, q, r ?? 0], rotation), [
-              1,
-              0,
-              0,
-              1,
-              -q,
-              -(r ?? 0),
-            ]);
-    } else throw new Error(`Transformation non prise en charge : ${name}`);
-    matrix = multiply(matrix, step);
-  }
-  return matrix;
-}
-
-const apply = (m: Matrix, x: number, y: number): [number, number] => [
-  m[0] * x + m[2] * y + m[4],
-  m[1] * x + m[3] * y + m[5],
-];
+const apply = applyMatrix;
 
 export function contentBounds(svg: string): Bounds {
   let [minX, minY, maxX, maxY] = [Infinity, Infinity, -Infinity, -Infinity];

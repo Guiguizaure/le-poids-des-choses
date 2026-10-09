@@ -381,12 +381,15 @@ test("« Les habitants du jardin » : liste accessible, « ? » pour les inconnu
 }) => {
   await openGarden(page, 3, DAY);
   const list = page.getByRole("region", { name: "Les habitants du jardin" });
-  await expect(list.getByRole("listitem")).toHaveCount(5);
-  // Oiseau et escargot pas encore rencontrés (5 et 8 choix légers).
-  await expect(list.locator("[data-unmet]")).toHaveCount(2);
-  await expect(list.getByText("Habitant pas encore rencontré")).toHaveCount(2);
-  // Le renard est passé (il dort le jour) : rencontré.
+  await expect(list.getByRole("listitem")).toHaveCount(7);
+  // Oiseau, escargot et abeille pas encore rencontrés (5, 8 et 12 choix légers).
+  await expect(list.locator("[data-unmet]")).toHaveCount(3);
+  await expect(list.getByText("Habitant pas encore rencontré")).toHaveCount(3);
+  // Le renard (il dort le jour) et l'écureuil (automne) sont passés : rencontrés.
   await expect(list.locator('[data-talk-row="fox"]')).toContainText("Renard");
+  await expect(list.locator('[data-talk-row="squirrel"]')).toContainText(
+    "Écureuil",
+  );
   await expect(list).not.toContainText("kg");
 
   const talk = list.getByRole("button", { name: "Parler au papillon" });
@@ -399,6 +402,94 @@ test("« Les habitants du jardin » : liste accessible, « ? » pour les inconnu
     list.locator('[data-talk-row="butterfly"] [data-progress]'),
   ).toHaveText("1 réplique sur 6");
   await expectNoAxeViolations(page);
+});
+
+test("l'abeille et l'écureuil (visiteur d'automne) parlent aussi : zones, présentation, liste", async ({
+  page,
+}) => {
+  // Douze choix légers : l'abeille est arrivée ; en automne, de jour, l'écureuil passe.
+  await openGarden(page, 12, DAY);
+  const bee = zone(page, "bee", "Parler à l’abeille");
+  const squirrel = zone(page, "squirrel", "Parler à l’écureuil");
+  for (const target of [bee, squirrel]) {
+    const box = (await target.boundingBox())!;
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+  // L'abeille vole sans arrêt : sa zone la suit (posée sur son dessin), mais un clic de
+  // Playwright attend un élément immobile (jamais le cas sous WebKit en CI). On lui parle
+  // depuis sa ligne de « Les habitants du jardin », le même bouton pour l'accessibilité.
+  const beeBox = (await bee.boundingBox())!;
+  const beeDrawn = (await page
+    .locator('[data-animal="bee"] svg')
+    .first()
+    .boundingBox())!;
+  expect(
+    Math.abs(beeBox.x + beeBox.width / 2 - (beeDrawn.x + beeDrawn.width / 2)),
+  ).toBeLessThan(40);
+  const list = page.getByRole("region", { name: "Les habitants du jardin" });
+  const beeRow = list.getByRole("button", { name: "Parler à l’abeille" });
+  await beeRow.click();
+  const beeTalk = page.getByRole("dialog", { name: "Abeille" });
+  await expect(beeTalk).toHaveAccessibleDescription(
+    "Bonjour ! Je n'ai qu'une minute, des fleurs m'attendent.",
+  );
+  await expect(beeTalk.locator("[data-portrait]")).toHaveAttribute(
+    "data-portrait",
+    "bee",
+  );
+  await page.keyboard.press("Escape");
+  await expect(beeRow).toBeFocused();
+
+  // L'écureuil se présente d'abord, même si sa réplique d'automne est possible.
+  await squirrel.click();
+  const squirrelTalk = page.getByRole("dialog", { name: "Écureuil" });
+  await expect(squirrelTalk).toHaveAccessibleDescription(
+    "Oh ! Tu m'as fait peur. Enfin non. Si. Un peu.",
+  );
+  await expect(squirrelTalk.locator("[data-portrait]")).toHaveAttribute(
+    "data-expr",
+    "surpris",
+  );
+  await expectNoAxeViolations(page);
+  await page.keyboard.press("Escape");
+
+  for (const talker of ["bee", "squirrel"])
+    await expect(
+      list.locator(`[data-talk-row="${talker}"] [data-progress]`),
+    ).toHaveText("1 réplique sur 6");
+  await expect(
+    list.getByRole("button", { name: "Parler à l’écureuil" }),
+  ).toBeVisible();
+});
+
+test("en hiver : l'abeille et l'écureuil ne sont pas là, la liste dit pourquoi", async ({
+  page,
+}) => {
+  const winter = "2027-01-15T13:00:00+01:00";
+  await page.clock.install({ time: new Date(winter) });
+  await seedJournal(page, lightChoices(12, "2027-01-15T09:00:00+01:00"));
+  // L'écureuil a été rencontré l'automne dernier.
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "lpdc:amis:v1",
+      JSON.stringify({
+        version: 1,
+        animals: {
+          squirrel: { seen: ["ecu-1"], day: "2026-10-08", talks: 1, met: true },
+        },
+      }),
+    ),
+  );
+  await page.goto("/jardin");
+  await expect(page.locator("[data-talk]").first()).toBeAttached();
+  await expect(page.locator('[data-talk="bee"]')).toHaveCount(0);
+  await expect(page.locator('[data-talk="squirrel"]')).toHaveCount(0);
+  const list = page.getByRole("region", { name: "Les habitants du jardin" });
+  for (const talker of ["bee", "squirrel"])
+    await expect(
+      list.locator(`[data-talk-row="${talker}"] [data-progress]`),
+    ).toContainText("Pas là en cette saison");
 });
 
 test("en anglais : “Talk to the bird”, étiquette, réplique et liste", async ({
@@ -416,7 +507,8 @@ test("en anglais : “Talk to the bird”, étiquette, réplique et liste", asyn
   await expect(
     list.locator('[data-talk-row="bird"] [data-progress]'),
   ).toHaveText("1 of 6 lines");
-  await expect(list.getByText("Resident not met yet")).toHaveCount(1);
+  // Escargot et abeille (8 et 12 choix légers).
+  await expect(list.getByText("Resident not met yet")).toHaveCount(2);
   await expectNoAxeViolations(page);
 });
 

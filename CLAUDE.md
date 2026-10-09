@@ -444,7 +444,14 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     anecdote non confirmée n'entre pas). Les jardins existants ne changent pas (test
     d'empreinte figée) ;
   - saisons (`seasons.ts`, hémisphère nord, mois à Paris ; aucune au rendu serveur) :
-    feuillage des caducs (tomate en automne, blanc cerné d'encre en hiver), ciel « Jour » de
+    caducs (pommier, cerisier, figuier ; `foliage.ts`, planche « Saisons · feuillage ») :
+    dégradé vertical d'automne par espèce à tous les stades (dégradé créé par le code, un par
+    forme, inverse de sa transformation : aucun `id` dans les SVG publiés), endormis l'hiver
+    (feuillage caché, branches nues et bourgeons verts, `<Bare>` ; `isDormant`) ; toucher un
+    arbre endormi sur /jardin (`touchableTrees`, une zone de 44 px au moins, un arrêt du
+    clavier par espèce) : « Le pommier dort jusqu’au printemps. » ; persistants et fleurs
+    inchangés ; fiche d'un arbre : bloc « Au fil des saisons » (`SeasonsStrip`, mini-arbres
+    décoratifs, phrase) ; sources : `docs/especes-sources.md` ; ciel « Jour » de
     saison (`SEASONAL_DAY_SKY` ; un ciel débloqué choisi ne change pas), neige sous les
     plantes, flocons qui glissent, pétales / feuilles qui tombent (`src/lib/geometry/fall.ts`,
     pause onglet caché ou hors écran ; rien ne tombe en mouvement réduit ni jardin
@@ -544,12 +551,15 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   habitudes à la fin ; « N jours arrosés cette semaine » sous le graphique.
 - Astuces de première utilisation (`FirstHint`, `src/lib/hints`) : une seule par situation,
   la première fois : jardin vide (/jardin, sous « Faire pousser une plante »), première
-  plante (feuille des espèces, grille), premier arrosage (sous les icônes d'habitudes). Fond
+  plante et saisons des espèces (feuille des espèces, grille), premier arrosage (sous les
+  icônes d'habitudes) ; plus une astuce par saison sur /jardin (`saison-automne-2026` :
+  année de la saison), construite avec les arbres du jardin, seulement s'il a un caduc. Fond
   soleil, « Astuce · … », croix « Fermer l’astuce » ; vue = fermée ou action faite (plante
   plantée, feuille fermée, premier arrosage) ; mémorisée sous `lpdc:indices:v1`
   (`{ version: 1, seen }`, repli en mémoire) ; région `polite` remplie après l'hydratation,
   jamais de focus pris.
-- « Les animaux parlent » (papillon, coccinelle, oiseau, escargot, renard) :
+- « Les animaux parlent » (papillon, coccinelle, oiseau, escargot, abeille ; visiteurs : renard,
+  écureuil, `TALKING_VISITORS`) :
   - contenu typé FR/EN dans `src/content/animaux/` (un fichier par animal : `name`, `talk`,
     répliques `{ id, chapter, kind, sourceId?, condition?, steps }`, `sleep`, `again`) ; une
     réplique (comme chaque réplique de sommeil ou « déjà parlé ») est une séquence de 1 à 3
@@ -564,8 +574,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     `kind: "fait"` exige un `sourceId` de `docs/animaux-sources.md` (colonne Id entre
     accents graves ET citation de la source sur la ligne) ; garde-fou du build toujours
     bloquant (`src/content/animaux/check.ts` : ids uniques et stables, chapitres dans l'ordre,
-    saison et espèce connues, 2 ou 3 « déjà parlé ») ; contenu réel reçu le 8 octobre 2026,
-    textes mot pour mot ;
+    saison et espèce connues, 2 ou 3 « déjà parlé ») ; contenu réel reçu le 8 octobre 2026
+    (écureuil et abeille le 9), textes mot pour mot ; abeille et écureuil jamais dessinés
+    endormis : leurs répliques de sommeil restent dans le contenu sans être affichées ;
   - toucher un animal (zones `TalkTargets` d'au moins 44 px, hors de la scène `role="img"`,
     recentrées à chaque image sur le dessin : elles suivent la marche, le vol, le vent) ouvre
     `AnimalTalk` : `<dialog>` en bas d'écran, portrait décoratif à gauche
@@ -590,9 +601,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     = répliques sans condition seulement (les conditionnelles sont des bonus, N sur N sans
     elles, testé) ;
   - « Les habitants du jardin » (`GardenFriends`, /jardin sous « Mes habitudes ») : une ligne
-    par animal, rencontré (débloqué, ou vu pour le renard) : portrait, nom, « 3 répliques
+    par animal, rencontré (débloqué, ou vu pour le renard et l'écureuil) : portrait, nom, « 3 répliques
     sur 8 », « Parler » s'il est là, sinon pourquoi ; sinon silhouette « ? » ; aucun kg ;
   - e2e : `e2e/animaux.spec.ts` (et `bird.spec.ts` pour l'envol après conversation).
+- Accueil pour quelqu'un qui revient (carnet d'au moins une entrée sur l'appareil) : script
+  en ligne (`src/components/home/returning.ts`) qui pose `data-garden` sur <html> avant les
+  boutons (`suppressHydrationWarning` sur <html>) ; « Retrouver mon jardin » (/jardin) en
+  action principale, « Faire pousser une plante » (/comparer, comme le bouton jaune de
+  /jardin) en secondaire, « Comment ça marche ? » ; sans jardin : « Commencer », « Comment
+  ça marche ? », « J’ai déjà un jardin ? Le retrouver ». Les deux versions dans la même case
+  de grille (la cachée en `invisible`) : même hauteur, CLS 0 (`e2e/decalage.spec.ts`).
 - Nom du site en haut à gauche (`Logo`, composant client `src/components/ui/Logo.tsx`) : duel,
   résultats, /jardin, pages de texte (`ContentPage`) et /saison ; « Le poids des choses »,
   nom accessible « Le poids des choses – Accueil » / « – Home », vers / ou /en, cible tactile

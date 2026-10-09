@@ -2111,6 +2111,7 @@ de dents » confirmé par le Muséum d'histoire naturelle de Los Angeles. Vitess
 aucune source fiable ne confirme seule « quelques centimètres par minute » (1,7 cm/min au plus
 pour l'université d'Exeter, 6 cm pour Vikidia, 10 à 15 cm en course, jusqu'à 80 cm dans le
 Physics Factbook ; Wikipédia semble se tromper d'un facteur 10 sur sa propre source) : signalé.
+
 - Test « toucher l'oiseau » : horloge figée avant l'ouverture, comme « toucher la boîte » (même course sous WebKit).
 
 ### Vitesse de l'escargot (même jour, même branche)
@@ -2124,6 +2125,7 @@ dépêche AAP en deuxième source ; la note de doute est retirée.
 **Pour plus tard (non traité)** : en CI, les tests « petit choix : une petite pousse, agrandie
 dans la vitrine… » (`e2e/journeys.spec.ts`) et « le sélecteur de langue garde la page, les
 paramètres et l'ancre » (`e2e/anglais.spec.ts`) ne passent parfois qu'au second essai.
+
 - Point ouvert, déjà sur `main` (logo #33 + CLS #34) : sur un téléphone qui partage, avec un
   carnet, « Exporter » et « Partager » arrivent après l'hydratation ; le nom et son emblème
   n'ont plus la place sur une ligne (412 px), le nom passe sur deux lignes et tout le haut de
@@ -2212,3 +2214,131 @@ jours » à partir de l'instant présent. Vu en lançant la suite à 0 h 05 ; 40
 cause que le sélecteur de langue : rechargement pendant les préchargements du pied de page.
 Attente du réseau au repos avant de recharger.
 
+## 2026-10-09 — Finitions avant les testeurs (branche feat/finitions-testeurs)
+
+**Demandé** : quatre commits (portraits v3 ; l'écureuil et l'abeille parlent ; le jardin au
+fil des saisons ; accueil pour quelqu'un qui revient), puis toutes les vérifications, la PR
+et la preview.
+
+### 1. Portraits v3
+
+21 portraits (7 animaux × content, surpris, dort) depuis `le-poids-des-choses-portraits-v3.zip`
+: papillon et oiseau raccord avec le jardin, écureuil et abeille nouveaux. Figma avait ajouté
+un `mask` (coins arrondis) et un `clipPath` (cadre) par fichier : retirés (script dans
+`.tmp/`), coins arrondis en CSS comme avant. Rendu comparé à `apercu-portraits.png` : identique.
+Test : exactement 21 portraits, aucun `id` ; LICENSE précise les 21.
+
+### 2. L'écureuil et l'abeille parlent — en attente
+
+`animaux-dialogues-ecureuil-abeille.json` n'est ni dans ~/Downloads ni ailleurs sur le disque
+(recherche Spotlight) : commit non fait, en attente du fichier. Ce qui est déjà vérifié dans
+le code : l'**écureuil** est un visiteur d'automne seulement (septembre à novembre), présent de
+jour comme de nuit, jamais dessiné endormi (pas de dessin endormi ; jardin assoupi : visiteurs
+gardés, immobiles), et il peut être écarté par le plafond de 4 visiteurs ; l'**abeille** est
+débloquée au 12e choix léger, présente au printemps, en été et en automne, le jour seulement,
+absente l'hiver, la nuit et quand le jardin s'assoupit : jamais dessinée endormie (sa réplique
+de sommeil sera gardée sans être affichée). Condition « ete » pour l'écureuil : jamais vraie
+(il n'est là qu'en automne) ; à signaler si le fichier l'utilise pour lui.
+
+### 3. Le jardin au fil des saisons
+
+**Avant** : caducs en aplat tomate à l'automne (pousse non recolorée), blancs cernés d'encre
+l'hiver, épanouissement caché l'hiver ; persistants inchangés ; fleurs : couleur inchangée,
+épanouissement caché l'hiver pour marguerite, lavande et pissenlit (pas pour églantine,
+tulipe, herbes folles), neige au sol et flocons pour tous.
+
+**Fait** :
+
+- `src/lib/garden/foliage.ts` : dégradés de la planche (pommier orange → rouille, cerisier
+  rouge → bordeaux, figuier jaune → or) avec hauteurs par stade (figuier : hauteurs de la
+  planche ramenées au dessin réduit à 0,85 du jardin) ; hiver : branches nues du JSON pour
+  pommier et cerisier adultes, bourgeons seuls pour le figuier adulte (ses branches sont dans
+  son tronc), proposition pour « pousse » (tige, deux brindilles, trois bourgeons) et « jeune »
+  (branches de l'adulte ramenées au houppier, cinq bourgeons ; figuier : trois bourgeons).
+- Dégradé créé par le code (aucun `id` dans les SVG publiés) : un dégradé par forme, avec
+  l'inverse de la transformation de la forme (les feuilles du figuier sont tournées et
+  agrandies : sans cela, le dégradé de la planche, en `userSpaceOnUse`, tombait tout entier
+  hors des feuilles ; c'est d'ailleurs ce que montre l'aperçu livré, où le figuier d'automne
+  est uni). Matrices partagées avec l'extraction des emprises (`src/lib/geometry/matrix.ts`).
+  Même rendu dans l'image de partage.
+- Toucher un arbre endormi sur /jardin : « Le pommier dort jusqu’au printemps. » (bulle et
+  région polie), zone de 44 px au moins, un arrêt du clavier par espèce.
+- Fiche d'un arbre : bloc « Au fil des saisons » (maquette, nœud 84:326) ; sapin : « garde ses
+  aiguilles » plutôt que « feuilles ». Astuce avant la grille au premier choix d'espèce
+  (`saisons-especes`), astuce par saison sur /jardin construite avec les arbres du jardin
+  (`saison-automne-2026`…, une fois par saison). /methode#habitudes et `docs/methode.md`.
+- Sources : `docs/especes-sources.md`, « Au fil des saisons ». Couleurs : figuier (jaune)
+  confirmé ; cerisier : rouge chez la RHS et Wikipédia, jaune orangé pour la Ville de Paris ;
+  pommier : jaune ou jaune-brun dans les trois sources, la planche est plus orangée en haut
+  (signalé, intégré). Les bourgeons verts sont un code du dessin (dans la réalité, plutôt
+  bruns) : aucun texte ne l'affirme.
+- Transitions entre saisons : aucune animation (le changement se fait au chargement), donc
+  rien à couper en mouvement réduit.
+
+**Pour la V3, noté sans le faire — « 4 saisons, le jardin s'endort »** :
+
+- fleurs en sommeil l'hiver : une rosette de feuilles au ras du sol avec un « Zzz » (esquisse
+  Figma, « Idée V3 · fleur endormie », nœud 87:39) ;
+- des invités par saison (rouge-gorge, houx, perce-neige en hiver, etc.) avec leurs répliques.
+
+### 4. Accueil pour quelqu'un qui revient
+
+Carnet d'au moins une entrée sur l'appareil : « Retrouver mon jardin » (/jardin) en action
+principale, « Faire pousser une plante » (/comparer, même cible que le bouton jaune de
+/jardin, vérifié) en secondaire, « Comment ça marche ? » ; le petit lien « J’ai déjà un
+jardin ? Le retrouver » disparaît (doublon). Script en ligne qui pose `data-garden` sur <html>
+avant les boutons ; les deux versions dans la même case de grille, la cachée en `invisible` :
+même hauteur. Tests : CLS = 0 avec et sans jardin, attribut présent dès `DOMContentLoaded`,
+même boîte, anglais (“Back to my garden”, “Grow a plant”).
+
+### Suite (même jour) : l'écureuil et l'abeille, arbitrages
+
+**Reçu** : `animaux-dialogues-ecureuil-abeille.json` (version corrigée : ecu-c1 devient une
+réplique d'automne). Arbitrages de Guillaume sur les saisons.
+
+**Fait** :
+
+- Commit 2 : contenu converti (`src/content/animaux/ecureuil.ts`, `abeille.ts`), textes mot
+  pour mot ; conditions : écureuil « automne » (ecu-c1, ecu-c2) et sapin (`arbre-5`) ;
+  abeille « ete » (abe-c1, voulu), « printemps » et lavande (`fleur-5`). L'abeille rejoint les
+  animaux débloqués qui parlent ; l'écureuil rejoint le renard parmi les visiteurs qui parlent
+  (`TALKING_VISITORS`) : zones de toucher, « Les habitants du jardin » (rencontré dès qu'il est
+  passé ; hors de l'automne, « Pas là en cette saison »), compteur sur 6 pour les deux.
+  Répliques de sommeil gardées sans être affichées (aucun des deux n'est dessiné endormi).
+  Le test « N sur N sans conditionnelle » choisit désormais, pour chaque animal, une saison
+  qu'aucune de ses répliques n'attend (l'abeille a des répliques d'été et de printemps).
+- Sources (`docs/animaux-sources.md`) : les quatre sources du fichier lues, chaque citation
+  confirmée mot pour mot ; deuxièmes sources : Wikipédia (écureuil roux : n'hiberne pas,
+  pinceaux plus visibles en hiver, nid, queue-balancier), Trees for Life, Iowa DNR
+  (incisives), NC State Extension (danse et soleil), _Plants_ 2020 (coquelicot et
+  ultraviolets), Vikidia (durée de vie), Humanité et Biodiversité (espèces, sol). Doutes :
+  1 000 à 1 500 fleurs de trèfle (Larousse seul) ; « environ 38 jours » (Larousse seul,
+  d'autres sources disent cinq à six ou six à sept semaines) ; coquelicot : vrai des
+  coquelicots d'Europe centrale ; « plusieurs milliers de graines » (Futura seul) ;
+  « près de 1 000 » espèces contre « plus de 1 000 » chez Humanité et Biodiversité.
+- Pommier : dégradé d'automne du jaune au brun (#F2B73A → #9A5B2B), comme les sources.
+- Astuce d'automne : « L’olivier, lui, ne change pas. » / « Le sapin et l’olivier, eux, ne
+  changent pas. » (EN “stays the same” / “stay the same”). Astuce du premier choix
+  d'espèce : « d’autres gardent leur feuillage » (au lieu de « leurs feuilles ») pour inclure
+  le sapin. Fiche du sapin et bloc « Au fil des saisons » : déjà « aiguilles ».
+- Bourgeons verts : gardés (code du dessin).
+
+**CI** : le nouveau test « l'abeille et l'écureuil parlent aussi » a échoué sous WebKit en CI
+(deux fois) : la zone de l'abeille, qui vole sans arrêt, n'était jamais « stable » pour le clic
+de Playwright. Cause : le test, pas l'appli. Correctif : la zone est vérifiée (taille, posée sur
+le dessin) et la conversation s'ouvre depuis la ligne de « Les habitants du jardin » ; 20 sur
+20 en local (Chromium et WebKit).
+
+**Pour le prochain lot (non corrigé)** : deux tests ont échoué une fois puis réussi à la
+relance pendant ce lot, à rendre fiables : « premier passage : liste à cases, barre
+« Valider » fixe… » (`e2e/arrosage.spec.ts`, Chromium) et « en-tête de /jardin à 320 px :
+même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts`, WebKit).
+
+### Retouches (même jour)
+
+- abe-c1, étape 1 : « En été, une ouvrière comme moi ne vit que quelques semaines. » / “In
+  summer, a worker like me only lives a few weeks.” (étape 2 inchangée) ; appuyée sur
+  Larousse (38 jours en été) et Vikidia (six à sept semaines) ; le doute est retiré.
+- Coquelicot : `docs/animaux-sources.md` précise que l'étude de _Plants_ porte sur les
+  coquelicots d'Europe centrale, de la même espèce (_Papaver rhoeas_) que ceux de France, et
+  non sur ceux de la Méditerranée orientale.

@@ -8,6 +8,7 @@ import {
   type Line,
   type TalkerId,
 } from ".";
+import { SEASONS } from "@/lib/garden/seasons";
 import { animalScriptProblems, drawnAsleep, sourceIdsFrom } from "./check";
 
 const SOURCES = readFileSync(
@@ -20,7 +21,9 @@ const SLUG: Record<TalkerId, string> = {
   ladybug: "coccinelle",
   bird: "oiseau",
   snail: "escargot",
+  bee: "abeille",
   fox: "renard",
+  squirrel: "ecureuil",
 };
 
 /**
@@ -172,8 +175,55 @@ describe("contenu « Les animaux parlent »", () => {
     }
   });
 
+  it("écureuil et abeille : conditions du contenu reçu (automne, sapin ; été, printemps, lavande)", () => {
+    const conditions = (talker: TalkerId) =>
+      ANIMAL_SCRIPTS[talker].lines
+        .filter((line) => line.condition)
+        .map((line) => [line.id, line.condition]);
+    expect(conditions("squirrel")).toEqual([
+      ["ecu-c1", { season: "automne" }],
+      ["ecu-c2", { season: "automne" }],
+      ["ecu-c3", { planted: "arbre-5" }],
+    ]);
+    expect(conditions("bee")).toEqual([
+      ["abe-c1", { season: "ete" }],
+      ["abe-c2", { season: "printemps" }],
+      ["abe-c3", { planted: "fleur-5" }],
+    ]);
+    expect(
+      progress(ANIMAL_SCRIPTS.squirrel, emptyFriends().squirrel).total,
+    ).toBe(6);
+    expect(progress(ANIMAL_SCRIPTS.bee, emptyFriends().bee).total).toBe(6);
+  });
+
+  it("les 21 portraits livrés : 7 animaux × 3 expressions, rien d'autre", () => {
+    const animals = [
+      "papillon",
+      "coccinelle",
+      "oiseau",
+      "escargot",
+      "renard",
+      "ecureuil",
+      "abeille",
+    ];
+    expect(readdirSync(PORTRAITS).sort()).toEqual(
+      animals
+        .flatMap((animal) =>
+          ["content", "surpris", "dort"].map(
+            (expr) => `portrait-${animal}-${expr}.svg`,
+          ),
+        )
+        .sort(),
+    );
+  });
+
   it("sommeil : répliques pour ceux qui sont dessinés endormis (oiseau, escargot, renard)", () => {
     expect(TALKERS.filter(drawnAsleep)).toEqual(["bird", "snail", "fox"]);
+    // L'abeille et l'écureuil ne sont jamais dessinés endormis : leurs répliques de sommeil
+    // restent dans le contenu, sans être affichées.
+    expect(drawnAsleep("bee")).toBe(false);
+    expect(drawnAsleep("squirrel")).toBe(false);
+    expect(ANIMAL_SCRIPTS.bee.sleep.length).toBeGreaterThan(0);
     for (const talker of TALKERS.filter(drawnAsleep))
       expect(ANIMAL_SCRIPTS[talker].sleep.length, talker).toBeGreaterThan(0);
   });
@@ -181,13 +231,18 @@ describe("contenu « Les animaux parlent »", () => {
   it("le compteur atteint N sur N sans aucune réplique conditionnelle", () => {
     for (const talker of TALKERS) {
       const script = ANIMAL_SCRIPTS[talker];
-      // En été, de jour, rien de planté : aucune condition n'est vraie.
+      // Une saison qu'aucune réplique n'attend, de jour, rien de planté : aucune condition
+      // n'est vraie (l'été pour la plupart ; l'abeille a des répliques d'été et de printemps).
+      const season = SEASONS.find(
+        (candidate) =>
+          !script.lines.some((line) => line.condition?.season === candidate),
+      )!;
       let record = emptyFriends()[talker];
       const total = script.lines.filter((line) => !line.condition).length;
       for (let day = 1; day <= total; day++)
         record = converse(talker, script, record, {
           day: `2026-07-${String(day).padStart(2, "0")}`,
-          season: "ete",
+          season,
           night: false,
           planted: new Set(),
           asleep: false,

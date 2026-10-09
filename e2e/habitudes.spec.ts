@@ -232,7 +232,7 @@ test.describe("saisons", () => {
   const WINTER = Date.UTC(2027, 0, 15, 11);
   const SPRING = Date.UTC(2027, 3, 15, 10);
 
-  test("hiver : neige, flocons, feuillage enneigé, épanouissement des caducs endormi", async ({
+  test("hiver : neige, flocons, caducs endormis, épanouissement des caducs endormi", async ({
     page,
   }) => {
     await page.clock.setFixedTime(new Date(WINTER));

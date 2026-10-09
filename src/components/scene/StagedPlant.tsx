@@ -1,11 +1,18 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useId, useLayoutEffect, useRef } from "react";
 import { Illustration } from "@/components/illustrations/Illustration";
 import { useGust } from "@/components/motion/gust";
 import { gsap, useGSAP } from "@/components/motion/gsap";
 import { useMotion } from "@/components/motion/useMotion";
 import { gustLean } from "@/lib/geometry/gust";
+import {
+  BRANCH_COLOR,
+  BUD_COLOR,
+  gradientTransformFor,
+  type BareBranches,
+  type SeasonalFoliage,
+} from "@/lib/garden/foliage";
 import {
   anchorAsCssOrigin,
   getSpec,
@@ -22,16 +29,64 @@ export const GROWTH = {
 /** Balancement au repos (degrés) : calme. */
 const SWAY_ANGLE = 1.5;
 
-const FOLIAGE = '[data-part="feuillage"], [data-part="feuilles"]';
+const FOLIAGE =
+  '[data-part="feuillage"], [data-part="feuilles"], [data-part="ramure"]';
 
-/** Couleur de saison du feuillage (table des espèces, src/lib/garden/species.ts). */
-export type PlantPaint = {
-  layers: readonly string[];
-  fill: string;
-  stroke?: string;
-  /** Épaisseur du trait, en unités du dessin. */
-  strokeWidth?: number;
-};
+/**
+ * Feuillage de saison (table des espèces, src/lib/garden/species.ts) : dégradé d'automne, ou
+ * arbre endormi l'hiver (feuillage caché, branches nues et bourgeons).
+ */
+export type PlantPaint = SeasonalFoliage & { layers: readonly string[] };
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+/** Branches nues d'un arbre endormi, posées sur le dessin du stade (décoratif). */
+function Bare({
+  bare,
+  frame,
+  strokeScale,
+}: {
+  bare: BareBranches;
+  frame: { width: number; height: number };
+  strokeScale: number;
+}) {
+  return (
+    <svg
+      viewBox={`0 0 ${frame.width} ${frame.height}`}
+      className="absolute inset-0 block h-full w-full"
+      aria-hidden
+      data-bare
+    >
+      {/* La ramure se balance comme le feuillage ; des bourgeons seuls (figuier, dont les
+          branches sont dans le tronc) restent au bout des branches. */}
+      <g
+        data-part={bare.branches.length > 0 ? "ramure" : "bourgeons"}
+        transform={bare.transform}
+      >
+        {bare.branches.map((branch) => (
+          <path
+            key={branch.d}
+            d={branch.d}
+            fill="none"
+            stroke={BRANCH_COLOR}
+            strokeLinecap="round"
+            // En style (et non en attribut) : l'épaisseur du jardin est déjà appliquée.
+            style={{ strokeWidth: branch.width * strokeScale }}
+          />
+        ))}
+        {bare.buds.map((bud) => (
+          <circle
+            key={`${bud.x} ${bud.y}`}
+            cx={bud.x}
+            cy={bud.y}
+            r={bare.budRadius}
+            fill={BUD_COLOR}
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
 
 /**
  * Épanouissement posé sur la plante adulte : un seul groupe affiché (celui du niveau), jamais
@@ -119,34 +174,71 @@ export function StagedPlant<S extends string>({
     };
   }, [strokeScale]);
 
-  // Couleur de saison du feuillage : posée sur les formes des calques de la table des espèces.
+  // Feuillage de saison, posé sur les formes des calques de la table des espèces : dégradé
+  // d'automne (un dégradé par forme, créé ici : les dessins publiés n'ont aucun id), ou
+  // feuillage caché l'hiver (les branches nues sont dessinées par <Bare>).
+  const gradientsRef = useRef<SVGDefsElement>(null);
+  const uid = useId().replace(/[^A-Za-z0-9_-]/g, "");
   const paintKey = paint ? JSON.stringify(paint) : "";
   useLayoutEffect(() => {
     const root = ref.current;
+    const defs = gradientsRef.current;
     if (!root || !paint) return;
-    const selector = paint.layers
-      .map((layer) => `[data-stage] [data-part="${layer}"] > *`)
-      .join(", ");
-    const shapes = Array.from(root.querySelectorAll<SVGElement>(selector));
-    for (const shape of shapes) {
-      shape.style.fill = paint.fill;
-      if (paint.stroke) {
-        shape.style.stroke = paint.stroke;
-        shape.style.strokeWidth = String(
-          (paint.strokeWidth ?? 1) * strokeScale,
-        );
+    const touched: SVGElement[] = [];
+    const created: Element[] = [];
+    for (const s of stages) {
+      const selector = paint.layers
+        .map((layer) => `[data-stage="${s}"] [data-part="${layer}"]`)
+        .join(", ");
+      const groups = Array.from(root.querySelectorAll<SVGElement>(selector));
+      if (paint.mode === "asleep") {
+        for (const group of groups) {
+          group.style.visibility = "hidden";
+          touched.push(group);
+        }
+        continue;
       }
+      const range = paint.y[s as keyof typeof paint.y];
+      if (!range || !defs) continue;
+      const shapes = groups.flatMap((group) =>
+        Array.from(group.children as HTMLCollectionOf<SVGElement>),
+      );
+      shapes.forEach((shape, index) => {
+        const id = `${uid}-automne-${s}-${index}`;
+        const gradient = document.createElementNS(SVG_NS, "linearGradient");
+        gradient.setAttribute("id", id);
+        gradient.setAttribute("gradientUnits", "userSpaceOnUse");
+        gradient.setAttribute("x1", "60");
+        gradient.setAttribute("x2", "60");
+        gradient.setAttribute("y1", String(range[0]));
+        gradient.setAttribute("y2", String(range[1]));
+        const inverse = gradientTransformFor(shape.getAttribute("transform"));
+        if (inverse) gradient.setAttribute("gradientTransform", inverse);
+        for (const [offset, color] of [
+          ["0", paint.top],
+          ["1", paint.bottom],
+        ]) {
+          const stop = document.createElementNS(SVG_NS, "stop");
+          stop.setAttribute("offset", offset);
+          stop.setAttribute("stop-color", color);
+          gradient.appendChild(stop);
+        }
+        defs.appendChild(gradient);
+        created.push(gradient);
+        shape.style.fill = `url(#${id})`;
+        touched.push(shape);
+      });
     }
     return () => {
-      for (const shape of shapes) {
-        shape.style.fill = "";
-        shape.style.stroke = "";
-        shape.style.strokeWidth = "";
+      for (const element of touched) {
+        element.style.fill = "";
+        element.style.visibility = "";
       }
+      for (const element of created) element.remove();
     };
     // paintKey résume `paint` (un nouvel objet à chaque rendu).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paintKey, strokeScale]);
+  }, [paintKey, uid]);
 
   // Épanouissement : seul le groupe du niveau affiché est visible.
   const bloomGroups = bloom?.groups.join(",") ?? "";
@@ -389,8 +481,19 @@ export function StagedPlant<S extends string>({
             name={illustrationFor(s)}
             className="block h-full w-full"
           />
+          {paint?.mode === "asleep" && s in paint.bare ? (
+            <Bare
+              bare={paint.bare[s as keyof typeof paint.bare]}
+              frame={spec}
+              strokeScale={strokeScale}
+            />
+          ) : null}
         </div>
       ))}
+      {/* Dégradés d'automne, créés à la demande (voir plus haut). */}
+      <svg aria-hidden width="0" height="0" className="absolute">
+        <defs ref={gradientsRef} />
+      </svg>
       {bloom ? (
         <div
           ref={bloomRef}

@@ -39,7 +39,12 @@ import { FirstHint } from "@/components/ui/FirstHint";
 import { HINTS } from "@/lib/i18n/messages/garden";
 import { markHintSeen } from "@/lib/hints/useHint";
 import { doneGesture, isComparison } from "@/lib/journal/kind";
-import type { TalkerId } from "@/content/animaux";
+import {
+  isTalkingVisitor,
+  TALKING_VISITORS,
+  type TalkerId,
+  type TalkingVisitor,
+} from "@/content/animaux";
 import { AnimalTalk } from "@/components/garden/talk/AnimalTalk";
 import {
   GardenFriends,
@@ -50,7 +55,11 @@ import { markMet, talkTo, useFriends } from "@/lib/friends/useFriends";
 import { isNightAt } from "@/lib/garden/daytime";
 import { liveScene } from "@/lib/garden/live";
 import { gardenDay, seasonAt } from "@/lib/garden/seasons";
-import { speciesFor } from "@/lib/garden/species";
+import { speciesFor, treesBySeasonHabit } from "@/lib/garden/species";
+import { seasonYear, visitorRule } from "@/lib/garden/visitors";
+import { seasonHintId } from "@/lib/hints/hints";
+import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
+import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
 
 const RECENT_COUNT = 5;
 
@@ -178,6 +187,25 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
   const revealId = wateredHere ?? fromUrl;
   const gardenRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // Astuce du changement de saison (une fois par saison), d'après les arbres du jardin :
+  // seulement s'il y a au moins un arbre caduc (celui qui change).
+  const season = seasonAt(now);
+  const seasonHint = useMemo(() => {
+    if (!season) return null;
+    const sheets = SPECIES_SHEETS[locale];
+    const trees = treesBySeasonHabit(garden.plants);
+    const text = SEASONS_UI[locale].seasonHint(
+      season,
+      trees.deciduous.map((tree) => ({
+        name: sheets[tree.id].name.toLowerCase(),
+        count: tree.count,
+      })),
+      trees.evergreen.map((id) => sheets[id].inSentence),
+    );
+    return text
+      ? { id: seasonHintId(season, seasonYear(new Date(now), season)), text }
+      : null;
+  }, [season, garden.plants, locale, now]);
   // Une plante a poussé : l'astuce du jardin vide ne reviendra plus.
   useEffect(() => {
     if (garden.plants.length > 0) markHintSeen("jardin-vide");
@@ -223,19 +251,36 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
     [garden, now, sky],
   );
   const friends = useFriends();
-  const foxHere = live.visitors.some((visitor) => visitor.kind === "renard");
+  // Visiteurs qui parlent (renard, écureuil) : « rencontrés » dès qu'ils sont dans la scène.
+  const visitorsHere = Object.entries(TALKING_VISITORS)
+    .filter(([, kind]) =>
+      live.visitors.some((visitor) => visitor.kind === kind),
+    )
+    .map(([talker]) => talker as TalkingVisitor)
+    .join(" ");
   useEffect(() => {
-    if (foxHere) markMet("fox");
-  }, [foxHere]);
+    for (const talker of visitorsHere.split(" ").filter(Boolean))
+      markMet(talker as TalkingVisitor);
+  }, [visitorsHere]);
   const met = (talker: TalkerId) =>
     friends[talker].met ||
-    (talker !== "fox" && garden.unlocked.includes(talker));
+    (!isTalkingVisitor(talker) && garden.unlocked.includes(talker));
   const presence = (talker: TalkerId): TalkerPresence => {
-    if (talker === "fox") {
-      const fox = live.visitors.find((visitor) => visitor.kind === "renard");
-      return fox
-        ? { here: true, asleep: fox.asleep }
-        : { here: false, why: "ailleurs" };
+    if (isTalkingVisitor(talker)) {
+      const kind = TALKING_VISITORS[talker];
+      const visitor = live.visitors.find(
+        (candidate) => candidate.kind === kind,
+      );
+      if (visitor) return { here: true, asleep: visitor.asleep };
+      // Hors de sa saison (l'écureuil, en automne seulement), sinon ailleurs.
+      const season = seasonAt(now);
+      return {
+        here: false,
+        why:
+          season && !visitorRule(kind).seasons.includes(season)
+            ? "saison"
+            : "ailleurs",
+      };
     }
     const animal = live.animals.find((candidate) => candidate.kind === talker);
     if (animal) return { here: true, asleep: animal.asleep };
@@ -368,6 +413,7 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
           sky={sky}
           onTalk={openTalk}
           talking={talk?.talker ?? null}
+          touchableTrees
         />
       </div>
       <p
@@ -415,6 +461,11 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
         >
           {HINTS[locale].emptyGarden}
         </FirstHint>
+        {seasonHint ? (
+          <FirstHint id={seasonHint.id} active={journal.ready} className="pt-3">
+            {seasonHint.text}
+          </FirstHint>
+        ) : null}
       </div>
 
       {/* Tout ce qui suit dépend du carnet (lu sur l'appareil après l'hydratation) : monté

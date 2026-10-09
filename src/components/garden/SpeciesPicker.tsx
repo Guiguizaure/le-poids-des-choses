@@ -12,7 +12,9 @@ import {
   speciesCards,
   type SpeciesCard,
 } from "@/lib/garden/species";
+import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
 import { SPECIES_PICKER, SPECIES_SHEETS } from "@/lib/i18n/messages/species";
+import { SeasonsStrip } from "./SeasonsStrip";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /** Cadenas des espèces à débloquer (décoratif : la carte dit « Dans N pas »). */
@@ -100,8 +102,9 @@ export function SpeciesPicker({
 
   /** Ferme la feuille : les places vides reviennent au tirage habituel. */
   const finish = (species: (string | null)[]) => {
-    // Première plante choisie (ou laissée au jardin) : l'astuce ne reviendra plus.
+    // Première plante choisie (ou laissée au jardin) : les astuces ne reviendront plus.
     markHintSeen("premiere-plante");
+    markHintSeen("saisons-especes");
     dialogRef.current?.close();
     onPick(species);
   };
@@ -231,6 +234,9 @@ export function SpeciesPicker({
         <FirstHint id="premiere-plante" active={!shown} className="px-5 pb-2">
           {HINTS[locale].firstPlant}
         </FirstHint>
+        <FirstHint id="saisons-especes" active={!shown} className="px-5 pb-2">
+          {SEASONS_UI[locale].pickerHint}
+        </FirstHint>
 
         {multi && !shown ? (
           <ol aria-label={t.slots} className="flex flex-wrap gap-1.5 px-5 pb-2">
@@ -296,6 +302,7 @@ export function SpeciesPicker({
               <p className="text-corps-m text-encre leading-[1.4]">
                 {sheets[shown.id].description}
               </p>
+              <SeasonsStrip id={shown.id} />
               <DidYouKnow title={t.didYouKnow} level={4}>
                 {sheets[shown.id].anecdote}
               </DidYouKnow>
