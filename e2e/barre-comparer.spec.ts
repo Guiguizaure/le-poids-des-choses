@@ -239,6 +239,9 @@ test.describe("avec le bandeau de langue (navigateur en anglais)", () => {
     expect(linkBox.y + linkBox.height).toBeLessThanOrEqual(
       (await bar.boundingBox())!.y,
     );
+    // L'encart de saison vient d'entrer à l'écran : l'étiquette du mois arrive en fondu
+    // (GSAP, invisible pour getAnimations) ; axe mesurerait son contraste en plein fondu.
+    await expect(page.locator("[data-month-tag]")).toHaveCSS("opacity", "1");
     await expectNoAxeViolations(page);
 
     // Bandeau fermé : la barre redescend tout en bas, la marge ne garde que sa hauteur.
