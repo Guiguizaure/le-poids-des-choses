@@ -91,7 +91,7 @@ describe("table des espèces", () => {
   });
   it("feuillage des caducs : dessin au printemps et en été, dégradé de la planche en automne, endormi l'hiver", () => {
     const planche = {
-      1: ["#FFB23E", "#B9552A"],
+      1: ["#F2B73A", "#9A5B2B"],
       3: ["#FF4F2E", "#9E1F3D"],
       6: ["#FFD84A", "#D99A1E"],
     } as const;

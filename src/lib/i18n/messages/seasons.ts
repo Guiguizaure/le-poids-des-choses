@@ -53,7 +53,7 @@ export const SEASONS_UI = defineMessages(
       `${capitalize(inSentence)} dort jusqu’au printemps.`,
     /** Astuce avant la grille des espèces, la première fois. */
     pickerHint:
-      "Chaque espèce vit au rythme des vraies saisons : certaines se colorent en automne et dorment l’hiver, d’autres gardent leurs feuilles toute l’année. Tu retrouves tout ça dans la fiche de chaque espèce.",
+      "Chaque espèce vit au rythme des vraies saisons : certaines se colorent en automne et dorment l’hiver, d’autres gardent leur feuillage toute l’année. Tu retrouves tout ça dans la fiche de chaque espèce.",
     /** Astuce du changement de saison, d'après les arbres du jardin (null : aucune). */
     seasonHint: (
       season: Season,
@@ -67,8 +67,8 @@ export const SEASONS_UI = defineMessages(
           evergreen.length === 0
             ? ""
             : evergreen.length === 1
-              ? ` ${capitalize(evergreen[0])}, lui, garde ses feuilles.`
-              : ` ${capitalize(listFr(evergreen))}, eux, gardent leurs feuilles.`;
+              ? ` ${capitalize(evergreen[0])}, lui, ne change pas.`
+              : ` ${capitalize(listFr(evergreen))}, eux, ne changent pas.`;
         return `L’automne est là : ${yoursFr(deciduous)} ${many ? "se colorent" : "se colore"}.${kept}`;
       }
       if (season === "hiver")
@@ -98,7 +98,7 @@ export const SEASONS_UI = defineMessages(
     asleepUntilSpring: (inSentence: string) =>
       `The ${inSentence} is asleep until spring.`,
     pickerHint:
-      "Each species lives by the real seasons: some turn colour in autumn and sleep through winter, others keep their leaves all year round. You’ll find it all on each species’ sheet.",
+      "Each species lives by the real seasons: some turn colour in autumn and sleep through winter, others keep their foliage all year round. You’ll find it all on each species’ sheet.",
     seasonHint: (
       season: Season,
       deciduous: readonly DeciduousInGarden[],
@@ -111,8 +111,8 @@ export const SEASONS_UI = defineMessages(
           evergreen.length === 0
             ? ""
             : evergreen.length === 1
-              ? ` The ${evergreen[0]}, though, keeps its leaves.`
-              : ` The ${listEn(evergreen)}, though, keep their leaves.`;
+              ? ` The ${evergreen[0]}, though, stays the same.`
+              : ` The ${listEn(evergreen)}, though, stay the same.`;
         return `Autumn is here: ${yoursEn(deciduous)} ${many ? "are" : "is"} turning colour.${kept}`;
       }
       if (season === "hiver")

@@ -37,7 +37,7 @@ describe("au fil des saisons : textes", () => {
   });
   it("astuce de saison construite avec les arbres du jardin", () => {
     expect(fr.seasonHint("automne", [apple, cherry], ["l’olivier"])).toBe(
-      "L’automne est là : ton pommier et ton cerisier se colorent. L’olivier, lui, garde ses feuilles.",
+      "L’automne est là : ton pommier et ton cerisier se colorent. L’olivier, lui, ne change pas.",
     );
     expect(fr.seasonHint("hiver", [apple], [])).toBe(
       "C’est l’hiver : ton pommier s’est endormi. Il se réveillera au printemps.",
@@ -58,8 +58,14 @@ describe("au fil des saisons : textes", () => {
         ["olive tree", "fir tree"],
       ),
     ).toBe(
-      "Autumn is here: your apple tree is turning colour. The olive tree and fir tree, though, keep their leaves.",
+      "Autumn is here: your apple tree is turning colour. The olive tree and fir tree, though, stay the same.",
     );
+  });
+  it("automne avec le sapin et l'olivier : « ne changent pas » (le sapin a des aiguilles)", () => {
+    expect(fr.seasonHint("automne", [apple], ["le sapin", "l’olivier"])).toBe(
+      "L’automne est là : ton pommier se colore. Le sapin et l’olivier, eux, ne changent pas.",
+    );
+    expect(fr.pickerHint).not.toContain("feuilles toute");
   });
   it("aucune astuce sans arbre caduc, ni l'été", () => {
     expect(fr.seasonHint("automne", [], ["l’olivier"])).toBeNull();

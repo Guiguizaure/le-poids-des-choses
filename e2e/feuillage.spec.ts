@@ -54,14 +54,14 @@ test("automne : un dégradé par caduc, les persistants inchangés ; astuce de s
   await page.goto("/jardin");
   await expect(page.getByRole("img", { name: /en automne/ })).toBeVisible();
 
-  // Pommier : dégradé orange → rouille, créé par le code (aucun id dans les dessins).
+  // Pommier : dégradé jaune → brun, créé par le code (aucun id dans les dessins).
   await expect.poll(() => foliageFill(page, "pommier-1")).toMatch(/^url\(/);
   const stops = await plant(page, "pommier-1")
     .locator("linearGradient")
     .first()
     .locator("stop")
     .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("stop-color")));
-  expect(stops).toEqual(["#FFB23E", "#B9552A"]);
+  expect(stops).toEqual(["#F2B73A", "#9A5B2B"]);
   // Olivier : le dessin tel quel ; aucune branche nue nulle part.
   expect(await foliageFill(page, "olivier")).not.toMatch(/^url\(/);
   await expect(page.locator("[data-bare]")).toHaveCount(0);
@@ -70,7 +70,7 @@ test("automne : un dégradé par caduc, les persistants inchangés ; astuce de s
 
   const hint = page.locator('[data-hint="saison-automne-2026"]');
   await expect(hint).toHaveText(
-    /L’automne est là : tes pommiers et ton cerisier se colorent\. L’olivier, lui, garde ses feuilles\./,
+    /L’automne est là : tes pommiers et ton cerisier se colorent\. L’olivier, lui, ne change pas\./,
   );
   await expectNoAxeViolations(page);
   await hint.getByRole("button", { name: "Fermer l’astuce" }).click();
@@ -163,7 +163,7 @@ test("premier choix d'espèce : astuce des saisons, une seule fois ; fiche « Au
   const picker = page.locator("[data-species-picker]");
   const hint = picker.locator('[data-hint="saisons-especes"]');
   await expect(hint).toContainText(
-    "Chaque espèce vit au rythme des vraies saisons : certaines se colorent en automne et dorment l’hiver, d’autres gardent leurs feuilles toute l’année. Tu retrouves tout ça dans la fiche de chaque espèce.",
+    "Chaque espèce vit au rythme des vraies saisons : certaines se colorent en automne et dorment l’hiver, d’autres gardent leur feuillage toute l’année. Tu retrouves tout ça dans la fiche de chaque espèce.",
   );
   // Annoncée sans prendre le focus ; fermable au clavier.
   await expect(

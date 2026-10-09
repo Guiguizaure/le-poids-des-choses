@@ -63,11 +63,12 @@ const bareSprout = (top: number): BareBranches => ({
 /** Couleurs et hauteurs de la planche ; stades « pousse » et « jeune » adaptés à leur feuillage. */
 export const AUTUMN: Record<"arbre-1" | "arbre-3" | "arbre-6", AutumnFoliage> =
   {
-    // Pommier : orange → rouille.
+    // Pommier : jaune → brun, comme les sources (« jaunissent en automne », “yellow-brown”) ;
+    // remplace l'orange → rouille de la planche (décision du 9 octobre 2026).
     "arbre-1": {
       mode: "autumn",
-      top: "#FFB23E",
-      bottom: "#B9552A",
+      top: "#F2B73A",
+      bottom: "#9A5B2B",
       y: { pousse: [120, 138], jeune: [64, 112], grand: [10, 98] },
     },
     // Cerisier : rouge → bordeaux.
