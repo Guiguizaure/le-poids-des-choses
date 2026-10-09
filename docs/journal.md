@@ -2323,6 +2323,12 @@ réplique d'automne). Arbitrages de Guillaume sur les saisons.
   le sapin. Fiche du sapin et bloc « Au fil des saisons » : déjà « aiguilles ».
 - Bourgeons verts : gardés (code du dessin).
 
+**CI** : le nouveau test « l'abeille et l'écureuil parlent aussi » a échoué sous WebKit en CI
+(deux fois) : la zone de l'abeille, qui vole sans arrêt, n'était jamais « stable » pour le clic
+de Playwright. Cause : le test, pas l'appli. Correctif : la zone est vérifiée (taille, posée sur
+le dessin) et la conversation s'ouvre depuis la ligne de « Les habitants du jardin » ; 20 sur
+20 en local (Chromium et WebKit).
+
 **Pour le prochain lot (non corrigé)** : deux tests ont échoué une fois puis réussi à la
 relance pendant ce lot, à rendre fiables : « premier passage : liste à cases, barre
 « Valider » fixe… » (`e2e/arrosage.spec.ts`, Chromium) et « en-tête de /jardin à 320 px :

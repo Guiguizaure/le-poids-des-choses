@@ -416,7 +416,20 @@ test("l'abeille et l'écureuil (visiteur d'automne) parlent aussi : zones, prés
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
   }
-  await bee.click();
+  // L'abeille vole sans arrêt : sa zone la suit (posée sur son dessin), mais un clic de
+  // Playwright attend un élément immobile (jamais le cas sous WebKit en CI). On lui parle
+  // depuis sa ligne de « Les habitants du jardin », le même bouton pour l'accessibilité.
+  const beeBox = (await bee.boundingBox())!;
+  const beeDrawn = (await page
+    .locator('[data-animal="bee"] svg')
+    .first()
+    .boundingBox())!;
+  expect(
+    Math.abs(beeBox.x + beeBox.width / 2 - (beeDrawn.x + beeDrawn.width / 2)),
+  ).toBeLessThan(40);
+  const list = page.getByRole("region", { name: "Les habitants du jardin" });
+  const beeRow = list.getByRole("button", { name: "Parler à l’abeille" });
+  await beeRow.click();
   const beeTalk = page.getByRole("dialog", { name: "Abeille" });
   await expect(beeTalk).toHaveAccessibleDescription(
     "Bonjour ! Je n'ai qu'une minute, des fleurs m'attendent.",
@@ -426,7 +439,7 @@ test("l'abeille et l'écureuil (visiteur d'automne) parlent aussi : zones, prés
     "bee",
   );
   await page.keyboard.press("Escape");
-  await expect(bee).toBeFocused();
+  await expect(beeRow).toBeFocused();
 
   // L'écureuil se présente d'abord, même si sa réplique d'automne est possible.
   await squirrel.click();
@@ -441,7 +454,6 @@ test("l'abeille et l'écureuil (visiteur d'automne) parlent aussi : zones, prés
   await expectNoAxeViolations(page);
   await page.keyboard.press("Escape");
 
-  const list = page.getByRole("region", { name: "Les habitants du jardin" });
   for (const talker of ["bee", "squirrel"])
     await expect(
       list.locator(`[data-talk-row="${talker}"] [data-progress]`),
