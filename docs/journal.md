@@ -2290,3 +2290,40 @@ jardin ? Le retrouver » disparaît (doublon). Script en ligne qui pose `data-ga
 avant les boutons ; les deux versions dans la même case de grille, la cachée en `invisible` :
 même hauteur. Tests : CLS = 0 avec et sans jardin, attribut présent dès `DOMContentLoaded`,
 même boîte, anglais (“Back to my garden”, “Grow a plant”).
+
+### Suite (même jour) : l'écureuil et l'abeille, arbitrages
+
+**Reçu** : `animaux-dialogues-ecureuil-abeille.json` (version corrigée : ecu-c1 devient une
+réplique d'automne). Arbitrages de Guillaume sur les saisons.
+
+**Fait** :
+
+- Commit 2 : contenu converti (`src/content/animaux/ecureuil.ts`, `abeille.ts`), textes mot
+  pour mot ; conditions : écureuil « automne » (ecu-c1, ecu-c2) et sapin (`arbre-5`) ;
+  abeille « ete » (abe-c1, voulu), « printemps » et lavande (`fleur-5`). L'abeille rejoint les
+  animaux débloqués qui parlent ; l'écureuil rejoint le renard parmi les visiteurs qui parlent
+  (`TALKING_VISITORS`) : zones de toucher, « Les habitants du jardin » (rencontré dès qu'il est
+  passé ; hors de l'automne, « Pas là en cette saison »), compteur sur 6 pour les deux.
+  Répliques de sommeil gardées sans être affichées (aucun des deux n'est dessiné endormi).
+  Le test « N sur N sans conditionnelle » choisit désormais, pour chaque animal, une saison
+  qu'aucune de ses répliques n'attend (l'abeille a des répliques d'été et de printemps).
+- Sources (`docs/animaux-sources.md`) : les quatre sources du fichier lues, chaque citation
+  confirmée mot pour mot ; deuxièmes sources : Wikipédia (écureuil roux : n'hiberne pas,
+  pinceaux plus visibles en hiver, nid, queue-balancier), Trees for Life, Iowa DNR
+  (incisives), NC State Extension (danse et soleil), _Plants_ 2020 (coquelicot et
+  ultraviolets), Vikidia (durée de vie), Humanité et Biodiversité (espèces, sol). Doutes :
+  1 000 à 1 500 fleurs de trèfle (Larousse seul) ; « environ 38 jours » (Larousse seul,
+  d'autres sources disent cinq à six ou six à sept semaines) ; coquelicot : vrai des
+  coquelicots d'Europe centrale ; « plusieurs milliers de graines » (Futura seul) ;
+  « près de 1 000 » espèces contre « plus de 1 000 » chez Humanité et Biodiversité.
+- Pommier : dégradé d'automne du jaune au brun (#F2B73A → #9A5B2B), comme les sources.
+- Astuce d'automne : « L’olivier, lui, ne change pas. » / « Le sapin et l’olivier, eux, ne
+  changent pas. » (EN “stays the same” / “stay the same”). Astuce du premier choix
+  d'espèce : « d’autres gardent leur feuillage » (au lieu de « leurs feuilles ») pour inclure
+  le sapin. Fiche du sapin et bloc « Au fil des saisons » : déjà « aiguilles ».
+- Bourgeons verts : gardés (code du dessin).
+
+**Pour le prochain lot (non corrigé)** : deux tests ont échoué une fois puis réussi à la
+relance pendant ce lot, à rendre fiables : « premier passage : liste à cases, barre
+« Valider » fixe… » (`e2e/arrosage.spec.ts`, Chromium) et « en-tête de /jardin à 320 px :
+même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts`, WebKit).
