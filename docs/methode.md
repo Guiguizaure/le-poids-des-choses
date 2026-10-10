@@ -15,15 +15,29 @@ calcul. Brouillon à relire avant le lancement ; à reprendre dans une page « M
 
 ## Objets : trois façons de les avoir
 
-| Mode              | Valeur                        | Origine                                           |
-| ----------------- | ----------------------------- | ------------------------------------------------- |
-| Neuf              | valeur du CSV                 | `impactco2`                                       |
-| D'occasion        | 0 kg                          | hypothèse `hypothese-occasion`                    |
-| D'occasion, livré | 0 kg de fabrication + 1 colis | hypothèse + ligne « Livraison à domicile » du CSV |
-| Garder le mien    | 0 kg                          | hypothèse `hypothese-garder`                      |
+| Mode              | Valeur                                             | Origine                                           |
+| ----------------- | -------------------------------------------------- | ------------------------------------------------- |
+| Neuf              | valeur du CSV (électroménager : fabrication seule) | `impactco2` (`impactco2-fabrication`)             |
+| D'occasion        | 0 kg                                               | hypothèse `hypothese-occasion`                    |
+| D'occasion, livré | 0 kg de fabrication + 1 colis                      | hypothèse + ligne « Livraison à domicile » du CSV |
+| Garder le mien    | 0 kg                                               | hypothèse `hypothese-garder`                      |
 
 Le CSV ne contient aucune ligne « occasion », « reconditionné » ou « seconde main » : la
 valeur d'occasion n'est donc pas mesurée, c'est une hypothèse.
+
+## Appareils : seule la fabrication est comptée
+
+Pour l'électroménager (« Équiper la maison », lot du 10 octobre 2026), la valeur du CSV
+additionne fabrication, usage (électricité sur 8 à 12 ans) et fin de vie. Le site ne compte que
+la fabrication (champ `footprint` de l'API détaillée Impact CO2, voir
+`docs/gestes-sources.md`) : l'électricité, on la consomme que l'appareil soit neuf ou gardé.
+Le mobilier n'a pas d'usage : sa valeur reste celle du CSV. Phrase publiée dans
+/methode#appareils.
+
+Limite connue, non corrigée (décision à prendre) : pour le numérique et l'habillement, la
+valeur du CSV comprend aussi un peu d'usage et de fin de vie (télévision : 29,6 kg d'usage sur
+369,7 ; détail objet par objet dans le journal du 10 octobre 2026), alors que /methode dit que
+l'usage des appareils n'est pas compté.
 
 ## Hypothèse « occasion = pas de nouvelle fabrication »
 
@@ -37,7 +51,9 @@ achat), pas une mesure du cycle de vie de l'objet.
   selon la méthode de l'ADEME).
 - Pour « d'occasion, livré » : l'envoi d'un colis, ligne « Livraison à domicile » du CSV,
   dont le poids est choisi par objet (1 kg, 2 kg ou 15 kg, voir `PARCEL_BY_GESTURE_ID` dans
-  `scripts/build-gestures.ts`). Ce choix de taille est une hypothèse.
+  `scripts/build-gestures.ts`). Ce choix de taille est une hypothèse. Au-delà du plus gros colis
+  du CSV (30 kg : lave-linge, réfrigérateur, lave-vaisselle, four, canapé, lit, table, armoire),
+  pas d'option « d'occasion, livré ».
 
 ## Ce qui n'est pas compté
 

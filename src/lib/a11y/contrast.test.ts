@@ -95,6 +95,13 @@ const PAIRS: {
       "contour de focus autour du bouton « Faire pousser une plante », sur le fond de page",
   },
   {
+    text: "encre",
+    background: "lavande",
+    minimum: 4.5,
+    where:
+      "pastille « Nouveau » de la catégorie « Équiper la maison » (jamais de texte blanc sur lavande : 3,4:1)",
+  },
+  {
     text: "blanc",
     background: "sapin",
     minimum: 4.5,

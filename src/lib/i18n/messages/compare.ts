@@ -62,11 +62,14 @@ export const COMPARE = defineMessages(
       chooseUsed: "Je choisis d’occasion",
       chooseKeep: "Je garde {mine}",
       howWeCount: "Comment on compte l’occasion ?",
+      manufacturingNote:
+        "Écart de fabrication : l’électricité, tu la consommes que l’appareil soit neuf ou gardé.",
     },
     result: {
       full: "Ton jardin est au complet",
       noted: "C’est noté",
       difference: "{mass} d’écart",
+      differenceManufacturing: "{mass} d’écart de fabrication",
       notedPill: "Noté",
       lightText: "{title} : c’est noté dans ton carnet.",
       heavyText:
@@ -141,11 +144,14 @@ export const COMPARE = defineMessages(
       chooseUsed: "I’ll go for second-hand",
       chooseKeep: "I’ll keep {mine}",
       howWeCount: "How do we count second-hand?",
+      manufacturingNote:
+        "Manufacturing difference: you use the electricity whether the appliance is new or kept.",
     },
     result: {
       full: "Your garden is full",
       noted: "Noted",
       difference: "{mass} difference",
+      differenceManufacturing: "{mass} manufacturing difference",
       notedPill: "Noted",
       lightText: "{title}: noted in your journal.",
       heavyText:

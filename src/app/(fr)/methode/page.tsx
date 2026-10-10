@@ -102,7 +102,8 @@ export default function MethodePage() {
             S’habiller et Numérique : par objet, pour la fabrication d’un objet
             neuf ;
           </li>
-          <li>Se faire livrer : par achat, pour un colis d’1 kg.</li>
+          <li>Se faire livrer : par achat, pour un colis d’1 kg ;</li>
+          <li>Équiper la maison : par objet, électroménager et meubles.</li>
         </ul>
       </Section>
 
@@ -117,11 +118,20 @@ export default function MethodePage() {
           fabrication. C’est une hypothèse, pas une mesure. Garder le tien
           compte aussi 0 kg.
         </p>
+        <p id="appareils" className="scroll-mt-6">
+          <strong>Les appareils.</strong> Pour les appareils, seule la
+          fabrication est comptée : l’électricité, tu la consommes que
+          l’appareil soit neuf ou gardé.
+        </p>
         <p>
           <strong>Le colis.</strong> Si l’objet d’occasion est livré, on ajoute
           l’envoi d’un colis à domicile, selon Impact CO2 : 1 kg pour un
-          vêtement ou un smartphone, 2 kg pour des chaussures ou un ordinateur
-          portable, 15 kg pour une télévision.
+          vêtement, un smartphone, une tablette ou une box internet, 2 kg pour
+          des chaussures, un manteau, un ordinateur portable ou un casque de
+          réalité virtuelle, 15 kg pour une télévision, un écran, un
+          micro-ondes, un aspirateur ou une chaise. Au-delà (lave-linge,
+          réfrigérateur, lave-vaisselle, four, gros meubles), aucun colis
+          d’Impact CO2 ne convient : l’occasion n’y est pas proposée livrée.
         </p>
         <p>
           <strong>Les trajets des achats.</strong> Pour « Se faire livrer », les

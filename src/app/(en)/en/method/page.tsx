@@ -105,7 +105,8 @@ export default function MethodPage() {
           <li>Eating: per meal;</li>
           <li>Drinking: per litre;</li>
           <li>Clothes and Digital: per item, for making a new item;</li>
-          <li>Deliveries: per purchase, for a 1 kg parcel.</li>
+          <li>Deliveries: per purchase, for a 1 kg parcel;</li>
+          <li>Furnish your home: per item, appliances and furniture.</li>
         </ul>
       </Section>
 
@@ -120,11 +121,18 @@ export default function MethodPage() {
           manufacturing. This is an assumption, not a measurement. Keeping yours
           also counts 0 kg.
         </p>
+        <p id="appareils" className="scroll-mt-6">
+          <strong>Appliances.</strong> For appliances, only manufacturing is
+          counted: you use the electricity whether the appliance is new or kept.
+        </p>
         <p>
           <strong>The parcel.</strong> If the second-hand item is delivered, we
           add sending a parcel to your home, according to Impact CO2: 1 kg for
-          clothing or a smartphone, 2 kg for trainers or a laptop, 15 kg for a
-          television.
+          clothing, a smartphone, a tablet or an internet box, 2 kg for
+          trainers, a coat, a laptop or a VR headset, 15 kg for a television, a
+          computer screen, a microwave, a vacuum cleaner or a chair. Beyond that
+          (washing machine, fridge, dishwasher, oven, large furniture), no
+          Impact CO2 parcel fits: second-hand isn’t offered delivered.
         </p>
         <p>
           <strong>Shopping trips.</strong> For “Deliveries”, Impact CO2’s values

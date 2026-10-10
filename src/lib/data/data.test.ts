@@ -21,6 +21,7 @@ const UNITS_BY_CATEGORY: Record<Category, string[]> = {
   numerique: ["objet"],
   boisson: ["litre"],
   livraison: ["achat"],
+  maison: ["objet"],
 };
 const CATEGORIES = Object.keys(UNITS_BY_CATEGORY) as Category[];
 
@@ -54,6 +55,10 @@ describe("données générées (Impact CO2)", () => {
       ["smartphone", "objet"],
       ["ordinateur-portable", "objet"],
       ["television", "objet"],
+      ["tablette", "objet"],
+      ["ecran", "objet"],
+      ["box-internet", "objet"],
+      ["casque-vr", "objet"],
     ]);
     expect(getGesture("streaming")).toBeUndefined();
     expect(getGesture("visio")).toBeUndefined();
@@ -106,11 +111,12 @@ describe("modes d'acquisition des objets", () => {
       expect(g.modes === undefined).toBe(g.unit !== "objet");
     }
   });
-  it("neuf = valeur du CSV, occasion et garder = hypothèses à 0", () => {
+  it("neuf = valeur du CSV (fabrication seule pour l'électroménager), occasion et garder = hypothèses à 0", () => {
     for (const g of objets()) {
       expect(g.modes?.neuf).toMatchObject({
         kgCo2e: g.kgCo2ePerUnit,
-        method: "impactco2",
+        method:
+          g.scope === "fabrication" ? "impactco2-fabrication" : "impactco2",
         sourceId: g.sourceId,
       });
       expect(g.modes?.occasion).toEqual({
@@ -123,8 +129,29 @@ describe("modes d'acquisition des objets", () => {
       });
     }
   });
-  it("occasion livrée : fabrication à 0 (hypothèse) + colis sourcé Livraison", () => {
-    for (const g of objets()) {
+  it("électroménager seulement : fabrication seule (champ footprint de l'API détaillée)", () => {
+    const fabrication = getGestures()
+      .filter((g) => g.scope === "fabrication")
+      .map((g) => g.sourceId);
+    expect(fabrication).toEqual([
+      "lavelinge",
+      "refrigirateur",
+      "lavevaisselle",
+      "microondes",
+      "fourelectrique",
+      "aspirateur",
+    ]);
+    expect(generated.manufacturingSource).toMatch(
+      /^https:\/\/impactco2\.fr\/api\/v1\/thematiques\/ecv\/6/,
+    );
+  });
+  it("occasion livrée, si un colis du CSV convient : fabrication à 0 (hypothèse) + colis sourcé Livraison", () => {
+    const delivered = objets().filter((g) => g.modes?.["occasion-livree"]);
+    // Les objets d'avant ce lot l'ont tous ; les plus gros (lave-linge, armoire…) jamais.
+    expect(delivered.length).toBeGreaterThanOrEqual(7);
+    for (const id of ["lave-linge", "refrigerateur", "armoire", "lit"])
+      expect(getGesture(id)?.modes?.["occasion-livree"]).toBeUndefined();
+    for (const g of delivered) {
       const livree = g.modes?.["occasion-livree"];
       expect(livree?.method).toBe("hypothese-occasion");
       expect(livree?.parts).toHaveLength(2);
@@ -152,7 +179,8 @@ describe("modes d'acquisition des objets", () => {
   });
   it("l'occasion livrée reste moins lourde que le neuf", () => {
     for (const g of objets()) {
-      expect(g.modes!["occasion-livree"]!.kgCo2e).toBeLessThan(g.kgCo2ePerUnit);
+      const livree = g.modes!["occasion-livree"];
+      if (livree) expect(livree.kgCo2e).toBeLessThan(g.kgCo2ePerUnit);
     }
   });
 });
