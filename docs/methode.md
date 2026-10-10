@@ -15,15 +15,24 @@ calcul. Brouillon à relire avant le lancement ; à reprendre dans une page « M
 
 ## Objets : trois façons de les avoir
 
-| Mode              | Valeur                        | Origine                                           |
-| ----------------- | ----------------------------- | ------------------------------------------------- |
-| Neuf              | valeur du CSV                 | `impactco2`                                       |
-| D'occasion        | 0 kg                          | hypothèse `hypothese-occasion`                    |
-| D'occasion, livré | 0 kg de fabrication + 1 colis | hypothèse + ligne « Livraison à domicile » du CSV |
-| Garder le mien    | 0 kg                          | hypothèse `hypothese-garder`                      |
+| Mode              | Valeur                                      | Origine                                           |
+| ----------------- | ------------------------------------------- | ------------------------------------------------- |
+| Neuf              | part fabrication (API détaillée Impact CO2) | `impactco2-fabrication`                           |
+| D'occasion        | 0 kg                                        | hypothèse `hypothese-occasion`                    |
+| D'occasion, livré | 0 kg de fabrication + 1 colis               | hypothèse + ligne « Livraison à domicile » du CSV |
+| Garder le mien    | 0 kg                                        | hypothèse `hypothese-garder`                      |
 
 Le CSV ne contient aucune ligne « occasion », « reconditionné » ou « seconde main » : la
 valeur d'occasion n'est donc pas mesurée, c'est une hypothèse.
+
+## Objets : seule la fabrication est comptée
+
+Pour tous les objets (décision du 10 octobre 2026), « neuf » = la part fabrication (champ
+`footprint` de l'API détaillée Impact CO2, voir `docs/gestes-sources.md`), sans usage ni fin de
+vie : la valeur du CSV les additionne, alors que l'usage (lavage, électricité) existe que l'objet
+soit neuf ou gardé. Le mobilier a son détail dans l'API (fabrication seule = valeur du CSV).
+D'occasion et garder ne changent pas. Phrase publiée dans /methode#appareils. Les choix déjà
+notés gardent l'écart enregistré au moment du choix (jamais recalculé).
 
 ## Hypothèse « occasion = pas de nouvelle fabrication »
 
@@ -33,19 +42,21 @@ achat), pas une mesure du cycle de vie de l'objet.
 
 ## Ce qui est compté
 
-- La fabrication d'un objet neuf (valeur du CSV, qui inclut les étapes amont de l'objet
-  selon la méthode de l'ADEME).
+- La fabrication d'un objet neuf (part « fabrication » du détail Impact CO2, qui inclut les
+  étapes amont de l'objet selon la méthode de l'ADEME).
 - Pour « d'occasion, livré » : l'envoi d'un colis, ligne « Livraison à domicile » du CSV,
   dont le poids est choisi par objet (1 kg, 2 kg ou 15 kg, voir `PARCEL_BY_GESTURE_ID` dans
-  `scripts/build-gestures.ts`). Ce choix de taille est une hypothèse.
+  `scripts/build-gestures.ts`). Ce choix de taille est une hypothèse. Au-delà du plus gros colis
+  du CSV (30 kg : lave-linge, réfrigérateur, lave-vaisselle, four, canapé, lit, table, armoire),
+  pas d'option « d'occasion, livré ».
 
 ## Ce qui n'est pas compté
 
 - Le trajet pour aller acheter d'occasion (friperie, brocante, remise en main propre).
 - L'entretien, le lavage, la réparation ou la remise en état d'un objet, neuf ou non.
-- La fin de vie (revente, don, déchet) et le transport du neuf jusqu'au magasin au-delà de
-  ce que contient déjà la valeur du CSV.
-- L'usage de l'objet (électricité d'un téléviseur, etc.) : le site compare l'acquisition.
+- La fin de vie d'un objet (revente, don, recyclage, déchet).
+- L'usage de l'objet (lavage d'un vêtement, électricité d'un appareil) : il existe que l'objet
+  soit neuf ou gardé ; le site compare l'acquisition.
 
 ## Limite : répartition entre plusieurs vies d'un objet
 

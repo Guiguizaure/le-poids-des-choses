@@ -105,6 +105,82 @@ export const HOME = defineMessages(
   },
 );
 
+/** Mini-duel de l'accueil (maquettes 102:3, 102:419, 103:2) : une devinette, rien n'est noté. */
+export const MINI_DUEL = defineMessages(
+  {
+    label: "Essaie tout de suite",
+    question: "Pour 5 km, lequel est le plus léger ?",
+    bike: "À vélo",
+    car: "En voiture",
+    or: "ou",
+    help: "Touche ta réponse : l’écart s’affiche, calculé avec les données de l’ADEME.",
+    right: "Bien vu !",
+    rightAnswer: "Le vélo est le plus léger.",
+    wrongAnswer: "Pas tout à fait : c’est le vélo le plus léger.",
+    gap: "{mass} CO2e d’écart sur 5 km",
+    firstPlant: "Faire pousser ma première plante",
+    logChoice: "Noter ce choix",
+    another: "Un autre duel",
+    next: "Tu passes au duel complet, déjà rempli : c’est là que ton choix est noté.",
+  },
+  {
+    label: "Try it now",
+    question: "For 5 km, which one is lighter?",
+    bike: "By bike",
+    car: "By car",
+    or: "or",
+    help: "Tap your answer: the difference appears, calculated with ADEME’s data.",
+    right: "Well spotted!",
+    rightAnswer: "The bike is the lighter one.",
+    wrongAnswer: "Not quite: the bike is the lighter one.",
+    gap: "{mass} CO2e difference over 5 km",
+    firstPlant: "Grow my first plant",
+    logChoice: "Log this choice",
+    another: "Another duel",
+    next: "You go on to the full duel, already filled in: that’s where your choice is logged.",
+  },
+);
+
+/** « Comment ça marche », sous le héros de l'accueil (maquettes 102:3 et 103:2). */
+export const HOW_IT_WORKS = defineMessages(
+  {
+    title: "Comment ça marche",
+    methodLink: "Tout sur la méthode",
+    steps: [
+      {
+        title: "Compare deux gestes",
+        text: "Un trajet, un repas, un jean… La balance penche et l’écart en CO2e s’affiche, calculé avec les données de l’ADEME.",
+      },
+      {
+        title: "Choisis le plus léger, ton jardin pousse",
+        text: "Une plante pousse à chaque choix plus léger. Un choix plus lourd est simplement noté : rien n’est retiré.",
+      },
+      {
+        title: "Ton jardin vit",
+        text: "Des espèces se débloquent, le jardin suit les vraies saisons, et des animaux s’installent… pour te parler.",
+      },
+    ],
+  },
+  {
+    title: "How it works",
+    methodLink: "All about the method",
+    steps: [
+      {
+        title: "Compare two actions",
+        text: "A journey, a meal, a pair of jeans… The scales tip and the CO2e difference appears, calculated with ADEME’s data.",
+      },
+      {
+        title: "Choose the lighter one, your garden grows",
+        text: "A plant grows with every lighter choice. A heavier choice is simply noted: nothing is taken away.",
+      },
+      {
+        title: "Your garden is alive",
+        text: "New species unlock, the garden follows the real seasons, and animals move in… to talk to you.",
+      },
+    ],
+  },
+);
+
 export const SEASON = defineMessages(
   {
     title: "De saison",

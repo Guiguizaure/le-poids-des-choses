@@ -4,7 +4,8 @@ export type Category =
   | "habillement"
   | "numerique"
   | "boisson"
-  | "livraison";
+  | "livraison"
+  | "maison";
 
 /** km : trajets ; repas ; objet : modes d'acquisition ; litre : boissons ; achat : livraisons. */
 export type Unit = "km" | "repas" | "objet" | "litre" | "achat";
@@ -21,9 +22,15 @@ export type GestureSource = "fictive" | "impactco2";
 export type AcquisitionMode =
   "neuf" | "occasion" | "occasion-livree" | "garder";
 
-/** Origine d'une valeur : une ligne du CSV, ou une hypothèse de méthode (voir docs/methode.md). */
+/**
+ * Origine d'une valeur : une ligne du CSV, la part fabrication de l'API détaillée Impact CO2
+ * (électroménager : sans usage ni fin de vie), ou une hypothèse de méthode (docs/methode.md).
+ */
 export type ValueMethod =
-  "impactco2" | "hypothese-occasion" | "hypothese-garder";
+  | "impactco2"
+  | "impactco2-fabrication"
+  | "hypothese-occasion"
+  | "hypothese-garder";
 
 export type ValuePart = {
   label: string;
@@ -59,6 +66,12 @@ export type Gesture = {
   sourceId?: string;
   /** Page Impact CO2 du geste (absente des données fictives). */
   sourceUrl?: string;
+  /**
+   * « fabrication » : la valeur ne compte que la fabrication (électroménager, champ footprint
+   * de l'API détaillée Impact CO2), l'usage étant le même que l'appareil soit neuf ou gardé.
+   * Absent : valeur du CSV telle quelle.
+   */
+  scope?: "fabrication";
   /** Valeurs par mode d'acquisition, pour les gestes à l'unité « objet » uniquement. */
   modes?: Partial<Record<AcquisitionMode, ModeValue>>;
   /** Vrai pour toute valeur de test : la construction stricte doit alors échouer. */

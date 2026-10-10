@@ -1,6 +1,7 @@
 {
-  "downloadedAt": "2026-10-05T09:29:36.476Z",
+  "downloadedAt": "2026-10-10T21:16:59.313Z",
   "source": "https://impactco2.fr/equivalents.csv",
+  "manufacturingSource": "https://impactco2.fr/api/v1/thematiques/ecv",
   "gestures": [
     {
       "id": "tgv",
@@ -100,6 +101,154 @@
       "sourceUrl": "https://impactco2.fr/outils/transport/marche"
     },
     {
+      "id": "voiture-electrique",
+      "label": "Voiture électrique",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.06737,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "voitureelectrique",
+      "sourceUrl": "https://impactco2.fr/outils/transport/voitureelectrique"
+    },
+    {
+      "id": "voiture-hybride",
+      "label": "Voiture hybride",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.1466,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "voiturehybride",
+      "sourceUrl": "https://impactco2.fr/outils/transport/voiturehybride"
+    },
+    {
+      "id": "covoiturage",
+      "label": "Covoiturage, 2 personnes",
+      "detail": "voiture thermique, par personne",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.07113,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "voiturethermique+1",
+      "sourceUrl": "https://impactco2.fr/outils/transport/voiturethermique+1"
+    },
+    {
+      "id": "autocar",
+      "label": "Autocar",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.03756,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "autocar",
+      "sourceUrl": "https://impactco2.fr/outils/transport/autocar"
+    },
+    {
+      "id": "intercites",
+      "label": "Intercités",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.00898,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "intercites",
+      "sourceUrl": "https://impactco2.fr/outils/transport/intercites"
+    },
+    {
+      "id": "rer",
+      "label": "RER ou Transilien",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.00978,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "rer",
+      "sourceUrl": "https://impactco2.fr/outils/transport/rer"
+    },
+    {
+      "id": "tram",
+      "label": "Tramway",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.00428,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "tramway",
+      "sourceUrl": "https://impactco2.fr/outils/transport/tramway"
+    },
+    {
+      "id": "moto",
+      "label": "Moto",
+      "detail": "plus de 250 cm³",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.2147,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "moto",
+      "sourceUrl": "https://impactco2.fr/outils/transport/moto"
+    },
+    {
+      "id": "scooter",
+      "label": "Scooter",
+      "detail": "thermique",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.0763,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "scooter",
+      "sourceUrl": "https://impactco2.fr/outils/transport/scooter"
+    },
+    {
+      "id": "trottinette",
+      "label": "Trottinette électrique",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.0249,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "trottinette",
+      "sourceUrl": "https://impactco2.fr/outils/transport/trottinette"
+    },
+    {
+      "id": "velo-electrique",
+      "label": "Vélo électrique",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.01095,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "veloelectrique",
+      "sourceUrl": "https://impactco2.fr/outils/transport/veloelectrique"
+    },
+    {
+      "id": "velo-cargo",
+      "label": "Vélo cargo",
+      "detail": "triporteur électrique",
+      "category": "transport",
+      "unit": "km",
+      "kgCo2ePerUnit": 0.01483,
+      "defaultQuantity": 10,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "triporteurelectrique",
+      "sourceUrl": "https://impactco2.fr/outils/transport/triporteurelectrique"
+    },
+    {
       "id": "repas-vegetarien",
       "label": "Repas végétarien",
       "category": "alimentation",
@@ -164,16 +313,17 @@
       "label": "Jean",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 25.09,
+      "kgCo2ePerUnit": 23.2,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "jeans",
       "sourceUrl": "https://impactco2.fr/outils/habillement/jeans",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 25.09,
-          "method": "impactco2",
+          "kgCo2e": 23.2,
+          "method": "impactco2-fabrication",
           "sourceId": "jeans",
           "sourceUrl": "https://impactco2.fr/outils/habillement/jeans"
         },
@@ -210,16 +360,17 @@
       "label": "T-shirt en coton",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 6.434,
+      "kgCo2ePerUnit": 5.2,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "tshirtencoton",
       "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 6.434,
-          "method": "impactco2",
+          "kgCo2e": 5.2,
+          "method": "impactco2-fabrication",
           "sourceId": "tshirtencoton",
           "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton"
         },
@@ -256,16 +407,17 @@
       "label": "Pull en laine",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 56.7,
+      "kgCo2ePerUnit": 52.9,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "pullenlaine",
       "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 56.7,
-          "method": "impactco2",
+          "kgCo2e": 52.9,
+          "method": "impactco2-fabrication",
           "sourceId": "pullenlaine",
           "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine"
         },
@@ -302,16 +454,17 @@
       "label": "Chaussures de sport",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 20.13,
+      "kgCo2ePerUnit": 18.7,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "chaussuresdesport",
       "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 20.13,
-          "method": "impactco2",
+          "kgCo2e": 18.7,
+          "method": "impactco2-fabrication",
           "sourceId": "chaussuresdesport",
           "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport"
         },
@@ -344,20 +497,209 @@
       }
     },
     {
+      "id": "manteau",
+      "label": "Manteau",
+      "category": "habillement",
+      "unit": "objet",
+      "kgCo2ePerUnit": 85.8,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "manteau",
+      "sourceUrl": "https://impactco2.fr/outils/habillement/manteau",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 85.8,
+          "method": "impactco2-fabrication",
+          "sourceId": "manteau",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/manteau"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 1.075,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 2kg)",
+              "kgCo2e": 1.075,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile2kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile2kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "robe",
+      "label": "Robe en coton",
+      "category": "habillement",
+      "unit": "objet",
+      "kgCo2ePerUnit": 49.8,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "robeencoton",
+      "sourceUrl": "https://impactco2.fr/outils/habillement/robeencoton",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 49.8,
+          "method": "impactco2-fabrication",
+          "sourceId": "robeencoton",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/robeencoton"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "chemise",
+      "label": "Chemise en coton",
+      "category": "habillement",
+      "unit": "objet",
+      "kgCo2ePerUnit": 11.2,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "chemiseencoton",
+      "sourceUrl": "https://impactco2.fr/outils/habillement/chemiseencoton",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 11.2,
+          "method": "impactco2-fabrication",
+          "sourceId": "chemiseencoton",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/chemiseencoton"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "sweat",
+      "label": "Sweat en coton",
+      "category": "habillement",
+      "unit": "objet",
+      "kgCo2ePerUnit": 27.4,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "sweatencoton",
+      "sourceUrl": "https://impactco2.fr/outils/habillement/sweatencoton",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 27.4,
+          "method": "impactco2-fabrication",
+          "sourceId": "sweatencoton",
+          "sourceUrl": "https://impactco2.fr/outils/habillement/sweatencoton"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
       "id": "smartphone",
       "label": "Smartphone",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 80.16,
+      "kgCo2ePerUnit": 79.27,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "smartphone",
       "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 80.16,
-          "method": "impactco2",
+          "kgCo2e": 79.27,
+          "method": "impactco2-fabrication",
           "sourceId": "smartphone",
           "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone"
         },
@@ -394,16 +736,17 @@
       "label": "Ordinateur portable",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 192.6,
+      "kgCo2ePerUnit": 182.3,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "ordinateurportable",
       "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 192.6,
-          "method": "impactco2",
+          "kgCo2e": 182.3,
+          "method": "impactco2-fabrication",
           "sourceId": "ordinateurportable",
           "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable"
         },
@@ -440,16 +783,17 @@
       "label": "Télévision",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 369.7,
+      "kgCo2ePerUnit": 328.3,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "television",
       "sourceUrl": "https://impactco2.fr/outils/numerique/television",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 369.7,
-          "method": "impactco2",
+          "kgCo2e": 328.3,
+          "method": "impactco2-fabrication",
           "sourceId": "television",
           "sourceUrl": "https://impactco2.fr/outils/numerique/television"
         },
@@ -474,6 +818,567 @@
               "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
             }
           ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "tablette",
+      "label": "Tablette",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 83.93,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "tabletteclassique",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/tabletteclassique",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 83.93,
+          "method": "impactco2-fabrication",
+          "sourceId": "tabletteclassique",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/tabletteclassique"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "ecran",
+      "label": "Écran d’ordinateur",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 65.89,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "ecran",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/ecran",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 65.89,
+          "method": "impactco2-fabrication",
+          "sourceId": "ecran",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/ecran"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 7.155,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 15kg)",
+              "kgCo2e": 7.155,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile15kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "box-internet",
+      "label": "Box internet",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 61.41,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "box",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/box",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 61.41,
+          "method": "impactco2-fabrication",
+          "sourceId": "box",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/box"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 0.722,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis d'1kg)",
+              "kgCo2e": 0.722,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "casque-vr",
+      "label": "Casque de réalité virtuelle",
+      "category": "numerique",
+      "unit": "objet",
+      "kgCo2ePerUnit": 70.73,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "casquevr",
+      "sourceUrl": "https://impactco2.fr/outils/numerique/casquevr",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 70.73,
+          "method": "impactco2-fabrication",
+          "sourceId": "casquevr",
+          "sourceUrl": "https://impactco2.fr/outils/numerique/casquevr"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 1.075,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 2kg)",
+              "kgCo2e": 1.075,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile2kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile2kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "lave-linge",
+      "label": "Lave-linge",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 341.1,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "lavelinge",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/lavelinge",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 341.1,
+          "method": "impactco2-fabrication",
+          "sourceId": "lavelinge",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/lavelinge"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "refrigerateur",
+      "label": "Réfrigérateur",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 257.3,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "refrigirateur",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/refrigirateur",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 257.3,
+          "method": "impactco2-fabrication",
+          "sourceId": "refrigirateur",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/refrigirateur"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "lave-vaisselle",
+      "label": "Lave-vaisselle",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 271.2,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "lavevaisselle",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/lavevaisselle",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 271.2,
+          "method": "impactco2-fabrication",
+          "sourceId": "lavevaisselle",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/lavevaisselle"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "micro-ondes",
+      "label": "Micro-ondes",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 98.34,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "microondes",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/microondes",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 98.34,
+          "method": "impactco2-fabrication",
+          "sourceId": "microondes",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/microondes"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 7.155,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 15kg)",
+              "kgCo2e": 7.155,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile15kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "four",
+      "label": "Four électrique",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 217.6,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "fourelectrique",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/fourelectrique",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 217.6,
+          "method": "impactco2-fabrication",
+          "sourceId": "fourelectrique",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/fourelectrique"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "aspirateur",
+      "label": "Aspirateur",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 47.31,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "aspirateur",
+      "sourceUrl": "https://impactco2.fr/outils/electromenager/aspirateur",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 47.31,
+          "method": "impactco2-fabrication",
+          "sourceId": "aspirateur",
+          "sourceUrl": "https://impactco2.fr/outils/electromenager/aspirateur"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 7.155,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 15kg)",
+              "kgCo2e": 7.155,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile15kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "canape",
+      "label": "Canapé en textile",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 179.1,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "canapetextile",
+      "sourceUrl": "https://impactco2.fr/outils/mobilier/canapetextile",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 179.1,
+          "method": "impactco2-fabrication",
+          "sourceId": "canapetextile",
+          "sourceUrl": "https://impactco2.fr/outils/mobilier/canapetextile"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "lit",
+      "label": "Lit",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 443.8,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "lit",
+      "sourceUrl": "https://impactco2.fr/outils/mobilier/lit",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 443.8,
+          "method": "impactco2-fabrication",
+          "sourceId": "lit",
+          "sourceUrl": "https://impactco2.fr/outils/mobilier/lit"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "table",
+      "label": "Table en bois",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 80.22,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "tableenbois",
+      "sourceUrl": "https://impactco2.fr/outils/mobilier/tableenbois",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 80.22,
+          "method": "impactco2-fabrication",
+          "sourceId": "tableenbois",
+          "sourceUrl": "https://impactco2.fr/outils/mobilier/tableenbois"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "chaise",
+      "label": "Chaise en bois",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 18.63,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "chaiseenbois",
+      "sourceUrl": "https://impactco2.fr/outils/mobilier/chaiseenbois",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 18.63,
+          "method": "impactco2-fabrication",
+          "sourceId": "chaiseenbois",
+          "sourceUrl": "https://impactco2.fr/outils/mobilier/chaiseenbois"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
+        },
+        "occasion-livree": {
+          "kgCo2e": 7.155,
+          "method": "hypothese-occasion",
+          "parts": [
+            {
+              "label": "Pas de nouvelle fabrication (hypothèse)",
+              "kgCo2e": 0,
+              "method": "hypothese-occasion"
+            },
+            {
+              "label": "Livraison à domicile (colis de 15kg)",
+              "kgCo2e": 7.155,
+              "method": "impactco2",
+              "sourceId": "livraisondomicile15kg",
+              "sourceUrl": "https://impactco2.fr/outils/livraison/livraisondomicile15kg"
+            }
+          ]
+        },
+        "garder": {
+          "kgCo2e": 0,
+          "method": "hypothese-garder"
+        }
+      }
+    },
+    {
+      "id": "armoire",
+      "label": "Armoire",
+      "category": "maison",
+      "unit": "objet",
+      "kgCo2ePerUnit": 906.9,
+      "defaultQuantity": 1,
+      "source": "impactco2",
+      "fictive": false,
+      "sourceId": "armoire",
+      "sourceUrl": "https://impactco2.fr/outils/mobilier/armoire",
+      "scope": "fabrication",
+      "modes": {
+        "neuf": {
+          "kgCo2e": 906.9,
+          "method": "impactco2-fabrication",
+          "sourceId": "armoire",
+          "sourceUrl": "https://impactco2.fr/outils/mobilier/armoire"
+        },
+        "occasion": {
+          "kgCo2e": 0,
+          "method": "hypothese-occasion"
         },
         "garder": {
           "kgCo2e": 0,

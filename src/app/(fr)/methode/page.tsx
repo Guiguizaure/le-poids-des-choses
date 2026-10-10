@@ -69,7 +69,9 @@ export default function MethodePage() {
             fichier public des équivalents
           </ExternalLink>{" "}
           d’Impact CO2 ; chaque geste y renvoie à sa page sur impactco2.fr, où
-          sa valeur est détaillée.
+          sa valeur est détaillée. Pour les objets, on en garde la part
+          « fabrication », lue dans le détail publié par Impact CO2 (voir nos
+          hypothèses).
         </p>
         <DataCredit />
         {DATA_LICENSE ? (
@@ -102,7 +104,11 @@ export default function MethodePage() {
             S’habiller et Numérique : par objet, pour la fabrication d’un objet
             neuf ;
           </li>
-          <li>Se faire livrer : par achat, pour un colis d’1 kg.</li>
+          <li>Se faire livrer : par achat, pour un colis d’1 kg ;</li>
+          <li>
+            Équiper la maison : par objet, pour la fabrication d’un appareil ou
+            d’un meuble neuf.
+          </li>
         </ul>
       </Section>
 
@@ -117,11 +123,20 @@ export default function MethodePage() {
           fabrication. C’est une hypothèse, pas une mesure. Garder le tien
           compte aussi 0 kg.
         </p>
+        <p id="appareils" className="scroll-mt-6">
+          <strong>La fabrication seule.</strong> Pour les objets, seule la
+          fabrication est comptée : l’usage (lavage, électricité) existe que
+          l’objet soit neuf ou gardé.
+        </p>
         <p>
           <strong>Le colis.</strong> Si l’objet d’occasion est livré, on ajoute
           l’envoi d’un colis à domicile, selon Impact CO2 : 1 kg pour un
-          vêtement ou un smartphone, 2 kg pour des chaussures ou un ordinateur
-          portable, 15 kg pour une télévision.
+          vêtement, un smartphone, une tablette ou une box internet, 2 kg pour
+          des chaussures, un manteau, un ordinateur portable ou un casque de
+          réalité virtuelle, 15 kg pour une télévision, un écran, un
+          micro-ondes, un aspirateur ou une chaise. Au-delà (lave-linge,
+          réfrigérateur, lave-vaisselle, four, gros meubles), aucun colis
+          d’Impact CO2 ne convient : l’occasion n’y est pas proposée livrée.
         </p>
         <p>
           <strong>Les trajets des achats.</strong> Pour « Se faire livrer », les
@@ -135,16 +150,14 @@ export default function MethodePage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>
             le trajet pour aller acheter d’occasion (friperie, brocante, remise
-            en main propre) ;
+            en main propre) ;
           </li>
           <li>
-            l’entretien, le lavage, la réparation ou la remise en état d’un
-            objet ;
+            l’usage d’un objet (lavage d’un vêtement, électricité d’un
+            appareil), son entretien, sa réparation ou sa remise en état : ils
+            existent que l’objet soit neuf ou gardé ;
           </li>
-          <li>la fin de vie (revente, don, déchet) ;</li>
-          <li>
-            l’usage des appareils (l’électricité d’une télévision, par exemple).
-          </li>
+          <li>la fin de vie d’un objet (revente, don, recyclage, déchet).</li>
         </ul>
       </Section>
 

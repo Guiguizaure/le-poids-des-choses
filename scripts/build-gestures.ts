@@ -1,6 +1,8 @@
 // Lancé à la main : `pnpm build-gestures`. Télécharge le CSV Impact CO2 (ADEME) et écrit
-// src/lib/data/gestures.generated.json. Aucune clé API nécessaire.
-import { writeFileSync } from "node:fs";
+// src/lib/data/gestures.generated.json. Pour les objets, la part fabrication vient de l'API
+// détaillée Impact CO2 (champ footprint) : sans clé, l'API répond avec un avertissement ;
+// si IMPACTCO2_API_KEY est définie dans .env.local, elle est envoyée (jamais écrite ailleurs).
+import { existsSync, writeFileSync } from "node:fs";
 import type {
   AcquisitionMode,
   Category,
@@ -10,6 +12,16 @@ import type {
 } from "../src/lib/data/types";
 
 const CSV_URL = "https://impactco2.fr/equivalents.csv";
+/**
+ * API détaillée Impact CO2 : fabrication, usage et fin de vie séparés, par thématique (mêmes
+ * identifiants que le CSV). Objets : numérique (1), habillement (5), électroménager (6),
+ * mobilier (7).
+ */
+export const MANUFACTURING_API = "https://impactco2.fr/api/v1/thematiques/ecv";
+export const MANUFACTURING_THEMES = [1, 5, 6, 7] as const;
+export const manufacturingUrl = (theme: number) =>
+  `${MANUFACTURING_API}/${theme}?detail=1`;
+const ENV_FILE = new URL("../.env.local", import.meta.url);
 const OUTPUT = new URL(
   "../src/lib/data/gestures.generated.json",
   import.meta.url,
@@ -58,6 +70,19 @@ const boisson = {
   unit: "litre",
   defaultQuantity: 1,
 } as const;
+// Électroménager et mobilier : « Équiper la maison ».
+const electromenager = {
+  theme: "Électroménager",
+  category: "maison",
+  unit: "objet",
+  defaultQuantity: 1,
+} as const;
+const mobilier = {
+  theme: "Mobilier",
+  category: "maison",
+  unit: "objet",
+  defaultQuantity: 1,
+} as const;
 // Livraison d'un même achat (colis d'1 kg) : le CSV donne un total par livraison ou achat.
 const livraison = {
   theme: "Livraison",
@@ -86,6 +111,68 @@ export const SELECTION: readonly Selection[] = [
   { ...transport, sourceId: "metro", id: "metro", label: "Métro" },
   { ...transport, sourceId: "velo", id: "velo", label: "Vélo" },
   { ...transport, sourceId: "marche", id: "marche", label: "Marche" },
+  // Lot « Comparer plus » : une seule variante par geste quand l'ADEME en donne plusieurs.
+  {
+    ...transport,
+    sourceId: "voitureelectrique",
+    id: "voiture-electrique",
+    label: "Voiture électrique",
+  },
+  {
+    ...transport,
+    sourceId: "voiturehybride",
+    id: "voiture-hybride",
+    label: "Voiture hybride",
+  },
+  {
+    ...transport,
+    sourceId: "voiturethermique+1",
+    id: "covoiturage",
+    label: "Covoiturage, 2 personnes",
+    detail: "voiture thermique, par personne",
+  },
+  { ...transport, sourceId: "autocar", id: "autocar", label: "Autocar" },
+  {
+    ...transport,
+    sourceId: "intercites",
+    id: "intercites",
+    label: "Intercités",
+  },
+  { ...transport, sourceId: "rer", id: "rer", label: "RER ou Transilien" },
+  { ...transport, sourceId: "tramway", id: "tram", label: "Tramway" },
+  {
+    ...transport,
+    sourceId: "moto",
+    id: "moto",
+    label: "Moto",
+    detail: "plus de 250 cm³",
+  },
+  {
+    ...transport,
+    sourceId: "scooter",
+    id: "scooter",
+    label: "Scooter",
+    detail: "thermique",
+  },
+  {
+    ...transport,
+    sourceId: "trottinette",
+    id: "trottinette",
+    label: "Trottinette électrique",
+  },
+  {
+    ...transport,
+    sourceId: "veloelectrique",
+    id: "velo-electrique",
+    label: "Vélo électrique",
+  },
+  {
+    ...transport,
+    sourceId: "triporteurelectrique",
+    id: "velo-cargo",
+    label: "Vélo cargo",
+    detail: "triporteur électrique",
+  },
 
   {
     ...repas,
@@ -137,6 +224,15 @@ export const SELECTION: readonly Selection[] = [
     id: "chaussures",
     label: "Chaussures de sport",
   },
+  { ...habit, sourceId: "manteau", id: "manteau", label: "Manteau" },
+  { ...habit, sourceId: "robeencoton", id: "robe", label: "Robe en coton" },
+  {
+    ...habit,
+    sourceId: "chemiseencoton",
+    id: "chemise",
+    label: "Chemise en coton",
+  },
+  { ...habit, sourceId: "sweatencoton", id: "sweat", label: "Sweat en coton" },
 
   {
     ...equipement,
@@ -156,6 +252,77 @@ export const SELECTION: readonly Selection[] = [
     id: "television",
     label: "Télévision",
   },
+  {
+    ...equipement,
+    sourceId: "tabletteclassique",
+    id: "tablette",
+    label: "Tablette",
+  },
+  {
+    ...equipement,
+    sourceId: "ecran",
+    id: "ecran",
+    label: "Écran d’ordinateur",
+  },
+  { ...equipement, sourceId: "box", id: "box-internet", label: "Box internet" },
+  {
+    ...equipement,
+    sourceId: "casquevr",
+    id: "casque-vr",
+    label: "Casque de réalité virtuelle",
+  },
+
+  {
+    ...electromenager,
+    sourceId: "lavelinge",
+    id: "lave-linge",
+    label: "Lave-linge",
+  },
+  {
+    ...electromenager,
+    sourceId: "refrigirateur",
+    id: "refrigerateur",
+    label: "Réfrigérateur",
+  },
+  {
+    ...electromenager,
+    sourceId: "lavevaisselle",
+    id: "lave-vaisselle",
+    label: "Lave-vaisselle",
+  },
+  {
+    ...electromenager,
+    sourceId: "microondes",
+    id: "micro-ondes",
+    label: "Micro-ondes",
+  },
+  {
+    ...electromenager,
+    sourceId: "fourelectrique",
+    id: "four",
+    label: "Four électrique",
+  },
+  {
+    ...electromenager,
+    sourceId: "aspirateur",
+    id: "aspirateur",
+    label: "Aspirateur",
+  },
+  {
+    ...mobilier,
+    sourceId: "canapetextile",
+    id: "canape",
+    label: "Canapé en textile",
+  },
+  { ...mobilier, sourceId: "lit", id: "lit", label: "Lit" },
+  { ...mobilier, sourceId: "tableenbois", id: "table", label: "Table en bois" },
+  {
+    ...mobilier,
+    sourceId: "chaiseenbois",
+    id: "chaise",
+    label: "Chaise en bois",
+  },
+  { ...mobilier, sourceId: "armoire", id: "armoire", label: "Armoire" },
 
   {
     ...boisson,
@@ -237,6 +404,19 @@ export const PARCEL_BY_GESTURE_ID: Readonly<Record<string, string>> = {
   smartphone: "livraisondomicile",
   "ordinateur-portable": "livraisondomicile2kg",
   television: "livraisondomicile15kg",
+  manteau: "livraisondomicile2kg",
+  robe: "livraisondomicile",
+  chemise: "livraisondomicile",
+  sweat: "livraisondomicile",
+  tablette: "livraisondomicile",
+  ecran: "livraisondomicile15kg",
+  "box-internet": "livraisondomicile",
+  "casque-vr": "livraisondomicile2kg",
+  "micro-ondes": "livraisondomicile15kg",
+  aspirateur: "livraisondomicile15kg",
+  chaise: "livraisondomicile15kg",
+  // Trop lourds ou encombrants pour le plus gros colis du CSV (30 kg) : lave-linge,
+  // réfrigérateur, lave-vaisselle, four, canapé, lit, table, armoire. Pas d'occasion livrée.
 };
 const PARCEL_THEME = "Livraison";
 
@@ -278,10 +458,31 @@ export function roundSignificant(value: number, digits = 4): number {
   return Number(value.toPrecision(digits));
 }
 
+/**
+ * Part fabrication (kg CO2e) par identifiant, d'après la réponse de l'API détaillée
+ * (`data[].slug`, `data[].footprint`). Échoue sur une réponse inattendue.
+ */
+export function parseManufacturing(body: unknown): Record<string, number> {
+  const data = (body as { data?: unknown })?.data;
+  if (!Array.isArray(data))
+    throw new Error("API détaillée : réponse inattendue (pas de « data »).");
+  const out: Record<string, number> = {};
+  for (const item of data as { slug?: unknown; footprint?: unknown }[]) {
+    if (typeof item.slug !== "string") continue;
+    if (typeof item.footprint !== "number" || !Number.isFinite(item.footprint))
+      throw new Error(
+        `API détaillée : fabrication illisible pour « ${item.slug} ».`,
+      );
+    out[item.slug] = item.footprint;
+  }
+  return out;
+}
+
 export function buildGestures(
   csv: string,
   selection: readonly Selection[] = SELECTION,
   parcels: Readonly<Record<string, string>> = PARCEL_BY_GESTURE_ID,
+  manufacturing: Readonly<Record<string, number>> = {},
 ): Gesture[] {
   const [header, ...rows] = parseCsv(csv);
   const col = (name: string) => {
@@ -316,7 +517,24 @@ export function buildGestures(
   };
 
   return selection.map((sel) => {
-    const { value, url } = lookup(sel.sourceId, sel.theme);
+    const csvRow = lookup(sel.sourceId, sel.theme);
+    const { url } = csvRow;
+    let value = csvRow.value;
+    // Objets : fabrication seule. L'usage (lavage, électricité) et la fin de vie existent que
+    // l'objet soit neuf ou gardé ; la valeur du CSV les additionne.
+    const manufacturingOnly = sel.unit === "objet";
+    if (manufacturingOnly) {
+      const footprint = manufacturing[sel.sourceId];
+      if (footprint === undefined)
+        throw new Error(
+          `Part fabrication de « ${sel.sourceId} » absente de l'API détaillée.`,
+        );
+      if (footprint <= 0 || footprint > value)
+        throw new Error(
+          `Part fabrication incohérente pour « ${sel.sourceId} » : ${footprint} (total ${value}).`,
+        );
+      value = footprint;
+    }
     const gesture: Gesture = {
       id: sel.id,
       label: sel.label,
@@ -329,13 +547,14 @@ export function buildGestures(
       fictive: false,
       sourceId: sel.sourceId,
       sourceUrl: url,
+      ...(manufacturingOnly ? { scope: "fabrication" as const } : {}),
     };
 
     if (sel.unit === "objet") {
       const modes: Partial<Record<AcquisitionMode, ModeValue>> = {
         neuf: {
           kgCo2e: gesture.kgCo2ePerUnit,
-          method: "impactco2",
+          method: manufacturingOnly ? "impactco2-fabrication" : "impactco2",
           sourceId: sel.sourceId,
           sourceUrl: url,
         },
@@ -370,14 +589,38 @@ export function buildGestures(
   });
 }
 
+/** Clé facultative, lue dans .env.local seulement (jamais affichée). */
+function apiKey(): string | undefined {
+  if (existsSync(ENV_FILE)) process.loadEnvFile(ENV_FILE);
+  return process.env.IMPACTCO2_API_KEY?.trim() || undefined;
+}
+
 async function main() {
   const response = await fetch(CSV_URL);
   if (!response.ok)
     throw new Error(`Téléchargement impossible : HTTP ${response.status}`);
-  const gestures = buildGestures(await response.text());
+  const key = apiKey();
+  const manufacturing: Record<string, number> = {};
+  for (const theme of MANUFACTURING_THEMES) {
+    const detail = await fetch(manufacturingUrl(theme), {
+      headers: key ? { Authorization: `Bearer ${key}` } : {},
+    });
+    if (!detail.ok)
+      throw new Error(
+        `API détaillée (thématique ${theme}) : HTTP ${detail.status}, rien n'est écrit.`,
+      );
+    Object.assign(manufacturing, parseManufacturing(await detail.json()));
+  }
+  const gestures = buildGestures(
+    await response.text(),
+    SELECTION,
+    PARCEL_BY_GESTURE_ID,
+    manufacturing,
+  );
   const file = {
     downloadedAt: new Date().toISOString(),
     source: CSV_URL,
+    manufacturingSource: MANUFACTURING_API,
     gestures,
   };
   writeFileSync(OUTPUT, JSON.stringify(file, null, 2) + "\n");
