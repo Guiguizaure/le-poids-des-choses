@@ -275,11 +275,16 @@ test.describe("« Équiper la maison »", () => {
       page.getByText("Fabrication d’un lave-linge neuf"),
     ).toBeVisible();
     await expect(page.locator("[data-manufacturing-note]")).toHaveText(
-      "Écart de fabrication\u202f: l’usage (lavage, électricité) existe que l’objet soit neuf ou gardé.",
+      "On compte la fabrication\u202f: l’usage existe, neuf ou gardé.",
     );
     // Trop gros pour un colis du CSV : pas d'interrupteur « Livré en colis ».
     await expect(page.getByRole("switch")).toHaveCount(0);
     await expectNoAxeViolations(page);
+
+    await page.goto("/en/compare?objet=lave-linge&option=garder&colis=0");
+    await expect(page.locator("[data-manufacturing-note]")).toHaveText(
+      "Only manufacturing is counted: the use happens whether it’s new or kept.",
+    );
   });
 
   test("la catégorie est marquée « Nouveau » (texte encre sur lavande)", async ({
