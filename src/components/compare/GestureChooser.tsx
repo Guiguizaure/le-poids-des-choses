@@ -22,6 +22,7 @@ import { COMPARE } from "@/lib/i18n/messages/compare";
 import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { CompareBar } from "./CompareBar";
+import { GestureSearch } from "./GestureSearch";
 import { useFocusTitle } from "./useFocusTitle";
 import { RaconteQuickLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
@@ -83,6 +84,7 @@ export function GestureChooser({
     initial ? { first: initial.id, second: null } : EMPTY_SELECTION,
   );
   const [message, setMessage] = useState("");
+  const [query, setQuery] = useState("");
   const titleRef = useFocusTitle<HTMLHeadingElement>(focusTitle);
 
   const count = selectionCount(selection);
@@ -114,6 +116,15 @@ export function GestureChooser({
     );
   };
 
+  /** Un résultat de recherche : comme dans la grille, puis retour à sa catégorie. */
+  const pick = (id: string) => {
+    const gesture = getGesture(id);
+    if (gesture) setCategory(gesture.category);
+    setQuery("");
+    toggle(id);
+  };
+  const searching = query.trim() !== "";
+
   return (
     <>
       <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
@@ -141,7 +152,15 @@ export function GestureChooser({
             {t.title}
           </h1>
 
+          <GestureSearch
+            query={query}
+            onQueryChange={setQuery}
+            isSelectable={(id) => isSelectable(selection, id)}
+            onPick={pick}
+          />
+
           <div
+            hidden={searching}
             className="flex flex-wrap gap-2"
             role="group"
             aria-label={t.categories}
@@ -159,17 +178,24 @@ export function GestureChooser({
                 }`}
               >
                 {categoryNames[id]}
+                {id === "maison" ? (
+                  <span className="bg-lavande text-encre text-legende ml-1.5 rounded-full px-2 py-0.5 align-[1px] leading-[1.2] font-semibold">
+                    {t.newCategory}
+                  </span>
+                ) : null}
               </button>
             ))}
           </div>
 
           <p
             id="gestes-aide"
+            hidden={searching}
             className="text-corps-s text-texte-attenue leading-[1.4]"
           >
             {subtitle}
           </p>
           <div
+            hidden={searching}
             className="grid grid-cols-2 gap-3"
             role="group"
             aria-labelledby="gestes-aide"

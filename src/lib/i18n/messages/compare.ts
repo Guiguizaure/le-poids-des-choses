@@ -29,6 +29,25 @@ export const COMPARE = defineMessages(
       logHabit: "Noter une habitude",
       logHabitHelp:
         "Un repas végé, le vélo pour aller au travail : sans comparaison ni kg, ça arrose ton jardin.",
+      searchLabel: "Chercher un geste",
+      searchPlaceholder: "Cherche : covoiturage, lave-linge…",
+      searchClear: "Effacer la recherche",
+      found: (n: number) =>
+        n === 0
+          ? "Aucun geste trouvé"
+          : `${n} ${n > 1 ? "gestes trouvés" : "geste trouvé"}`,
+      searchRule:
+        "Un trajet se compare à un autre trajet, un objet à lui-même (neuf, d’occasion ou garder le tien). Jamais un vélo contre un steak.",
+      searchEmpty:
+        "Rien trouvé ? Le catalogue suit les données de l’ADEME : si un geste n’y est pas, on ne l’invente pas.",
+      newCategory: "Nouveau",
+      units: {
+        km: "au km",
+        repas: "par repas",
+        litre: "par litre",
+        achat: "par achat",
+        objet: "par objet",
+      },
     },
     duel: {
       lighterFeminine: "plus légère",
@@ -112,6 +131,25 @@ export const COMPARE = defineMessages(
       logHabit: "Log a habit",
       logHabitHelp:
         "A veggie meal, cycling to work: no comparison and no kg, it just waters your garden.",
+      searchLabel: "Search for an action",
+      searchPlaceholder: "Search: car-sharing, washing machine…",
+      searchClear: "Clear the search",
+      found: (n: number) =>
+        n === 0
+          ? "No actions found"
+          : `${n} ${n > 1 ? "actions found" : "action found"}`,
+      searchRule:
+        "A journey is compared with another journey, an item with itself (new, second-hand or keeping yours). Never a bike against a steak.",
+      searchEmpty:
+        "Nothing found? The catalogue follows ADEME’s data: if an action isn’t in it, we don’t make it up.",
+      newCategory: "New",
+      units: {
+        km: "per km",
+        repas: "per meal",
+        litre: "per litre",
+        achat: "per purchase",
+        objet: "per item",
+      },
     },
     duel: {
       lighterFeminine: "lighter",
