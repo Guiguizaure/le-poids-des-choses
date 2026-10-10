@@ -69,7 +69,9 @@ export default function MethodePage() {
             fichier public des équivalents
           </ExternalLink>{" "}
           d’Impact CO2 ; chaque geste y renvoie à sa page sur impactco2.fr, où
-          sa valeur est détaillée.
+          sa valeur est détaillée. Pour les objets, on en garde la part
+          « fabrication », lue dans le détail publié par Impact CO2 (voir nos
+          hypothèses).
         </p>
         <DataCredit />
         {DATA_LICENSE ? (
@@ -103,7 +105,10 @@ export default function MethodePage() {
             neuf ;
           </li>
           <li>Se faire livrer : par achat, pour un colis d’1 kg ;</li>
-          <li>Équiper la maison : par objet, électroménager et meubles.</li>
+          <li>
+            Équiper la maison : par objet, pour la fabrication d’un appareil ou
+            d’un meuble neuf.
+          </li>
         </ul>
       </Section>
 
@@ -119,9 +124,9 @@ export default function MethodePage() {
           compte aussi 0 kg.
         </p>
         <p id="appareils" className="scroll-mt-6">
-          <strong>Les appareils.</strong> Pour les appareils, seule la
-          fabrication est comptée : l’électricité, tu la consommes que
-          l’appareil soit neuf ou gardé.
+          <strong>La fabrication seule.</strong> Pour les objets, seule la
+          fabrication est comptée : l’usage (lavage, électricité) existe que
+          l’objet soit neuf ou gardé.
         </p>
         <p>
           <strong>Le colis.</strong> Si l’objet d’occasion est livré, on ajoute
@@ -145,16 +150,14 @@ export default function MethodePage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>
             le trajet pour aller acheter d’occasion (friperie, brocante, remise
-            en main propre) ;
+            en main propre) ;
           </li>
           <li>
-            l’entretien, le lavage, la réparation ou la remise en état d’un
-            objet ;
+            l’usage d’un objet (lavage d’un vêtement, électricité d’un
+            appareil), son entretien, sa réparation ou sa remise en état : ils
+            existent que l’objet soit neuf ou gardé ;
           </li>
-          <li>la fin de vie (revente, don, déchet) ;</li>
-          <li>
-            l’usage des appareils (l’électricité d’une télévision, par exemple).
-          </li>
+          <li>la fin de vie d’un objet (revente, don, recyclage, déchet).</li>
         </ul>
       </Section>
 

@@ -289,16 +289,17 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
 - Catalogue (lot « Comparer plus ») : 65 gestes en 7 catégories, dont « Équiper la maison »
   (`maison` : électroménager et meubles, objets ; couleur `lavande` #8F7BEA, texte encre
   seulement, 5,1:1). Une seule variante ADEME par geste, écrite dans le nom (« Covoiturage, 2
-  personnes ») ; variantes écartées listées dans `docs/gestes-sources.md`. Électroménager :
-  `scope: "fabrication"`, « neuf » = champ `footprint` de l'API détaillée Impact CO2
-  (`MANUFACTURING_URL`, méthode `impactco2-fabrication`), sans usage ni fin de vie ; « écart
-  de fabrication » sur la carte de résultat et note sous l'écart du duel objet ;
-  /methode#appareils. Le mobilier garde la valeur du CSV (aucun usage). « Raconte ta
-  journée » ne reconnaît pas encore les gestes de ce lot (`NOT_YET_RECOGNIZED`,
+  personnes ») ; variantes écartées listées dans `docs/gestes-sources.md`. Tous les objets
+  (`scope: "fabrication"`) : « neuf » = champ `footprint` de l'API détaillée Impact CO2
+  (`MANUFACTURING_API`, thématiques 1, 5, 6, 7 ; méthode `impactco2-fabrication`), sans usage
+  ni fin de vie (le mobilier a son détail : fabrication = valeur du CSV) ; « écart de
+  fabrication » sur la carte de résultat et note sous l'écart du duel objet ;
+  /methode#appareils. Les choix déjà notés gardent l'écart enregistré (jamais recalculé).
+  « Raconte ta journée » ne reconnaît pas encore les gestes de ce lot (`NOT_YET_RECOGNIZED`,
   `src/lib/raconte/detections.ts`).
 - Objets (unité `objet`) : chaque geste porte `modes` (`neuf`, `occasion`, `occasion-livree`,
-  `garder`), chaque valeur avec `method` (`impactco2` + `sourceId`, ou `hypothese-occasion` /
-  `hypothese-garder`). `withMode` / `compareModes` (`src/lib/calc/modes.ts`) comparent les
+  `garder`), chaque valeur avec `method` (`impactco2-fabrication` + `sourceId` pour le neuf,
+  `impactco2` pour un colis, ou `hypothese-occasion` / `hypothese-garder`). `withMode` / `compareModes` (`src/lib/calc/modes.ts`) comparent les
   modes d'un même objet. Le colis de l'option « livrée » est choisi par objet dans
   `PARCEL_BY_GESTURE_ID` (script) ; pas de ligne adaptée = pas d'option, jamais de valeur
   inventée. Hypothèses détaillées dans `docs/methode.md`.

@@ -75,7 +75,9 @@ export default function MethodPage() {
             public file of equivalents
           </ExternalLink>
           ; each action links to its page on impactco2.fr (in French), where its
-          value is explained in detail.
+          value is explained in detail. For items, we keep the “manufacturing”
+          share, read from the breakdown published by Impact CO2 (see our
+          assumptions).
         </p>
         <DataCredit />
         {DATA_LICENSE ? (
@@ -106,7 +108,10 @@ export default function MethodPage() {
           <li>Drinking: per litre;</li>
           <li>Clothes and Digital: per item, for making a new item;</li>
           <li>Deliveries: per purchase, for a 1 kg parcel;</li>
-          <li>Furnish your home: per item, appliances and furniture.</li>
+          <li>
+            Furnish your home: per item, for making a new appliance or piece of
+            furniture.
+          </li>
         </ul>
       </Section>
 
@@ -122,8 +127,9 @@ export default function MethodPage() {
           also counts 0 kg.
         </p>
         <p id="appareils" className="scroll-mt-6">
-          <strong>Appliances.</strong> For appliances, only manufacturing is
-          counted: you use the electricity whether the appliance is new or kept.
+          <strong>Manufacturing only.</strong> For items, only manufacturing is
+          counted: use (washing, electricity) happens whether the item is new or
+          kept.
         </p>
         <p>
           <strong>The parcel.</strong> If the second-hand item is delivered, we
@@ -147,9 +153,12 @@ export default function MethodPage() {
             the trip to buy second-hand (charity shop, car boot sale, handover
             in person);
           </li>
-          <li>looking after, washing, repairing or refurbishing an item;</li>
-          <li>end of life (resale, donation, waste);</li>
-          <li>using appliances (a television’s electricity, for example).</li>
+          <li>
+            using an item (washing clothes, an appliance’s electricity), looking
+            after, repairing or refurbishing it: these happen whether the item
+            is new or kept;
+          </li>
+          <li>an item’s end of life (resale, donation, recycling, waste).</li>
         </ul>
       </Section>
 

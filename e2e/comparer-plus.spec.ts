@@ -267,7 +267,7 @@ test.describe("« Équiper la maison »", () => {
       page.getByText("Fabrication d’un lave-linge neuf"),
     ).toBeVisible();
     await expect(page.locator("[data-manufacturing-note]")).toHaveText(
-      "Écart de fabrication : l’électricité, tu la consommes que l’appareil soit neuf ou gardé.",
+      "Écart de fabrication\u202f: l’usage (lavage, électricité) existe que l’objet soit neuf ou gardé.",
     );
     // Trop gros pour un colis du CSV : pas d'interrupteur « Livré en colis ».
     await expect(page.getByRole("switch")).toHaveCount(0);

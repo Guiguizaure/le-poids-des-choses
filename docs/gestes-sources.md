@@ -7,24 +7,45 @@ présents avant ce jour sont identiques à celles du 5 octobre). Aucune valeur n
 main. Un test vérifie que chaque geste du catalogue figure ici avec son identifiant ADEME et sa
 fiche (`src/lib/data/sources.test.ts`).
 
-## Électroménager : fabrication seule
+## Objets : fabrication seule
 
-Pour l'électroménager (« Équiper la maison »), la valeur du CSV additionne la fabrication,
-l'usage (électricité sur plusieurs années) et la fin de vie. Le site ne garde que la
-fabrication : champ `footprint` de l'API détaillée Impact CO2,
-<https://impactco2.fr/api/v1/thematiques/ecv/6?detail=1> (même outil, mêmes identifiants),
-lu le 10 octobre 2026. L'électricité, on la consomme que l'appareil soit neuf ou gardé
-(/methode#appareils). Le mobilier n'a ni usage ni fin de vie dans l'API : sa valeur est celle
-du CSV.
+Pour tous les objets (vêtements, numérique, électroménager, meubles), la valeur du CSV additionne
+la fabrication, l'usage (lavage, électricité sur plusieurs années) et la fin de vie. Le site ne
+garde que la fabrication : champ `footprint` de l'API détaillée Impact CO2,
+`https://impactco2.fr/api/v1/thematiques/ecv/{1,5,6,7}?detail=1` (numérique, habillement,
+électroménager, mobilier ; mêmes identifiants que le CSV), lue le 10 octobre 2026. L'usage
+existe que l'objet soit neuf ou gardé (/methode#appareils). Le mobilier a bien son détail dans
+l'API : ni usage ni fin de vie, sa fabrication est égale à la valeur du CSV. Usage : par an ×
+années, tels que l'API les donne.
 
-| Appareil                           | Valeur du CSV (kg CO2e) | Fabrication (`footprint`) | Usage (par an × années) | Fin de vie |
-| ---------------------------------- | ----------------------- | ------------------------- | ----------------------- | ---------- |
-| Lave-linge (`lavelinge`)           | 513,42                  | 341,10                    | 18,08 × 12 = 216,96     | −44,64     |
-| Réfrigérateur (`refrigirateur`)    | 338,71                  | 257,30                    | 8,832 × 10 = 88,32      | −6,91      |
-| Lave-vaisselle (`lavevaisselle`)   | 460,79                  | 271,19                    | 18,25 × 12 = 219,00     | −29,40     |
-| Micro-ondes (`microondes`)         | 121,35                  | 98,34                     | 2,45 × 12 = 29,40       | −6,39      |
-| Four électrique (`fourelectrique`) | 272,61                  | 217,59                    | 6,297 × 12 = 75,57      | −20,55     |
-| Aspirateur (`aspirateur`)          | 73,43                   | 47,31                     | 3,733 × 8 = 29,86       | −3,74      |
+| Objet                                      | Valeur du CSV (kg CO2e) | Fabrication (`footprint`) | Usage  | Fin de vie |
+| ------------------------------------------ | ----------------------- | ------------------------- | ------ | ---------- |
+| Jean (`jeans`)                             | 25,09                   | 23,20                     | 1,25   | 0,64       |
+| T-shirt en coton (`tshirtencoton`)         | 6,43                    | 5,20                      | 0,98   | 0,25       |
+| Pull en laine (`pullenlaine`)              | 56,70                   | 52,90                     | 2,52   | 1,28       |
+| Chaussures de sport (`chaussuresdesport`)  | 20,13                   | 18,70                     | 0      | 1,43       |
+| Manteau (`manteau`)                        | 101,42                  | 85,80                     | 13,22  | 2,40       |
+| Robe en coton (`robeencoton`)              | 56,91                   | 49,80                     | 5,81   | 1,29       |
+| Chemise en coton (`chemiseencoton`)        | 13,23                   | 11,20                     | 1,57   | 0,46       |
+| Sweat en coton (`sweatencoton`)            | 32,49                   | 27,40                     | 3,58   | 1,52       |
+| Smartphone (`smartphone`)                  | 80,16                   | 79,27                     | 0,64   | 0,25       |
+| Ordinateur portable (`ordinateurportable`) | 192,62                  | 182,30                    | 7,53   | 2,79       |
+| Télévision (`television`)                  | 369,71                  | 328,26                    | 29,55  | 11,90      |
+| Tablette (`tabletteclassique`)             | 87,14                   | 83,93                     | 2,84   | 0,36       |
+| Écran d’ordinateur (`ecran`)               | 92,57                   | 65,89                     | 22,73  | 3,95       |
+| Box internet (`box`)                       | 81,23                   | 61,41                     | 18,19  | 1,63       |
+| Casque de réalité virtuelle (`casquevr`)   | 72,59                   | 70,73                     | 0,19   | 1,68       |
+| Lave-linge (`lavelinge`)                   | 513,42                  | 341,10                    | 216,96 | −44,64     |
+| Réfrigérateur (`refrigirateur`)            | 338,71                  | 257,30                    | 88,32  | −6,91      |
+| Lave-vaisselle (`lavevaisselle`)           | 460,79                  | 271,19                    | 219,00 | −29,40     |
+| Micro-ondes (`microondes`)                 | 121,35                  | 98,34                     | 29,40  | −6,39      |
+| Four électrique (`fourelectrique`)         | 272,61                  | 217,59                    | 75,57  | −20,55     |
+| Aspirateur (`aspirateur`)                  | 73,43                   | 47,31                     | 29,86  | −3,74      |
+| Canapé en textile (`canapetextile`)        | 179,10                  | 179,10                    | 0      | —          |
+| Lit (`lit`)                                | 443,81                  | 443,81                    | 0      | —          |
+| Table en bois (`tableenbois`)              | 80,22                   | 80,22                     | 0      | —          |
+| Chaise en bois (`chaiseenbois`)            | 18,63                   | 18,63                     | 0      | —          |
+| Armoire (`armoire`)                        | 906,88                  | 906,88                    | 0      | —          |
 
 ## Duels prêts à jouer : distance Paris–Marseille
 
@@ -63,32 +84,32 @@ trajets.
 | `repas-poulet`         | Repas au poulet                    | Manger            | repas             | `repasavecdupoulet`       | 1,46              | valeur du CSV                     | [fiche](https://impactco2.fr/outils/alimentation/repasavecdupoulet)       |
 | `repas-boeuf`          | Repas au bœuf                      | Manger            | repas             | `repasavecduboeuf`        | 4,97              | valeur du CSV                     | [fiche](https://impactco2.fr/outils/alimentation/repasavecduboeuf)        |
 | `repas-poisson`        | Repas au poisson blanc (cabillaud) | Manger            | repas             | `repasavecdupoissonblanc` | 2,43              | valeur du CSV                     | [fiche](https://impactco2.fr/outils/alimentation/repasavecdupoissonblanc) |
-| `jean`                 | Jean                               | S’habiller        | objet             | `jeans`                   | 25,09             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/jeans)                    |
-| `tshirt`               | T-shirt en coton                   | S’habiller        | objet             | `tshirtencoton`           | 6,434             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/tshirtencoton)            |
-| `pull`                 | Pull en laine                      | S’habiller        | objet             | `pullenlaine`             | 56,7              | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/pullenlaine)              |
-| `chaussures`           | Chaussures de sport                | S’habiller        | objet             | `chaussuresdesport`       | 20,13             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/chaussuresdesport)        |
-| `manteau`              | Manteau                            | S’habiller        | objet             | `manteau`                 | 101,4             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/manteau)                  |
-| `robe`                 | Robe en coton                      | S’habiller        | objet             | `robeencoton`             | 56,91             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/robeencoton)              |
-| `chemise`              | Chemise en coton                   | S’habiller        | objet             | `chemiseencoton`          | 13,23             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/chemiseencoton)           |
-| `sweat`                | Sweat en coton                     | S’habiller        | objet             | `sweatencoton`            | 32,49             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/habillement/sweatencoton)             |
-| `smartphone`           | Smartphone                         | Numérique         | objet             | `smartphone`              | 80,16             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/smartphone)                 |
-| `ordinateur-portable`  | Ordinateur portable                | Numérique         | objet             | `ordinateurportable`      | 192,6             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/ordinateurportable)         |
-| `television`           | Télévision                         | Numérique         | objet             | `television`              | 369,7             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/television)                 |
-| `tablette`             | Tablette                           | Numérique         | objet             | `tabletteclassique`       | 87,14             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/tabletteclassique)          |
-| `ecran`                | Écran d’ordinateur                 | Numérique         | objet             | `ecran`                   | 92,57             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/ecran)                      |
-| `box-internet`         | Box internet                       | Numérique         | objet             | `box`                     | 81,23             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/box)                        |
-| `casque-vr`            | Casque de réalité virtuelle        | Numérique         | objet             | `casquevr`                | 72,59             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/numerique/casquevr)                   |
+| `jean`                 | Jean                               | S’habiller        | objet             | `jeans`                   | 23,2              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/jeans)                    |
+| `tshirt`               | T-shirt en coton                   | S’habiller        | objet             | `tshirtencoton`           | 5,2               | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/tshirtencoton)            |
+| `pull`                 | Pull en laine                      | S’habiller        | objet             | `pullenlaine`             | 52,9              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/pullenlaine)              |
+| `chaussures`           | Chaussures de sport                | S’habiller        | objet             | `chaussuresdesport`       | 18,7              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/chaussuresdesport)        |
+| `manteau`              | Manteau                            | S’habiller        | objet             | `manteau`                 | 85,8              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/manteau)                  |
+| `robe`                 | Robe en coton                      | S’habiller        | objet             | `robeencoton`             | 49,8              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/robeencoton)              |
+| `chemise`              | Chemise en coton                   | S’habiller        | objet             | `chemiseencoton`          | 11,2              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/chemiseencoton)           |
+| `sweat`                | Sweat en coton                     | S’habiller        | objet             | `sweatencoton`            | 27,4              | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/habillement/sweatencoton)             |
+| `smartphone`           | Smartphone                         | Numérique         | objet             | `smartphone`              | 79,27             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/smartphone)                 |
+| `ordinateur-portable`  | Ordinateur portable                | Numérique         | objet             | `ordinateurportable`      | 182,3             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/ordinateurportable)         |
+| `television`           | Télévision                         | Numérique         | objet             | `television`              | 328,3             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/television)                 |
+| `tablette`             | Tablette                           | Numérique         | objet             | `tabletteclassique`       | 83,93             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/tabletteclassique)          |
+| `ecran`                | Écran d’ordinateur                 | Numérique         | objet             | `ecran`                   | 65,89             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/ecran)                      |
+| `box-internet`         | Box internet                       | Numérique         | objet             | `box`                     | 61,41             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/box)                        |
+| `casque-vr`            | Casque de réalité virtuelle        | Numérique         | objet             | `casquevr`                | 70,73             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/numerique/casquevr)                   |
 | `lave-linge`           | Lave-linge                         | Équiper la maison | objet             | `lavelinge`               | 341,1             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/lavelinge)             |
 | `refrigerateur`        | Réfrigérateur                      | Équiper la maison | objet             | `refrigirateur`           | 257,3             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/refrigirateur)         |
 | `lave-vaisselle`       | Lave-vaisselle                     | Équiper la maison | objet             | `lavevaisselle`           | 271,2             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/lavevaisselle)         |
 | `micro-ondes`          | Micro-ondes                        | Équiper la maison | objet             | `microondes`              | 98,34             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/microondes)            |
 | `four`                 | Four électrique                    | Équiper la maison | objet             | `fourelectrique`          | 217,6             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/fourelectrique)        |
 | `aspirateur`           | Aspirateur                         | Équiper la maison | objet             | `aspirateur`              | 47,31             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/electromenager/aspirateur)            |
-| `canape`               | Canapé en textile                  | Équiper la maison | objet             | `canapetextile`           | 179,1             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/mobilier/canapetextile)               |
-| `lit`                  | Lit                                | Équiper la maison | objet             | `lit`                     | 443,8             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/mobilier/lit)                         |
-| `table`                | Table en bois                      | Équiper la maison | objet             | `tableenbois`             | 80,22             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/mobilier/tableenbois)                 |
-| `chaise`               | Chaise en bois                     | Équiper la maison | objet             | `chaiseenbois`            | 18,63             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/mobilier/chaiseenbois)                |
-| `armoire`              | Armoire                            | Équiper la maison | objet             | `armoire`                 | 906,9             | valeur du CSV                     | [fiche](https://impactco2.fr/outils/mobilier/armoire)                     |
+| `canape`               | Canapé en textile                  | Équiper la maison | objet             | `canapetextile`           | 179,1             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/mobilier/canapetextile)               |
+| `lit`                  | Lit                                | Équiper la maison | objet             | `lit`                     | 443,8             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/mobilier/lit)                         |
+| `table`                | Table en bois                      | Équiper la maison | objet             | `tableenbois`             | 80,22             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/mobilier/tableenbois)                 |
+| `chaise`               | Chaise en bois                     | Équiper la maison | objet             | `chaiseenbois`            | 18,63             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/mobilier/chaiseenbois)                |
+| `armoire`              | Armoire                            | Équiper la maison | objet             | `armoire`                 | 906,9             | fabrication seule (API détaillée) | [fiche](https://impactco2.fr/outils/mobilier/armoire)                     |
 | `eau-robinet`          | Eau du robinet                     | Boire             | litre             | `eaudurobinet`            | 0,000132          | valeur du CSV                     | [fiche](https://impactco2.fr/outils/boisson/eaudurobinet)                 |
 | `eau-bouteille`        | Eau en bouteille                   | Boire             | litre             | `eauenbouteille`          | 0,3207            | valeur du CSV                     | [fiche](https://impactco2.fr/outils/boisson/eauenbouteille)               |
 | `cafe`                 | Café                               | Boire             | litre             | `cafe`                    | 0,6355            | valeur du CSV                     | [fiche](https://impactco2.fr/outils/boisson/cafe)                         |

@@ -129,20 +129,11 @@ describe("modes d'acquisition des objets", () => {
       });
     }
   });
-  it("électroménager seulement : fabrication seule (champ footprint de l'API détaillée)", () => {
-    const fabrication = getGestures()
-      .filter((g) => g.scope === "fabrication")
-      .map((g) => g.sourceId);
-    expect(fabrication).toEqual([
-      "lavelinge",
-      "refrigirateur",
-      "lavevaisselle",
-      "microondes",
-      "fourelectrique",
-      "aspirateur",
-    ]);
-    expect(generated.manufacturingSource).toMatch(
-      /^https:\/\/impactco2\.fr\/api\/v1\/thematiques\/ecv\/6/,
+  it("objets : fabrication seule (champ footprint de l'API détaillée), jamais pour un geste", () => {
+    for (const g of getGestures())
+      expect(g.scope === "fabrication", g.id).toBe(g.unit === "objet");
+    expect(generated.manufacturingSource).toBe(
+      "https://impactco2.fr/api/v1/thematiques/ecv",
     );
   });
   it("occasion livrée, si un colis du CSV convient : fabrication à 0 (hypothèse) + colis sourcé Livraison", () => {

@@ -1,6 +1,6 @@
 // Lancé à la main : `pnpm build-gestures`. Télécharge le CSV Impact CO2 (ADEME) et écrit
-// src/lib/data/gestures.generated.json. Pour l'électroménager, la part fabrication vient de
-// l'API détaillée Impact CO2 (champ footprint) : sans clé, l'API répond avec un avertissement ;
+// src/lib/data/gestures.generated.json. Pour les objets, la part fabrication vient de l'API
+// détaillée Impact CO2 (champ footprint) : sans clé, l'API répond avec un avertissement ;
 // si IMPACTCO2_API_KEY est définie dans .env.local, elle est envoyée (jamais écrite ailleurs).
 import { existsSync, writeFileSync } from "node:fs";
 import type {
@@ -12,9 +12,15 @@ import type {
 } from "../src/lib/data/types";
 
 const CSV_URL = "https://impactco2.fr/equivalents.csv";
-/** Électroménager (thématique 6) : fabrication, usage et fin de vie séparés. */
-export const MANUFACTURING_URL =
-  "https://impactco2.fr/api/v1/thematiques/ecv/6?detail=1";
+/**
+ * API détaillée Impact CO2 : fabrication, usage et fin de vie séparés, par thématique (mêmes
+ * identifiants que le CSV). Objets : numérique (1), habillement (5), électroménager (6),
+ * mobilier (7).
+ */
+export const MANUFACTURING_API = "https://impactco2.fr/api/v1/thematiques/ecv";
+export const MANUFACTURING_THEMES = [1, 5, 6, 7] as const;
+export const manufacturingUrl = (theme: number) =>
+  `${MANUFACTURING_API}/${theme}?detail=1`;
 const ENV_FILE = new URL("../.env.local", import.meta.url);
 const OUTPUT = new URL(
   "../src/lib/data/gestures.generated.json",
@@ -32,11 +38,6 @@ type Selection = {
   category: Category;
   unit: Unit;
   defaultQuantity: number;
-  /**
-   * Fabrication seule (électroménager) : la valeur du CSV compte aussi l'électricité de
-   * plusieurs années d'usage, la même que l'appareil soit neuf ou gardé.
-   */
-  manufacturingOnly?: true;
 };
 
 const transport = {
@@ -75,7 +76,6 @@ const electromenager = {
   category: "maison",
   unit: "objet",
   defaultQuantity: 1,
-  manufacturingOnly: true,
 } as const;
 const mobilier = {
   theme: "Mobilier",
@@ -520,7 +520,10 @@ export function buildGestures(
     const csvRow = lookup(sel.sourceId, sel.theme);
     const { url } = csvRow;
     let value = csvRow.value;
-    if (sel.manufacturingOnly) {
+    // Objets : fabrication seule. L'usage (lavage, électricité) et la fin de vie existent que
+    // l'objet soit neuf ou gardé ; la valeur du CSV les additionne.
+    const manufacturingOnly = sel.unit === "objet";
+    if (manufacturingOnly) {
       const footprint = manufacturing[sel.sourceId];
       if (footprint === undefined)
         throw new Error(
@@ -544,14 +547,14 @@ export function buildGestures(
       fictive: false,
       sourceId: sel.sourceId,
       sourceUrl: url,
-      ...(sel.manufacturingOnly ? { scope: "fabrication" as const } : {}),
+      ...(manufacturingOnly ? { scope: "fabrication" as const } : {}),
     };
 
     if (sel.unit === "objet") {
       const modes: Partial<Record<AcquisitionMode, ModeValue>> = {
         neuf: {
           kgCo2e: gesture.kgCo2ePerUnit,
-          method: sel.manufacturingOnly ? "impactco2-fabrication" : "impactco2",
+          method: manufacturingOnly ? "impactco2-fabrication" : "impactco2",
           sourceId: sel.sourceId,
           sourceUrl: url,
         },
@@ -597,21 +600,27 @@ async function main() {
   if (!response.ok)
     throw new Error(`Téléchargement impossible : HTTP ${response.status}`);
   const key = apiKey();
-  const detail = await fetch(MANUFACTURING_URL, {
-    headers: key ? { Authorization: `Bearer ${key}` } : {},
-  });
-  if (!detail.ok)
-    throw new Error(`API détaillée : HTTP ${detail.status}, rien n'est écrit.`);
+  const manufacturing: Record<string, number> = {};
+  for (const theme of MANUFACTURING_THEMES) {
+    const detail = await fetch(manufacturingUrl(theme), {
+      headers: key ? { Authorization: `Bearer ${key}` } : {},
+    });
+    if (!detail.ok)
+      throw new Error(
+        `API détaillée (thématique ${theme}) : HTTP ${detail.status}, rien n'est écrit.`,
+      );
+    Object.assign(manufacturing, parseManufacturing(await detail.json()));
+  }
   const gestures = buildGestures(
     await response.text(),
     SELECTION,
     PARCEL_BY_GESTURE_ID,
-    parseManufacturing(await detail.json()),
+    manufacturing,
   );
   const file = {
     downloadedAt: new Date().toISOString(),
     source: CSV_URL,
-    manufacturingSource: MANUFACTURING_URL,
+    manufacturingSource: MANUFACTURING_API,
     gestures,
   };
   writeFileSync(OUTPUT, JSON.stringify(file, null, 2) + "\n");

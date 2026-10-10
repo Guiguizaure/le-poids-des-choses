@@ -82,7 +82,7 @@ export const COMPARE = defineMessages(
       chooseKeep: "Je garde {mine}",
       howWeCount: "Comment on compte l’occasion ?",
       manufacturingNote:
-        "Écart de fabrication : l’électricité, tu la consommes que l’appareil soit neuf ou gardé.",
+        "Écart de fabrication : l’usage (lavage, électricité) existe que l’objet soit neuf ou gardé.",
     },
     result: {
       full: "Ton jardin est au complet",
@@ -183,7 +183,7 @@ export const COMPARE = defineMessages(
       chooseKeep: "I’ll keep {mine}",
       howWeCount: "How do we count second-hand?",
       manufacturingNote:
-        "Manufacturing difference: you use the electricity whether the appliance is new or kept.",
+        "Manufacturing difference: use (washing, electricity) happens whether the item is new or kept.",
     },
     result: {
       full: "Your garden is full",

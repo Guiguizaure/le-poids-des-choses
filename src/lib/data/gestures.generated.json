@@ -1,7 +1,7 @@
 {
-  "downloadedAt": "2026-10-10T19:45:31.373Z",
+  "downloadedAt": "2026-10-10T21:16:59.313Z",
   "source": "https://impactco2.fr/equivalents.csv",
-  "manufacturingSource": "https://impactco2.fr/api/v1/thematiques/ecv/6?detail=1",
+  "manufacturingSource": "https://impactco2.fr/api/v1/thematiques/ecv",
   "gestures": [
     {
       "id": "tgv",
@@ -313,16 +313,17 @@
       "label": "Jean",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 25.09,
+      "kgCo2ePerUnit": 23.2,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "jeans",
       "sourceUrl": "https://impactco2.fr/outils/habillement/jeans",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 25.09,
-          "method": "impactco2",
+          "kgCo2e": 23.2,
+          "method": "impactco2-fabrication",
           "sourceId": "jeans",
           "sourceUrl": "https://impactco2.fr/outils/habillement/jeans"
         },
@@ -359,16 +360,17 @@
       "label": "T-shirt en coton",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 6.434,
+      "kgCo2ePerUnit": 5.2,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "tshirtencoton",
       "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 6.434,
-          "method": "impactco2",
+          "kgCo2e": 5.2,
+          "method": "impactco2-fabrication",
           "sourceId": "tshirtencoton",
           "sourceUrl": "https://impactco2.fr/outils/habillement/tshirtencoton"
         },
@@ -405,16 +407,17 @@
       "label": "Pull en laine",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 56.7,
+      "kgCo2ePerUnit": 52.9,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "pullenlaine",
       "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 56.7,
-          "method": "impactco2",
+          "kgCo2e": 52.9,
+          "method": "impactco2-fabrication",
           "sourceId": "pullenlaine",
           "sourceUrl": "https://impactco2.fr/outils/habillement/pullenlaine"
         },
@@ -451,16 +454,17 @@
       "label": "Chaussures de sport",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 20.13,
+      "kgCo2ePerUnit": 18.7,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "chaussuresdesport",
       "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 20.13,
-          "method": "impactco2",
+          "kgCo2e": 18.7,
+          "method": "impactco2-fabrication",
           "sourceId": "chaussuresdesport",
           "sourceUrl": "https://impactco2.fr/outils/habillement/chaussuresdesport"
         },
@@ -497,16 +501,17 @@
       "label": "Manteau",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 101.4,
+      "kgCo2ePerUnit": 85.8,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "manteau",
       "sourceUrl": "https://impactco2.fr/outils/habillement/manteau",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 101.4,
-          "method": "impactco2",
+          "kgCo2e": 85.8,
+          "method": "impactco2-fabrication",
           "sourceId": "manteau",
           "sourceUrl": "https://impactco2.fr/outils/habillement/manteau"
         },
@@ -543,16 +548,17 @@
       "label": "Robe en coton",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 56.91,
+      "kgCo2ePerUnit": 49.8,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "robeencoton",
       "sourceUrl": "https://impactco2.fr/outils/habillement/robeencoton",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 56.91,
-          "method": "impactco2",
+          "kgCo2e": 49.8,
+          "method": "impactco2-fabrication",
           "sourceId": "robeencoton",
           "sourceUrl": "https://impactco2.fr/outils/habillement/robeencoton"
         },
@@ -589,16 +595,17 @@
       "label": "Chemise en coton",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 13.23,
+      "kgCo2ePerUnit": 11.2,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "chemiseencoton",
       "sourceUrl": "https://impactco2.fr/outils/habillement/chemiseencoton",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 13.23,
-          "method": "impactco2",
+          "kgCo2e": 11.2,
+          "method": "impactco2-fabrication",
           "sourceId": "chemiseencoton",
           "sourceUrl": "https://impactco2.fr/outils/habillement/chemiseencoton"
         },
@@ -635,16 +642,17 @@
       "label": "Sweat en coton",
       "category": "habillement",
       "unit": "objet",
-      "kgCo2ePerUnit": 32.49,
+      "kgCo2ePerUnit": 27.4,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "sweatencoton",
       "sourceUrl": "https://impactco2.fr/outils/habillement/sweatencoton",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 32.49,
-          "method": "impactco2",
+          "kgCo2e": 27.4,
+          "method": "impactco2-fabrication",
           "sourceId": "sweatencoton",
           "sourceUrl": "https://impactco2.fr/outils/habillement/sweatencoton"
         },
@@ -681,16 +689,17 @@
       "label": "Smartphone",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 80.16,
+      "kgCo2ePerUnit": 79.27,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "smartphone",
       "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 80.16,
-          "method": "impactco2",
+          "kgCo2e": 79.27,
+          "method": "impactco2-fabrication",
           "sourceId": "smartphone",
           "sourceUrl": "https://impactco2.fr/outils/numerique/smartphone"
         },
@@ -727,16 +736,17 @@
       "label": "Ordinateur portable",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 192.6,
+      "kgCo2ePerUnit": 182.3,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "ordinateurportable",
       "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 192.6,
-          "method": "impactco2",
+          "kgCo2e": 182.3,
+          "method": "impactco2-fabrication",
           "sourceId": "ordinateurportable",
           "sourceUrl": "https://impactco2.fr/outils/numerique/ordinateurportable"
         },
@@ -773,16 +783,17 @@
       "label": "Télévision",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 369.7,
+      "kgCo2ePerUnit": 328.3,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "television",
       "sourceUrl": "https://impactco2.fr/outils/numerique/television",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 369.7,
-          "method": "impactco2",
+          "kgCo2e": 328.3,
+          "method": "impactco2-fabrication",
           "sourceId": "television",
           "sourceUrl": "https://impactco2.fr/outils/numerique/television"
         },
@@ -819,16 +830,17 @@
       "label": "Tablette",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 87.14,
+      "kgCo2ePerUnit": 83.93,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "tabletteclassique",
       "sourceUrl": "https://impactco2.fr/outils/numerique/tabletteclassique",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 87.14,
-          "method": "impactco2",
+          "kgCo2e": 83.93,
+          "method": "impactco2-fabrication",
           "sourceId": "tabletteclassique",
           "sourceUrl": "https://impactco2.fr/outils/numerique/tabletteclassique"
         },
@@ -865,16 +877,17 @@
       "label": "Écran d’ordinateur",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 92.57,
+      "kgCo2ePerUnit": 65.89,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "ecran",
       "sourceUrl": "https://impactco2.fr/outils/numerique/ecran",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 92.57,
-          "method": "impactco2",
+          "kgCo2e": 65.89,
+          "method": "impactco2-fabrication",
           "sourceId": "ecran",
           "sourceUrl": "https://impactco2.fr/outils/numerique/ecran"
         },
@@ -911,16 +924,17 @@
       "label": "Box internet",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 81.23,
+      "kgCo2ePerUnit": 61.41,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "box",
       "sourceUrl": "https://impactco2.fr/outils/numerique/box",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 81.23,
-          "method": "impactco2",
+          "kgCo2e": 61.41,
+          "method": "impactco2-fabrication",
           "sourceId": "box",
           "sourceUrl": "https://impactco2.fr/outils/numerique/box"
         },
@@ -957,16 +971,17 @@
       "label": "Casque de réalité virtuelle",
       "category": "numerique",
       "unit": "objet",
-      "kgCo2ePerUnit": 72.59,
+      "kgCo2ePerUnit": 70.73,
       "defaultQuantity": 1,
       "source": "impactco2",
       "fictive": false,
       "sourceId": "casquevr",
       "sourceUrl": "https://impactco2.fr/outils/numerique/casquevr",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
-          "kgCo2e": 72.59,
-          "method": "impactco2",
+          "kgCo2e": 70.73,
+          "method": "impactco2-fabrication",
           "sourceId": "casquevr",
           "sourceUrl": "https://impactco2.fr/outils/numerique/casquevr"
         },
@@ -1219,10 +1234,11 @@
       "fictive": false,
       "sourceId": "canapetextile",
       "sourceUrl": "https://impactco2.fr/outils/mobilier/canapetextile",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
           "kgCo2e": 179.1,
-          "method": "impactco2",
+          "method": "impactco2-fabrication",
           "sourceId": "canapetextile",
           "sourceUrl": "https://impactco2.fr/outils/mobilier/canapetextile"
         },
@@ -1247,10 +1263,11 @@
       "fictive": false,
       "sourceId": "lit",
       "sourceUrl": "https://impactco2.fr/outils/mobilier/lit",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
           "kgCo2e": 443.8,
-          "method": "impactco2",
+          "method": "impactco2-fabrication",
           "sourceId": "lit",
           "sourceUrl": "https://impactco2.fr/outils/mobilier/lit"
         },
@@ -1275,10 +1292,11 @@
       "fictive": false,
       "sourceId": "tableenbois",
       "sourceUrl": "https://impactco2.fr/outils/mobilier/tableenbois",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
           "kgCo2e": 80.22,
-          "method": "impactco2",
+          "method": "impactco2-fabrication",
           "sourceId": "tableenbois",
           "sourceUrl": "https://impactco2.fr/outils/mobilier/tableenbois"
         },
@@ -1303,10 +1321,11 @@
       "fictive": false,
       "sourceId": "chaiseenbois",
       "sourceUrl": "https://impactco2.fr/outils/mobilier/chaiseenbois",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
           "kgCo2e": 18.63,
-          "method": "impactco2",
+          "method": "impactco2-fabrication",
           "sourceId": "chaiseenbois",
           "sourceUrl": "https://impactco2.fr/outils/mobilier/chaiseenbois"
         },
@@ -1349,10 +1368,11 @@
       "fictive": false,
       "sourceId": "armoire",
       "sourceUrl": "https://impactco2.fr/outils/mobilier/armoire",
+      "scope": "fabrication",
       "modes": {
         "neuf": {
           "kgCo2e": 906.9,
-          "method": "impactco2",
+          "method": "impactco2-fabrication",
           "sourceId": "armoire",
           "sourceUrl": "https://impactco2.fr/outils/mobilier/armoire"
         },
