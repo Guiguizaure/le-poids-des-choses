@@ -280,3 +280,23 @@ export const SENTENCES = defineMessages(
       `The difference equals ${km} km in a petrol or diesel car.`,
   },
 );
+
+/** Duels prêts à jouer (Comparer, accueil) ; titres des duels : src/lib/duels/ready.ts. */
+export const DUELS_UI = defineMessages(
+  {
+    ready: "Duels prêts à jouer",
+    daily: "Duel du jour",
+    forStarters: "Des duels pour commencer",
+    seeAll: "Voir tous les duels",
+    intro: "Prends un duel tout prêt, ou compose le tien.",
+    compose: "Ou compose ton duel",
+  },
+  {
+    ready: "Ready-made duels",
+    daily: "Today’s duel",
+    forStarters: "Duels to get you started",
+    seeAll: "See all duels",
+    intro: "Pick a ready-made duel, or put your own together.",
+    compose: "Or put your own duel together",
+  },
+);

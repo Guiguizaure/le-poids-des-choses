@@ -21,6 +21,9 @@ import { format, type Locale } from "@/lib/i18n";
 import { COMPARE } from "@/lib/i18n/messages/compare";
 import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { ReadyDuelCards } from "@/components/duels/ReadyDuels";
+import { duelCards } from "@/lib/duels/cards";
+import { DUELS_UI } from "@/lib/i18n/messages/compare";
 import { CompareBar } from "./CompareBar";
 import { GestureSearch } from "./GestureSearch";
 import { useFocusTitle } from "./useFocusTitle";
@@ -75,6 +78,7 @@ export function GestureChooser({
   const locale = useLocale();
   const common = COMPARE[locale];
   const t = common.chooser;
+  const duels = DUELS_UI[locale];
   const categoryNames = CATEGORY_NAMES[locale];
   const initial = initialFirst ? getGesture(initialFirst) : undefined;
   const [category, setCategory] = useState<Category>(
@@ -152,6 +156,28 @@ export function GestureChooser({
             {t.title}
           </h1>
 
+          <section
+            aria-labelledby="duels-prets"
+            className="flex flex-col gap-3"
+            data-ready-duels-section
+          >
+            <h2
+              id="duels-prets"
+              className="text-corps-l text-encre leading-[1.2] font-semibold"
+            >
+              {duels.ready}
+            </h2>
+            {/* Défilement horizontal, au bord de l'écran ; chaque carte est un lien. */}
+            <ReadyDuelCards
+              cards={duelCards(locale)}
+              size="compact"
+              className="-mx-5 flex snap-x gap-3 overflow-x-auto px-5 pb-1 [&>li]:snap-start"
+            />
+          </section>
+
+          <h2 className="text-corps-l text-encre leading-[1.2] font-semibold">
+            {duels.compose}
+          </h2>
           <GestureSearch
             query={query}
             onQueryChange={setQuery}
