@@ -96,6 +96,19 @@ const PAIRS: {
   },
   {
     text: "encre",
+    background: "pomme",
+    minimum: 4.5,
+    where:
+      "étiquette « Bien vu ! » du mini-duel de l'accueil, pastille « 2 » de « Comment ça marche »",
+  },
+  {
+    text: "encre",
+    background: "rose",
+    minimum: 4.5,
+    where: "pastille « 3 » de « Comment ça marche »",
+  },
+  {
+    text: "encre",
     background: "lavande",
     minimum: 4.5,
     where:

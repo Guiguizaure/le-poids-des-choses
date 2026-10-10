@@ -1,30 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Landscape } from "@/components/scene/Landscape";
-import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { Butterfly } from "@/components/scene/Butterfly";
 import { Flower } from "@/components/scene/Flower";
 import { Scale } from "@/components/scene/Scale";
 import { Tree } from "@/components/scene/Tree";
+import { useMiniDuelTilt } from "./MiniDuel";
 
-/** La balance hésite puis penche du côté le plus lourd, en boucle. */
-const WEIGHING = [0.55, -0.2, 0.35, 0.6, 0.15];
-const STATIC_TILT = 0.45;
-
-/** Scène d'accueil : paysage, balance animée (vélo contre voiture), papillon et plantes. */
+/**
+ * Scène d'accueil : paysage, papillon, plantes et la balance du mini-duel (vélo contre
+ * voiture) : à l'équilibre au repos, elle penche avec l'animation du duel après la réponse
+ * (`Scale` : rien qu'un fondu court en mouvement réduit).
+ */
 export function HomeScene({ className = "" }: { className?: string }) {
-  const reduce = useReducedMotion();
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    if (reduce) return;
-    const timer = window.setInterval(
-      () => setStep((value) => (value + 1) % WEIGHING.length),
-      3200,
-    );
-    return () => window.clearInterval(timer);
-  }, [reduce]);
+  const tilt = useMiniDuelTilt();
 
   return (
     <div
@@ -48,7 +37,7 @@ export function HomeScene({ className = "" }: { className?: string }) {
       </div>
       <div className="absolute bottom-[10%] left-1/2 w-[74%] -translate-x-1/2">
         <Scale
-          tilt={reduce ? STATIC_TILT : WEIGHING[step]}
+          tilt={tilt}
           leftItem="picto-velo"
           rightItem="picto-voiture"
           className="w-full"

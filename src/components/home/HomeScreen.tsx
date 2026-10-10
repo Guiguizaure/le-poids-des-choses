@@ -7,119 +7,171 @@ import { HOME, NAV } from "@/lib/i18n/messages/common";
 import { LocalLink as Link } from "@/lib/i18n/LocaleProvider";
 import { HomeScene } from "./HomeScene";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
+import { ReadyDuelCards } from "@/components/duels/ReadyDuels";
+import { DUELS_UI } from "@/lib/i18n/messages/compare";
+import { HowItWorks } from "./HowItWorks";
+import { MiniDuelCard, MiniDuelProvider } from "./MiniDuel";
+import { duelCards } from "@/lib/duels/cards";
+import { miniDuelData } from "@/lib/duels/mini";
 import { RETURNING_SCRIPT } from "./returning";
 
-/** Accueil : écran 01 sur mobile, 07 sur ordinateur (navigation + héros sur deux colonnes). */
+/** Ancre de « Comment ça marche ? » (lien du héros). */
+const HOW_IT_WORKS_HREF = "#comment-ca-marche";
+
+/**
+ * Accueil : écran 01 sur mobile, 07 sur ordinateur (navigation + héros sur deux colonnes),
+ * avec le mini-duel à la place de l'encart de saison (maquettes « Accueil v2 · duels », v2b),
+ * puis « Comment ça marche », des duels pour commencer et l'encart de saison.
+ */
 export function HomeScreen({ locale }: { locale: Locale }) {
   const t = pick(HOME, locale);
   const nav = pick(NAV, locale);
+  const duels = pick(DUELS_UI, locale);
   return (
-    <div className="bg-creme flex min-h-screen flex-col">
-      <header className="hidden items-center justify-between px-20 py-7 lg:flex">
-        <Link
-          href="/"
-          className="font-titre text-titre-m text-encre leading-[1.1]"
-        >
-          Le poids des choses
-        </Link>
-        <nav aria-label={nav.label}>
-          <ul className="text-corps-m text-encre flex gap-8 leading-[1.3] font-semibold">
-            <li>
-              <Link href={COMPARE_PATH}>{nav.compare}</Link>
-            </li>
-            <li>
-              <Link href="/jardin">{nav.garden}</Link>
-            </li>
-            <li>
-              <Link href="/methode">{nav.method}</Link>
-            </li>
-            <li>
-              <AccountLink large />
-            </li>
-            <li>
+    <MiniDuelProvider data={miniDuelData(locale)}>
+      <div className="bg-creme flex min-h-screen flex-col">
+        <header className="hidden items-center justify-between px-20 py-7 lg:flex">
+          <Link
+            href="/"
+            className="font-titre text-titre-m text-encre leading-[1.1]"
+          >
+            Le poids des choses
+          </Link>
+          <nav aria-label={nav.label}>
+            <ul className="text-corps-m text-encre flex gap-8 leading-[1.3] font-semibold">
+              <li>
+                <Link href={COMPARE_PATH}>{nav.compare}</Link>
+              </li>
+              <li>
+                <Link href="/jardin">{nav.garden}</Link>
+              </li>
+              <li>
+                <Link href="/methode">{nav.method}</Link>
+              </li>
+              <li>
+                <AccountLink large />
+              </li>
+              <li>
+                <LanguageSwitch className="font-normal" />
+              </li>
+            </ul>
+          </nav>
+        </header>
+
+        <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col lg:max-w-none lg:flex-row lg:items-center lg:gap-16 lg:px-20">
+          <div className="relative lg:order-2 lg:w-[44%] lg:max-w-[560px] lg:shrink-0">
+            {/* En-tête mobile : liens discrets posés sur le ciel de la scène. */}
+            <div className="text-corps-s absolute top-4 right-6 z-10 flex items-center gap-4 lg:hidden">
               <LanguageSwitch className="font-normal" />
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col lg:max-w-none lg:flex-row lg:items-center lg:gap-16 lg:px-20">
-        <div className="relative lg:order-2 lg:w-[44%] lg:max-w-[560px] lg:shrink-0">
-          {/* En-tête mobile : liens discrets posés sur le ciel de la scène. */}
-          <div className="text-corps-s absolute top-4 right-6 z-10 flex items-center gap-4 lg:hidden">
-            <LanguageSwitch className="font-normal" />
-            <AccountLink />
+              <AccountLink />
+            </div>
+            <HomeScene />
           </div>
-          <HomeScene />
-        </div>
 
-        <div className="flex flex-col gap-3.5 px-6 pt-5 pb-8 lg:order-1 lg:max-w-[560px] lg:min-w-0 lg:flex-1 lg:gap-6 lg:px-0">
-          <p className="text-legende text-texte-attenue leading-[1.3] font-semibold">
-            {t.eyebrow}
-          </p>
-          <div className="flex flex-col gap-1.5">
-            <h1 className="font-titre text-titre-xl text-encre lg:text-display leading-none lg:leading-[0.95] lg:tracking-[-0.88px]">
-              Le poids des choses
-            </h1>
-            {t.subtitle ? (
-              <p className="text-corps-m text-texte-attenue leading-[1.3]">
-                {t.subtitle}
-              </p>
-            ) : null}
-          </div>
-          <p className="text-corps-l text-encre max-w-[480px] leading-[1.45]">
-            {t.intro}
-          </p>
-          {/* Quelqu'un qui revient (un carnet sur l'appareil) : « Retrouver mon jardin » devient
+          <div className="flex flex-col gap-3.5 px-6 pt-5 pb-8 lg:order-1 lg:max-w-[560px] lg:min-w-0 lg:flex-1 lg:gap-6 lg:px-0">
+            <p className="text-legende text-texte-attenue leading-[1.3] font-semibold">
+              {t.eyebrow}
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <h1 className="font-titre text-titre-xl text-encre lg:text-display leading-none lg:leading-[0.95] lg:tracking-[-0.88px]">
+                Le poids des choses
+              </h1>
+              {t.subtitle ? (
+                <p className="text-corps-m text-texte-attenue leading-[1.3]">
+                  {t.subtitle}
+                </p>
+              ) : null}
+            </div>
+            <p className="text-corps-l text-encre max-w-[480px] leading-[1.45]">
+              {t.intro}
+            </p>
+            {/* Quelqu'un qui revient (un carnet sur l'appareil) : « Retrouver mon jardin » devient
               l'action principale. Le script en ligne pose `data-garden` sur <html> avant le
               premier affichage ; les deux versions occupent la même case de la grille (la
               cachée en `invisible` : hors du clavier et des lecteurs d'écran), donc la même
               hauteur, sans bascule visible ni décalage. Sans script : la version de départ. */}
-          <script dangerouslySetInnerHTML={{ __html: RETURNING_SCRIPT }} />
-          <div className="grid">
-            <div
-              data-home-actions="new"
-              className="col-start-1 row-start-1 flex flex-col gap-3.5 [html[data-garden]_&]:invisible"
-            >
-              <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:gap-6">
-                <PrimaryLink href={COMPARE_PATH} className="lg:w-auto">
-                  {t.start}
+            <script dangerouslySetInnerHTML={{ __html: RETURNING_SCRIPT }} />
+            <div className="grid">
+              <div
+                data-home-actions="new"
+                className="col-start-1 row-start-1 flex flex-col gap-3.5 [html[data-garden]_&]:invisible"
+              >
+                <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:gap-6">
+                  <PrimaryLink href={COMPARE_PATH} className="lg:w-auto">
+                    {t.start}
+                  </PrimaryLink>
+                  <TextLink
+                    href={HOW_IT_WORKS_HREF}
+                    className="lg:text-corps-m"
+                  >
+                    {t.howItWorks}
+                  </TextLink>
+                </div>
+                <Link
+                  href="/connexion"
+                  className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
+                >
+                  {t.findGardenQuestion}{" "}
+                  <span className="font-semibold underline underline-offset-2">
+                    {t.findGardenAction}
+                  </span>
+                </Link>
+              </div>
+              <div
+                data-home-actions="returning"
+                className="invisible col-start-1 row-start-1 flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3.5 [html[data-garden]_&]:visible"
+              >
+                <PrimaryLink href="/jardin" className="lg:w-auto">
+                  {t.backToGarden}
                 </PrimaryLink>
-                <TextLink href="/methode" className="lg:text-corps-m">
+                <SecondaryLink href={COMPARE_PATH} className="lg:w-auto">
+                  {t.grow}
+                </SecondaryLink>
+                <TextLink href={HOW_IT_WORKS_HREF} className="lg:text-corps-m">
                   {t.howItWorks}
                 </TextLink>
               </div>
-              <Link
-                href="/connexion"
-                className="text-corps-s text-encre focus-visible:outline-outremer self-center rounded-sm leading-[1.3] focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-start"
+            </div>
+            <MiniDuelCard className="mt-2" />
+          </div>
+        </main>
+
+        <div className="mx-auto flex w-full max-w-[430px] flex-col gap-14 px-6 pt-10 pb-10 lg:max-w-none lg:gap-20 lg:px-20 lg:pt-20">
+          <HowItWorks />
+
+          <section
+            aria-labelledby="duels-pour-commencer"
+            className="flex flex-col gap-5"
+          >
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <h2
+                id="duels-pour-commencer"
+                className="font-titre text-encre text-[32px] leading-[1.05] lg:text-[52px]"
               >
-                {t.findGardenQuestion}{" "}
-                <span className="font-semibold underline underline-offset-2">
-                  {t.findGardenAction}
-                </span>
+                {duels.forStarters}
+              </h2>
+              <Link
+                href={COMPARE_PATH}
+                className="text-corps-m text-encre focus-visible:outline-outremer self-start leading-[1.3] font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 lg:self-auto"
+              >
+                {duels.seeAll} <span aria-hidden>→</span>
               </Link>
             </div>
-            <div
-              data-home-actions="returning"
-              className="invisible col-start-1 row-start-1 flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3.5 [html[data-garden]_&]:visible"
-            >
-              <PrimaryLink href="/jardin" className="lg:w-auto">
-                {t.backToGarden}
-              </PrimaryLink>
-              <SecondaryLink href={COMPARE_PATH} className="lg:w-auto">
-                {t.grow}
-              </SecondaryLink>
-              <TextLink href="/methode" className="lg:text-corps-m">
-                {t.howItWorks}
-              </TextLink>
-            </div>
-          </div>
-          <SeasonTeaser className="mt-2" />
+            <ReadyDuelCards
+              cards={duelCards(locale)}
+              count={4}
+              size="large"
+              arrow
+              className="-mx-6 flex snap-x gap-3.5 overflow-x-auto px-6 pb-1 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0 [&>li]:snap-start lg:[&>li>*]:w-full"
+            />
+          </section>
+
+          <SeasonTeaser />
           <p className="text-legende text-texte-attenue text-center lg:text-left">
             {t.sources}
           </p>
         </div>
-      </main>
-    </div>
+      </div>
+    </MiniDuelProvider>
   );
 }
