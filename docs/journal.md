@@ -2401,3 +2401,32 @@ ce lot ; le reste du site garde l'espace ordinaire (à harmoniser plus tard si v
 **Hors périmètre, noté** : mode trajet, usages numériques et « Surprenant » (notes de
 conception : après les testeurs) ; ouvrir les nouveaux gestes à « Raconte ta journée » ;
 harmoniser la valeur des objets numériques et textiles.
+
+### Suite (même soir, même branche) : décisions sur la PR #39
+
+**Décidé par Guillaume** : une seule règle pour les objets (« neuf » = fabrication seule, champ
+`footprint` de l'API détaillée, pour les vêtements, le numérique, l'électroménager et le
+mobilier ; le mobilier a son détail : fabrication = valeur du CSV) ; nouvelle phrase de
+/methode#appareils et liste « Ce qui n'est pas compté » mise en accord ; Comparer selon la
+maquette 105:2 (recherche, duels, catégories) ; aide du mini-duel « l'écart s'affiche » ; lien
+« Tout sur la méthode » à la fin de « Comment ça marche ».
+
+**Carnet** : chaque choix garde l'écart calculé au moment du choix (`avoidedKg`) ; jardin,
+carnet, paliers, pastille et image de partage lisent cette valeur, jamais recalculée. Aucun
+ancien choix ne change ; rien n'est réécrit. Seuls les encadrés « Le savais-tu ? » sur les
+objets (calculés avec les données du moment) montrent les nouvelles valeurs.
+
+**Objets en ligne, « neuf » affiché (kg CO2e), avant → après** : jean 25,09 → 23,2 ; t-shirt
+6,434 → 5,2 ; pull 56,7 → 52,9 ; chaussures 20,13 → 18,7 ; smartphone 80,16 → 79,27 ;
+ordinateur portable 192,6 → 182,3 ; télévision 369,7 → 328,3. Nouveaux : manteau 85,8, robe
+49,8, chemise 11,2, sweat 27,4, tablette 83,93, écran 65,89, box 61,41, casque VR 70,73.
+
+**Pour plus tard** :
+
+- « Raconte ta journée » et les nouveaux gestes : leur écrire des lignes de reconnaissance et
+  des alternatives, puis relancer `pnpm raconte:eval` (`NOT_YET_RECOGNIZED` aujourd'hui).
+- Espace fine insécable (U+202F) avant « : », « ? », « ! » sur tout le site (seuls les textes
+  du lot « Comparer plus » l'ont).
+- Tests instables, à ajouter à la liste : « premier choix d'espèce : astuce des saisons, une
+  seule fois ; fiche « Au fil des saisons » » (`e2e/feuillage.spec.ts`, WebKit), relancé une
+  fois en CI sur la PR #39, passé à la relance ; cause non cherchée.
