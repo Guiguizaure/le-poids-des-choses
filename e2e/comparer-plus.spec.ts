@@ -34,6 +34,11 @@ test.describe("mini-duel de l'accueil", () => {
     test(`au clavier, « ${label} » : ${heading}`, async ({ page }) => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
+      await expect(
+        card(page).getByText(
+          "Touche ta réponse\u202f: l’écart s’affiche, calculé avec les données de l’ADEME.",
+        ),
+      ).toBeVisible();
       const before = (await card(page).boundingBox())!;
       const button = page.getByRole("button", { name: label });
       await button.focus();
@@ -130,6 +135,9 @@ test.describe("mini-duel de l'accueil", () => {
     await expect(page.getByRole("listitem")).toContainText([
       "Compare deux gestes",
     ]);
+    await expect(
+      page.getByRole("link", { name: "Tout sur la méthode" }),
+    ).toHaveAttribute("href", "/methode");
   });
 });
 

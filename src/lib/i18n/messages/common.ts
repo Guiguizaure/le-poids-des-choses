@@ -113,7 +113,7 @@ export const MINI_DUEL = defineMessages(
     bike: "À vélo",
     car: "En voiture",
     or: "ou",
-    help: "Touche ta réponse : la balance te répond, avec les données de l’ADEME.",
+    help: "Touche ta réponse : l’écart s’affiche, calculé avec les données de l’ADEME.",
     right: "Bien vu !",
     rightAnswer: "Le vélo est le plus léger.",
     wrongAnswer: "Pas tout à fait : c’est le vélo le plus léger.",
@@ -129,7 +129,7 @@ export const MINI_DUEL = defineMessages(
     bike: "By bike",
     car: "By car",
     or: "or",
-    help: "Tap your answer: the scales reply, with ADEME’s data.",
+    help: "Tap your answer: the difference appears, calculated with ADEME’s data.",
     right: "Well spotted!",
     rightAnswer: "The bike is the lighter one.",
     wrongAnswer: "Not quite: the bike is the lighter one.",
@@ -145,6 +145,7 @@ export const MINI_DUEL = defineMessages(
 export const HOW_IT_WORKS = defineMessages(
   {
     title: "Comment ça marche",
+    methodLink: "Tout sur la méthode",
     steps: [
       {
         title: "Compare deux gestes",
@@ -162,6 +163,7 @@ export const HOW_IT_WORKS = defineMessages(
   },
   {
     title: "How it works",
+    methodLink: "All about the method",
     steps: [
       {
         title: "Compare two actions",

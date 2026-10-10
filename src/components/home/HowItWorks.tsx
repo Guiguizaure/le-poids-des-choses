@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useSyncExternalStore } from "react";
+import { TextLink } from "@/components/ui/buttons";
 import { HOW_IT_WORKS } from "@/lib/i18n/messages/common";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
@@ -73,6 +74,12 @@ export function HowItWorks({ className = "" }: { className?: string }) {
           </li>
         ))}
       </ol>
+      <TextLink
+        href="/methode"
+        className="lg:text-corps-m mt-6 block text-left lg:mt-8"
+      >
+        {t.methodLink}
+      </TextLink>
     </section>
   );
 }
