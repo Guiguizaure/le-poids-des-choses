@@ -28,11 +28,11 @@ du CSV.
 
 ## Duels prêts à jouer : distance Paris–Marseille
 
-752 km : moitié de la « Distance totale parcourue : 1504 km » du cas pratique ADEME « A/R Paris
-
-- Marseille en TGV » (`tgv-paris-marseille`, <https://impactco2.fr/outils/caspratiques/tgv-paris-marseille>,
-  rubrique « Hypothèses », lue le 10 octobre 2026). Le site compare l'avion sur la même distance,
-  comme dans tout duel de trajets.
+752 km : moitié de la « Distance totale parcourue : 1504 km » du cas pratique ADEME
+« A/R Paris - Marseille en TGV » (`tgv-paris-marseille`,
+<https://impactco2.fr/outils/caspratiques/tgv-paris-marseille>, rubrique « Hypothèses », lue
+le 10 octobre 2026). Le site compare l'avion sur la même distance, comme dans tout duel de
+trajets.
 
 ## Catalogue
 

@@ -2342,3 +2342,62 @@ même hauteur sans carnet et avec Exporter et Partager » (`e2e/decalage.spec.ts
 - Coquelicot : `docs/animaux-sources.md` précise que l'étude de _Plants_ porte sur les
   coquelicots d'Europe centrale, de la même espèce (_Papaver rhoeas_) que ceux de France, et
   non sur ceux de la Méditerranée orientale.
+
+## 2026-10-10 (soir) — Lot « Comparer plus » (branche feat/comparer-plus)
+
+**Demandé** (exception au gel validée le 10 octobre) : nouveaux gestes et pictos d'après le
+CSV ADEME, catégorie « Équiper la maison », recherche dans Comparer, duels prêts à jouer et Duel
+du jour, mini-duel sur l'accueil (une devinette), « Comment ça marche », tests et docs.
+Maquettes : page « Accueil v2 · duels » (v2b), notes de conception 105:170.
+
+**Méthode décidée en cours de lot** : pour l'électroménager, la valeur du CSV compte surtout
+l'usage (lave-linge : 513 kg, dont 341 de fabrication, 217 d'électricité sur 12 ans, −45 de fin
+de vie). Choix de Guillaume : « neuf » = part fabrication (champ `footprint` de l'API détaillée
+Impact CO2), sans usage ni fin de vie ; « écart de fabrication » affiché ; phrase dans
+/methode#appareils. Le mobilier n'a pas d'usage : valeur du CSV.
+
+**Catalogue** : 31 gestes ajoutés (65 en tout), une variante par geste (variantes écartées dans
+`docs/gestes-sources.md`). Écartés : console de jeux et montre connectée (absentes du CSV) ;
+avion moyen, moyen à long et long-courrier (au-delà du curseur de 1 000 km). Occasion livrée :
+colis du CSV par objet (hypothèse de taille, comme avant) ; aucun pour lave-linge,
+réfrigérateur, lave-vaisselle, four, canapé, lit, table, armoire (plus de 30 kg) : neuf,
+d'occasion (sans colis) et garder. Les valeurs des 34 gestes d'avant sont identiques au CSV du
+5 octobre. « Raconte ta journée » ne reconnaît pas encore les nouveaux gestes (consignes et
+évaluation inchangées, `NOT_YET_RECOGNIZED`).
+
+**Objets déjà en ligne, valeur du CSV (non corrigés, à décider)** — fabrication / usage / fin de
+vie, d'après l'API détaillée : jean 25,09 = 23,20 / 1,25 / 0,64 ; t-shirt 6,43 = 5,20 / 0,98 /
+0,25 ; pull en laine 56,70 = 52,90 / 2,52 / 1,28 ; chaussures de sport 20,13 = 18,70 / 0 / 1,43 ;
+smartphone 80,16 = 79,27 / 0,64 / 0,25 ; ordinateur portable 192,6 = 182,3 / 7,53 / 2,79 ;
+télévision 369,7 = 328,3 / 29,55 / 11,9. Nouveaux objets gardés à la valeur du CSV : manteau
+101,4 = 85,8 / 13,2 / 2,4 ; robe 56,91 = 49,8 / 5,81 / 1,29 ; chemise 13,23 = 11,2 / 1,57 /
+0,46 ; sweat 32,49 = 27,4 / 3,58 / 1,52 ; tablette 87,14 = 83,93 / 2,84 / 0,36 ; écran 92,57 =
+65,89 / 22,73 / 3,95 ; box 81,23 = 61,41 / 18,19 / 1,63 ; casque VR 72,59 = 70,73 / 0,19 /
+1,68. /methode dit que l'usage des appareils n'est pas compté : vrai pour l'électroménager
+seulement.
+
+**Comparer** : duels prêts à jouer en haut (8, Duel du jour d'abord), puis « Ou compose ton
+duel », la recherche (FR et EN, sans accents), puis les catégories. Paris–Marseille : 752 km,
+moitié des 1 504 km du cas pratique ADEME « A/R Paris - Marseille en TGV ». La maquette 105:2
+mettait la recherche au-dessus des duels : la consigne écrite (duels, recherche, catégories) a
+été suivie. Pas de lien « Tout voir » dans Comparer (tous les duels y sont déjà).
+
+**Accueil** : le haut ne bouge pas ; le mini-duel remplace l'encart de saison (descendu en bas).
+La balance du héros est à l'équilibre, puis penche (même calcul que le duel). Mauvaise réponse :
+« Pas tout à fait : c'est le vélo le plus léger. », sans l'étiquette « Bien vu ! ». Sur mobile,
+l'illustration reste au-dessus du texte (ordre actuel gardé, la maquette 103:2 la plaçait après
+les boutons). Le lien « Comment ça marche ? » du héros mène maintenant à la section de
+l'accueil (il menait à /methode). Phrases de la maquette vérifiées : « l'écart de CO₂ » →
+« l'écart en CO2e » ; « les arbres suivent les vraies saisons » → « le jardin suit les vraies
+saisons » (olivier et sapin ne changent pas). Mesures (Lighthouse mobile, médianes, même
+session, en alternance) : `/` 2,42 s sur `main` contre 2,56 s, `/en` 2,42 s contre 2,11 s, CLS 0
+partout ; écarts dans le bruit de la machine (même FCP, 0,76 s). Pour ne pas alourdir
+l'accueil : mini-duel et cartes calculés au rendu serveur, illustrations de « Comment ça
+marche » chargées à la demande sur ordinateur seulement.
+
+**Typographie** : espace fine insécable (U+202F) avant « : », « ? », « ! » dans les textes de
+ce lot ; le reste du site garde l'espace ordinaire (à harmoniser plus tard si voulu).
+
+**Hors périmètre, noté** : mode trajet, usages numériques et « Surprenant » (notes de
+conception : après les testeurs) ; ouvrir les nouveaux gestes à « Raconte ta journée » ;
+harmoniser la valeur des objets numériques et textiles.

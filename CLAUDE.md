@@ -13,7 +13,9 @@ suit les saisons et l'heure, et reçoit des visiteurs. En français (racine) et 
   version anglaise et de l'étude de cas ; seulement corrections, traduction et finitions.
   Exceptions validées par l'utilisateur : le lot « Espèces », la refonte des habitudes
   (arrosage ciblé, `feat/habitudes-arrosage`), puis « Les animaux parlent »
-  (`feat/animaux-parlent`, demandé le 8 octobre 2026).
+  (`feat/animaux-parlent`, demandé le 8 octobre 2026), puis « Comparer plus »
+  (`feat/comparer-plus`, validé le 10 octobre 2026 : mini-duel de l'accueil, duels prêts à
+  jouer, recherche, nouveaux gestes ; rien d'autre).
 - Vérifie la branche courante avant toute action git.
 - Aucun commit ni push sur `main` sans accord explicite. Travail sur des branches
   (`feat/…`, `fix/…`, `docs/…`, `chore/…`), fusionnées par demande de fusion relue par
@@ -182,9 +184,15 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   `Vitrine`), `HabitResult` (après une habitude)
 - `src/components/home` — accueil ; `src/components/ui` — boutons, interrupteur, pastille
   « Mon jardin · X kg d’écart »
+- `src/lib/duels` — duels prêts à jouer (`ready.ts` : liste écrite à la main, titres FR/EN,
+  `DUEL_TITLES`), rotation du Duel du jour (`daily.ts` : `parisDayNumber`, `fromToday`),
+  cartes préparées avec les données (`cards.ts` : `duelCards`), mini-duel de l'accueil
+  (`mini.ts` : `miniDuelData`, calculé au rendu serveur) ; `src/components/duels` —
+  `ReadyDuelCards`
 - `src/lib/compare` — règles pures du parcours : filtrage par unité, curseurs, inclinaison
   (`tiltFor`), phrase de résultat et équivalence (`sentence.ts`), noms et accords
-  (`nouns.ts`), URL (`url.ts`), entrées du carnet (`duelEntry`, `objectEntry`)
+  (`nouns.ts`), URL (`url.ts`), entrées du carnet (`duelEntry`, `objectEntry`), recherche
+  dans le catalogue (`search.ts` : noms FR et EN, sans accents ni majuscules)
 - `src/lib/geometry` — géométrie pure (balance, délais et inclinaisons du coup de vent)
 - `src/lib/data` — types, `gestures.generated.json` (données réelles), données de test (tests
   uniquement), adaptateur (`index.ts` : `getGestures`,
@@ -212,7 +220,9 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   textes (`text.ts`), client de l'API (`api.ts`) ; `src/components/raconte` — écran
   (`RaconteScreen`) et point d'entrée (`RaconteLink`) ; `server/raconte.ts` (appel à Claude) et
   `server/raconte-prompt.ts` (prompt système, schéma de sortie)
-- `docs` — conventions, `methode.md` (hypothèses de calcul) et `journal.md`
+- `docs` — conventions, `methode.md` (hypothèses de calcul), `journal.md`, sources :
+  `gestes-sources.md` (chaque geste du catalogue, testé), `especes-sources.md`,
+  `animaux-sources.md`
 
 ## Conventions
 
@@ -276,6 +286,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   ou change de thématique. Valeurs arrondies à 4 chiffres significatifs, date de
   téléchargement en tête du fichier. Pas de source, pas de geste : ne jamais ajouter de
   valeur à la main dans le JSON généré.
+- Catalogue (lot « Comparer plus ») : 65 gestes en 7 catégories, dont « Équiper la maison »
+  (`maison` : électroménager et meubles, objets ; couleur `lavande` #8F7BEA, texte encre
+  seulement, 5,1:1). Une seule variante ADEME par geste, écrite dans le nom (« Covoiturage, 2
+  personnes ») ; variantes écartées listées dans `docs/gestes-sources.md`. Électroménager :
+  `scope: "fabrication"`, « neuf » = champ `footprint` de l'API détaillée Impact CO2
+  (`MANUFACTURING_URL`, méthode `impactco2-fabrication`), sans usage ni fin de vie ; « écart
+  de fabrication » sur la carte de résultat et note sous l'écart du duel objet ;
+  /methode#appareils. Le mobilier garde la valeur du CSV (aucun usage). « Raconte ta
+  journée » ne reconnaît pas encore les gestes de ce lot (`NOT_YET_RECOGNIZED`,
+  `src/lib/raconte/detections.ts`).
 - Objets (unité `objet`) : chaque geste porte `modes` (`neuf`, `occasion`, `occasion-livree`,
   `garder`), chaque valeur avec `method` (`impactco2` + `sourceId`, ou `hypothese-occasion` /
   `hypothese-garder`). `withMode` / `compareModes` (`src/lib/calc/modes.ts`) comparent les
@@ -298,6 +318,12 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
   toucher à un écran ; tutoiement et textes repris tels quels.
 - Parcours de comparaison (`/comparer`, état dans l'URL, lu côté client) :
+  - En haut du choix des gestes : « Duels prêts à jouer » (cartes qui ouvrent le duel déjà
+    rempli, le Duel du jour d'abord : rotation chaque jour à minuit, heure de Paris, la même
+    pour tous ; calculée côté client, places de taille fixe avant), puis « Ou compose ton
+    duel », la recherche (`GestureSearch` : vrai label, nombre de résultats dans une région
+    polie, encart sur la règle de comparaison, « Rien trouvé ? »), puis les catégories
+    (pastille « Nouveau » sur « Équiper la maison »).
   - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
     pure : `toggleGesture`, `isSelectable`) ; dès le premier choix, les gestes d'une autre
     unité sont grisés ; retoucher un geste le retire ; un objet ouvre directement 03b.
@@ -604,6 +630,16 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
     par animal, rencontré (débloqué, ou vu pour le renard et l'écureuil) : portrait, nom, « 3 répliques
     sur 8 », « Parler » s'il est là, sinon pourquoi ; sinon silhouette « ? » ; aucun kg ;
   - e2e : `e2e/animaux.spec.ts` (et `bird.spec.ts` pour l'envol après conversation).
+- Accueil, sous le héros (maquettes « Accueil v2 · duels », v2b) : mini-duel `MiniDuelCard` à
+  la place de l'ancien encart de saison (une devinette : rien n'entre dans le carnet ; la
+  balance de `HomeScene` est à l'équilibre puis penche avec l'animation du duel ; écart et
+  inclinaison calculés au rendu serveur, `miniDuelData` ; « Faire pousser ma première
+  plante » ou « Noter ce choix » (`data-garden`) ouvre `/comparer?a=velo&b=voiture&q=5` ;
+  « Un autre duel » ; même hauteur dans tous les états) ; puis « Comment ça marche »
+  (`#comment-ca-marche`, cible du lien du héros ; illustrations chargées à la demande sur
+  ordinateur seulement), « Des duels pour commencer » (4 cartes, le Duel du jour d'abord) et
+  l'encart de saison. Textes de ce lot : espace fine insécable (U+202F) avant « : », « ? »,
+  « ! » ; le reste du site garde l'espace ordinaire.
 - Accueil pour quelqu'un qui revient (carnet d'au moins une entrée sur l'appareil) : script
   en ligne (`src/components/home/returning.ts`) qui pose `data-garden` sur <html> avant les
   boutons (`suppressHydrationWarning` sur <html>) ; « Retrouver mon jardin » (/jardin) en
