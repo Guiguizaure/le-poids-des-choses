@@ -157,7 +157,7 @@ test.describe("duels prêts à jouer", () => {
     await page.getByRole("link", { name: /Voir tous les duels/ }).isVisible();
   });
 
-  test("Comparer : les 8 duels en haut, puis la recherche, puis les catégories", async ({
+  test("Comparer : la recherche en haut, puis les 8 duels, puis les catégories (maquette 105:2)", async ({
     page,
   }) => {
     await page.goto("/comparer");
@@ -167,8 +167,8 @@ test.describe("duels prêts à jouer", () => {
       const top = (selector: string) =>
         document.querySelector(selector)!.getBoundingClientRect().top;
       return [
-        top("[data-ready-duels-section]"),
         top("[data-gesture-search]"),
+        top("[data-ready-duels-section]"),
         top('[aria-label="Catégories"]'),
       ];
     });

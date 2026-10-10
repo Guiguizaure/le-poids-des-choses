@@ -319,12 +319,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   07 Accueil ordinateur. Les lire avec le connecteur Figma avant de
   toucher à un écran ; tutoiement et textes repris tels quels.
 - Parcours de comparaison (`/comparer`, état dans l'URL, lu côté client) :
-  - En haut du choix des gestes : « Duels prêts à jouer » (cartes qui ouvrent le duel déjà
-    rempli, le Duel du jour d'abord : rotation chaque jour à minuit, heure de Paris, la même
-    pour tous ; calculée côté client, places de taille fixe avant), puis « Ou compose ton
-    duel », la recherche (`GestureSearch` : vrai label, nombre de résultats dans une région
-    polie, encart sur la règle de comparaison, « Rien trouvé ? »), puis les catégories
-    (pastille « Nouveau » sur « Équiper la maison »).
+  - En haut du choix des gestes (maquette 105:2) : la recherche (`GestureSearch` : vrai
+    label, nombre de résultats dans une région polie, encart sur la règle de comparaison,
+    « Rien trouvé ? » ; pendant une recherche, seuls les résultats), puis « Duels prêts à
+    jouer » (cartes qui ouvrent le duel déjà rempli, le Duel du jour d'abord : rotation chaque
+    jour à minuit, heure de Paris, la même pour tous ; calculée côté client, places de taille
+    fixe avant), puis « Ou compose ton duel » et les catégories (pastille « Nouveau » sur
+    « Équiper la maison »).
   - Choix sur un seul écran (02) : premier toucher = geste 1, second = geste 2 (logique
     pure : `toggleGesture`, `isSelectable`) ; dès le premier choix, les gestes d'une autre
     unité sont grisés ; retoucher un geste le retire ; un objet ouvre directement 03b.

@@ -156,7 +156,15 @@ export function GestureChooser({
             {t.title}
           </h1>
 
+          <GestureSearch
+            query={query}
+            onQueryChange={setQuery}
+            isSelectable={(id) => isSelectable(selection, id)}
+            onPick={pick}
+          />
+
           <section
+            hidden={searching}
             aria-labelledby="duels-prets"
             className="flex flex-col gap-3"
             data-ready-duels-section
@@ -175,15 +183,12 @@ export function GestureChooser({
             />
           </section>
 
-          <h2 className="text-corps-l text-encre leading-[1.2] font-semibold">
+          <h2
+            hidden={searching}
+            className="text-corps-l text-encre leading-[1.2] font-semibold"
+          >
             {duels.compose}
           </h2>
-          <GestureSearch
-            query={query}
-            onQueryChange={setQuery}
-            isSelectable={(id) => isSelectable(selection, id)}
-            onPick={pick}
-          />
 
           <div
             hidden={searching}
