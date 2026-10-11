@@ -9,6 +9,7 @@ import {
   expectNoAxeViolations,
   seedJournal,
   test,
+  trackNetwork,
 } from "./fixtures";
 
 test.use({ timezoneId: "Europe/Paris" });
@@ -158,6 +159,7 @@ test("sans arbre caduc : pas d'astuce de saison", async ({ page }) => {
 test("premier choix d'espèce : astuce des saisons, une seule fois ; fiche « Au fil des saisons »", async ({
   page,
 }) => {
+  const network = trackNetwork(page);
   await page.goto("/comparer?a=tgv&b=avion&q=300");
   await page.getByRole("button", { name: "Je choisis le TGV" }).click();
   const picker = page.locator("[data-species-picker]");
@@ -206,6 +208,13 @@ test("premier choix d'espèce : astuce des saisons, une seule fois ; fiche « Au
   await picker
     .getByRole("button", { name: "Laisse le jardin choisir" })
     .click();
+  // Changer de page une fois la carte de résultat affichée et ses préchargements finis
+  // (réseau au repos) : WebKit signale en console ceux qu'une navigation interrompt
+  // (« … due to access control checks », vu en CI sur les liens du pied de page).
+  await expect(
+    page.getByRole("link", { name: "Aller la planter" }),
+  ).toBeVisible();
+  await network.idle();
   await page.goto("/comparer?a=velo&b=voiture&q=20");
   await page.getByRole("button", { name: "Je choisis le vélo" }).click();
   await expect(picker).toBeVisible();
