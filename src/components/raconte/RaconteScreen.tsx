@@ -76,7 +76,7 @@ type State =
 const FIELD =
   "border-encre bg-blanc text-corps-m text-encre focus-visible:outline-outremer w-full rounded-[20px] border px-4 pt-4 pb-2 leading-[1.4] focus-visible:outline-2 focus-visible:outline-offset-2";
 const SMALL_FIELD =
-  "border-encre/30 bg-creme text-corps-s text-encre focus-visible:outline-outremer rounded-xl border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-1";
+  "border-encre/30 hover:border-encre bg-creme text-corps-s text-encre focus-visible:outline-outremer rounded-xl border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-1";
 
 /**
  * Écran 08 · Raconte ta journée : la personne écrit, Claude repère les gestes du catalogue, la

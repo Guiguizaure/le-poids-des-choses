@@ -167,7 +167,7 @@ export function AnimalTalk({
           onClick={close}
           aria-label={t.close}
           title={t.close}
-          className="text-encre focus-visible:outline-outremer absolute top-2 right-2 flex size-11 items-center justify-center rounded-full text-[24px] leading-none focus-visible:outline-2"
+          className="hover-disc text-encre focus-visible:outline-outremer absolute top-2 right-2 flex size-11 items-center justify-center rounded-full text-[24px] leading-none focus-visible:outline-2"
         >
           <span aria-hidden>×</span>
         </button>

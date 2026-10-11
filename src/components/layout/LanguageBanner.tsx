@@ -94,7 +94,7 @@ export function LanguageBanner() {
         type="button"
         onClick={close}
         aria-label={LANGUAGE_BANNER.close}
-        className="focus-visible:outline-soleil flex size-8 shrink-0 items-center justify-center rounded-full text-[20px] leading-none focus-visible:outline-2"
+        className="hover:bg-creme/15 focus-visible:outline-soleil flex size-8 shrink-0 items-center justify-center rounded-full text-[20px] leading-none focus-visible:outline-2"
       >
         <span aria-hidden>×</span>
       </button>

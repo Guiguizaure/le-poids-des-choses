@@ -172,26 +172,98 @@ body {
   background: var(--color-blanc);
   border: 3px solid var(--color-tomate);
 }
+@media (hover: hover) {
+  .range-tomate:hover::-webkit-slider-thumb {
+    background: var(--color-tomate-douce);
+  }
+  .range-tomate:hover::-moz-range-thumb {
+    background: var(--color-tomate-douce);
+  }
+}
 .range-tomate:focus-visible {
   outline: 2px solid var(--color-outremer);
   outline-offset: 4px;
   border-radius: 4px;
 }
 
-/* Boutons et cartes : légère élévation au survol, léger écrasement au toucher. */
-@utility press {
-  transition: transform 150ms ease;
-  &:hover {
-    transform: translateY(-1px);
+/*
+ * Curseur système : la preflight de Tailwind 4 ne met plus la main sur les boutons. Tout ce
+ * qui se sélectionne la retrouve ; un élément désactivé ne l'a jamais.
+ */
+@layer base {
+  a[href]:not([aria-disabled="true"]),
+  button:not(:disabled, [aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  label[for],
+  select:not(:disabled),
+  input:is([type="checkbox"], [type="radio"], [type="range"]):not(:disabled) {
+    cursor: pointer;
   }
-  &:active {
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  /* Survol des liens texte (souris seulement) : soulignés, ou soulignement épaissi. Les
+     cartes (`press`) et les éléments qui ont leur propre survol (`data-own-hover`) à part. */
+  @media (hover: hover) {
+    a[href]:not(.press, [data-own-hover], [aria-disabled="true"]):hover,
+    summary:hover,
+    label[for]:hover {
+      text-decoration-line: underline;
+      text-decoration-thickness: 2px;
+    }
+    button.underline:not(:disabled, [aria-disabled="true"]):hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+}
+
+/*
+ * Boutons et cartes : au survol (souris), le papier se soulève de 2 px avec une ombre nette ;
+ * léger écrasement au toucher. En mouvement réduit, l'ombre seule : rien ne bouge. Jamais
+ * sur un élément désactivé. Transformation et ombre : aucun décalage de mise en page.
+ */
+@utility press {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+  @media (hover: hover) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 0 0
+        color-mix(in srgb, var(--color-encre) 20%, transparent);
+    }
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.97);
   }
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-    &:hover,
-    &:active {
+    &:hover:not(:disabled, [aria-disabled="true"]),
+    &:active:not(:disabled, [aria-disabled="true"]) {
       transform: none;
+    }
+  }
+}
+
+/* Boutons ronds à icône (fermer, effacer, retour) : une pastille encre très claire au survol. */
+@utility hover-disc {
+  @media (hover: hover) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
+      background-color: color-mix(in srgb, var(--color-encre) 10%, transparent);
+    }
+  }
+}
+
+/* Zones de toucher posées sur le dessin du jardin (animaux, arbres endormis) : un pointillé
+   encre, comme un découpage, au survol ; le focus garde son contour outremer plein. */
+@utility hover-cutout {
+  border: 2px dashed transparent;
+  @media (hover: hover) {
+    &:hover {
+      border-color: color-mix(in srgb, var(--color-encre) 55%, transparent);
     }
   }
 }

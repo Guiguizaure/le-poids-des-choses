@@ -157,7 +157,7 @@ export function ObjectDuel({
                 className={`bg-blanc has-[input[type=radio]:focus-visible]:outline-outremer rounded-[18px] has-[input[type=radio]:focus-visible]:outline-2 has-[input[type=radio]:focus-visible]:outline-offset-2 ${
                   checked
                     ? "border-tomate animate-select border-2 p-[13px] motion-reduce:animate-none"
-                    : "border-encre border p-3.5"
+                    : "border-encre border p-3.5 hover:border-2 hover:p-[13px]"
                 }`}
               >
                 <label className="flex cursor-pointer items-center gap-3">

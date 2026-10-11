@@ -24,7 +24,7 @@ export function InstallBanner() {
         type="button"
         onClick={dismissInstallBanner}
         aria-label={t.close}
-        className="text-encre focus-visible:outline-outremer absolute top-3 right-3 flex size-8 items-center justify-center rounded-full text-[20px] leading-none focus-visible:outline-2"
+        className="hover-disc text-encre focus-visible:outline-outremer absolute top-3 right-3 flex size-8 items-center justify-center rounded-full text-[20px] leading-none focus-visible:outline-2"
       >
         <span aria-hidden>×</span>
       </button>
