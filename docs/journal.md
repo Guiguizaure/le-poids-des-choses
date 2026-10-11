@@ -2509,3 +2509,39 @@ recharger, réponse au mini-duel, « Noter ce choix », carnet inchangé, CLS 0 
 **Tests instables (à rendre fiables, non corrigé dans ce lot)** : « premier choix d'espèce :
 astuce des saisons, une seule fois ; fiche « Au fil des saisons » » (`e2e/feuillage.spec.ts`,
 WebKit), relancé une fois dans la CI de la PR #39, passé à la relance.
+
+## 2026-10-11 — Survol et animaux qui se téléportent (branche fix/finitions-survol-jardin)
+
+**Demandé** : deux corrections, sans nouvelle fonctionnalité. 1) Sur ordinateur, la main et un
+état de survol sur tout ce qui se sélectionne. 2) Pendant la pousse d'une nouvelle plante, des
+animaux changeaient de place d'un coup : trouver la cause, et qu'un animal ne saute jamais.
+
+**Survol** : cause confirmée, la preflight de Tailwind 4 ne met plus `cursor: pointer` sur les
+boutons. Règle de base dans `globals.css` (liens, boutons, `role="button"`, `summary`,
+`label[for]`, menus, cases, curseurs ; jamais sur un élément désactivé). Inventaire fait par un
+script (accueil, Comparer, duels, jardin, carnet, saison, méthode, Raconte, connexion) : environ
+110 éléments sans la main ou sans survol. Survol à la souris seulement, sans décalage : cartes
+et boutons `press` soulevés de 2 px avec une ombre nette (l'ombre seule en mouvement réduit),
+liens soulignés, boutons ronds (fermer, effacer, retour, « i »), zones de toucher du jardin en
+pointillé, options du duel objet, interrupteur, ciels, menus, pouce du curseur de distance,
+« Faire pousser une plante ». Test : `e2e/survol.spec.ts`.
+
+**Téléportations, cause** : `placeVisitors` tirait la place de chaque visiteur par
+`pickIndex(graine, nombre de places libres)`. Une nouvelle plante retire des places libres :
+le même indice tombait sur une autre place, et l'écureuil, le renard, les champignons (et le
+hibou, qui allait sur l'arbre adulte le plus haut) sautaient tous au moment où la plante
+apparaissait, même sans être gênés. Ni remontage de composant ni animation relancée : les
+animaux débloqués (papillon, coccinelle, oiseau…) ont des places fixes et ne bougeaient pas.
+
+**Corrigé** : rang fixe pour chaque place candidate (graine + identifiant de la place), la
+mieux classée encore libre gagne (`preferred`) ; hibou et cigale : même tirage parmi les arbres
+adultes (le hibou ne change d'arbre que si le nouvel arbre gagne ce tirage). Mesure sur environ
+58 000 cas : 90 % des visiteurs gardent leur place, 10 % sont gênés, 0,6 % bougent en cascade
+(un visiteur délogé libère une place qu'un autre préférait ; impossible à éviter sans mémoire de
+l'affichage précédent). Tout déplacement est animé (`useVisitorMove`) : renard qui marche,
+écureuil et rouge-gorge qui bondissent, arc pour ceux qui volent, une plante s'efface et
+repousse, un fondu pour un visiteur endormi ou en mouvement réduit. Les places des visiteurs
+changent une fois pour les jardins existants (nouveau tirage), puis restent stables. Tests :
+`live.test.ts` (une nouvelle plante ne déplace pas un visiteur qu'elle ne gêne pas, hibou,
+ordre des plantes), `visitor-move.test.ts`, `e2e/visiteurs.spec.ts` (position relevée à chaque
+image avant et pendant la pousse).

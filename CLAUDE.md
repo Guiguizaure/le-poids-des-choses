@@ -545,6 +545,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - performance : la 404 racine est embarquée dans toutes les pages, elle doit rester sans
     composant client ; l'écran de résultat est chargé à la demande ; les animations
     d'ambiance démarrent deux images après l'affichage (`useMotion`) ;
+  - curseur et survol (`globals.css`) : la main (curseur système) sur tout ce qui se
+    sélectionne (la preflight de Tailwind 4 ne la met plus sur les boutons), jamais sur un
+    élément désactivé ; survol à la souris seulement (`@media (hover: hover)`), sans décalage :
+    `press` (soulevé de 2 px, ombre nette ; l'ombre seule en mouvement réduit), liens texte
+    soulignés (épaissi s'ils le sont déjà ; `data-own-hover` pour un survol à part),
+    `hover-disc` (boutons ronds à icône), `hover-cutout` (zones de toucher du jardin, pointillé) ;
+    e2e : `e2e/survol.spec.ts` ;
   - micro-interactions (CSS, `globals.css`) : `press` (survol / toucher), `animate-enter`
     (apparition des pages et étapes, depuis une opacité de 0,35 pour ne pas retarder le
     LCP), `animate-pop` (badges), `animate-select` (cartes choisies), `animate-bar-in` (barre « Comparer ») — toujours avec
@@ -692,17 +699,26 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   - Visiteurs (`VISITORS`, `visitors.ts`) : non débloqués, hors compteur ; hiver rouge-gorge,
     perce-neige, houx ; printemps hirondelle, primevère, jonquille ; été cigale (tronc d'un
     arbre adulte, sinon absente), libellule, coquelicot, tournesol ; automne écureuil,
-    champignons ; toute l'année hibou (perché sous le feuillage de l'arbre adulte le plus
-    haut, absent sans arbre adulte ; éveillé la nuit, endormi le jour) et renard (au sol,
-    marche la nuit, dort le jour ; absent sans place). Placement déterministe
-    (`placeVisitors` : saison + année de saison, décembre compte avec l'hiver suivant), jamais
+    champignons ; toute l'année hibou (perché sous le feuillage d'un arbre adulte qui a un
+    perchoir, tiré au sort de façon stable, absent sans arbre adulte ; éveillé la nuit, endormi
+    le jour) et renard (au sol, marche la nuit, dort le jour ; absent sans place). Placement
+    déterministe (`placeVisitors` : saison + année de saison, décembre compte avec l'hiver
+    suivant ; `preferred` : chaque place candidate a un rang fixe tiré de la graine et de son
+    identifiant, la mieux classée encore libre gagne ; une nouvelle plante ne déplace que le
+    visiteur qu'elle gêne, ou en cascade celui qu'un visiteur déplacé gêne ou libère ; jamais
+    selon l'ordre des plantes ; testé), jamais
     sur l'emprise dessinée des plantes ni des animaux, jamais sur un autre visiteur ; volants
     dans la bande de ciel, jamais sur le soleil ; places indépendantes de l'heure. La nuit :
     hirondelle et libellule absentes, rouge-gorge endormi. L'hirondelle n'apparaît jamais sur
     Nuit encre (contraste). Jardin assoupi : visiteurs gardés, immobiles. Au plus
     `MAX_VISIBLE_VISITORS` (4) visibles en même temps, nocturnes compris (`capVisitors` :
     hibou et renard d'abord, puis un ordre tiré de la saison et de l'année ; un visiteur
-    écarté garde sa place, vide).
+    écarté garde sa place, vide). Un visiteur ne saute jamais (`useVisitorMove`,
+    `src/lib/geometry/visitor-move.ts`) : sa place change, il la rejoint avec sa démarche
+    (renard qui marche, écureuil et rouge-gorge qui bondissent, arc pour ceux qui volent, une
+    plante s'efface et repousse), endormi ou en mouvement réduit un fondu ; ses animations au
+    repos continuent ; e2e : `e2e/visiteurs.spec.ts`. Les animaux débloqués ont des places
+    fixes (`ANIMAL_PLACES`) : ils ne bougent jamais quand une plante pousse.
   - Jour et nuit (`daytime.ts`, heure locale de l'appareil) : de 21 h à 6 h, le ciel affiché
     passe en Nuit encre (le ciel choisi reste choisi, mention sous le sélecteur) ; soleil →
     lune : groupe `crateres` du calque `soleil` de scene-paysage (opacité 0, 1 la nuit) ;
