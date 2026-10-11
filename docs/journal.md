@@ -2545,3 +2545,10 @@ changent une fois pour les jardins existants (nouveau tirage), puis restent stab
 `live.test.ts` (une nouvelle plante ne déplace pas un visiteur qu'elle ne gêne pas, hibou,
 ordre des plantes), `visitor-move.test.ts`, `e2e/visiteurs.spec.ts` (position relevée à chaque
 image avant et pendant la pousse).
+
+**Tests instables (non corrigé dans ce lot)** : « toucher l'oiseau ouvre la conversation sans
+envol ; fermée, il s'envole et revient se poser » (`e2e/bird.spec.ts`, WebKit) : en CI sur la
+PR #40, la zone de toucher était à 33 puis 43 px du dessin de l'oiseau en vol (moins de 20
+attendus), deux fois de suite ; passé à la relance du job, et 8 fois sur 8 en local. Piste : la
+zone n'est recalculée qu'une image sur trois, et les images sont longues quand la machine est
+chargée.
