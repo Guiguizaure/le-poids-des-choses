@@ -13,6 +13,7 @@ import { HowItWorks } from "./HowItWorks";
 import { MiniDuelCard, MiniDuelProvider } from "./MiniDuel";
 import { duelCards } from "@/lib/duels/cards";
 import { miniDuelData } from "@/lib/duels/mini";
+import { GardenFlag } from "./GardenFlag";
 import { RETURNING_SCRIPT } from "./returning";
 
 /** Ancre de « Comment ça marche ? » (lien du héros). */
@@ -91,6 +92,8 @@ export function HomeScreen({ locale }: { locale: Locale }) {
               cachée en `invisible` : hors du clavier et des lecteurs d'écran), donc la même
               hauteur, sans bascule visible ni décalage. Sans script : la version de départ. */}
             <script dangerouslySetInnerHTML={{ __html: RETURNING_SCRIPT }} />
+            {/* Arrivée sans rechargement (logo, retour) : même état, relu côté client. */}
+            <GardenFlag />
             <div className="grid">
               <div
                 data-home-actions="new"

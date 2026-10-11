@@ -15,6 +15,7 @@ import type { Season } from "@/lib/garden/seasons";
 import { skyColors, type SkyId } from "@/lib/garden/skies";
 import { bareBranchesSvg, gradientTransformFor } from "@/lib/garden/foliage";
 import { plantLook, type PlantLook } from "@/lib/garden/species";
+import { replaceGroups } from "./svg-groups";
 import { getSpec, type IllustrationName } from "@/lib/illustrations/specs";
 
 /** Sources SVG des illustrations (contenu des fichiers de public/illustrations). */
@@ -86,30 +87,25 @@ export function paintFoliage(
   prefix: string,
 ): string {
   if (!paint) return svg;
-  const layer = new RegExp(
-    `(<g id="(?:${paint.layers.join("|")})"[^>]*)>([\\s\\S]*?)(</g>)`,
-    "g",
-  );
   if (paint.mode === "asleep") {
     const bare = paint.bare[stage as keyof typeof paint.bare];
     if (!bare) return svg;
-    return svg
-      .replace(
-        layer,
-        (_, open: string, body: string, close: string) =>
-          `${open} visibility="hidden">${body}${close}`,
-      )
-      .replace(/<\/svg>\s*$/, `${bareBranchesSvg(bare)}</svg>`);
+    return replaceGroups(
+      svg,
+      paint.layers,
+      ({ open, body, close }) => `${open} visibility="hidden">${body}${close}`,
+    ).replace(/<\/svg>\s*$/, `${bareBranchesSvg(bare)}</svg>`);
   }
   const range = paint.y[stage as keyof typeof paint.y];
   if (!range) return svg;
   const gradients: string[] = [];
-  const painted = svg.replace(
-    layer,
-    (_, open: string, body: string, close: string) =>
+  const painted = replaceGroups(
+    svg,
+    paint.layers,
+    ({ open, body, close }) =>
       `${open}>${body.replace(
         /<(circle|ellipse|rect|path)\b([^>]*?)\s*(\/?)>/g,
-        (__, tag: string, attributes: string, selfClosing: string) => {
+        (_, tag: string, attributes: string, selfClosing: string) => {
           const id = `${GRADIENT_ID}${prefix}-${gradients.length}`;
           const inverse = gradientTransformFor(
             attributes.match(/\stransform="([^"]+)"/)?.[1],
@@ -134,15 +130,10 @@ export function keepBloomGroup(
   groups: readonly string[],
   level: number,
 ): string {
-  return groups.reduce(
-    (acc, group, index) =>
-      index + 1 === level
-        ? acc
-        : acc.replace(
-            new RegExp(`<g id="${group}"[^>]*>[\\s\\S]*?</g>`, "g"),
-            "",
-          ),
+  return replaceGroups(
     svg,
+    groups.filter((_, index) => index + 1 !== level),
+    () => "",
   );
 }
 
