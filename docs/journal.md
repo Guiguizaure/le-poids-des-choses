@@ -2496,3 +2496,16 @@ ordinateur portable 192,6 → 182,3 ; télévision 369,7 → 328,3. Nouveaux : m
 - Tests instables, à ajouter à la liste : « premier choix d'espèce : astuce des saisons, une
   seule fois ; fiche « Au fil des saisons » » (`e2e/feuillage.spec.ts`, WebKit), relancé une
   fois en CI sur la PR #39, passé à la relance ; cause non cherchée.
+
+### Mise à jour avec `main` (PR #38 fusionnée)
+
+Conflits résolus en gardant les deux côtés : `HomeScreen.tsx` (GardenFlag et `data-garden` de la
+#38, mini-duel de la #39), journal (entrées remises dans l'ordre des dates) ; CLAUDE.md fusionné
+sans conflit. Le bouton du mini-duel lit le même indicateur que le héros (`data-garden`). Test
+ajouté (`e2e/decalage.spec.ts`) : premier choix noté, retour à l'accueil par le logo sans
+recharger, réponse au mini-duel, « Noter ce choix », carnet inchangé, CLS 0 ; 10 sur 10
+(Chromium et WebKit, 5 fois chacun).
+
+**Tests instables (à rendre fiables, non corrigé dans ce lot)** : « premier choix d'espèce :
+astuce des saisons, une seule fois ; fiche « Au fil des saisons » » (`e2e/feuillage.spec.ts`,
+WebKit), relancé une fois dans la CI de la PR #39, passé à la relance.
