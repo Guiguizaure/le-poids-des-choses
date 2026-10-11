@@ -2552,3 +2552,69 @@ PR #40, la zone de toucher était à 33 puis 43 px du dessin de l'oiseau en vol 
 attendus), deux fois de suite ; passé à la relance du job, et 8 fois sur 8 en local. Piste : la
 zone n'est recalculée qu'une image sur trois, et les images sont longues quand la machine est
 chargée.
+
+## 2026-10-11 (après-midi) — Tests instables (branche fix/tests-instables)
+
+**Demandé** : rendre fiables les tests instables notés au journal (« premier choix d'espèce »,
+envol de l'oiseau, et ceux du 10 octobre : en-tête de /jardin à 320 px, barre au-dessus du
+bandeau de langue, habitants du jardin, premier passage, parcours complet du compte) : reproduire
+sur une machine chargée, trouver la cause, faire attendre au test un état réel ; ni nouvel
+essai, ni délai allongé, ni test sauté. Critère : 40 sur 40 sous charge, Chromium et WebKit.
+
+**Protocole de charge** : `E2E_CPU_THROTTLE=3` (nouveau, `e2e/fixtures.ts` : processeur des
+pages Chromium ralenti ×3 par le protocole de Chrome), 3 workers ; WebKit (rien d'équivalent) :
+4 workers et deux fils de calcul à vide sur la machine. Réglé à la main : avec 4 workers ralentis
+×3, le M1 (4 cœurs rapides, Docker et le serveur de dev ouverts) sature : un même test passe de
+5 s à plus d'une minute, et tout échoue par dépassement des 30 s, surtout pendant les analyses
+axe de /jardin ; ce n'est plus un test qui est instable mais la machine qui ne suit plus. Les
+journaux de la CI (relances des PR #39 et #40) ont donné les vrais messages d'échec.
+
+**Envol de l'oiseau** (`e2e/bird.spec.ts`, WebKit en CI) — deux causes, toutes deux dans le
+test. 1) L'écart entre la zone de toucher et le dessin était mesuré à un instant quelconque ; la
+zone n'est replacée qu'une image sur trois, et sous charge les images sont longues : 42,9 puis
+32,8 px en CI (limite 20). 2) Le test attendait la phase « boucle » en interrogeant la page :
+sous charge, la boucle passait entière entre deux interrogations (« depart » vu six fois, puis
+« retour » ; reproduit 2 fois sur 40, Chromium ×3, 4 workers). Correctif : l'envol est relevé
+dans la page (observateurs de mutations) : chaque phase quand elle change, et la zone au moment
+même où elle est replacée ; le test exige depart → boucle → retour → posé, le dessin en vol
+pendant les trois phases, et pendant la boucle au moins 3 placements, chacun centré sur le
+dessin (écart < 1 px ; relevé : 0 à chaque fois, 16 à 19 placements, 70 px parcourus). Pendant
+la conversation, 60 images au lieu de 1,2 s. Pas un défaut de l'appli : sur un téléphone à
+60 images par seconde, la zone a quelques pixels de retard au plus.
+
+**« premier choix d'espèce »** (`e2e/feuillage.spec.ts`, WebKit en CI) — cause (journal CI de
+la PR #39) : erreur de console « …/mentions-legales/__next.!KGZyKQ.mentions-legales.**PAGE**.txt
+… due to access control checks ». Le test changeait de page (`page.goto`) aussitôt la feuille des
+espèces fermée, pendant que Next préchargeait les liens de la carte de résultat et du pied de
+page ; WebKit Linux signale les préchargements interrompus. Reproduit derrière un relais qui
+retarde les préchargements de 800 ms : trois préchargements abandonnés par le `goto`, dont
+celui de la CI, et l'erreur (« Fetch API cannot load …/confidentialite due to access control
+checks ») 1 fois sur 10 sous WebKit (WebKit sur Mac ne l'écrit pas toujours). Correctif : avant
+de changer de page, attendre la carte de résultat puis le réseau au repos. `waitForLoadState
+("networkidle")` ne suffit pas (il ne regarde que le chargement du document et rend la main
+tout de suite ensuite) : nouvelle aide `trackNetwork(page).idle()` (aucune requête en cours
+depuis 500 ms, préchargements compris). Avec le relais lent : plus aucun préchargement
+abandonné avant le changement de page, 20 sur 20.
+
+**Tests du 10 octobre** (en-tête de /jardin à 320 px, barre au-dessus du bandeau, habitants du
+jardin, premier passage, parcours complet du compte) — non reproduits, rien changé. Sous le
+protocole : 40 sur 40 dans chaque navigateur ; derrière le relais lent (WebKit) : 50 sur 50 ;
+seul échec obtenu, le dépassement des 30 s quand la machine sature (4 workers ralentis ×3 :
+« premier passage » 9 sur 40, le plus long, deux analyses axe de /jardin ; barre 6, en-tête 2,
+habitants 0 à 2), ce qui rejoint les deux échecs connus (habitants pendant des passages
+Lighthouse, premier passage un soir de suite complète). Essayé puis retiré : `resultTypes:
+["violations"]` pour axe (environ 12 % de gagné seulement, dans le bruit).
+
+**En plus : « pendant la pousse, aucun animal ne saute »** (`e2e/visiteurs.spec.ts`, écrit ce
+matin, échec dans la suite complète) — deux erreurs de mesure du test, pas de l'appli.
+Reproduit : 11 sur 160 sans ralentissement, 4 workers (un CPU ralenti retarde l'hydratation et
+cache l'effet : 80 sur 80). 1) Les places étaient lues par rapport à la fenêtre : quand le
+jardin s'affiche tôt, l'arrivée de la page (`animate-enter`) déplace encore toute la scène, et
+les champignons « bougeaient » de 1,1 à 1,9 px (limite 1). Places lues maintenant dans la scène. 2) Le relevé passe avant GSAP à chaque image : la place lue à l'image i est celle de l'image
+i − 1, et le pas était rapporté au mauvais intervalle. L'écureuil, parti juste après l'image
+longue où la plante apparaît (69 ms), semblait faire 6,02 px en 16 ms (limite 6) : 1,45 px par
+image en vrai. Pas rapporté maintenant à l'intervalle précédent. Après : 160 sur 160 sans
+ralentissement, 80 sur 80 sous Chromium ×3, 80 sur 80 sous WebKit chargé.
+
+**Vérifié** : sous charge, 40 sur 40 pour chaque test (six tests × deux navigateurs = 480, plus
+80 pour le compte, plus `e2e/visiteurs.spec.ts`).
