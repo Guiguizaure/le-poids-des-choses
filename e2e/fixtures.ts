@@ -4,6 +4,7 @@ import {
   expect,
   type Locator,
   type Page,
+  type Request,
 } from "@playwright/test";
 
 /**
@@ -13,6 +14,16 @@ import {
  * Playwright (`erreurs-console.txt`), y compris pour les erreurs tolérées ensuite.
  */
 export const test = base.extend<{ consoleErrors: string[] }>({
+  // Machine chargée, pour traquer un test instable : `E2E_CPU_THROTTLE=4 pnpm e2e …` ralentit
+  // le processeur de chaque page Chromium (WebKit n'a pas d'équivalent : charger la machine).
+  page: async ({ page, browserName }, provide) => {
+    const rate = Number(process.env.E2E_CPU_THROTTLE ?? 1);
+    if (rate > 1 && browserName === "chromium") {
+      const session = await page.context().newCDPSession(page);
+      await session.send("Emulation.setCPUThrottlingRate", { rate });
+    }
+    await provide(page);
+  },
   // Un test qui ouvre volontairement une page inexistante vide ce tableau après la navigation :
   // le statut 404 du document y est attendu.
   consoleErrors: [
@@ -102,6 +113,36 @@ export function acceptStatus(errors: string[], ...statuses: number[]) {
       !statuses.some((status) => message.includes(`status of ${status}`)),
   );
   errors.splice(0, errors.length, ...others);
+}
+
+/**
+ * Suit les requêtes de la page à partir de maintenant ; `idle()` attend qu'aucune ne soit en
+ * cours depuis 500 ms. `waitForLoadState("networkidle")` ne regarde que le chargement du
+ * document (il rend la main tout de suite ensuite) ; ici, les préchargements lancés plus tard
+ * comptent aussi (Next précharge les liens qui entrent à l'écran). À attendre avant de quitter
+ * la page : WebKit écrit en console ceux qu'une navigation interrompt.
+ */
+export function trackNetwork(page: Page, quiet = 500) {
+  const pending = new Set<Request>();
+  let last = Date.now();
+  page.on("request", (request) => {
+    pending.add(request);
+    last = Date.now();
+  });
+  const settle = (request: Request) => {
+    pending.delete(request);
+    last = Date.now();
+  };
+  page.on("requestfinished", settle);
+  page.on("requestfailed", settle);
+  return {
+    idle: () =>
+      expect
+        .poll(() => pending.size === 0 && Date.now() - last >= quiet, {
+          intervals: [100],
+        })
+        .toBe(true),
+  };
 }
 
 /**

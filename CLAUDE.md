@@ -103,7 +103,13 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   parcours, sélecteur de langue, bandeau, hreflang, mêmes ancres) et un parcours anglais
   dans le compte et dans « Raconte ta journée ». Le serveur de test sert le `404.html` le plus
   proche (`/en/…` → `en/404.html`), comme Cloudflare Pages.
-  Aucun vrai e-mail, aucun appel à Claude, aucune connexion à Cloudflare.
+  Aucun vrai e-mail, aucun appel à Claude, aucune connexion à Cloudflare. Test instable :
+  `E2E_CPU_THROTTLE=3` ralentit le processeur des pages Chromium (protocole du journal,
+  11 octobre : 3 workers, 40 passages ; plus de 3 workers ralentis sature un M1). Avant de
+  quitter une page après une action qui en affiche une autre partie, attendre le réseau au
+  repos (`trackNetwork(page).idle()`, `e2e/fixtures.ts` ; `waitForLoadState("networkidle")`
+  ne vaut que juste après un chargement) : WebKit signale en console les préchargements
+  interrompus.
 - `pnpm lighthouse` — scores Lighthouse mobile (accueil, choix des gestes, duel, jardin,
   carnet, saison, méthode, en français puis en anglais ; `LH_LANG=fr|en` pour une seule
   langue ; `LH_PATHS=/,/comparer,/jardin` pour quelques adresses) sur `pnpm serve:out`

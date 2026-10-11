@@ -28,12 +28,16 @@ const JOURNAL = [
 
 type Frame = {
   t: number;
-  // Coin haut gauche (px), opacité (0 si caché).
+  // Coin haut gauche (px, dans la scène), opacité (0 si caché).
   row: Record<string, [number, number, number]>;
   plants: number;
 };
 
-/** Relève, à chaque image et dès le chargement, la place de chaque animal et visiteur. */
+/**
+ * Relève, à chaque image et dès le chargement, la place de chaque animal et visiteur dans la
+ * scène : l'arrivée de la page (`animate-enter`) déplace toute la scène de quelques pixels sur
+ * les premières images, ce n'est pas un animal qui bouge.
+ */
 async function trackScene(page: Page) {
   await page.addInitScript({
     content: `
@@ -43,9 +47,11 @@ async function trackScene(page: Page) {
         var row = {};
         document.querySelectorAll("[data-animal],[data-visitor]").forEach(function (el) {
           var r = el.getBoundingClientRect();
+          var scene = el.offsetParent ? el.offsetParent.getBoundingClientRect() : r;
           var style = getComputedStyle(el);
           row[el.dataset.animal || el.dataset.visitor] = [
-            r.x, r.y, style.visibility === "hidden" ? 0 : Number(style.opacity),
+            r.x - scene.x, r.y - scene.y,
+            style.visibility === "hidden" ? 0 : Number(style.opacity),
           ];
         });
         window.__frames.push({
@@ -72,14 +78,21 @@ async function revealAndRecord(page: Page): Promise<Frame[]> {
 
 const visible = (cell?: [number, number, number]) => !!cell && cell[2] > 0.05;
 
-/** Plus grand déplacement visible d'une image à l'autre, ramené à une image de 1/60 s. */
+/**
+ * Plus grand déplacement visible d'une image à l'autre, ramené à une image de 1/60 s. Le relevé
+ * passe avant GSAP à chaque image (premier rappel inscrit) : la place lue à l'image i est celle
+ * que GSAP a posée à l'image i − 1. Le pas entre deux relevés s'est donc fait pendant
+ * l'intervalle précédent ; sans ce décalage, un trajet qui démarre juste après une image longue
+ * (la plante qui apparaît) semblait faire en 16 ms le chemin de 70.
+ */
 function largestStep(frames: Frame[], who: string) {
   let largest = 0;
   for (let i = 1; i < frames.length; i++) {
     const [a, b] = [frames[i - 1].row[who], frames[i].row[who]];
     if (!visible(a) || !visible(b)) continue;
     const step = Math.hypot(b[0] - a[0], b[1] - a[1]);
-    const frames60 = Math.max(1, (frames[i].t - frames[i - 1].t) / (1000 / 60));
+    const before = frames[Math.max(0, i - 2)];
+    const frames60 = Math.max(1, (frames[i - 1].t - before.t) / (1000 / 60));
     largest = Math.max(largest, step / frames60);
   }
   return largest;
