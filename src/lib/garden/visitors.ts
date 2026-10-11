@@ -1,11 +1,12 @@
 // Visiteurs du jardin vivant : des animaux et des plantes de saison, et deux visiteurs de la
 // nuit (hibou, renard). Ils apparaissent seuls, ne se débloquent pas et ne comptent nulle part.
 // Table de données (comme species.ts), puis placement déterministe : même carnet et même
-// saison = mêmes places, sur tous les appareils ; jamais devant les plantes de la personne.
+// saison = mêmes places, sur tous les appareils ; jamais devant les plantes de la personne. Une
+// nouvelle plante ne déplace que les visiteurs qu'elle gêne (`preferred`).
 import { PLANT_BOUNDS } from "@/lib/illustrations/bounds.generated";
 import type { IllustrationName } from "@/lib/illustrations/specs";
 import type { Presence } from "./fauna";
-import { pickIndex } from "./hash";
+import { hashString, pickIndex } from "./hash";
 import {
   animalBox,
   boxAt,
@@ -248,9 +249,37 @@ function centeredBox(x: number, y: number, width: number): Box {
 }
 
 /**
+ * Place préférée d'un visiteur : chaque place candidate reçoit un rang fixe, tiré de la graine
+ * du visiteur et de l'identifiant de la place (jamais de sa position dans la liste des places
+ * libres), et la mieux classée encore libre gagne. Ajouter une plante ne fait donc changer de
+ * place que le visiteur dont elle occupe la place (ou celui qu'un visiteur déplacé gêne à son
+ * tour), quel que soit l'ordre d'arrivée des plantes.
+ */
+export function preferred<T>(
+  candidates: readonly T[],
+  id: (candidate: T) => string,
+  seed: string,
+): T | undefined {
+  let best: T | undefined;
+  let bestRank = Infinity;
+  let bestId = "";
+  for (const candidate of candidates) {
+    const candidateId = id(candidate);
+    const rank = hashString(`${seed}:${candidateId}`);
+    if (rank < bestRank || (rank === bestRank && candidateId < bestId)) {
+      best = candidate;
+      bestRank = rank;
+      bestId = candidateId;
+    }
+  }
+  return best;
+}
+
+/**
  * Place les visiteurs du moment (saison) dans le jardin. Les places ne dépendent pas de
- * l'heure : un visiteur ne saute pas d'un endroit à l'autre à 21 h. Un visiteur sans place
- * libre (jardin plein, pas d'arbre adulte) n'apparaît pas.
+ * l'heure : un visiteur ne saute pas d'un endroit à l'autre à 21 h ; ni de l'ordre des
+ * plantes ; une nouvelle plante ne déplace que ceux qu'elle gêne (`preferred`). Un visiteur
+ * sans place libre (jardin plein, pas d'arbre adulte) n'apparaît pas.
  */
 export function placeVisitors(
   garden: Pick<GardenState, "plants" | "unlocked">,
@@ -276,13 +305,11 @@ export function placeVisitors(
     inScene(box) &&
     ![...blocked, ...placed.map((v) => v.box)].some((b) => overlaps(box, b));
 
-  const adultTrees = garden.plants
-    .filter((plant) => plant.kind.type === "tree" && plant.stage === "grand")
-    // Le plus haut d'abord (haut du cadre le plus haut), puis l'ordre du jardin.
-    .sort((a, b) => a.box.y - b.box.y);
-
-  const pick = <T>(candidates: readonly T[], k: string): T | undefined =>
-    candidates.length ? candidates[pickIndex(k, candidates.length)] : undefined;
+  const adultTrees = garden.plants.filter(
+    (plant) => plant.kind.type === "tree" && plant.stage === "grand",
+  );
+  const byTree = (tree: GardenPlant) => tree.id;
+  const bySlot = ({ index }: { index: number }) => String(index);
 
   const rules = VISITORS.filter((rule) => rule.seasons.includes(season));
   // Ordre : perchés (arbres), puis plantes, ciel, et le sol en dernier (renard à la fin).
@@ -297,8 +324,13 @@ export function placeVisitors(
     const scale = (plant: GardenPlant) => plant.box.width / 120;
     switch (rule.place) {
       case "perch": {
-        // Hibou : sur l'arbre adulte le plus haut.
-        const tree = adultTrees[0];
+        // Hibou : sur un arbre adulte qui a un perchoir (tirage stable : un nouvel arbre ne
+        // l'attire que s'il gagne ce tirage).
+        const tree = preferred(
+          adultTrees.filter((plant) => speciesFor(plant.kind).perches?.owl),
+          byTree,
+          key(rule.kind),
+        );
         const perch = tree && speciesFor(tree.kind).perches?.owl;
         if (!tree || !perch) break;
         const box = boxAt(
@@ -314,7 +346,11 @@ export function placeVisitors(
         // Cigale : sur le tronc d'un arbre adulte (un autre que celui du hibou s'il y en a).
         const owlTree = placed.find((v) => v.kind === "hibou")?.treeId;
         const others = adultTrees.filter((tree) => tree.id !== owlTree);
-        const tree = pick(others.length ? others : adultTrees, key(rule.kind));
+        const tree = preferred(
+          others.length ? others : adultTrees,
+          byTree,
+          key(rule.kind),
+        );
         const spot = tree && speciesFor(tree.kind).perches?.cicada;
         if (!tree || !spot) break;
         const height = (rule.width * 48) / 64;
@@ -335,29 +371,31 @@ export function placeVisitors(
             box: boxAt(rule.illustration, slot.x, slot.y, rule.width),
           }))
           .filter(({ box }) => free(box));
-        const choice = pick(candidates, key(rule.kind));
+        const choice = preferred(candidates, bySlot, key(rule.kind));
         if (!choice) break;
         taken.add(choice.index);
         placed.push({ kind: rule.kind, rule, box: choice.box });
         break;
       }
       case "sky": {
-        const candidates = SKY_CANDIDATES.map(({ x, y }) =>
-          centeredBox(x, y, rule.width),
-        ).filter((box) => free(box) && !overlaps(box, SUN));
-        const box = pick(candidates, key(rule.kind));
-        if (box) placed.push({ kind: rule.kind, rule, box });
+        const candidates = SKY_CANDIDATES.map((spot, index) => ({
+          index,
+          box: centeredBox(spot.x, spot.y, rule.width),
+        })).filter(({ box }) => free(box) && !overlaps(box, SUN));
+        const choice = preferred(candidates, bySlot, key(rule.kind));
+        if (choice) placed.push({ kind: rule.kind, rule, box: choice.box });
         break;
       }
       case "ground": {
         const walk = rule.kind === "renard" ? FOX_WALK : 0;
-        const candidates = GARDEN_SLOTS.map((slot) =>
-          boxAt(rule.illustration, slot.x, slot.y + 2, rule.width),
-        ).filter((box) =>
+        const candidates = GARDEN_SLOTS.map((slot, index) => ({
+          index,
+          box: boxAt(rule.illustration, slot.x, slot.y + 2, rule.width),
+        })).filter(({ box }) =>
           free({ ...box, x: box.x - walk, width: box.width + 2 * walk }),
         );
-        const box = pick(candidates, key(rule.kind));
-        if (box) placed.push({ kind: rule.kind, rule, box });
+        const choice = preferred(candidates, bySlot, key(rule.kind));
+        if (choice) placed.push({ kind: rule.kind, rule, box: choice.box });
         break;
       }
     }

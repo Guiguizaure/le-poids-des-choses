@@ -62,6 +62,7 @@ import { SEASONS_UI } from "@/lib/i18n/messages/seasons";
 import { SPECIES_SHEETS } from "@/lib/i18n/messages/species";
 import { FlightPath, useAutoFlights } from "./BirdFlight";
 import { TalkTargets, type TalkTarget } from "./talk/TalkTargets";
+import { useVisitorMove } from "./useVisitorMove";
 
 type GardenProps = {
   entries: readonly JournalEntry[];
@@ -285,7 +286,10 @@ function WateringCan({ plant }: { plant: GardenPlant }) {
 
 const NONE: readonly string[] = [];
 
-/** Un visiteur à sa place (cadre en unités de scène). */
+/**
+ * Un visiteur à sa place (cadre en unités de scène). Si sa place change (une nouvelle plante la
+ * prend), il la rejoint avec sa démarche, jamais d'un saut (`useVisitorMove`).
+ */
 function VisitorAt({
   visitor,
   still,
@@ -293,8 +297,11 @@ function VisitorAt({
   visitor: LiveVisitor;
   still: boolean;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useVisitorMove(ref, visitor, still);
   return (
     <div
+      ref={ref}
       className="absolute"
       style={place(visitor.box)}
       data-visitor={visitor.kind}

@@ -12,9 +12,11 @@ import {
   ANIMAL_UNLOCKS,
   animalBox,
   animalIllustration,
+  boxAt,
   buildGarden,
   plantKindFor,
   type AnimalKind,
+  type Box,
   type GardenState,
 } from "./model";
 import { SCENE } from "./scene";
@@ -32,6 +34,7 @@ import { SPECIES, speciesFor } from "./species";
 import { arrivalMessage, gardenDescription } from "./text";
 import {
   drawnBox,
+  FOX_WALK,
   MAX_VISIBLE_VISITORS,
   overlaps,
   placeVisitors,
@@ -313,7 +316,7 @@ describe("visiteurs : placement", () => {
         }
       }
   });
-  it("hibou sur l'arbre adulte le plus haut, dans son feuillage (jamais dans le ciel) ; absent sans arbre adulte", () => {
+  it("hibou sur un arbre adulte qui a un perchoir, dans son feuillage (jamais dans le ciel) ; absent sans arbre adulte", () => {
     expect(
       placeVisitors(gardenWith(0, 5), "automne", 2026).some(
         (v) => v.kind === "hibou",
@@ -323,13 +326,12 @@ describe("visiteurs : placement", () => {
     const owl = placeVisitors(garden, "automne", 2026).find(
       (v) => v.kind === "hibou",
     )!;
-    const trees = garden.plants.filter(
-      (p) => p.kind.type === "tree" && p.stage === "grand",
-    );
-    const tallest = [...trees].sort((a, b) => a.box.y - b.box.y)[0];
-    expect(owl.treeId).toBe(tallest.id);
-    expect(overlaps(owl.box, tallest.box)).toBe(true);
-    expect(owl.box.y).toBeGreaterThan(tallest.box.y);
+    const tree = garden.plants.find((p) => p.id === owl.treeId)!;
+    expect(tree.kind.type).toBe("tree");
+    expect(tree.stage).toBe("grand");
+    expect(speciesFor(tree.kind).perches?.owl).toBeDefined();
+    expect(overlaps(owl.box, tree.box)).toBe(true);
+    expect(owl.box.y).toBeGreaterThan(tree.box.y);
   });
   it("cigale sur le tronc d'un arbre adulte ; absente sans arbre adulte", () => {
     expect(
@@ -397,6 +399,139 @@ describe("visiteurs : placement", () => {
     ).toBe("rouge-gorge-endormi");
   });
 });
+
+describe("visiteurs : une nouvelle plante ne les fait pas sauter", () => {
+  /** Carnets variés (graine) : de 0 à 24 choix légers, écarts de 0,3 à 40 kg. */
+  const journal = (seed: number) =>
+    Array.from({ length: seed % 25 }, (_, i) =>
+      choice(`j${seed}-${i}`, [0.3, 4, 12, 25, 40][(seed + i * 7) % 5], i),
+    );
+  const added = (seed: number) =>
+    choice(`j${seed}-nouveau`, [0.5, 6, 30][seed % 3], 500);
+  const SAMPLE = Array.from({ length: 160 }, (_, seed) => seed);
+
+  /** Ce que le nouveau choix ajoute à la scène : sa plante (ou la plante qui grandit), un animal. */
+  function newBlockers(before: GardenState, after: GardenState) {
+    const old = new Map(before.plants.map((p) => [p.id, p.level]));
+    return [
+      ...after.plants
+        .filter((p) => old.get(p.id) !== p.level)
+        .map((p) => drawnBox(p)),
+      ...after.unlocked
+        .filter((kind) => !before.unlocked.includes(kind))
+        .map(animalBox),
+    ];
+  }
+
+  it("un visiteur que la nouvelle plante ne gêne pas garde exactement sa place", () => {
+    let kept = 0;
+    let moved = 0;
+    for (const seed of SAMPLE)
+      for (const season of SEASONS) {
+        const entries = journal(seed);
+        const before = buildGarden(entries, NOW);
+        const after = buildGarden([...entries, added(seed)], NOW);
+        const was = placeVisitors(before, season, 2026);
+        const now = placeVisitors(after, season, 2026);
+        // Ce qui peut gêner un visiteur : la nouvelle plante (son dessin, et son emplacement
+        // pour un visiteur-plante), l'animal qui arrive, et un visiteur placé avant lui qui a
+        // changé de place (sa nouvelle place le gêne, ou il libère une place que ce visiteur
+        // préférait : un déplacement en cascade, qui reste animé).
+        const blockers = newBlockers(before, after);
+        const newSlots = after.plants
+          .filter((plant) => !before.plants.some((p) => p.id === plant.id))
+          .map((plant) => plant.slot);
+        // Un visiteur qui n'a plus de place part, et libère la sienne.
+        const freed: Box[] = was
+          .filter((v) => !now.some((other) => other.kind === v.kind))
+          .map((v) => v.box);
+        for (const visitor of now) {
+          const old = was.find((v) => v.kind === visitor.kind);
+          if (!old || visitor.rule.place === "perch") continue;
+          const sameTree =
+            visitor.rule.place !== "trunk" || old.treeId === visitor.treeId;
+          // Le renard a besoin de la place de son va-et-vient (FOX_WALK de chaque côté).
+          const walk = visitor.kind === "renard" ? FOX_WALK : 0;
+          const zone = {
+            ...old.box,
+            x: old.box.x - walk,
+            width: old.box.width + 2 * walk,
+          };
+          const slotTaken =
+            visitor.rule.place === "plant" &&
+            newSlots.some((slot) =>
+              isSameBox(
+                boxAt(
+                  visitor.rule.illustration,
+                  slot.x,
+                  slot.y,
+                  visitor.rule.width,
+                ),
+                old.box,
+              ),
+            );
+          const bothered =
+            !sameTree ||
+            slotTaken ||
+            blockers.some((box) => overlaps(box, zone)) ||
+            freed.some((box) => overlaps(box, visitor.box));
+          if (!bothered) {
+            expect(visitor.box, `${seed} ${season} ${visitor.kind}`).toEqual(
+              old.box,
+            );
+            kept += 1;
+          } else if (!isSameBox(visitor.box, old.box)) {
+            moved += 1;
+            blockers.push(visitor.box);
+            freed.push(old.box);
+          }
+        }
+      }
+    // L'échantillon contient bien des visiteurs gênés et d'autres non.
+    expect(kept).toBeGreaterThan(500);
+    expect(moved).toBeGreaterThan(10);
+  });
+
+  it("le hibou ne change d'arbre que pour le nouvel arbre adulte (jamais pour un autre)", () => {
+    let stayed = 0;
+    for (const seed of SAMPLE) {
+      const entries = journal(seed);
+      const before = buildGarden(entries, NOW);
+      const after = buildGarden([...entries, added(seed)], NOW);
+      const owl = (garden: GardenState) =>
+        placeVisitors(garden, "automne", 2026).find((v) => v.kind === "hibou");
+      const was = owl(before);
+      const now = owl(after);
+      if (!was || !now) continue;
+      if (now.treeId === was.treeId) {
+        expect(now.box).toEqual(was.box);
+        stayed += 1;
+      } else expect(now.treeId).toBe(added(seed).id);
+    }
+    expect(stayed).toBeGreaterThan(20);
+  });
+
+  it("les places ne dépendent pas de l'ordre des plantes, seulement de leurs places", () => {
+    for (const seed of SAMPLE.slice(0, 60)) {
+      const garden = buildGarden([...journal(seed), added(seed)], NOW);
+      const reversed = { ...garden, plants: [...garden.plants].reverse() };
+      const rotated = {
+        ...garden,
+        plants: garden.plants.map(
+          (_, i) => garden.plants[(i + seed) % garden.plants.length],
+        ),
+      };
+      for (const season of SEASONS) {
+        const places = placeVisitors(garden, season, 2026);
+        expect(placeVisitors(reversed, season, 2026)).toEqual(places);
+        expect(placeVisitors(rotated, season, 2026)).toEqual(places);
+      }
+    }
+  });
+});
+
+const isSameBox = (a: Box, b: Box) =>
+  a.x === b.x && a.y === b.y && a.width === b.width;
 
 describe("perchoirs des arbres (relus dans les dessins)", () => {
   /** Bas du feuillage à l'abscisse x (cercles et ellipses du calque feuillage). */
