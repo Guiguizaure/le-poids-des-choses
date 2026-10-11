@@ -117,7 +117,7 @@ export function TalkTargets({
           onClick={(event) => onTalk(target.talker, event.currentTarget)}
           // Hors de l'écran tant que la position n'est pas mesurée.
           style={{ transform: "translate(-200vw, 0)" }}
-          className="focus-visible:outline-outremer pointer-events-auto absolute top-0 left-0 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="hover-cutout focus-visible:outline-outremer pointer-events-auto absolute top-0 left-0 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           {target.asleep ? (
             <Zzz className="absolute -top-2 right-0 text-[13px]" />

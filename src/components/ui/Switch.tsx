@@ -14,7 +14,7 @@ export function Switch({
 }) {
   return (
     <label
-      className={`text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.4] ${className}`}
+      className={`group text-corps-s text-encre flex cursor-pointer items-center gap-2.5 leading-[1.4] ${className}`}
     >
       <input
         type="checkbox"
@@ -25,7 +25,7 @@ export function Switch({
       />
       <span
         aria-hidden
-        className="bg-texte-attenue/40 peer-checked:bg-encre peer-focus-visible:outline-outremer after:bg-creme relative h-6 w-10 shrink-0 rounded-full transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 after:absolute after:top-[3px] after:left-[3px] after:h-[18px] after:w-[18px] after:rounded-full after:transition-transform peer-checked:after:translate-x-4"
+        className="bg-texte-attenue/40 peer-checked:bg-encre peer-focus-visible:outline-outremer after:bg-creme relative h-6 w-10 shrink-0 rounded-full transition-colors group-hover:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-encre)_20%,transparent)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 after:absolute after:top-[3px] after:left-[3px] after:h-[18px] after:w-[18px] after:rounded-full after:transition-transform peer-checked:after:translate-x-4"
       />
       {children}
     </label>

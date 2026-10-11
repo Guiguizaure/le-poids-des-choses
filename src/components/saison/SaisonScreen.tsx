@@ -75,7 +75,7 @@ export function SaisonScreen() {
             onChange={(event) =>
               chooseMonth(Number(event.target.value), locale)
             }
-            className="bg-blanc border-encre/20 text-corps-m text-encre focus-visible:outline-outremer rounded-full border px-4 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-blanc border-encre/20 hover:border-encre text-corps-m text-encre focus-visible:outline-outremer rounded-full border px-4 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {!month ? <option value="">…</option> : null}
             {monthNames.map((name, index) => (

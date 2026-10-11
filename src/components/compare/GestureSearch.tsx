@@ -68,7 +68,7 @@ export function GestureSearch({
             onClick={() => onQueryChange("")}
             aria-label={t.searchClear}
             title={t.searchClear}
-            className="bg-creme text-encre focus-visible:outline-outremer absolute top-1/2 right-2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-[18px] leading-none font-semibold focus-visible:outline-2"
+            className="bg-creme hover:bg-encre/10 text-encre focus-visible:outline-outremer absolute top-1/2 right-2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-[18px] leading-none font-semibold focus-visible:outline-2"
           >
             <span aria-hidden>×</span>
           </button>

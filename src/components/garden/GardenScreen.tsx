@@ -434,12 +434,14 @@ export function GardenScreen({ siteUrl }: { siteUrl: string }) {
 
       {/* Action principale de la page, juste sous le jardin : papier découpé jaune soleil,
           texte encre (paire vérifiée par le test du thème), contour et ombre nette encre ;
-          appuyé, l'ombre se réduit et le bouton descend de 2 px (rien en mouvement réduit). */}
+          survolé, il se soulève et son ombre s'allonge ; appuyé, l'ombre se réduit et le bouton descend
+          de 2 px (en mouvement réduit, seule l'ombre change au survol). */}
       <div className="px-5 pt-4">
         <Link
           href="/comparer"
           data-grow-plant
-          className="bg-soleil text-encre border-encre focus-visible:outline-outremer flex w-full items-center justify-center gap-3 rounded-[20px] border-2 px-5 py-3.5 shadow-[4px_4px_0_0_var(--color-encre)] transition-[transform,box-shadow] duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-[2px] active:shadow-[2px_2px_0_0_var(--color-encre)] motion-reduce:transition-none motion-reduce:active:translate-y-0 motion-reduce:active:shadow-[4px_4px_0_0_var(--color-encre)]"
+          data-own-hover
+          className="bg-soleil text-encre border-encre focus-visible:outline-outremer flex w-full items-center justify-center gap-3 rounded-[20px] border-2 px-5 py-3.5 shadow-[4px_4px_0_0_var(--color-encre)] transition-[transform,box-shadow] duration-100 hover:-translate-y-0.5 hover:shadow-[4px_6px_0_0_var(--color-encre)] focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-[2px] active:shadow-[2px_2px_0_0_var(--color-encre)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:translate-y-0 motion-reduce:active:shadow-[4px_4px_0_0_var(--color-encre)]"
         >
           <Illustration
             name="fleur-1-pousse"

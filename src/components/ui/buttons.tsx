@@ -77,7 +77,7 @@ export function IconLink({
     <Link
       href={href}
       aria-label={label}
-      className="focus-visible:outline-outremer -m-2 rounded-full p-2 focus-visible:outline-2"
+      className="hover-disc focus-visible:outline-outremer -m-2 rounded-full p-2 focus-visible:outline-2"
     >
       <Icon name={icon} />
     </Link>

@@ -41,7 +41,7 @@ export function FirstHint({
             onClick={() => markHintSeen(id)}
             aria-label={t.close}
             title={t.close}
-            className="focus-visible:outline-encre flex size-8 shrink-0 items-center justify-center rounded-full text-[18px] leading-none focus-visible:outline-2"
+            className="hover-disc focus-visible:outline-encre flex size-8 shrink-0 items-center justify-center rounded-full text-[18px] leading-none focus-visible:outline-2"
           >
             <span aria-hidden>×</span>
           </button>

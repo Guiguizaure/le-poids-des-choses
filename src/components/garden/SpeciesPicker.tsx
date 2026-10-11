@@ -182,7 +182,7 @@ export function SpeciesPicker({
               onClick={() => setDetail(null)}
               aria-label={t.back}
               title={t.back}
-              className="focus-visible:outline-outremer -ml-1.5 flex size-9 shrink-0 items-center justify-center rounded-full focus-visible:outline-2"
+              className="hover-disc focus-visible:outline-outremer -ml-1.5 flex size-9 shrink-0 items-center justify-center rounded-full focus-visible:outline-2"
             >
               <Icon name="retour" />
             </button>
@@ -224,7 +224,7 @@ export function SpeciesPicker({
               onClick={() => finish(slots)}
               aria-label={t.close}
               title={t.close}
-              className="text-encre focus-visible:outline-outremer flex size-9 shrink-0 items-center justify-center rounded-full text-[22px] leading-none focus-visible:outline-2"
+              className="hover-disc text-encre focus-visible:outline-outremer flex size-9 shrink-0 items-center justify-center rounded-full text-[22px] leading-none focus-visible:outline-2"
             >
               <span aria-hidden>×</span>
             </button>
@@ -259,7 +259,7 @@ export function SpeciesPicker({
                       type="button"
                       onClick={() => remove(index)}
                       aria-label={t.remove(sheets[slot].inSentence, index + 1)}
-                      className="focus-visible:outline-outremer flex size-6 items-center justify-center rounded-full text-[16px] leading-none focus-visible:outline-2"
+                      className="hover-disc focus-visible:outline-outremer flex size-6 items-center justify-center rounded-full text-[16px] leading-none focus-visible:outline-2"
                     >
                       <span aria-hidden>×</span>
                     </button>
@@ -416,7 +416,7 @@ export function SpeciesPicker({
                       data-more
                       onClick={() => openDetail(card.id)}
                       aria-label={t.more(sheet.inSentence)}
-                      className="border-encre bg-creme text-encre focus-visible:outline-outremer font-titre absolute top-2 right-2 flex size-7 items-center justify-center rounded-full border text-[14px] leading-none focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="border-encre bg-creme hover:bg-soleil text-encre focus-visible:outline-outremer font-titre absolute top-2 right-2 flex size-7 items-center justify-center rounded-full border text-[14px] leading-none focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                       <span aria-hidden>i</span>
                     </button>

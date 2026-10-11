@@ -60,7 +60,7 @@ function Select({
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="bg-blanc border-encre/20 text-corps-s text-encre focus-visible:outline-outremer rounded-full border px-3 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="bg-blanc border-encre/20 hover:border-encre text-corps-s text-encre focus-visible:outline-outremer rounded-full border px-3 py-2 leading-[1.3] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {children}
       </select>

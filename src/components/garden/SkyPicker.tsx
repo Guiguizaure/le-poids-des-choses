@@ -39,7 +39,9 @@ export function SkyPicker({
             <label
               key={sky.id}
               className={`border-encre/15 has-[:checked]:border-encre has-[:focus-visible]:outline-outremer flex items-center gap-2.5 rounded-2xl border p-2.5 has-[:checked]:border-2 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 ${
-                locked ? "opacity-60" : "cursor-pointer"
+                locked
+                  ? "cursor-not-allowed opacity-60"
+                  : "hover:border-encre/60 cursor-pointer"
               }`}
             >
               <input
