@@ -641,11 +641,38 @@ function PerceNeige({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoArmoire({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="15" y="8" width="34" height="44" rx="3" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><path d="M32 8V52" stroke="#1F1A17" strokeWidth="2" /><rect x="13" y="7" width="38" height="5" rx="2" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.6" /><circle cx="29" cy="31" r="1.8" fill="#1F1A17" /><circle cx="35" cy="31" r="1.8" fill="#1F1A17" /><path d="M19 52V56M45 52V56" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 function PictoArrosoir({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M14 30 C 8 30, 8 42, 16 42" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><path d="M20 22 C 22 14, 34 14, 36 22" stroke="#FFC93C" strokeWidth="4" strokeLinecap="round" fill="none" /><rect x="16" y="22" width="22" height="24" rx="3" fill="#FFC93C" /><path d="M36 40 L50 26" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><ellipse cx="51.5" cy="24.5" rx="3" ry="6.5" transform="rotate(45 51.5 24.5)" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoAspirateur({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><path d="M31 44V37C31 29 37 25 44 25C50 25 54 30 54 37V44H31Z" fill="#FFF3DC" /><circle cx="37" cy="46" r="4" fill="#1F1A17" /><circle cx="49" cy="46" r="4" fill="#1F1A17" /><rect x="40" y="30" width="9" height="4" rx="2" fill="#FFC93C" /><path d="M33 33C24 30 21 22 23 14" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /><path d="M23 14L15 45" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /><rect x="8" y="45" width="13" height="4.5" rx="2.25" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoAutocar({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><rect x="8" y="19" width="48" height="24" rx="5" fill="#FFF3DC" /><rect x="12" y="23" width="40" height="9" rx="2" fill="#2D4BFF" /><path d="M22 23V32M32 23V32M42 23V32" stroke="#FFF3DC" strokeWidth="2" /><rect x="8" y="35" width="48" height="3" fill="#FFC93C" /><circle cx="19" cy="44" r="5" fill="#1F1A17" /><circle cx="45" cy="44" r="5" fill="#1F1A17" /></g>
     </svg>
   );
 }
@@ -677,6 +704,15 @@ function PictoBoissonSoja({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoBoxInternet({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FFC93C" /><g data-part="objet" fill="none"><rect x="12" y="31" width="40" height="15" rx="4" fill="#1F1A17" /><circle cx="20" cy="38.5" r="2" fill="#2FBF71" /><circle cx="26" cy="38.5" r="2" fill="#FFF3DC" /><circle cx="32" cy="38.5" r="2" fill="#FFF3DC" /><path d="M16 46V50M48 46V50" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /><path d="M26 24C29.5 20.5 34.5 20.5 38 24M21 19C27.5 13 36.5 13 43 19" stroke="#2D4BFF" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 function PictoBus({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -695,11 +731,56 @@ function PictoCafe({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoCanape({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="15" y="18" width="34" height="17" rx="5" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="16" y="31" width="32" height="11" rx="3" fill="#FFC93C" stroke="#1F1A17" strokeWidth="2" /><rect x="8" y="27" width="10" height="19" rx="4" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="46" y="27" width="10" height="19" rx="4" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><path d="M13 46V51M51 46V51" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoCasqueVr({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FFC93C" /><g data-part="objet" fill="none"><path d="M10 30C10 24 14 22 20 22H44C50 22 54 24 54 30V36C54 41 51 43 46 43H40C37 43 35.5 38 32 38C28.5 38 27 43 24 43H18C13 43 10 41 10 36V30Z" fill="#1F1A17" /><path d="M17 28H30M34 28H47" stroke="#FFF3DC" strokeWidth="2.5" strokeLinecap="round" /><path d="M10 31H7M54 31H57" stroke="#1F1A17" strokeWidth="3.5" strokeLinecap="round" /><rect x="26" y="17" width="12" height="5" rx="2" fill="#2D4BFF" /></g>
+    </svg>
+  );
+}
+
+function PictoChaise({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><path d="M22 9V45" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><path d="M22 32H42" stroke="#FFF3DC" strokeWidth="4.5" strokeLinecap="round" /><path d="M24 33V53M41 33V53" stroke="#FFF3DC" strokeWidth="4" strokeLinecap="round" /><rect x="19.5" y="12" width="5" height="15" rx="2" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
 function PictoChaussures({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FF8FB1" /></g><g data-part="objet"><path d="M12 38 C12 30 16 26 20 26 L26 30 L34 24 C38 30 46 32 52 36 V42 H12 Z" fill="#FFF3DC" /><rect x="11" y="42" width="42" height="5" rx="2.5" fill="#1F1A17" /><path d="M26 30 L30 34 M30 27 L34 31" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoChemise({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FF8FB1" /><g data-part="objet" fill="none"><path d="M19 17L26 12H38L45 17L50 30L45 32L44 29V53H20V29L19 32L14 30L19 17Z" fill="#FFF3DC" /><path d="M26 12L32 20L28 23L26 12Z M38 12L32 20L36 23L38 12Z" fill="#2D4BFF" /><path d="M32 20V53" stroke="#2D4BFF" strokeWidth="1.6" /><circle cx="32" cy="28" r="1.5" fill="#2D4BFF" /><circle cx="32" cy="35" r="1.5" fill="#2D4BFF" /><circle cx="32" cy="42" r="1.5" fill="#2D4BFF" /><rect x="36" y="27" width="5" height="5" rx="1" stroke="#2D4BFF" strokeWidth="1.4" /></g>
+    </svg>
+  );
+}
+
+function PictoCovoiturage({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><path d="M12 40L16 28C17 25 19 24 22 24H42C45 24 47 25 48 28L52 40V45H12V40Z" fill="#FFF3DC" /><path d="M19 35L21 28H43L45 35H19Z" fill="#2D4BFF" /><circle cx="25" cy="31.5" r="3" fill="#FFC93C" /><circle cx="32" cy="31.5" r="3" fill="#FFC93C" /><circle cx="39" cy="31.5" r="3" fill="#FFC93C" /><circle cx="21" cy="46" r="5" fill="#1F1A17" /><circle cx="43" cy="46" r="5" fill="#1F1A17" /></g>
     </svg>
   );
 }
@@ -722,6 +803,24 @@ function PictoEauRobinet({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoEcran({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FFC93C" /><g data-part="objet" fill="none"><rect x="11" y="13" width="42" height="29" rx="3" fill="#1F1A17" /><rect x="14.5" y="16.5" width="35" height="22" rx="1.5" fill="#FFF3DC" /><path d="M28 42L26 49H38L36 42H28Z" fill="#1F1A17" /><path d="M21 51H43" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /><path d="M20 33L27 26L32 30L38 23L44 29" stroke="#2D4BFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g>
+    </svg>
+  );
+}
+
+function PictoFour({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="12" y="11" width="40" height="42" rx="5" fill="#FFF3DC" /><path d="M12 20H52" stroke="#1F1A17" strokeWidth="2" /><circle cx="19" cy="15.5" r="2.1" fill="#1F1A17" /><circle cx="26" cy="15.5" r="2.1" fill="#1F1A17" /><rect x="38" y="13.5" width="9" height="4" rx="1" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1" /><rect x="20" y="23" width="24" height="2.6" rx="1.3" fill="#1F1A17" /><rect x="17" y="28" width="30" height="20" rx="3" fill="#1F1A17" /><path d="M21 43H43" stroke="#FF4F2E" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 function PictoGarder({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -740,6 +839,15 @@ function PictoGenerique({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoIntercites({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><path d="M9 22H50C53 22 55 25 55 28V40H9V22Z" fill="#FFF3DC" /><rect x="13" y="26" width="7" height="6" rx="1.5" fill="#2D4BFF" /><rect x="24" y="26" width="7" height="6" rx="1.5" fill="#2D4BFF" /><rect x="35" y="26" width="7" height="6" rx="1.5" fill="#2D4BFF" /><path d="M46 26H51V32H46V26Z" fill="#2D4BFF" /><rect x="9" y="35" width="46" height="2.5" fill="#FFC93C" /><circle cx="17" cy="43" r="3.5" fill="#1F1A17" /><circle cx="26" cy="43" r="3.5" fill="#1F1A17" /><circle cx="38" cy="43" r="3.5" fill="#1F1A17" /><circle cx="47" cy="43" r="3.5" fill="#1F1A17" /><path d="M8 49H56" stroke="#FFF3DC" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 function PictoJean({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -754,6 +862,33 @@ function PictoLaitVache({ svgProps, children }: GeneratedSvgProps) {
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2FBF71" /></g><g data-part="objet"><path d="M22 22 L26 12 H38 L42 22 V52 H22 Z" fill="#FFF3DC" /><path d="M22 22 H42" stroke="#1F1A17" strokeWidth="2" /><ellipse cx="30" cy="35" rx="5" ry="4" fill="#1F1A17" /><ellipse cx="37" cy="44" rx="3.5" ry="3" fill="#1F1A17" /><ellipse cx="27" cy="46" rx="2.5" ry="2" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoLaveLinge({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="15" y="10" width="34" height="44" rx="5" fill="#FFF3DC" /><path d="M15 19H49" stroke="#1F1A17" strokeWidth="2" /><circle cx="20.5" cy="14.5" r="1.6" fill="#1F1A17" /><circle cx="25.5" cy="14.5" r="1.6" fill="#1F1A17" /><circle cx="42" cy="14.5" r="2.6" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /><circle cx="32" cy="36" r="11.5" fill="#1F1A17" /><circle cx="32" cy="36" r="8" fill="#2D4BFF" /><path d="M26 37C28 34 30 39 32 36C34 33 36 38 38 35" stroke="#FFF3DC" strokeWidth="2" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoLaveVaisselle({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="15" y="10" width="34" height="44" rx="5" fill="#FFF3DC" /><path d="M15 18H49" stroke="#1F1A17" strokeWidth="2" /><circle cx="42" cy="14" r="1.6" fill="#1F1A17" /><circle cx="37" cy="14" r="1.6" fill="#1F1A17" /><rect x="24" y="21" width="16" height="3" rx="1.5" fill="#1F1A17" /><rect x="20" y="28" width="24" height="20" rx="3" fill="#2D4BFF" /><ellipse cx="26" cy="38" rx="2.4" ry="7" fill="#FFF3DC" /><ellipse cx="32" cy="38" rx="2.4" ry="7" fill="#FFC93C" /><ellipse cx="38" cy="38" rx="2.4" ry="7" fill="#FFF3DC" /></g>
+    </svg>
+  );
+}
+
+function PictoLit({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="9" y="16" width="6" height="32" rx="2" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="13" y="33" width="42" height="9" rx="2" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><ellipse cx="21.5" cy="29.5" rx="6" ry="3.6" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="28" y="27" width="28" height="10" rx="3" fill="#FFC93C" stroke="#1F1A17" strokeWidth="2" /><path d="M15 42V49M54 42V49" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
     </svg>
   );
 }
@@ -785,6 +920,15 @@ function PictoMagasinVoiture({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoManteau({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FF8FB1" /><g data-part="objet" fill="none"><path d="M20 13L26 10L32 15L38 10L44 13L49 26L44 28V53H20V28L15 26L20 13Z" fill="#2D4BFF" /><path d="M26 10L32 24L38 10" stroke="#FFF3DC" strokeWidth="2" strokeLinejoin="round" /><path d="M32 24V53" stroke="#FFF3DC" strokeWidth="1.6" /><circle cx="35.5" cy="31" r="1.7" fill="#FFF3DC" /><circle cx="35.5" cy="38" r="1.7" fill="#FFF3DC" /><circle cx="35.5" cy="45" r="1.7" fill="#FFF3DC" /><rect x="20" y="35" width="24" height="3" fill="#FFC93C" /></g>
+    </svg>
+  );
+}
+
 function PictoMarche({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -799,6 +943,24 @@ function PictoMetro({ svgProps, children }: GeneratedSvgProps) {
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><rect x="18" y="12" width="28" height="34" rx="13" fill="#FFF3DC" /><rect x="22" y="18" width="20" height="12" rx="5" fill="#2D4BFF" /><circle cx="32" cy="38" r="3" fill="#FF4F2E" /><path d="M22 46 L18 54 M42 46 L46 54 M20 51 H44" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoMicroOndes({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="9" y="16" width="46" height="31" rx="5" fill="#FFF3DC" /><rect x="13" y="20" width="29" height="23" rx="3" fill="#1F1A17" /><ellipse cx="27.5" cy="37" rx="9" ry="2.6" fill="#FFC93C" /><circle cx="48.5" cy="24" r="2.4" fill="#1F1A17" /><circle cx="48.5" cy="31" r="2.4" fill="#1F1A17" /><rect x="45.5" y="36" width="6" height="5" rx="1" fill="#2D4BFF" /><path d="M15 47V50M49 47V50" stroke="#1F1A17" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoMoto({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><circle cx="17" cy="42" r="7.5" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="47" cy="42" r="7.5" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M17 42L22 33H30L34 40H42L47 42" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><path d="M22 33H42L45 27" fill="none" /><path d="M24 34C24 30 27 28 31 28H38L42 34L38 40H30L24 34Z" fill="#FFF3DC" /><ellipse cx="34" cy="28.5" rx="6.5" ry="3.8" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" /><rect x="20" y="26.5" width="9" height="3.5" rx="1.75" fill="#1F1A17" /><path d="M40 30L44 21H50" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><circle cx="31" cy="35" r="2.6" fill="#1F1A17" /></g>
     </svg>
   );
 }
@@ -848,6 +1010,15 @@ function PictoPull({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoRefrigerateur({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="18" y="7" width="28" height="48" rx="5" fill="#FFF3DC" /><path d="M18 23H46" stroke="#1F1A17" strokeWidth="2.5" /><rect x="22" y="12" width="3.2" height="7" rx="1.6" fill="#1F1A17" /><rect x="22" y="27" width="3.2" height="12" rx="1.6" fill="#1F1A17" /><rect x="35" y="30" width="6" height="6" rx="1" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.2" /><path d="M22 55V58M42 55V58" stroke="#1F1A17" strokeWidth="2.5" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
 function PictoRepasBoeuf({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -893,6 +1064,33 @@ function PictoRepasVegetarien({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoRer({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><rect x="18" y="10" width="28" height="38" rx="6" fill="#FFF3DC" /><rect x="22" y="15" width="20" height="8" rx="2" fill="#2D4BFF" /><rect x="22" y="26" width="20" height="8" rx="2" fill="#2D4BFF" /><rect x="18" y="37" width="28" height="3" fill="#FFC93C" /><circle cx="24" cy="44" r="2" fill="#1F1A17" /><circle cx="40" cy="44" r="2" fill="#1F1A17" /><path d="M22 49L18 55M42 49L46 55" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoRobe({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FF8FB1" /><g data-part="objet" fill="none"><path d="M27 10V16M37 10V16" stroke="#FFF3DC" strokeWidth="2.5" strokeLinecap="round" /><path d="M26 16H38L36 25L47 52H17L28 25L26 16Z" fill="#FFF3DC" /><path d="M28 25H36" stroke="#2D4BFF" strokeWidth="3.5" strokeLinecap="round" /><circle cx="26" cy="42" r="1.8" fill="#FF4F2E" /><circle cx="34" cy="36" r="1.8" fill="#FF4F2E" /><circle cx="38" cy="46" r="1.8" fill="#FF4F2E" /></g>
+    </svg>
+  );
+}
+
+function PictoScooter({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><circle cx="19" cy="45" r="5.5" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="45" cy="45" r="5.5" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M13 40C13 33 18 31 30 31V40H13Z" fill="#FFF3DC" /><path d="M24 40H38C42 40 44 36 43 30L41 19H48" stroke="#FFF3DC" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" /><rect x="15" y="26" width="14" height="5" rx="2.5" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" /></g>
+    </svg>
+  );
+}
+
 function PictoSmartphone({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -916,6 +1114,33 @@ function PictoStreaming({ svgProps, children }: GeneratedSvgProps) {
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#FFC93C" /></g><g data-part="objet"><rect x="12" y="16" width="40" height="27" rx="4" fill="#FFF3DC" /><path d="M28 23 L39 29.5 L28 36 Z" fill="#FF4F2E" /><path d="M24 49 H40" stroke="#1F1A17" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoSweat({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FF8FB1" /><g data-part="objet" fill="none"><path d="M21 20L14 31L18 45H22V53H42V45H46L50 31L43 20H21Z" fill="#2D4BFF" /><path d="M24 21C24 12 40 12 40 21L36 25H28L24 21Z" fill="#2D4BFF" stroke="#FFF3DC" strokeWidth="2" strokeLinejoin="round" /><path d="M30 25V31M34 25V31" stroke="#FFF3DC" strokeWidth="1.8" strokeLinecap="round" /><path d="M26 41H38L36 47H28L26 41Z" fill="#FFF3DC" /><path d="M22 45H42" stroke="#FFC93C" strokeWidth="2" /></g>
+    </svg>
+  );
+}
+
+function PictoTable({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#8F7BEA" /><g data-part="objet" fill="none"><rect x="9" y="27" width="46" height="6" rx="2" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="14" y="33" width="5" height="19" rx="1.5" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><rect x="45" y="33" width="5" height="19" rx="1.5" fill="#FFF3DC" stroke="#1F1A17" strokeWidth="2" /><path d="M28 19H36L35 27H29L28 19Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.6" strokeLinejoin="round" /><path d="M32 19C32 15 29 13 26 13C26 16 28 19 32 19ZM32 19C32 14 35 11 39 11C39 15 36 19 32 19Z" fill="#2FBF71" stroke="#1F1A17" strokeWidth="1.4" /></g>
+    </svg>
+  );
+}
+
+function PictoTablette({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#FFC93C" /><g data-part="objet" fill="none"><rect x="16" y="11" width="32" height="42" rx="5" fill="#1F1A17" /><rect x="20" y="15" width="24" height="31" rx="2" fill="#FFF3DC" /><circle cx="32" cy="49.5" r="1.6" fill="#FFF3DC" /><rect x="24" y="20" width="16" height="9" rx="1.5" fill="#2D4BFF" /><path d="M24 34H40M24 39H34" stroke="#1F1A17" strokeWidth="2" strokeLinecap="round" /></g>
     </svg>
   );
 }
@@ -956,6 +1181,24 @@ function PictoThe({ svgProps, children }: GeneratedSvgProps) {
   );
 }
 
+function PictoTram({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><path d="M21 9.5H43" stroke="#FFF3DC" strokeWidth="2" strokeLinecap="round" /><path d="M32 20L27 15L35 10" stroke="#FFF3DC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><rect x="17" y="20" width="30" height="29" rx="7" fill="#FFF3DC" /><rect x="21" y="24" width="22" height="11" rx="3" fill="#2D4BFF" /><rect x="17" y="38" width="30" height="3" fill="#FFC93C" /><circle cx="23" cy="45" r="2" fill="#1F1A17" /><circle cx="41" cy="45" r="2" fill="#1F1A17" /><path d="M22 50L19 55M42 50L45 55" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoTrottinette({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><circle cx="18" cy="46" r="4.5" stroke="#FFF3DC" strokeWidth="3" /><circle cx="45" cy="46" r="4.5" stroke="#FFF3DC" strokeWidth="3" /><path d="M18 46H40L46 14" stroke="#FFF3DC" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M41 14H51" stroke="#FFF3DC" strokeWidth="3.5" strokeLinecap="round" /><path transform="translate(23 22) scale(1)" d="M6 0L0 9H4.5L2 17L10 6H5.5L8 0Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" strokeLinejoin="round" /></g>
+    </svg>
+  );
+}
+
 function PictoTshirt({ svgProps, children }: GeneratedSvgProps) {
   return (
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
@@ -970,6 +1213,24 @@ function PictoVelo({ svgProps, children }: GeneratedSvgProps) {
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><circle cx="20" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="44" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M20 40 L28 26 H40 L44 40 M28 26 L33 40 H20 M38 22 H44" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><path d="M25 22 H31" stroke="#FFC93C" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoVeloCargo({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><circle cx="16" cy="42" r="7.5" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="48" cy="42" r="7.5" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M16 42L24 29H30M24 29L28 42H40L48 42M36 29V24H41" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><rect x="33" y="29" width="17" height="11" rx="2" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.6" /><path d="M20 25H27" stroke="#FFC93C" strokeWidth="3" strokeLinecap="round" /></g>
+    </svg>
+  );
+}
+
+function PictoVeloElectrique({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><circle cx="20" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><circle cx="44" cy="40" r="9" stroke="#FFF3DC" strokeWidth="3.5" /><path d="M28 26L20 40H33L28 26ZM28 26H40L44 40M38 22H44" stroke="#FFF3DC" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><path d="M25 22H31" stroke="#FFC93C" strokeWidth="3" strokeLinecap="round" /><path transform="translate(43 6) scale(1)" d="M6 0L0 9H4.5L2 17L10 6H5.5L8 0Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" strokeLinejoin="round" /></g>
     </svg>
   );
 }
@@ -997,6 +1258,24 @@ function PictoVoiture({ svgProps, children }: GeneratedSvgProps) {
     <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
       {children}
       <g data-part="fond"><circle cx="32" cy="32" r="30" fill="#2D4BFF" /></g><g data-part="objet"><path d="M13 39 L17 29 C18 26 20 25 23 25 H41 C44 25 46 26 47 29 L51 39 V44 H13 Z" fill="#FFF3DC" /><path d="M20 34 L22 29 H42 L44 34 Z" fill="#2D4BFF" /><circle cx="22" cy="45" r="5" fill="#1F1A17" /><circle cx="42" cy="45" r="5" fill="#1F1A17" /></g>
+    </svg>
+  );
+}
+
+function PictoVoitureElectrique({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><path d="M13 39L17 29C18 26 20 25 23 25H41C44 25 46 26 47 29L51 39V44H13V39Z" fill="#FFF3DC" /><path d="M20 34L22 29H42L44 34H20Z" fill="#2D4BFF" /><circle cx="22" cy="45" r="5" fill="#1F1A17" /><circle cx="42" cy="45" r="5" fill="#1F1A17" /><path transform="translate(28 7) scale(1)" d="M6 0L0 9H4.5L2 17L10 6H5.5L8 0Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" strokeLinejoin="round" /></g>
+    </svg>
+  );
+}
+
+function PictoVoitureHybride({ svgProps, children }: GeneratedSvgProps) {
+  return (
+    <svg width={64} height={64} viewBox="0 0 64 64" fill="none" {...svgProps}>
+      {children}
+      <circle data-part="fond" cx="32" cy="32" r="30" fill="#2D4BFF" /><g data-part="objet" fill="none"><path d="M13 39L17 29C18 26 20 25 23 25H41C44 25 46 26 47 29L51 39V44H13V39Z" fill="#FFF3DC" /><path d="M20 34L22 29H42L44 34H20Z" fill="#2D4BFF" /><circle cx="22" cy="45" r="5" fill="#1F1A17" /><circle cx="42" cy="45" r="5" fill="#1F1A17" /><path d="M22 8C22 8 17 14 17 17.5C17 20.3 19.2 22 22 22C24.8 22 27 20.3 27 17.5C27 14 22 8 22 8Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" /><path transform="translate(36 6) scale(0.95)" d="M6 0L0 9H4.5L2 17L10 6H5.5L8 0Z" fill="#FFC93C" stroke="#1F1A17" strokeWidth="1.4" strokeLinejoin="round" /></g>
     </svg>
   );
 }
@@ -1378,46 +1657,77 @@ export const generatedIllustrations: Record<IllustrationName, ComponentType<Gene
   "oiseau-vol": OiseauVol,
   "papillon": Papillon,
   "perce-neige": PerceNeige,
+  "picto-armoire": PictoArmoire,
   "picto-arrosoir": PictoArrosoir,
+  "picto-aspirateur": PictoAspirateur,
+  "picto-autocar": PictoAutocar,
   "picto-avion": PictoAvion,
   "picto-biere": PictoBiere,
   "picto-boisson-soja": PictoBoissonSoja,
+  "picto-box-internet": PictoBoxInternet,
   "picto-bus": PictoBus,
   "picto-cafe": PictoCafe,
+  "picto-canape": PictoCanape,
+  "picto-casque-vr": PictoCasqueVr,
+  "picto-chaise": PictoChaise,
   "picto-chaussures": PictoChaussures,
+  "picto-chemise": PictoChemise,
+  "picto-covoiturage": PictoCovoiturage,
   "picto-eau-bouteille": PictoEauBouteille,
   "picto-eau-robinet": PictoEauRobinet,
+  "picto-ecran": PictoEcran,
+  "picto-four": PictoFour,
   "picto-garder": PictoGarder,
   "picto-generique": PictoGenerique,
+  "picto-intercites": PictoIntercites,
   "picto-jean": PictoJean,
   "picto-lait-vache": PictoLaitVache,
+  "picto-lave-linge": PictoLaveLinge,
+  "picto-lave-vaisselle": PictoLaveVaisselle,
+  "picto-lit": PictoLit,
   "picto-livraison-domicile": PictoLivraisonDomicile,
   "picto-magasin-pied": PictoMagasinPied,
   "picto-magasin-voiture": PictoMagasinVoiture,
+  "picto-manteau": PictoManteau,
   "picto-marche": PictoMarche,
   "picto-metro": PictoMetro,
+  "picto-micro-ondes": PictoMicroOndes,
+  "picto-moto": PictoMoto,
   "picto-occasion": PictoOccasion,
   "picto-ordinateur": PictoOrdinateur,
   "picto-point-relais-pied": PictoPointRelaisPied,
   "picto-point-relais-voiture": PictoPointRelaisVoiture,
   "picto-pull": PictoPull,
+  "picto-refrigerateur": PictoRefrigerateur,
   "picto-repas-boeuf": PictoRepasBoeuf,
   "picto-repas-poisson": PictoRepasPoisson,
   "picto-repas-poulet": PictoRepasPoulet,
   "picto-repas-vegetalien": PictoRepasVegetalien,
   "picto-repas-vegetarien": PictoRepasVegetarien,
+  "picto-rer": PictoRer,
+  "picto-robe": PictoRobe,
+  "picto-scooter": PictoScooter,
   "picto-smartphone": PictoSmartphone,
   "picto-soda": PictoSoda,
   "picto-streaming": PictoStreaming,
+  "picto-sweat": PictoSweat,
+  "picto-table": PictoTable,
+  "picto-tablette": PictoTablette,
   "picto-television": PictoTelevision,
   "picto-ter": PictoTer,
   "picto-tgv": PictoTgv,
   "picto-the": PictoThe,
+  "picto-tram": PictoTram,
+  "picto-trottinette": PictoTrottinette,
   "picto-tshirt": PictoTshirt,
   "picto-velo": PictoVelo,
+  "picto-velo-cargo": PictoVeloCargo,
+  "picto-velo-electrique": PictoVeloElectrique,
   "picto-vin": PictoVin,
   "picto-visio": PictoVisio,
   "picto-voiture": PictoVoiture,
+  "picto-voiture-electrique": PictoVoitureElectrique,
+  "picto-voiture-hybride": PictoVoitureHybride,
   "primevere": Primevere,
   "renard": Renard,
   "renard-endormi": RenardEndormi,

@@ -1,0 +1,6 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle id="fond" cx="32" cy="32" r="30" fill="#2D4BFF"/>
+<g id="objet" fill="none"><rect x="8" y="19" width="48" height="24" rx="5" fill="#FFF3DC"/><rect x="12" y="23" width="40" height="9" rx="2" fill="#2D4BFF"/>
+<path d="M22 23V32M32 23V32M42 23V32" stroke="#FFF3DC" stroke-width="2"/><rect x="8" y="35" width="48" height="3" fill="#FFC93C"/>
+<circle cx="19" cy="44" r="5" fill="#1F1A17"/><circle cx="45" cy="44" r="5" fill="#1F1A17"/></g>
+</svg>

@@ -21,7 +21,11 @@ import { format, type Locale } from "@/lib/i18n";
 import { COMPARE } from "@/lib/i18n/messages/compare";
 import { CATEGORY_NAMES } from "@/lib/i18n/messages/names";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { ReadyDuelCards } from "@/components/duels/ReadyDuels";
+import { duelCards } from "@/lib/duels/cards";
+import { DUELS_UI } from "@/lib/i18n/messages/compare";
 import { CompareBar } from "./CompareBar";
+import { GestureSearch } from "./GestureSearch";
 import { useFocusTitle } from "./useFocusTitle";
 import { RaconteQuickLink } from "@/components/raconte/RaconteLink";
 import { SeasonTeaser } from "@/components/saison/SeasonTeaser";
@@ -74,6 +78,7 @@ export function GestureChooser({
   const locale = useLocale();
   const common = COMPARE[locale];
   const t = common.chooser;
+  const duels = DUELS_UI[locale];
   const categoryNames = CATEGORY_NAMES[locale];
   const initial = initialFirst ? getGesture(initialFirst) : undefined;
   const [category, setCategory] = useState<Category>(
@@ -83,6 +88,7 @@ export function GestureChooser({
     initial ? { first: initial.id, second: null } : EMPTY_SELECTION,
   );
   const [message, setMessage] = useState("");
+  const [query, setQuery] = useState("");
   const titleRef = useFocusTitle<HTMLHeadingElement>(focusTitle);
 
   const count = selectionCount(selection);
@@ -114,6 +120,15 @@ export function GestureChooser({
     );
   };
 
+  /** Un résultat de recherche : comme dans la grille, puis retour à sa catégorie. */
+  const pick = (id: string) => {
+    const gesture = getGesture(id);
+    if (gesture) setCategory(gesture.category);
+    setQuery("");
+    toggle(id);
+  };
+  const searching = query.trim() !== "";
+
   return (
     <>
       <main className="animate-enter mx-auto flex min-h-screen w-full max-w-[430px] flex-col motion-reduce:animate-none">
@@ -141,7 +156,42 @@ export function GestureChooser({
             {t.title}
           </h1>
 
+          <GestureSearch
+            query={query}
+            onQueryChange={setQuery}
+            isSelectable={(id) => isSelectable(selection, id)}
+            onPick={pick}
+          />
+
+          <section
+            hidden={searching}
+            aria-labelledby="duels-prets"
+            className="flex flex-col gap-3"
+            data-ready-duels-section
+          >
+            <h2
+              id="duels-prets"
+              className="text-corps-l text-encre leading-[1.2] font-semibold"
+            >
+              {duels.ready}
+            </h2>
+            {/* Défilement horizontal, au bord de l'écran ; chaque carte est un lien. */}
+            <ReadyDuelCards
+              cards={duelCards(locale)}
+              size="compact"
+              className="-mx-5 flex snap-x gap-3 overflow-x-auto px-5 pb-1 [&>li]:snap-start"
+            />
+          </section>
+
+          <h2
+            hidden={searching}
+            className="text-corps-l text-encre leading-[1.2] font-semibold"
+          >
+            {duels.compose}
+          </h2>
+
           <div
+            hidden={searching}
             className="flex flex-wrap gap-2"
             role="group"
             aria-label={t.categories}
@@ -159,17 +209,24 @@ export function GestureChooser({
                 }`}
               >
                 {categoryNames[id]}
+                {id === "maison" ? (
+                  <span className="bg-lavande text-encre text-legende ml-1.5 rounded-full px-2 py-0.5 align-[1px] leading-[1.2] font-semibold">
+                    {t.newCategory}
+                  </span>
+                ) : null}
               </button>
             ))}
           </div>
 
           <p
             id="gestes-aide"
+            hidden={searching}
             className="text-corps-s text-texte-attenue leading-[1.4]"
           >
             {subtitle}
           </p>
           <div
+            hidden={searching}
             className="grid grid-cols-2 gap-3"
             role="group"
             aria-labelledby="gestes-aide"

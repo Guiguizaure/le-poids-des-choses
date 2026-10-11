@@ -185,7 +185,7 @@ test("/comparer : une habitude déclarée se propose sans comparaison", async ({
     ),
   );
   await page.goto("/comparer");
-  await page.getByRole("button", { name: /^Vélo/ }).click();
+  await page.getByRole("button", { name: "Vélo", exact: true }).click();
   await page
     .getByRole("button", {
       name: "C’est une de tes habitudes : la noter sans comparer",

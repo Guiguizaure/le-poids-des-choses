@@ -240,7 +240,7 @@ test("objet : neuf, d'occasion (livré par défaut) et je garde le mien", async 
   await page.getByRole("button", { name: "Je garde le mien" }).click();
   await letGardenChoose(page);
   await expect(
-    page.getByText("25,1 kg d’écart", { exact: true }),
+    page.getByText("23,2 kg d’écart de fabrication", { exact: true }),
   ).toBeVisible();
 });
 

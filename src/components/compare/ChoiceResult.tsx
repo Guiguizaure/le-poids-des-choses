@@ -15,6 +15,7 @@ import { Tree } from "@/components/scene/Tree";
 import { IconLink, PrimaryLink, TextButton } from "@/components/ui/buttons";
 import { Logo } from "@/components/ui/Logo";
 import { formatMass } from "@/lib/calc";
+import { getGesture } from "@/lib/data";
 import type { ComparisonEntry } from "@/lib/data/types";
 import {
   illustrationFor,
@@ -249,9 +250,12 @@ export function ChoiceResult({
             }`}
           >
             {light
-              ? format(t.difference, {
-                  mass: formatMass(entry.avoidedKg, locale),
-                })
+              ? format(
+                  getGesture(entry.gestureA)?.scope === "fabrication"
+                    ? t.differenceManufacturing
+                    : t.difference,
+                  { mass: formatMass(entry.avoidedKg, locale) },
+                )
               : t.notedPill}
           </p>
 

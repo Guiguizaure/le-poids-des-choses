@@ -269,6 +269,58 @@ test.describe("accueil, avec et sans jardin", () => {
     }
   });
 
+  test("premier choix, retour par le logo sans recharger, mini-duel : « Noter ce choix » (même indicateur que le héros) ; CLS = 0", async ({
+    page,
+    browserName,
+  }) => {
+    const chromium = browserName === "chromium";
+    if (chromium) await measureShifts(page);
+    await page.goto("/comparer?a=voiture&b=velo&q=10");
+    await page.getByRole("button", { name: "Je choisis le vélo" }).click();
+    await letGardenChoose(page);
+    await expect(
+      page.getByRole("heading", { name: /va pousser dans ton jardin/ }),
+    ).toBeVisible();
+    const journal = () =>
+      page.evaluate(() => localStorage.getItem("lpdc:journal:v1"));
+    const stored = await journal();
+    expect(stored).not.toBeNull();
+    if (chromium)
+      await page.evaluate(() => {
+        (window as unknown as { __shifts: unknown[] }).__shifts = [];
+      });
+    await page
+      .getByRole("link", { name: /Le poids des choses – Accueil/ })
+      .first()
+      .click();
+    await page.waitForURL((url) => url.pathname === "/");
+    // Le héros et le mini-duel lisent le même indicateur (`data-garden`, tenu à jour côté
+    // client par GardenFlag quand l'accueil est atteint sans rechargement).
+    await expect(page.locator("html")).toHaveAttribute("data-garden", "");
+    await expect(
+      page.getByRole("link", { name: "Retrouver mon jardin" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "À vélo" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Le vélo est le plus léger." }),
+    ).toBeVisible();
+    const action = page.getByRole("link", { name: "Noter ce choix" });
+    await expect(action).toBeVisible();
+    await expect(action).toHaveAttribute(
+      "href",
+      "/comparer?a=velo&b=voiture&q=5",
+    );
+    await expect(
+      page.getByRole("link", { name: "Faire pousser ma première plante" }),
+    ).toHaveCount(0);
+    // Une devinette : le carnet n'a pas bougé.
+    expect(await journal()).toBe(stored);
+    if (chromium) {
+      await page.waitForTimeout(1000);
+      expect(await shiftsSince(page)).toBe(0);
+    }
+  });
+
   for (const withGarden of [false, true])
     test(`CLS = 0 ${withGarden ? "avec" : "sans"} jardin (Chromium)`, async ({
       page,

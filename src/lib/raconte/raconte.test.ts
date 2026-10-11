@@ -228,8 +228,10 @@ describe("sanitizeText", () => {
 });
 
 describe("table des alternatives", () => {
-  it("chaque geste du catalogue (hors objets) a une alternative de même unité, différente", () => {
-    for (const gesture of getGestures()) {
+  it("chaque geste reconnu (hors objets) a une alternative de même unité, différente", () => {
+    for (const gesture of getGestures().filter((g) =>
+      catalogIds().includes(g.id),
+    )) {
       const alternative = alternativeFor(gesture.id);
       if (gesture.unit === "objet") {
         expect(alternative, gesture.id).toBeNull();

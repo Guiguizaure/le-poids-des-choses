@@ -95,6 +95,26 @@ const PAIRS: {
       "contour de focus autour du bouton « Faire pousser une plante », sur le fond de page",
   },
   {
+    text: "encre",
+    background: "pomme",
+    minimum: 4.5,
+    where:
+      "étiquette « Bien vu ! » du mini-duel de l'accueil, pastille « 2 » de « Comment ça marche »",
+  },
+  {
+    text: "encre",
+    background: "rose",
+    minimum: 4.5,
+    where: "pastille « 3 » de « Comment ça marche »",
+  },
+  {
+    text: "encre",
+    background: "lavande",
+    minimum: 4.5,
+    where:
+      "pastille « Nouveau » de la catégorie « Équiper la maison » (jamais de texte blanc sur lavande : 3,4:1)",
+  },
+  {
     text: "blanc",
     background: "sapin",
     minimum: 4.5,

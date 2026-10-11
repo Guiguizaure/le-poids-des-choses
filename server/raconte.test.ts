@@ -11,7 +11,11 @@ import {
   vi,
 } from "vitest";
 import { getGestures } from "../src/lib/data";
-import { catalogIds, RACONTE_MAX_CHARS } from "../src/lib/raconte/detections";
+import {
+  catalogIds,
+  NOT_YET_RECOGNIZED,
+  RACONTE_MAX_CHARS,
+} from "../src/lib/raconte/detections";
 import { createSession, upsertUser } from "./auth";
 import { DAY, RACONTE_DAILY_CAP, SESSION_COOKIE } from "./config";
 import type { D1Database, Env } from "./env";
@@ -186,7 +190,9 @@ describe("POST /api/raconte", () => {
     );
     const schema = outputSchema();
     expect(schema.properties.gestures.items.properties.gestureId.enum).toEqual(
-      getGestures().map((gesture) => gesture.id),
+      getGestures()
+        .map((gesture) => gesture.id)
+        .filter((id) => !NOT_YET_RECOGNIZED.has(id)),
     );
   });
 

@@ -1,0 +1,5 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle id="fond" cx="32" cy="32" r="30" fill="#8F7BEA"/>
+<g id="objet" fill="none"><rect x="15" y="10" width="34" height="44" rx="5" fill="#FFF3DC"/><path d="M15 19H49" stroke="#1F1A17" stroke-width="2"/><circle cx="20.5" cy="14.5" r="1.6" fill="#1F1A17"/><circle cx="25.5" cy="14.5" r="1.6" fill="#1F1A17"/><circle cx="42" cy="14.5" r="2.6" fill="#FFC93C" stroke="#1F1A17" stroke-width="1.2"/>
+<circle cx="32" cy="36" r="11.5" fill="#1F1A17"/><circle cx="32" cy="36" r="8" fill="#2D4BFF"/><path d="M26 37C28 34 30 39 32 36C34 33 36 38 38 35" stroke="#FFF3DC" stroke-width="2" stroke-linecap="round"/></g>
+</svg>

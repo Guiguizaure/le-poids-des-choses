@@ -206,6 +206,15 @@ export function ObjectDuel({
           {equivalence ? (
             <p className="text-corps-s text-texte-attenue">{equivalence}</p>
           ) : null}
+          {/* Électroménager : seule la fabrication est comptée (docs/methode.md). */}
+          {gesture.scope === "fabrication" ? (
+            <p
+              data-manufacturing-note
+              className="text-corps-s text-texte-attenue"
+            >
+              {t.manufacturingNote}
+            </p>
+          ) : null}
         </div>
 
         <PrimaryButton onClick={onChoose}>{action}</PrimaryButton>

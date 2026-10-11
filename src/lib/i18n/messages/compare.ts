@@ -29,6 +29,25 @@ export const COMPARE = defineMessages(
       logHabit: "Noter une habitude",
       logHabitHelp:
         "Un repas végé, le vélo pour aller au travail : sans comparaison ni kg, ça arrose ton jardin.",
+      searchLabel: "Chercher un geste",
+      searchPlaceholder: "Cherche : covoiturage, lave-linge…",
+      searchClear: "Effacer la recherche",
+      found: (n: number) =>
+        n === 0
+          ? "Aucun geste trouvé"
+          : `${n} ${n > 1 ? "gestes trouvés" : "geste trouvé"}`,
+      searchRule:
+        "Un trajet se compare à un autre trajet, un objet à lui-même (neuf, d’occasion ou garder le tien). Jamais un vélo contre un steak.",
+      searchEmpty:
+        "Rien trouvé ? Le catalogue suit les données de l’ADEME : si un geste n’y est pas, on ne l’invente pas.",
+      newCategory: "Nouveau",
+      units: {
+        km: "au km",
+        repas: "par repas",
+        litre: "par litre",
+        achat: "par achat",
+        objet: "par objet",
+      },
     },
     duel: {
       lighterFeminine: "plus légère",
@@ -62,11 +81,14 @@ export const COMPARE = defineMessages(
       chooseUsed: "Je choisis d’occasion",
       chooseKeep: "Je garde {mine}",
       howWeCount: "Comment on compte l’occasion ?",
+      manufacturingNote:
+        "On compte la fabrication : l’usage existe, neuf ou gardé.",
     },
     result: {
       full: "Ton jardin est au complet",
       noted: "C’est noté",
       difference: "{mass} d’écart",
+      differenceManufacturing: "{mass} d’écart de fabrication",
       notedPill: "Noté",
       lightText: "{title} : c’est noté dans ton carnet.",
       heavyText:
@@ -109,6 +131,25 @@ export const COMPARE = defineMessages(
       logHabit: "Log a habit",
       logHabitHelp:
         "A veggie meal, cycling to work: no comparison and no kg, it just waters your garden.",
+      searchLabel: "Search for an action",
+      searchPlaceholder: "Search: car-sharing, washing machine…",
+      searchClear: "Clear the search",
+      found: (n: number) =>
+        n === 0
+          ? "No actions found"
+          : `${n} ${n > 1 ? "actions found" : "action found"}`,
+      searchRule:
+        "A journey is compared with another journey, an item with itself (new, second-hand or keeping yours). Never a bike against a steak.",
+      searchEmpty:
+        "Nothing found? The catalogue follows ADEME’s data: if an action isn’t in it, we don’t make it up.",
+      newCategory: "New",
+      units: {
+        km: "per km",
+        repas: "per meal",
+        litre: "per litre",
+        achat: "per purchase",
+        objet: "per item",
+      },
     },
     duel: {
       lighterFeminine: "lighter",
@@ -141,11 +182,14 @@ export const COMPARE = defineMessages(
       chooseUsed: "I’ll go for second-hand",
       chooseKeep: "I’ll keep {mine}",
       howWeCount: "How do we count second-hand?",
+      manufacturingNote:
+        "Only manufacturing is counted: the use happens whether it’s new or kept.",
     },
     result: {
       full: "Your garden is full",
       noted: "Noted",
       difference: "{mass} difference",
+      differenceManufacturing: "{mass} manufacturing difference",
       notedPill: "Noted",
       lightText: "{title}: noted in your journal.",
       heavyText:
@@ -234,5 +278,25 @@ export const SENTENCES = defineMessages(
       "The difference equals less than 1 km in a petrol or diesel car.",
     equivalence: (km: string) =>
       `The difference equals ${km} km in a petrol or diesel car.`,
+  },
+);
+
+/** Duels prêts à jouer (Comparer, accueil) ; titres des duels : src/lib/duels/ready.ts. */
+export const DUELS_UI = defineMessages(
+  {
+    ready: "Duels prêts à jouer",
+    daily: "Duel du jour",
+    forStarters: "Des duels pour commencer",
+    seeAll: "Voir tous les duels",
+    intro: "Prends un duel tout prêt, ou compose le tien.",
+    compose: "Ou compose ton duel",
+  },
+  {
+    ready: "Ready-made duels",
+    daily: "Today’s duel",
+    forStarters: "Duels to get you started",
+    seeAll: "See all duels",
+    intro: "Pick a ready-made duel, or put your own together.",
+    compose: "Or put your own duel together",
   },
 );

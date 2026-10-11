@@ -28,7 +28,7 @@ test("deux gestes choisis : barre fixe « Voiture thermique vs Vélo », annonc�
   await page.getByRole("button", { name: /^Voiture thermique/ }).click();
   await expect(bar).toHaveCount(0);
 
-  await page.getByRole("button", { name: /^Vélo/ }).click();
+  await page.getByRole("button", { name: "Vélo", exact: true }).click();
   await expect(bar).toBeVisible();
   await expect(bar).toHaveCSS("position", "fixed");
   await expect(bar).toContainText("Voiture thermique vs Vélo");
@@ -77,7 +77,7 @@ test("désélectionner un geste retire la barre ; changer de choix la met à jou
   await expect(bar).toHaveCount(0);
   expect(await bodyPadding(page)).toBe(0);
 
-  await page.getByRole("button", { name: /^Vélo/ }).click();
+  await page.getByRole("button", { name: "Vélo", exact: true }).click();
   await expect(bar).toContainText("TGV vs Vélo");
   await bar.getByRole("button", { name: "Comparer" }).click();
   await expect(page).toHaveURL(/\/comparer\?a=tgv&b=velo&q=/);

@@ -35,9 +35,51 @@ export const DETECTED_MODES: readonly DetectedMode[] = [
 ];
 export const CERTAINTIES: readonly Certainty[] = ["explicit", "inferred"];
 
+/**
+ * Gestes du catalogue ajoutés au lot « Comparer plus » (10 octobre 2026) : pas encore
+ * reconnus par « Raconte ta journée » (consignes et évaluation inchangées). Pour les ouvrir,
+ * leur écrire une ligne de reconnaissance (server/raconte-prompt.ts), une alternative pour
+ * les trajets, puis relancer `pnpm raconte:eval`.
+ */
+export const NOT_YET_RECOGNIZED: ReadonlySet<string> = new Set([
+  "voiture-electrique",
+  "voiture-hybride",
+  "covoiturage",
+  "autocar",
+  "intercites",
+  "rer",
+  "tram",
+  "moto",
+  "scooter",
+  "trottinette",
+  "velo-electrique",
+  "velo-cargo",
+  "manteau",
+  "robe",
+  "chemise",
+  "sweat",
+  "tablette",
+  "ecran",
+  "box-internet",
+  "casque-vr",
+  "lave-linge",
+  "refrigerateur",
+  "lave-vaisselle",
+  "micro-ondes",
+  "four",
+  "aspirateur",
+  "canape",
+  "lit",
+  "table",
+  "chaise",
+  "armoire",
+]);
+
 /** Ids des gestes que le modèle peut renvoyer (l'enum exact du schéma de sortie). */
 export function catalogIds(): string[] {
-  return getGestures().map((gesture) => gesture.id);
+  return getGestures()
+    .map((gesture) => gesture.id)
+    .filter((id) => !NOT_YET_RECOGNIZED.has(id));
 }
 
 /**
@@ -92,7 +134,8 @@ export function parseDetection(value: unknown, text: string): Detection | null {
   const { excerpt, gestureId, certainty, quantity, mode } = value;
   if (typeof gestureId !== "string") return null;
   const gesture = getGesture(gestureId);
-  if (!gesture || gesture.fictive) return null;
+  if (!gesture || gesture.fictive || NOT_YET_RECOGNIZED.has(gestureId))
+    return null;
   if (!CERTAINTIES.includes(certainty as Certainty)) return null;
   if (typeof excerpt !== "string") return null;
   const cleanExcerpt = excerpt.trim();

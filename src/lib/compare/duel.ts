@@ -17,6 +17,7 @@ export const CATEGORY_ORDER: readonly Category[] = [
   "habillement",
   "numerique",
   "livraison",
+  "maison",
 ];
 
 export function gesturesIn(category: Category): Gesture[] {

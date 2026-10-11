@@ -53,9 +53,18 @@ describe("buildGestures", () => {
       "Livraison à domicile (colis d'1kg),0.7220005148152214,Livraison,livraisondomicile,https://impactco2.fr/outils/livraison/livraisondomicile",
       "Marche,0,Transport,marche,https://x",
     ].join("\n");
-    it("construit les 4 modes avec le colis arrondi", () => {
-      const [g] = buildGestures(csv, jean, { jean: "livraisondomicile" });
-      expect(g.modes?.neuf?.kgCo2e).toBe(25.09);
+    const fabrication = { jeans: 23.2 };
+    it("construit les 4 modes avec le colis arrondi ; neuf = fabrication seule", () => {
+      const [g] = buildGestures(
+        csv,
+        jean,
+        { jean: "livraisondomicile" },
+        fabrication,
+      );
+      expect(g.modes?.neuf?.kgCo2e).toBe(23.2);
+      expect(g.modes?.neuf?.method).toBe("impactco2-fabrication");
+      expect(g.kgCo2ePerUnit).toBe(23.2);
+      expect(g.scope).toBe("fabrication");
       expect(g.modes?.occasion?.kgCo2e).toBe(0);
       expect(g.modes?.garder?.kgCo2e).toBe(0);
       expect(g.modes?.["occasion-livree"]?.kgCo2e).toBe(0.722);
@@ -64,13 +73,19 @@ describe("buildGestures", () => {
       );
     });
     it("sans colis adapté : pas d'occasion livrée, aucun transport inventé", () => {
-      const [g] = buildGestures(csv, jean, {});
+      const [g] = buildGestures(csv, jean, {}, fabrication);
       expect(g.modes?.["occasion-livree"]).toBeUndefined();
       expect(g.modes?.neuf).toBeDefined();
     });
     it("échoue si la ligne de colis n'est plus dans « Livraison »", () => {
-      expect(() => buildGestures(csv, jean, { jean: "marche" })).toThrow(
-        /attendu/,
+      expect(() =>
+        buildGestures(csv, jean, { jean: "marche" }, fabrication),
+      ).toThrow(/attendu/);
+    });
+    it("échoue sans part fabrication, ou si elle dépasse la valeur du CSV", () => {
+      expect(() => buildGestures(csv, jean, {})).toThrow(/absente/);
+      expect(() => buildGestures(csv, jean, {}, { jeans: 30 })).toThrow(
+        /incohérente/,
       );
     });
     it("pas de modes pour un trajet", () => {
