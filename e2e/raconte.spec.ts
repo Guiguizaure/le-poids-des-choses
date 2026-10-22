@@ -3,6 +3,7 @@
 // appel à Claude. Le faux modèle repère quelques mots-clés (« pris le TER », « un burger »…).
 import type { BrowserContext, Page, TestInfo } from "@playwright/test";
 import generated from "../src/lib/data/gestures.generated.json";
+import { RACONTE_ENABLED } from "../src/lib/raconte/enabled";
 import {
   acceptCancelledPrefetch,
   acceptStatus,
@@ -16,6 +17,9 @@ const PAGES_PORT = 4331;
 const BASE = `https://localhost:${PAGES_PORT}`;
 
 test.use({ baseURL: BASE, ignoreHTTPSErrors: true });
+// En veille (drapeau de build éteint, cas de la CI) : pages non générées, tests gardés pour la
+// réactivation (NEXT_PUBLIC_RACONTE_ENABLED=1 au build). Veille vérifiée par e2e/veille.spec.ts.
+test.skip(!RACONTE_ENABLED, "« Raconte ta journée » en veille");
 test.afterEach(({ consoleErrors }) => acceptCancelledPrefetch(consoleErrors));
 
 const FAKE_TURNSTILE = `

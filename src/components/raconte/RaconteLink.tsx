@@ -2,11 +2,13 @@
 
 import { RACONTE } from "@/lib/i18n/messages/raconte";
 import { useRaconteAvailability } from "@/lib/raconte/availability";
+import { RACONTE_ENABLED } from "@/lib/raconte/enabled";
 import { LocalLink as Link, useMessages } from "@/lib/i18n/LocaleProvider";
 
-/** Point d'entrée de « Raconte ta journée » (/comparer, /jardin). */
+/** Point d'entrée de « Raconte ta journée » (/jardin) ; rien quand la fonction est en veille. */
 export function RaconteLink({ className = "" }: { className?: string }) {
   const t = useMessages(RACONTE).link;
+  if (!RACONTE_ENABLED) return null;
   return (
     <Link
       href="/raconte"
@@ -24,7 +26,8 @@ export function RaconteLink({ className = "" }: { className?: string }) {
 
 /**
  * Petite carte discrète de /comparer, sous la sélection : « Plus rapide : raconte ta journée ».
- * Seulement si la fonction est active (AI_ENABLED) ; sinon, rien (pas de place réservée).
+ * Seulement si la fonction est allumée (drapeau de build) et active (AI_ENABLED) ; sinon,
+ * rien (pas de place réservée).
  */
 export function RaconteQuickLink({ className = "" }: { className?: string }) {
   const t = useMessages(RACONTE).link;

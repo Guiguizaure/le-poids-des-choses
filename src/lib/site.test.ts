@@ -5,6 +5,7 @@ import {
   isLaunched,
   pageMetadata,
   PUBLIC_PATHS,
+  publicPaths,
   robotsFile,
   robotsMeta,
   siteUrl,
@@ -35,7 +36,9 @@ describe("lancement (SITE_LAUNCHED)", () => {
   });
   it("sitemap vide avant le lancement, pages publiques après, jamais /labo", () => {
     expect(sitemapEntries(false, "https://x.fr")).toEqual([]);
-    const urls = sitemapEntries(true, "https://x.fr").map((entry) => entry.url);
+    const urls = sitemapEntries(true, "https://x.fr", publicPaths(true)).map(
+      (entry) => entry.url,
+    );
     expect(urls).toEqual([
       "https://x.fr",
       "https://x.fr/en",
@@ -60,6 +63,15 @@ describe("lancement (SITE_LAUNCHED)", () => {
     expect(PUBLIC_PATHS).not.toContain("/labo");
     expect(PUBLIC_PATHS).not.toContain("/connexion");
     expect(PUBLIC_PATHS).toContain("/confidentialite");
+  });
+  it("« Raconte ta journée » en veille : /raconte et /en/your-day hors du sitemap", () => {
+    const urls = sitemapEntries(true, "https://x.fr", publicPaths(false)).map(
+      (entry) => entry.url,
+    );
+    expect(urls).toHaveLength(16);
+    expect(urls).not.toContain("https://x.fr/raconte");
+    expect(urls).not.toContain("https://x.fr/en/your-day");
+    expect(publicPaths(true)).toContain("/raconte");
   });
   it("adresse du site : variable SITE_URL, sinon Cloudflare Pages", () => {
     expect(siteUrl({})).toBe(DEFAULT_SITE_URL);

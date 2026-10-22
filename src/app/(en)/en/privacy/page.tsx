@@ -8,6 +8,7 @@ import {
 import { localizedPath } from "@/lib/i18n";
 import { PAGES } from "@/lib/i18n/messages/common";
 import { HOST, PUBLISHER } from "@/lib/legal";
+import { RACONTE_ENABLED } from "@/lib/raconte/enabled";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -32,10 +33,12 @@ export default function PrivacyPage() {
             The account is optional. It’s only there to find your garden on
             another device.
           </li>
-          <li>
-            “Tell us about your day” is optional: your text is sent to Anthropic
-            to spot your actions, then forgotten on our side.
-          </li>
+          {RACONTE_ENABLED ? (
+            <li>
+              “Tell us about your day” is optional: your text is sent to
+              Anthropic to spot your actions, then forgotten on our side.
+            </li>
+          ) : null}
           <li>No advertising, no reselling, no profiling, no trackers.</li>
         </ul>
       </Section>
@@ -83,13 +86,15 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Cloudflare Turnstile</strong> checks, on the sign-in form
-            and on “Tell us about your day” only, that the request doesn’t come
-            from a robot. According to Cloudflare, it uses in particular the IP
-            address and characteristics of the browser, only to detect robots (
+            {RACONTE_ENABLED ? " and on “Tell us about your day”" : ""} only,
+            that the request doesn’t come from a robot. According to Cloudflare,
+            it uses in particular the IP address and characteristics of the
+            browser, only to detect robots (
             <ExternalLink href="https://www.cloudflare.com/turnstile-privacy-policy/">
               Turnstile’s policy
             </ExternalLink>
-            ). It’s only loaded when you use one of these forms.
+            ). It’s only loaded when you use{" "}
+            {RACONTE_ENABLED ? "one of these forms" : "this form"}.
           </li>
           <li>
             <strong>Resend</strong> (Plus Five Five, Inc., United States) sends
@@ -104,44 +109,46 @@ export default function PrivacyPage() {
         </ul>
       </Section>
 
-      <Section id="raconte" title="“Tell us about your day”">
-        <ul className="list-disc space-y-1 pl-5">
-          <li>
-            When you start the analysis, the text you wrote (280 characters at
-            most) is sent to <strong>Anthropic</strong> (Anthropic, PBC, United
-            States), so that its Claude model can spot actions from the
-            catalogue. Nothing is sent until you press “Read my day”.
-          </li>
-          <li>
-            On our side, the text only passes through: it’s neither stored nor
-            written in the server logs. Only counters are kept (number of
-            analyses, outcome, number of actions spotted).
-          </li>
-          <li>
-            At Anthropic, according to its official documentation (
-            <ExternalLink href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data">
-              How long do you store my organization’s data?
-            </ExternalLink>
-            ): “For Anthropic API users, we automatically delete inputs and
-            outputs on our backend within 30 days of receipt or generation”,
-            unless another agreement has been made, unless Anthropic needs to
-            keep them longer to enforce its usage policy, or to comply with the
-            law. According to the same page, an exchange flagged by its
-            automated systems as breaching that policy is kept for up to 2 years
-            (and its classification score for up to 7 years).
-          </li>
-          <li>
-            That’s why the field reminds you: don’t write any personal
-            information.
-          </li>
-          <li>
-            To limit abuse and cost: a counter per IP address (encrypted
-            fingerprint) and, if you’re signed in, per account, erased after 2
-            days at most. This processing is based on the service you ask for by
-            starting the analysis.
-          </li>
-        </ul>
-      </Section>
+      {RACONTE_ENABLED ? (
+        <Section id="raconte" title="“Tell us about your day”">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>
+              When you start the analysis, the text you wrote (280 characters at
+              most) is sent to <strong>Anthropic</strong> (Anthropic, PBC,
+              United States), so that its Claude model can spot actions from the
+              catalogue. Nothing is sent until you press “Read my day”.
+            </li>
+            <li>
+              On our side, the text only passes through: it’s neither stored nor
+              written in the server logs. Only counters are kept (number of
+              analyses, outcome, number of actions spotted).
+            </li>
+            <li>
+              At Anthropic, according to its official documentation (
+              <ExternalLink href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data">
+                How long do you store my organization’s data?
+              </ExternalLink>
+              ): “For Anthropic API users, we automatically delete inputs and
+              outputs on our backend within 30 days of receipt or generation”,
+              unless another agreement has been made, unless Anthropic needs to
+              keep them longer to enforce its usage policy, or to comply with
+              the law. According to the same page, an exchange flagged by its
+              automated systems as breaching that policy is kept for up to 2
+              years (and its classification score for up to 7 years).
+            </li>
+            <li>
+              That’s why the field reminds you: don’t write any personal
+              information.
+            </li>
+            <li>
+              To limit abuse and cost: a counter per IP address (encrypted
+              fingerprint) and, if you’re signed in, per account, erased after 2
+              days at most. This processing is based on the service you ask for
+              by starting the analysis.
+            </li>
+          </ul>
+        </Section>
+      ) : null}
 
       <Section id="duree" title="For how long">
         <ul className="list-disc space-y-1 pl-5">

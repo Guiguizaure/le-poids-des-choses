@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/ContentPage";
 import { HOST, PUBLISHER } from "@/lib/legal";
 import { PAGES } from "@/lib/i18n/messages/common";
+import { RACONTE_ENABLED } from "@/lib/raconte/enabled";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -29,10 +30,12 @@ export default function ConfidentialitePage() {
             Le compte est facultatif. Il sert seulement à retrouver ton jardin
             sur un autre appareil.
           </li>
-          <li>
-            « Raconte ta journée » est facultatif : ton texte est envoyé à
-            Anthropic pour y repérer tes gestes, puis oublié chez nous.
-          </li>
+          {RACONTE_ENABLED ? (
+            <li>
+              « Raconte ta journée » est facultatif : ton texte est envoyé à
+              Anthropic pour y repérer tes gestes, puis oublié chez nous.
+            </li>
+          ) : null}
           <li>
             Pas de publicité, pas de revente, pas de profilage, pas de traceur.
           </li>
@@ -82,14 +85,16 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <strong>Cloudflare Turnstile</strong> vérifie, sur le formulaire de
-            connexion et sur « Raconte ta journée » seulement, que la demande ne
-            vient pas d’un robot. Selon Cloudflare, il utilise notamment
-            l’adresse IP et des caractéristiques du navigateur, uniquement pour
-            détecter les robots (
+            connexion
+            {RACONTE_ENABLED ? " et sur « Raconte ta journée »" : ""} seulement,
+            que la demande ne vient pas d’un robot. Selon Cloudflare, il utilise
+            notamment l’adresse IP et des caractéristiques du navigateur,
+            uniquement pour détecter les robots (
             <ExternalLink href="https://www.cloudflare.com/turnstile-privacy-policy/">
               politique de Turnstile
             </ExternalLink>
-            ). Il n’est chargé que lorsque tu utilises l’un de ces formulaires.
+            ). Il n’est chargé que lorsque tu utilises{" "}
+            {RACONTE_ENABLED ? "l’un de ces formulaires" : "ce formulaire"}.
           </li>
           <li>
             <strong>Resend</strong> (Plus Five Five, Inc., États-Unis) envoie
@@ -104,47 +109,49 @@ export default function ConfidentialitePage() {
         </ul>
       </Section>
 
-      <Section id="raconte" title="« Raconte ta journée »">
-        <ul className="list-disc space-y-1 pl-5">
-          <li>
-            Quand tu lances l’analyse, le texte que tu as écrit (280 caractères
-            au plus) est envoyé à <strong>Anthropic</strong> (Anthropic, PBC,
-            États-Unis), pour que son modèle Claude y repère des gestes du
-            catalogue. Rien n’est envoyé tant que tu n’appuies pas sur «
-            Analyser mon texte ».
-          </li>
-          <li>
-            Chez nous, le texte ne fait que passer : il n’est ni enregistré, ni
-            écrit dans les journaux du serveur. Seuls des compteurs sont gardés
-            (nombre d’analyses, résultat, nombre de gestes repérés).
-          </li>
-          <li>
-            Chez Anthropic, d’après sa documentation officielle (
-            <ExternalLink href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data">
-              How long do you store my organization’s data?
-            </ExternalLink>
-            ) : « For Anthropic API users, we automatically delete inputs and
-            outputs on our backend within 30 days of receipt or generation »
-            (les textes envoyés et les réponses sont supprimés automatiquement
-            dans les 30 jours), sauf quand un autre accord a été passé, quand
-            Anthropic doit les garder plus longtemps pour faire respecter sa
-            politique d’utilisation, ou pour respecter la loi. Toujours selon
-            cette page, un échange signalé par ses systèmes automatiques comme
-            contraire à cette politique est gardé jusqu’à 2 ans (et son score de
-            classement jusqu’à 7 ans).
-          </li>
-          <li>
-            C’est pourquoi le champ le rappelle : n’écris pas d’informations
-            personnelles.
-          </li>
-          <li>
-            Pour limiter les abus et le coût : un compteur par adresse IP
-            (empreinte chiffrée) et, si tu es connecté, par compte, effacés au
-            bout de 2 jours au plus. Ce traitement repose sur le service que tu
-            demandes en lançant l’analyse.
-          </li>
-        </ul>
-      </Section>
+      {RACONTE_ENABLED ? (
+        <Section id="raconte" title="« Raconte ta journée »">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>
+              Quand tu lances l’analyse, le texte que tu as écrit (280
+              caractères au plus) est envoyé à <strong>Anthropic</strong>{" "}
+              (Anthropic, PBC, États-Unis), pour que son modèle Claude y repère
+              des gestes du catalogue. Rien n’est envoyé tant que tu n’appuies
+              pas sur « Analyser mon texte ».
+            </li>
+            <li>
+              Chez nous, le texte ne fait que passer : il n’est ni enregistré,
+              ni écrit dans les journaux du serveur. Seuls des compteurs sont
+              gardés (nombre d’analyses, résultat, nombre de gestes repérés).
+            </li>
+            <li>
+              Chez Anthropic, d’après sa documentation officielle (
+              <ExternalLink href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data">
+                How long do you store my organization’s data?
+              </ExternalLink>
+              ) : « For Anthropic API users, we automatically delete inputs and
+              outputs on our backend within 30 days of receipt or generation »
+              (les textes envoyés et les réponses sont supprimés automatiquement
+              dans les 30 jours), sauf quand un autre accord a été passé, quand
+              Anthropic doit les garder plus longtemps pour faire respecter sa
+              politique d’utilisation, ou pour respecter la loi. Toujours selon
+              cette page, un échange signalé par ses systèmes automatiques comme
+              contraire à cette politique est gardé jusqu’à 2 ans (et son score
+              de classement jusqu’à 7 ans).
+            </li>
+            <li>
+              C’est pourquoi le champ le rappelle : n’écris pas d’informations
+              personnelles.
+            </li>
+            <li>
+              Pour limiter les abus et le coût : un compteur par adresse IP
+              (empreinte chiffrée) et, si tu es connecté, par compte, effacés au
+              bout de 2 jours au plus. Ce traitement repose sur le service que
+              tu demandes en lançant l’analyse.
+            </li>
+          </ul>
+        </Section>
+      ) : null}
 
       <Section id="duree" title="Combien de temps">
         <ul className="list-disc space-y-1 pl-5">
