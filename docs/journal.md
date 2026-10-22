@@ -2649,6 +2649,11 @@ rien supprimer, et pouvoir la rallumer en changeant une variable.
   la lecture du texte, sans compteur ni appel à Anthropic (test unitaire existant). Le serveur
   de test passe maintenant `AI_ENABLED` selon le drapeau, et le faux Anthropic compte ses
   appels (`GET /v1/messages/count`).
+- Constaté sur la préversion et la production (22 octobre) : `GET /api/raconte` répond
+  `{ enabled: true }`, donc `AI_ENABLED=1` dans Cloudflare. Un appel direct passe le
+  coupe-circuit et n'est arrêté que par Turnstile (400 `turnstile`). À passer à `0` par
+  l'utilisateur dans le tableau de bord (production et préversion) pour que la veille soit
+  complète côté serveur.
 - Tests : `e2e/veille.spec.ts` (drapeau éteint) : pages principales FR et EN sans lien ni
   titre de la fonction (avec et sans carnet), aucune question à l'API, pages légales et
   méthode sans passage sur l'IA ni Anthropic, /raconte et /en/your-day en 404, appel direct
