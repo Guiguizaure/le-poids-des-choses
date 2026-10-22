@@ -6,8 +6,12 @@ import {
   seedJournal,
   test,
 } from "./fixtures";
+import { RACONTE_ENABLED } from "../src/lib/raconte/enabled";
 
-/** « Raconte ta journée » actif (AI_ENABLED) : le serveur statique répond sinon « coupé ». */
+/**
+ * « Raconte ta journée » actif (AI_ENABLED) : le serveur statique répond sinon « coupé ». Ces
+ * tests ne tournent que drapeau allumé (NEXT_PUBLIC_RACONTE_ENABLED=1 au build).
+ */
 const aiEnabled = (page: Page) =>
   page.route("**/api/raconte", (route) =>
     route.request().method() === "GET"
@@ -23,6 +27,7 @@ test.describe("carte « Plus rapide : raconte ta journée » sur /comparer", () 
   test("IA active : sous la sélection, après le bouton Comparer, vers /raconte", async ({
     page,
   }) => {
+    test.skip(!RACONTE_ENABLED, "« Raconte ta journée » en veille");
     await aiEnabled(page);
     await page.goto("/comparer");
     const card = page.getByRole("link", {
@@ -61,6 +66,7 @@ test.describe("carte « Plus rapide : raconte ta journée » sur /comparer", () 
     test(`avec la barre « Comparer » (${path}) : la carte reste visible au-dessus de la marge réservée`, async ({
       page,
     }) => {
+      test.skip(!RACONTE_ENABLED, "« Raconte ta journée » en veille");
       await aiEnabled(page);
       await page.goto(path);
       const card = page.getByRole("link", { name: label });
@@ -109,6 +115,7 @@ test.describe("carte « Plus rapide : raconte ta journée » sur /comparer", () 
   });
 
   test("en anglais : “Quicker: tell us about your day”", async ({ page }) => {
+    test.skip(!RACONTE_ENABLED, "« Raconte ta journée » en veille");
     await aiEnabled(page);
     await page.goto("/en/compare");
     const card = page.getByRole("link", {

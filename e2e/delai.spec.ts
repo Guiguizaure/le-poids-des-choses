@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import { expect, expectNoAxeViolations, test } from "./fixtures";
+import { RACONTE_ENABLED } from "../src/lib/raconte/enabled";
 
 // Délai maximal des appels au serveur (src/lib/net/deadline.ts) : une requête qui ne répond
 // jamais, l'horloge de Playwright avancée jusqu'au délai, puis le bouton revenu et le message
@@ -128,6 +129,7 @@ for (const { path, label, analyse, reading, message } of [
   test(`${path} : analyse sans réponse, bouton rendu et message annoncé au bout de 20 s`, async ({
     page,
   }) => {
+    test.skip(!RACONTE_ENABLED, "« Raconte ta journée » en veille");
     const requests = await prepare(page, "/api/raconte");
     await aiEnabled(page);
     await page.goto(path);

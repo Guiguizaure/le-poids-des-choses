@@ -2618,3 +2618,51 @@ ralentissement, 80 sur 80 sous Chromium ×3, 80 sur 80 sous WebKit chargé.
 
 **Vérifié** : sous charge, 40 sur 40 pour chaque test (six tests × deux navigateurs = 480, plus
 80 pour le compte, plus `e2e/visiteurs.spec.ts`).
+
+## 2026-10-22 — « Raconte ta journée » en veille (branche feat/raconte-en-veille)
+
+**Demandé** : retirer « Raconte ta journée » de tout le site, en français et en anglais, sans
+rien supprimer, et pouvoir la rallumer en changeant une variable.
+
+**Fait** :
+
+- Interrupteur unique : `src/lib/raconte/enabled.ts` (`RACONTE_ENABLED`), drapeau de build
+  `NEXT_PUBLIC_RACONTE_ENABLED`, absent = éteint, seul « 1 » allume.
+- Inventaire des points d'entrée : `RaconteLink` sur /jardin (jardin vide, et sous le carnet ;
+  il s'affichait même avec `AI_ENABLED=0`), `RaconteQuickLink` sur /comparer (déjà masqué par
+  `GET /api/raconte`), pages /raconte et /en/your-day, sitemap au lancement, sélecteur de
+  langue et hreflang de ces deux pages, /methode#raconte et /en/method#raconte,
+  /confidentialite et /en/privacy (« En bref », mention de Turnstile, section #raconte). Rien
+  dans l'accueil, la navigation, le pied de page, le carnet, les astuces, les répliques des
+  animaux (« raconter » y est le verbe ordinaire), le manifeste (pas de raccourcis), ni les
+  mentions légales. Pas de page « Accessibilité » sur le site.
+- Éteint : les deux liens ne s'affichent plus, la question `GET /api/raconte` n'est plus posée,
+  les passages sur l'IA ne s'affichent plus, Turnstile n'est décrit que pour la connexion
+  (« sur le formulaire de connexion seulement », « ce formulaire »). Gardé : « Comment ce site
+  est fait » (le code écrit avec Claude Code, toujours vrai).
+- /raconte : la solution la plus simple pour un export statique est de ne pas générer la page
+  (les redirections ne sont pas permises avec `output: 'export'`). Les deux pages s'appellent
+  `page.raconte.tsx` ; `next.config.ts` ne déclare l'extension `raconte.tsx` que drapeau
+  allumé. Éteint : 404 (la 404 de la langue, comme toute adresse inconnue), hors du sitemap
+  (`publicPaths`).
+- Fonction Cloudflare : déjà sûre. `AI_ENABLED` différent de « 1 » → 503 `ai-disabled` avant
+  la lecture du texte, sans compteur ni appel à Anthropic (test unitaire existant). Le serveur
+  de test passe maintenant `AI_ENABLED` selon le drapeau, et le faux Anthropic compte ses
+  appels (`GET /v1/messages/count`).
+- Tests : `e2e/veille.spec.ts` (drapeau éteint) : pages principales FR et EN sans lien ni
+  titre de la fonction (avec et sans carnet), aucune question à l'API, pages légales et
+  méthode sans passage sur l'IA ni Anthropic, /raconte et /en/your-day en 404, appel direct
+  refusé (503) sans appel au faux Anthropic, choix déjà notés (dont une entrée faite par
+  « Raconte ») toujours dans le carnet. Les tests propres à la fonction sont gardés et
+  sautés drapeau éteint (`raconte.spec.ts`, cartes de `raccourcis.spec.ts`, délai de
+  `delai.spec.ts`, /en/your-day d'`anglais.spec.ts`) ; les unitaires restent actifs.
+
+**Réactiver « Raconte ta journée »** :
+
+1. relancer `pnpm raconte:eval` et compléter les phrases : les gestes ajoutés par le lot
+   « Comparer plus » ne sont pas encore reconnus (`NOT_YET_RECOGNIZED`) ;
+2. dans Cloudflare Pages (production et préversion) : `NEXT_PUBLIC_RACONTE_ENABLED=1`
+   (build) et `AI_ENABLED=1` (Functions) ; les secrets et plafonds sont restés en place ;
+3. redéployer (le drapeau est lu au build) ;
+4. en local : `NEXT_PUBLIC_RACONTE_ENABLED=1 pnpm build` puis
+   `NEXT_PUBLIC_RACONTE_ENABLED=1 pnpm e2e`.

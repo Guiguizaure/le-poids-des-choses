@@ -47,13 +47,39 @@ suit les saisons et l'heure, et reçoit des visiteurs. En français (racine) et 
   fichiers en anglais. Tout texte d'interface passe par les dictionnaires (voir Langues).
 - Après chaque session, ajoute une entrée datée dans `docs/journal.md` : ce qui a été
   demandé, proposé, gardé ou changé.
+- « Raconte ta journée » est en veille depuis le 22 octobre 2026 (voir la section suivante) :
+  le code, le prompt, les tests, les tables D1 et les variables Cloudflare restent en place.
+
+## Réactiver « Raconte ta journée »
+
+Interrupteur unique côté site : `src/lib/raconte/enabled.ts` (`RACONTE_ENABLED`, drapeau de
+build `NEXT_PUBLIC_RACONTE_ENABLED`, absent = éteint, seul « 1 » allume). Éteint : aucun lien
+ni texte (`RaconteLink`, `RaconteQuickLink`, passages #raconte de /methode et
+/confidentialite et leur version anglaise, mention de Turnstile), pas d'appel à
+`GET /api/raconte`, pages `page.raconte.tsx` non générées (`pageExtensions`,
+`next.config.ts`) donc /raconte et /en/your-day en 404, hors du sitemap (`publicPaths`).
+Côté Functions, `AI_ENABLED` (différent de « 1 ») fait refuser `POST /api/raconte` en 503
+`ai-disabled` avant tout appel à Anthropic. Les choix déjà notés restent dans le carnet. Pour
+réactiver :
+
+1. relancer l'évaluation du prompt (`pnpm raconte:eval`) et la compléter : les gestes du lot
+   « Comparer plus » ne sont pas encore reconnus (`NOT_YET_RECOGNIZED`) ;
+2. dans Cloudflare Pages (production et préversion) : `NEXT_PUBLIC_RACONTE_ENABLED=1`
+   (variable de build) et `AI_ENABLED=1` (Functions) ; vérifier `ANTHROPIC_API_KEY`,
+   `TURNSTILE_SECRET_KEY` et `AI_DAILY_CAP` ;
+3. redéployer (nouveau build : le drapeau est lu à la construction) ;
+4. en local, les tests propres à la fonction (`e2e/raconte.spec.ts`, cartes de
+   `e2e/raccourcis.spec.ts`, délai de `e2e/delai.spec.ts`, /en/your-day d'`anglais.spec.ts`) ne
+   tournent que drapeau allumé : `NEXT_PUBLIC_RACONTE_ENABLED=1 pnpm build`, puis
+   `NEXT_PUBLIC_RACONTE_ENABLED=1 pnpm e2e` (le serveur de test passe alors `AI_ENABLED=1`) ;
+   drapeau éteint, `e2e/veille.spec.ts` vérifie la veille (et s'arrête drapeau allumé).
 
 ## Stack
 
 Next.js 16 (App Router, `src/`), React 19, TypeScript, Tailwind CSS 4 (thème dans
 `src/app/globals.css`, bloc `@theme`), GSAP + `@gsap/react` (animations), Vitest, ESLint,
 Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et D1 (base
-`DB`), e-mails Resend, anti-robot Turnstile. « Raconte ta journée » : API Anthropic
+`DB`), e-mails Resend, anti-robot Turnstile. « Raconte ta journée » (en veille) : API Anthropic
 (`@anthropic-ai/sdk`, modèle `claude-haiku-4-5`) appelée par une Pages Function. Site statique
 (`output: 'export'`, images non optimisées) hébergé sur Cloudflare Pages.
 
@@ -98,7 +124,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   en HTTPS, port 4331, D1 locale neuve dans `.tmp/e2e-d1`) et `e2e/fake-services.mjs` (faux
   Resend, faux siteverify et faux Anthropic, port 4330) ; Turnstile est simulé par une route
   Playwright. « Raconte ta journée » (`e2e/raconte.spec.ts`, projets `raconte-chromium` et
-  `raconte-webkit`, après le compte) passe par le même serveur. Version anglaise :
+  `raconte-webkit`, après le compte) passe par le même serveur, seulement drapeau allumé
+  (sinon sautés ; la veille : `e2e/veille.spec.ts`). Version anglaise :
   `e2e/anglais.spec.ts` (navigateur `en-GB` : pages /en avec axe et aucun mot français,
   parcours, sélecteur de langue, bandeau, hreflang, mêmes ancres) et un parcours anglais
   dans le compte et dans « Raconte ta journée ». Le serveur de test sert le `404.html` le plus
@@ -135,7 +162,8 @@ Prettier, pnpm. Compte facultatif : Cloudflare Pages Functions (`functions/`) et
   de comparaison), `/jardin` (Mon jardin), `/jardin/carnet` (carnet analysé, « Tout
   voir »), `/saison` (fruits et légumes de saison),
   `/methode` (maquette 06, papiers découpés `PaperCutout`), `/mentions-legales`,
-  `/confidentialite`, `/raconte` (« Raconte ta journée », maquette 08), `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
+  `/confidentialite`, `/raconte` (« Raconte ta journée », maquette 08 ; `page.raconte.tsx`, générée seulement
+  drapeau allumé), `/connexion` (lien magique, ou formulaire « Retrouve ton jardin » sans
   jeton ; toujours noindex et hors sitemap),
   404 (`NotFoundScreen`, jardin dans la brume), `/labo` (banc d'essai, en français seulement ;
   non liée, toujours noindex et hors sitemap) ; `manifest.ts`, `robots.ts`, `sitemap.ts` ;
@@ -796,7 +824,8 @@ variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet,
   - /confidentialite (pied de page, formulaire) et mentions légales : un seul cookie, posé
     seulement à la connexion ; Turnstile chargé seulement quand le formulaire sert (CSP :
     `challenges.cloudflare.com` en script et frame).
-- « Raconte ta journée » (lot V2-3, `/raconte`, maquette 08 nœud 17:55) :
+- « Raconte ta journée » (lot V2-3, `/raconte`, maquette 08 nœud 17:55 ; en veille, voir
+  « Réactiver « Raconte ta journée » ») :
   - la personne écrit (280 caractères au plus) ; Claude (`claude-haiku-4-5`, température 0,
     600 jetons au plus, 15 s, sans nouvel essai) ne fait que reconnaître des gestes du
     catalogue : sortie structurée (`output_config.format`, enum exact des ids), jamais de
@@ -831,6 +860,7 @@ variant="retrouver"`) ; choix arrivés pendant la visite (synchro, autre onglet,
   - points d'entrée : sur /comparer, carte discrète `RaconteQuickLink` (« Plus rapide :
     raconte ta journée ») sous la sélection, seulement si `GET /api/raconte` dit
     `enabled` (`useRaconteAvailability`, une question par page) ; `RaconteLink` sur /jardin ;
+    les deux, et la question, seulement drapeau allumé (`RACONTE_ENABLED`) ;
   - secrets et variables Cloudflare : `ANTHROPIC_API_KEY` (secret), `AI_ENABLED`,
     `AI_DAILY_CAP` (facultative) ; en local `.dev.vars` (`AI_ENABLED=0` par défaut).
 - Licences : code MIT ; illustrations, icône, image de partage et identité visuelle tous

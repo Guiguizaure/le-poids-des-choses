@@ -1,11 +1,13 @@
 // Faux services pour les tests de bout en bout du compte (jamais de vrai e-mail) :
 // - faux Resend : POST /emails enregistre le message ; GET /emails?to=… les relit (tests) ;
 // - faux Turnstile siteverify : POST /siteverify accepte le jeton « jeton-e2e » ;
-// - faux Anthropic : POST /v1/messages repère quelques mots-clés (aucun appel réel à Claude).
+// - faux Anthropic : POST /v1/messages repère quelques mots-clés (aucun appel réel à Claude) ;
+//   GET /v1/messages/count donne le nombre d'appels reçus (« Raconte » en veille : aucun).
 import { createServer } from "node:http";
 
 const PORT = Number(process.env.PORT ?? 4330);
 const mails = [];
+let anthropicCalls = 0;
 
 function readBody(request) {
   return new Promise((resolve) => {
@@ -102,7 +104,10 @@ createServer(async (request, response) => {
         params.get("response") === "jeton-e2e",
     });
   }
+  if (request.method === "GET" && url.pathname === "/v1/messages/count")
+    return send(response, 200, { count: anthropicCalls });
   if (request.method === "POST" && url.pathname === "/v1/messages") {
+    anthropicCalls += 1;
     if (request.headers["x-api-key"] !== "sk-ant-faux-e2e")
       return send(response, 401, {
         type: "error",

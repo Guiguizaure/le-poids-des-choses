@@ -17,6 +17,7 @@ import {
   SAISON_DOWNLOADED_AT,
   SAISON_TOOL_URL,
 } from "@/lib/saison";
+import { RACONTE_ENABLED } from "@/lib/raconte/enabled";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -290,30 +291,33 @@ export default function MethodPage() {
         </p>
       </Section>
 
-      <Section id="raconte" title="“Tell us about your day”">
-        <p>
-          You write about your day; Claude Haiku 4.5, a model by Anthropic,
-          spots the actions that are in the site’s catalogue, and nothing else.
-          It doesn’t calculate anything and gives no figures: it only returns
-          the names of the actions, the words that justify them and, for a
-          journey, the distance if you wrote it. An inferred action (“a burger”
-          for a beef meal) is marked “Check this” and isn’t ticked.
-        </p>
-        <p>
-          The option it’s compared with comes from a table written by hand (the
-          TER regional train is compared with a petrol or diesel car, a
-          vegetarian meal with a chicken meal…), which you can change before
-          adding. The differences are then calculated as everywhere else, from
-          Impact CO2 data. Nothing goes into your journal unless you’ve ticked
-          it.
-        </p>
-        <p>
-          Each analysis runs an AI model in a data centre: it uses energy and so
-          has a footprint. We don’t show it in grams, because there’s no public
-          source that puts a figure on a single request. That’s why the analysis
-          only runs when you ask, on a short text, with a brief reply.
-        </p>
-      </Section>
+      {RACONTE_ENABLED ? (
+        <Section id="raconte" title="“Tell us about your day”">
+          <p>
+            You write about your day; Claude Haiku 4.5, a model by Anthropic,
+            spots the actions that are in the site’s catalogue, and nothing
+            else. It doesn’t calculate anything and gives no figures: it only
+            returns the names of the actions, the words that justify them and,
+            for a journey, the distance if you wrote it. An inferred action (“a
+            burger” for a beef meal) is marked “Check this” and isn’t ticked.
+          </p>
+          <p>
+            The option it’s compared with comes from a table written by hand
+            (the TER regional train is compared with a petrol or diesel car, a
+            vegetarian meal with a chicken meal…), which you can change before
+            adding. The differences are then calculated as everywhere else, from
+            Impact CO2 data. Nothing goes into your journal unless you’ve ticked
+            it.
+          </p>
+          <p>
+            Each analysis runs an AI model in a data centre: it uses energy and
+            so has a footprint. We don’t show it in grams, because there’s no
+            public source that puts a figure on a single request. That’s why the
+            analysis only runs when you ask, on a short text, with a brief
+            reply.
+          </p>
+        </Section>
+      ) : null}
 
       <Section id="fabrication" title="How this site is made">
         <p>

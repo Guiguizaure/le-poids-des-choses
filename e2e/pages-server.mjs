@@ -37,8 +37,10 @@ const bindings = {
   TURNSTILE_VERIFY_URL: `${FAKE}/siteverify`,
   HASH_SECRET: "hash-e2e",
   ALLOW_LOCALHOST: "1",
-  // « Raconte ta journée » : faux Anthropic, jamais la vraie clé.
-  AI_ENABLED: "1",
+  // « Raconte ta journée » : allumée comme au build (NEXT_PUBLIC_RACONTE_ENABLED) ; en veille,
+  // AI_ENABLED=0 et la fonction doit refuser sans appeler Anthropic (e2e/veille.spec.ts).
+  // Faux Anthropic, jamais la vraie clé.
+  AI_ENABLED: process.env.NEXT_PUBLIC_RACONTE_ENABLED === "1" ? "1" : "0",
   AI_DAILY_CAP: "100000",
   ANTHROPIC_API_KEY: "sk-ant-faux-e2e",
   ANTHROPIC_BASE_URL: FAKE,

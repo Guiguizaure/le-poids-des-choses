@@ -8,6 +8,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { SITE } from "@/lib/i18n/messages/common";
+import { RACONTE_ENABLED } from "@/lib/raconte/enabled";
 
 export const SITE_NAME = "Le poids des choses";
 export const SITE_DESCRIPTION = SITE.fr.description;
@@ -34,8 +35,7 @@ export function isLaunched(
   return env.SITE_LAUNCHED === "1";
 }
 
-/** Pages publiques (le sitemap au lancement) : /labo et /connexion n'y figurent jamais. */
-export const PUBLIC_PATHS = [
+const ALL_PUBLIC_PATHS = [
   "/",
   "/comparer",
   "/raconte",
@@ -45,7 +45,19 @@ export const PUBLIC_PATHS = [
   "/methode",
   "/mentions-legales",
   "/confidentialite",
-] as const;
+] as const satisfies readonly FrenchPath[];
+
+/**
+ * Pages publiques (le sitemap au lancement) : /labo et /connexion n'y figurent jamais ;
+ * /raconte seulement si « Raconte ta journée » est allumée (sinon la page n'existe pas).
+ */
+export function publicPaths(raconteEnabled: boolean): readonly FrenchPath[] {
+  return raconteEnabled
+    ? ALL_PUBLIC_PATHS
+    : ALL_PUBLIC_PATHS.filter((path) => path !== "/raconte");
+}
+
+export const PUBLIC_PATHS = publicPaths(RACONTE_ENABLED);
 
 export function robotsMeta(launched: boolean): Metadata["robots"] {
   return launched
@@ -78,9 +90,10 @@ export function languageAlternates(path: FrenchPath): Record<string, string> {
 export function sitemapEntries(
   launched: boolean,
   base: string,
+  paths: readonly FrenchPath[] = PUBLIC_PATHS,
 ): MetadataRoute.Sitemap {
   if (!launched) return [];
-  return PUBLIC_PATHS.flatMap((path) => {
+  return paths.flatMap((path) => {
     const languages = {
       fr: absolute(base, path),
       en: absolute(base, ROUTES[path]),

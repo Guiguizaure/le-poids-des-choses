@@ -11,6 +11,7 @@ import {
   test,
   letGardenChoose,
 } from "./fixtures";
+import { RACONTE_ENABLED } from "../src/lib/raconte/enabled";
 
 test.use({ locale: "en-GB" });
 
@@ -67,7 +68,10 @@ const PAGES = [
   { path: "/en/legal-notice", heading: "Legal notice" },
   { path: "/en/privacy", heading: "Privacy" },
   { path: "/en/sign-in", heading: "Find your garden" },
-  { path: "/en/your-day", heading: "Tell us about your day" },
+  // « Raconte ta journée » : seulement drapeau allumé (sinon 404, e2e/veille.spec.ts).
+  ...(RACONTE_ENABLED
+    ? [{ path: "/en/your-day", heading: "Tell us about your day" }]
+    : []),
 ];
 
 test.describe("pages anglaises : axe et aucun texte français", () => {
